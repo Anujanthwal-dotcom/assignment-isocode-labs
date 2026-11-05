@@ -2,3 +2,8 @@ export * from './common.js';
 export * from './auth.js';
 export * from './catalogue.js';
 export * from './inventory.js';
+export * from './customer.js';
+export * from './compliance.js';
+export * from './pharmacist-verification.js';
+export * from './fulfilment.js';
+export * from './refills-and-analytics.js';
