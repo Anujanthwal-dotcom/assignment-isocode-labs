@@ -18,33 +18,33 @@ export const CustomerHomePreview: React.FC = () => {
 
   return (
     <div className="space-y-[32px]">
-      {/* Sample Data Disclaimer Banner */}
-      <div className="flex items-center justify-between rounded-[8px] border border-[#B9DEC9] bg-[#E8F4ED] px-4 py-2 text-[12px] text-[#23845D]">
-        <span className="font-semibold uppercase tracking-wider">Preview Environment</span>
-        <span>Deterministic Sample Data &bull; Persona: Customer Portal</span>
+      {/* Teladoc Health Preview Disclaimer Banner */}
+      <div className="flex items-center justify-between rounded-[8px] border border-[#D6D1F7] bg-[#F7F5FD] px-4 py-2 text-[12px] text-[#6240E8]">
+        <span className="font-semibold uppercase tracking-wider">Teladoc Health Portal</span>
+        <span>Deterministic Preview &bull; Persona: Customer Patient Care</span>
       </div>
 
       {/* Greeting & Family Selector */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-2 border-b border-[#E5EAE6]">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-2 border-b border-[#EAE8F0]">
         <div>
-          <h1 className="text-[22px] leading-[30px] font-semibold text-[#24332E]">
+          <h1 className="text-[22px] leading-[30px] font-semibold text-[#351F65]">
             Good morning, {SAMPLE_CUSTOMER.name}
           </h1>
-          <p className="text-[14px] leading-[20px] text-[#64736C] mt-1">
+          <p className="text-[14px] leading-[20px] text-[#78879A] mt-1">
             Managing pharmacy refill schedule and verified prescriptions for your family.
           </p>
         </div>
 
         {/* Profile pills */}
-        <div className="flex items-center gap-1.5 bg-white p-1 rounded-[8px] border border-[#E5EAE6] self-start sm:self-auto">
+        <div className="flex items-center gap-1.5 bg-white p-1 rounded-[8px] border border-[#EAE8F0] self-start sm:self-auto shadow-xs">
           {SAMPLE_CUSTOMER.familyMembers.map((member) => (
             <button
               key={member.id}
               onClick={() => setActiveProfile(member.relation)}
               className={`px-3 py-1.5 rounded-[6px] text-[12px] font-medium transition-colors ${
                 activeProfile === member.relation
-                  ? 'bg-[#176B52] text-white'
-                  : 'text-[#64736C] hover:text-[#24332E] hover:bg-[#F0F3F1]'
+                  ? 'bg-[#6240E8] text-white shadow-xs'
+                  : 'text-[#6C757D] hover:text-[#351F65] hover:bg-[#F7F5FD]'
               }`}
             >
               {member.relation}
@@ -58,13 +58,13 @@ export const CustomerHomePreview: React.FC = () => {
         {/* Left Column: Refill & Primary Action */}
         <div className="lg:col-span-7 space-y-[24px]">
           {/* Upcoming Refill Card */}
-          <Card className="border-[#E5EAE6] bg-white">
+          <Card className="border-[#EAE8F0] bg-white">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3">
               <div>
-                <span className="text-[12px] font-semibold uppercase tracking-wider text-[#176B52]">
+                <span className="text-[12px] font-semibold uppercase tracking-wider text-[#6240E8]">
                   Upcoming Refill Alert
                 </span>
-                <CardTitle className="text-[18px] leading-[26px] mt-1">
+                <CardTitle className="text-[18px] leading-[26px] mt-1 text-[#351F65]">
                   {SAMPLE_CUSTOMER.upcomingRefill.medicineName}
                 </CardTitle>
               </div>
@@ -72,23 +72,23 @@ export const CustomerHomePreview: React.FC = () => {
             </CardHeader>
 
             <CardContent className="space-y-[16px]">
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-[14px] text-[#64736C] bg-[#F7F9F7] p-3.5 rounded-[8px] border border-[#E5EAE6]">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-[14px] text-[#6C757D] bg-[#F8F9FB] p-3.5 rounded-[8px] border border-[#EAE8F0]">
                 <div>
-                  <span className="block text-[12px] font-medium text-[#7D8A81]">Schedule</span>
-                  <span className="text-[#24332E] font-medium">
+                  <span className="block text-[12px] font-medium text-[#78879A]">Schedule</span>
+                  <span className="text-[#351F65] font-semibold">
                     {SAMPLE_CUSTOMER.upcomingRefill.scheduleType} (Rx Required)
                   </span>
                 </div>
                 <div>
-                  <span className="block text-[12px] font-medium text-[#7D8A81]">Refill Due Date</span>
-                  <span className="text-[#24332E] font-medium flex items-center gap-1.5">
-                    <Calendar className="h-4 w-4 text-[#176B52]" />
+                  <span className="block text-[12px] font-medium text-[#78879A]">Refill Due Date</span>
+                  <span className="text-[#351F65] font-semibold flex items-center gap-1.5">
+                    <Calendar className="h-4 w-4 text-[#6240E8]" />
                     {SAMPLE_CUSTOMER.upcomingRefill.dueDate}
                   </span>
                 </div>
                 <div className="sm:col-span-2">
-                  <span className="block text-[12px] font-medium text-[#7D8A81]">Instructions</span>
-                  <span className="text-[#24332E]">
+                  <span className="block text-[12px] font-medium text-[#78879A]">Dosage &amp; Doctor</span>
+                  <span className="text-[#14161A]">
                     {SAMPLE_CUSTOMER.upcomingRefill.dosage} &bull; {SAMPLE_CUSTOMER.upcomingRefill.prescribedBy}
                   </span>
                 </div>
@@ -107,19 +107,19 @@ export const CustomerHomePreview: React.FC = () => {
                   Quick Reorder Refill
                 </Button>
                 <Button size="lg" variant="outline" className="w-full sm:w-auto">
-                  <FileText className="mr-2 h-4 w-4" />
+                  <FileText className="mr-2 h-4 w-4 text-[#6240E8]" />
                   View Original Prescription
                 </Button>
               </div>
             </CardContent>
           </Card>
 
-          {/* Schedule H Compliance Notice */}
-          <div className="rounded-[8px] border border-[#B9DEC9] bg-[#E8F4ED] p-4 text-[14px] text-[#23845D] flex items-start gap-3">
-            <AlertCircle className="h-5 w-5 shrink-0 mt-0.5" />
+          {/* Schedule H Compliance Notice (Teal Accent) */}
+          <div className="rounded-[8px] border border-[#B4EDFB] bg-[#EBF9FD] p-4 text-[14px] text-[#0088AA] flex items-start gap-3">
+            <AlertCircle className="h-5 w-5 shrink-0 mt-0.5 text-[#0088AA]" />
             <div>
-              <p className="font-semibold">Compliance Note for Schedule H Prescriptions</p>
-              <p className="text-[12px] mt-0.5 text-[#176B52]">
+              <p className="font-semibold text-[#0088AA]">Teladoc Health Compliance Note</p>
+              <p className="text-[12px] mt-0.5 text-[#0088AA]/90">
                 Refills for blood pressure management must be verified by a registered pharmacist
                 at your assigned hub ({SAMPLE_CUSTOMER.recentOrders[0].store} Store).
               </p>
@@ -130,30 +130,30 @@ export const CustomerHomePreview: React.FC = () => {
         {/* Right Column: Recent Orders List */}
         <div className="lg:col-span-5 space-y-[16px]">
           <div className="flex items-center justify-between">
-            <h2 className="text-[18px] leading-[26px] font-semibold text-[#24332E]">
+            <h2 className="text-[18px] leading-[26px] font-semibold text-[#351F65]">
               Recent Orders
             </h2>
-            <span className="text-[12px] text-[#64736C]">Last 30 Days</span>
+            <span className="text-[12px] text-[#78879A]">Last 30 Days</span>
           </div>
 
           <div className="space-y-[12px]">
             {SAMPLE_CUSTOMER.recentOrders.map((order) => (
-              <Card key={order.id} className="p-4 bg-white hover:border-[#176B52] transition-colors">
+              <Card key={order.id} className="p-4 bg-white hover:border-[#6240E8] transition-colors">
                 <div className="flex items-start justify-between">
                   <div>
                     <div className="flex items-center gap-2">
-                      <span className="font-semibold text-[14px] text-[#24332E]">{order.id}</span>
-                      <span className="text-[12px] text-[#64736C]">&bull; {order.date}</span>
+                      <span className="font-semibold text-[14px] text-[#351F65]">{order.id}</span>
+                      <span className="text-[12px] text-[#78879A]">&bull; {order.date}</span>
                     </div>
-                    <p className="text-[14px] text-[#24332E] mt-1 font-medium">{order.items}</p>
-                    <p className="text-[12px] text-[#64736C] flex items-center gap-1 mt-1">
-                      <Building2 className="h-3.5 w-3.5 text-[#7D8A81]" />
+                    <p className="text-[14px] text-[#14161A] mt-1 font-medium">{order.items}</p>
+                    <p className="text-[12px] text-[#78879A] flex items-center gap-1 mt-1">
+                      <Building2 className="h-3.5 w-3.5 text-[#6240E8]" />
                       Fulfilled by {order.store} Store
                     </p>
                   </div>
                   <div className="text-right flex flex-col items-end gap-1.5">
                     <StatusBadge status={order.status} label={order.statusLabel} />
-                    <span className="text-[14px] font-semibold text-[#24332E]">{order.total}</span>
+                    <span className="text-[14px] font-semibold text-[#351F65]">{order.total}</span>
                   </div>
                 </div>
               </Card>
