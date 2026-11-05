@@ -6,6 +6,8 @@ import {
   MedicineSchedule,
   MedicineStatus,
   InventoryMovementType,
+  ComplianceRuleSetStatus,
+  CompliancePolicyAction,
   Prisma,
 } from '@prisma/client';
 import * as argon2 from 'argon2';
@@ -37,6 +39,15 @@ async function main() {
       address: 'Station Road, Howrah Maidan, Howrah (Demo Address)',
       latitude: 22.5898,
       longitude: 88.3248,
+      status: StoreStatus.ACTIVE,
+    },
+    {
+      code: 'SOU-001',
+      name: 'South Kolkata Store',
+      city: 'Kolkata',
+      address: 'Gariahat Road, South Kolkata (Demo Address)',
+      latitude: 22.5200,
+      longitude: 88.3650,
       status: StoreStatus.ACTIVE,
     },
   ];
@@ -162,7 +173,7 @@ async function main() {
   });
 
   // Compliance Admin: Demo Compliance Admin (compliance@example.com)
-  await prisma.user.upsert({
+  const complianceAdminUser = await prisma.user.upsert({
     where: { email: 'compliance@example.com' },
     update: {
       role: UserRole.COMPLIANCE_ADMIN,
@@ -176,6 +187,113 @@ async function main() {
       passwordHash: passwordHash,
     },
   });
+
+  // 4b. Seed Initial Versioned Compliance Rule Set (v1.0.0)
+  const activeRuleSet = await prisma.complianceRuleSet.upsert({
+    where: { version: '1.0.0' },
+    update: {
+      name: 'Standard Operational Pharmacy Policy',
+      description: 'Initial deterministic compliance policy version 1.0.0 for prescription verification',
+      status: ComplianceRuleSetStatus.ACTIVE,
+      activatedByUserId: complianceAdminUser.id,
+      activationReason: 'Initial deterministic baseline compliance activation',
+    },
+    create: {
+      version: '1.0.0',
+      name: 'Standard Operational Pharmacy Policy',
+      description: 'Initial deterministic compliance policy version 1.0.0 for prescription verification',
+      status: ComplianceRuleSetStatus.ACTIVE,
+      createdByUserId: complianceAdminUser.id,
+      activatedByUserId: complianceAdminUser.id,
+      activationReason: 'Initial deterministic baseline compliance activation',
+    },
+  });
+
+  const complianceRulesData = [
+    {
+      medicineSchedule: MedicineSchedule.OTC,
+      policyAction: CompliancePolicyAction.ALLOW_WITH_REVIEW,
+      requiresPrescription: false,
+      requiresPharmacistApproval: true,
+      requiresH1Register: false,
+      hardBlocked: false,
+      description: 'OTC medicines require explicit pharmacist review for every medicine item.',
+    },
+    {
+      medicineSchedule: MedicineSchedule.SCHEDULE_H,
+      policyAction: CompliancePolicyAction.REQUIRE_PRESCRIPTION_AND_APPROVAL,
+      requiresPrescription: true,
+      requiresPharmacistApproval: true,
+      requiresH1Register: false,
+      hardBlocked: false,
+      description: 'Schedule H medicines require valid prescription and explicit pharmacist approval.',
+    },
+    {
+      medicineSchedule: MedicineSchedule.SCHEDULE_H1,
+      policyAction: CompliancePolicyAction.REQUIRE_H1_REGISTER,
+      requiresPrescription: true,
+      requiresPharmacistApproval: true,
+      requiresH1Register: true,
+      hardBlocked: false,
+      description: 'Schedule H1 medicines require valid prescription, pharmacist approval, and H1 register recording.',
+    },
+    {
+      medicineSchedule: MedicineSchedule.SCHEDULE_X,
+      policyAction: CompliancePolicyAction.HARD_BLOCK,
+      requiresPrescription: true,
+      requiresPharmacistApproval: false,
+      requiresH1Register: false,
+      hardBlocked: true,
+      description: 'Schedule X substances are hard-blocked from dispensing under the assignment policy.',
+    },
+    {
+      medicineSchedule: MedicineSchedule.NARCOTIC,
+      policyAction: CompliancePolicyAction.HARD_BLOCK,
+      requiresPrescription: true,
+      requiresPharmacistApproval: false,
+      requiresH1Register: false,
+      hardBlocked: true,
+      description: 'Narcotic drugs are hard-blocked from dispensing under the assignment policy.',
+    },
+    {
+      medicineSchedule: MedicineSchedule.UNKNOWN,
+      policyAction: CompliancePolicyAction.FAIL_CLOSED,
+      requiresPrescription: false,
+      requiresPharmacistApproval: false,
+      requiresH1Register: false,
+      hardBlocked: false,
+      description: 'Unclassified medicines fail closed and cannot be approved until classified by compliance admin.',
+    },
+  ];
+
+  for (const rule of complianceRulesData) {
+    await prisma.complianceRule.upsert({
+      where: {
+        ruleSetId_medicineSchedule: {
+          ruleSetId: activeRuleSet.id,
+          medicineSchedule: rule.medicineSchedule,
+        },
+      },
+      update: {
+        policyAction: rule.policyAction,
+        requiresPrescription: rule.requiresPrescription,
+        requiresPharmacistApproval: rule.requiresPharmacistApproval,
+        requiresH1Register: rule.requiresH1Register,
+        hardBlocked: rule.hardBlocked,
+        description: rule.description,
+      },
+      create: {
+        ruleSetId: activeRuleSet.id,
+        medicineSchedule: rule.medicineSchedule,
+        policyAction: rule.policyAction,
+        requiresPrescription: rule.requiresPrescription,
+        requiresPharmacistApproval: rule.requiresPharmacistApproval,
+        requiresH1Register: rule.requiresH1Register,
+        hardBlocked: rule.hardBlocked,
+        description: rule.description,
+      },
+    });
+  }
 
   // 5. Seed Catalogue Medicines
   const medicines = [
@@ -257,6 +375,71 @@ async function main() {
       mrp: new Prisma.Decimal('80.00'),
       status: MedicineStatus.ACTIVE,
     },
+    {
+      sku: 'MED-ALP-05-001',
+      name: 'Alprazolam 0.5 mg',
+      brandName: 'Alprax Demo',
+      genericName: 'Alprazolam',
+      manufacturer: 'Torrent Demo Pharma',
+      strength: '0.5 mg',
+      dosageForm: 'Tablet',
+      packSize: '15 tablets',
+      schedule: MedicineSchedule.SCHEDULE_H1,
+      mrp: new Prisma.Decimal('45.00'),
+      status: MedicineStatus.ACTIVE,
+    },
+    {
+      sku: 'MED-MET-10-001',
+      name: 'Methylphenidate 10 mg',
+      brandName: 'Ritalin Demo',
+      genericName: 'Methylphenidate',
+      manufacturer: 'Novartis Demo Corp',
+      strength: '10 mg',
+      dosageForm: 'Tablet',
+      packSize: '10 tablets',
+      schedule: MedicineSchedule.SCHEDULE_X,
+      mrp: new Prisma.Decimal('210.00'),
+      status: MedicineStatus.ACTIVE,
+    },
+    {
+      sku: 'MED-MOR-10-001',
+      name: 'Morphine Sulphate 10 mg',
+      brandName: 'Morphit Demo',
+      genericName: 'Morphine',
+      manufacturer: 'Rusan Demo Healthcare',
+      strength: '10 mg',
+      dosageForm: 'Tablet',
+      packSize: '10 tablets',
+      schedule: MedicineSchedule.NARCOTIC,
+      mrp: new Prisma.Decimal('350.00'),
+      status: MedicineStatus.ACTIVE,
+    },
+    {
+      sku: 'MED-UNK-001',
+      name: 'Unclassified Test Medicine 50 mg',
+      brandName: 'Experimental Demo',
+      genericName: 'Test Compound X',
+      manufacturer: 'Unknown Lab',
+      strength: '50 mg',
+      dosageForm: 'Tablet',
+      packSize: '10 tablets',
+      schedule: MedicineSchedule.UNKNOWN,
+      mrp: new Prisma.Decimal('15.00'),
+      status: MedicineStatus.ACTIVE,
+    },
+    {
+      sku: 'MED-PAR-500-002',
+      name: 'Paracetamol 500 mg (Dolo Demo)',
+      brandName: 'Dolo Demo',
+      genericName: 'Paracetamol',
+      manufacturer: 'Micro Labs Demo',
+      strength: '500 mg',
+      dosageForm: 'Tablet',
+      packSize: '15 tablets',
+      schedule: MedicineSchedule.OTC,
+      mrp: new Prisma.Decimal('18.00'),
+      status: MedicineStatus.ACTIVE,
+    },
   ];
 
   const seededMedicines: Record<string, string> = {};
@@ -290,6 +473,11 @@ async function main() {
     { sku: 'MED-PAR-500-001', saltLake: 200, howrah: 150, warehouse: 1000 },
     { sku: 'MED-ORS-001', saltLake: 0, howrah: 45, warehouse: 300 },
     { sku: 'MED-AMX-500-001', saltLake: 12, howrah: 0, warehouse: 100 },
+    { sku: 'MED-ALP-05-001', saltLake: 50, howrah: 20, warehouse: 200 },
+    { sku: 'MED-MET-10-001', saltLake: 10, howrah: 0, warehouse: 50 },
+    { sku: 'MED-MOR-10-001', saltLake: 5, howrah: 0, warehouse: 20 },
+    { sku: 'MED-UNK-001', saltLake: 30, howrah: 30, warehouse: 100 },
+    { sku: 'MED-PAR-500-002', saltLake: 150, howrah: 100, warehouse: 500 },
   ];
 
   const locations = [

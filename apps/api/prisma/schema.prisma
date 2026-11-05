@@ -53,6 +53,14 @@ model Store {
   inventoryBalances InventoryBalance[]
   inventoryMovements InventoryMovement[]
   inventoryImports  InventoryImport[]
+  reviewAssignments OrderReviewAssignment[]
+  prescriptionReviews PrescriptionReview[]
+  h1RegisterEntries H1RegisterEntry[]
+  stockReservations StockReservation[]
+  routingDecisions  OrderRoutingDecision[]
+  invoices          Invoice[]
+  fulfilmentOrders  Order[]               @relation("FulfilmentStoreOrders")
+  handovers         OrderHandover[]
 
   @@map("stores")
 }
@@ -73,6 +81,28 @@ model User {
   auditLogs          AuditLog[]
   inventoryMovements InventoryMovement[]
   inventoryImports   InventoryImport[]
+  familyMembers      FamilyMember[]
+  customerAddresses  CustomerAddress[]
+  prescriptions      Prescription[]
+  orders             Order[]
+  cart               Cart?
+  orderStatusHistory OrderStatusHistory[]
+  assignedReviewOrders OrderReviewAssignment[]
+  createdComplianceRuleSets ComplianceRuleSet[] @relation("RuleSetCreatedBy")
+  activatedComplianceRuleSets ComplianceRuleSet[] @relation("RuleSetActivatedBy")
+  pharmacistPrescriptionReviews PrescriptionReview[]
+  pharmacistOrderItemReviews OrderItemReview[]
+  proposedAlternatives OrderItemAlternativeProposal[] @relation("AlternativeProposedBy")
+  h1RegisterEntries H1RegisterEntry[] @relation("H1RegisterPharmacist")
+  stockReservations StockReservation[]
+  manualRoutedOrders OrderRoutingDecision[] @relation("ManualRoutedOrders")
+  orderItemPickings OrderItemPicking[]
+  invoicesIssued    Invoice[]              @relation("InvoiceIssuedByUser")
+  handoversGiven    OrderHandover[]        @relation("HandoverGivenByUser")
+  codCollections    OrderCodCollection[]   @relation("CodCollectedByUser")
+  refillEstimates   RefillEstimate[]       @relation("CustomerRefillEstimates")
+  refillSubscriptions RefillSubscription[] @relation("CustomerRefillSubscriptions")
+  customerNotifications CustomerNotification[] @relation("CustomerNotifications")
 
   @@map("users")
 }
@@ -180,6 +210,11 @@ enum InventoryMovementType {
   STOCK_IMPORT
   MANUAL_ADJUSTMENT
   STOCK_CORRECTION
+  STOCK_RESERVED
+  STOCK_RESERVATION_RELEASED
+  STOCK_DISPENSED
+  STOCK_ADJUSTMENT
+  STOCK_DISCREPANCY
 }
 
 enum InventoryImportStatus {
@@ -231,6 +266,16 @@ model Medicine {
   inventoryBalances  InventoryBalance[]
   inventoryMovements InventoryMovement[]
   importRows         InventoryImportRow[]
+  cartItems          CartItem[]
+  orderItems         OrderItem[]
+  orderItemReviews   OrderItemReview[]
+  originalAlternatives OrderItemAlternativeProposal[] @relation("OriginalMedicineAlternative")
+  proposedAlternatives OrderItemAlternativeProposal[] @relation("ProposedMedicineAlternative")
+  stockReservations    StockReservation[]
+  orderItemPickings    OrderItemPicking[]
+  invoiceLineItems     InvoiceLineItem[]
+  refillEstimates      RefillEstimate[]
+  refillSubscriptions  RefillSubscription[]
 
   @@index([name])
   @@index([genericName])
@@ -335,3 +380,872 @@ model InventoryImportRow {
   @@index([sku])
   @@map("inventory_import_rows")
 }
+
+// ==========================================
+// Phase 3: Customer Ordering & Prescriptions
+// ==========================================
+
+enum FamilyMemberRelationship {
+  SELF
+  MOTHER
+  FATHER
+  SPOUSE
+  CHILD
+  SIBLING
+  OTHER
+}
+
+enum PrescriptionStatus {
+  UPLOADED
+  UNDER_REVIEW
+  APPROVED
+  REJECTED
+  REUPLOAD_REQUIRED
+}
+
+enum PrescriptionAIStatus {
+  QUEUED
+  PROCESSING
+  COMPLETED
+  NEEDS_REUPLOAD
+  FAILED
+}
+
+
+enum OrderStatus {
+  PENDING_VERIFICATION
+  UNDER_REVIEW
+  VERIFICATION_FAILED
+  AWAITING_CUSTOMER_ACTION
+  APPROVED
+  PARTIALLY_APPROVED
+  REJECTED
+  ROUTING_PENDING
+  STOCK_UNAVAILABLE
+  STOCK_RESERVED
+  PICKING
+  PACKED
+  READY_FOR_HANDOVER
+  HANDED_OVER
+  FULFILMENT_CANCELLED
+  PROCESSING
+  READY_FOR_DISPATCH
+  DISPATCHED
+  DELIVERED
+  CANCELLED
+}
+
+enum OrderPaymentMethod {
+  UPI
+  COD
+}
+
+enum OrderPaymentStatus {
+  PENDING
+  SUCCESS
+  FAILED
+  NOT_REQUIRED
+}
+
+enum OrderItemStatus {
+  PENDING_VERIFICATION
+  APPROVED
+  REJECTED
+  REMOVED
+}
+
+model FamilyMember {
+  id             String                   @id @default(uuid()) @db.Uuid
+  customerUserId String                   @db.Uuid
+  fullName       String
+  relationship   FamilyMemberRelationship
+  dateOfBirth    DateTime?                @db.Date
+  isDeleted      Boolean                  @default(false)
+  createdAt      DateTime                 @default(now()) @db.Timestamptz(6)
+  updatedAt      DateTime                 @updatedAt @db.Timestamptz(6)
+
+  customerUser  User           @relation(fields: [customerUserId], references: [id], onDelete: Restrict)
+  prescriptions Prescription[]
+  orders        Order[]
+  refillEstimates RefillEstimate[]
+  refillSubscriptions RefillSubscription[]
+
+  @@index([customerUserId])
+  @@index([customerUserId, isDeleted])
+  @@map("family_members")
+}
+
+model CustomerAddress {
+  id             String   @id @default(uuid()) @db.Uuid
+  customerUserId String   @db.Uuid
+  label          String
+  recipientName  String
+  phone          String
+  addressLine1   String
+  addressLine2   String?
+  landmark       String?
+  city           String
+  state          String
+  postalCode     String
+  latitude       Decimal? @db.Decimal(10, 7)
+  longitude      Decimal? @db.Decimal(10, 7)
+  isDefault      Boolean  @default(false)
+  isDeleted      Boolean  @default(false)
+  createdAt      DateTime @default(now()) @db.Timestamptz(6)
+  updatedAt      DateTime @updatedAt @db.Timestamptz(6)
+
+  customerUser User    @relation(fields: [customerUserId], references: [id], onDelete: Restrict)
+  orders       Order[]
+
+  @@index([customerUserId])
+  @@index([customerUserId, isDeleted])
+  @@map("customer_addresses")
+}
+
+model Prescription {
+  id               String             @id @default(uuid()) @db.Uuid
+  customerUserId   String             @db.Uuid
+  familyMemberId   String?            @db.Uuid
+  objectKey        String             @unique
+  originalFileName String
+  mimeType         String
+  fileSizeBytes    Int
+  status           PrescriptionStatus @default(UPLOADED)
+  uploadedAt       DateTime           @default(now()) @db.Timestamptz(6)
+  updatedAt        DateTime           @updatedAt @db.Timestamptz(6)
+
+  customerUser User          @relation(fields: [customerUserId], references: [id], onDelete: Restrict)
+  familyMember FamilyMember? @relation(fields: [familyMemberId], references: [id], onDelete: Restrict)
+  orders       Order[]
+  aiExtractions PrescriptionAIExtraction[]
+  reviews      PrescriptionReview[]
+  h1RegisterEntries H1RegisterEntry[]
+
+  @@index([customerUserId, uploadedAt])
+  @@index([familyMemberId])
+  @@map("prescriptions")
+}
+
+model Cart {
+  id             String   @id @default(uuid()) @db.Uuid
+  customerUserId String   @unique @db.Uuid
+  createdAt      DateTime @default(now()) @db.Timestamptz(6)
+  updatedAt      DateTime @updatedAt @db.Timestamptz(6)
+
+  customerUser User       @relation(fields: [customerUserId], references: [id], onDelete: Cascade)
+  items        CartItem[]
+
+  @@map("carts")
+}
+
+model CartItem {
+  id         String   @id @default(uuid()) @db.Uuid
+  cartId     String   @db.Uuid
+  medicineId String   @db.Uuid
+  quantity   Int
+  createdAt  DateTime @default(now()) @db.Timestamptz(6)
+  updatedAt  DateTime @updatedAt @db.Timestamptz(6)
+
+  cart     Cart     @relation(fields: [cartId], references: [id], onDelete: Cascade)
+  medicine Medicine @relation(fields: [medicineId], references: [id], onDelete: Restrict)
+
+  @@unique([cartId, medicineId])
+  @@index([cartId])
+  @@index([medicineId])
+  @@map("cart_items")
+}
+
+model Order {
+  id              String             @id @default(uuid()) @db.Uuid
+  orderNumber     String             @unique
+  customerUserId  String             @db.Uuid
+  familyMemberId  String?            @db.Uuid
+  prescriptionId  String             @db.Uuid
+  addressId       String?            @db.Uuid
+  status          OrderStatus        @default(PENDING_VERIFICATION)
+  fulfilmentStoreId String?          @db.Uuid
+  paymentMethod   OrderPaymentMethod
+  paymentStatus   OrderPaymentStatus
+  subtotal        Decimal            @db.Decimal(10, 2)
+  deliveryFee     Decimal            @default(0) @db.Decimal(10, 2)
+  discount        Decimal            @default(0) @db.Decimal(10, 2)
+  totalAmount     Decimal            @db.Decimal(10, 2)
+  addressSnapshot Json
+  customerNote    String?
+  placedAt        DateTime           @default(now()) @db.Timestamptz(6)
+  createdAt       DateTime           @default(now()) @db.Timestamptz(6)
+  updatedAt       DateTime           @updatedAt @db.Timestamptz(6)
+
+  customerUser  User                 @relation(fields: [customerUserId], references: [id], onDelete: Restrict)
+  familyMember  FamilyMember?        @relation(fields: [familyMemberId], references: [id], onDelete: Restrict)
+  prescription  Prescription         @relation(fields: [prescriptionId], references: [id], onDelete: Restrict)
+  address       CustomerAddress?     @relation(fields: [addressId], references: [id], onDelete: SetNull)
+  items         OrderItem[]
+  payment       OrderPayment?
+  statusHistory OrderStatusHistory[]
+  reviewAssignments    OrderReviewAssignment[]
+  prescriptionReviews  PrescriptionReview[]
+  fulfilmentStore      Store?                 @relation("FulfilmentStoreOrders", fields: [fulfilmentStoreId], references: [id], onDelete: SetNull)
+  stockReservations    StockReservation[]
+  routingDecisions     OrderRoutingDecision[]
+  pickings             OrderItemPicking[]
+  invoice              Invoice?
+  handover             OrderHandover?
+  codCollection        OrderCodCollection?
+
+  @@index([customerUserId, placedAt])
+  @@index([status])
+  @@index([prescriptionId])
+  @@map("orders")
+}
+
+model OrderItem {
+  id                   String          @id @default(uuid()) @db.Uuid
+  orderId              String          @db.Uuid
+  medicineId           String          @db.Uuid
+  medicineNameSnapshot String
+  skuSnapshot          String
+  unitPrice            Decimal         @db.Decimal(10, 2)
+  quantity             Int
+  lineTotal            Decimal         @db.Decimal(10, 2)
+  status               OrderItemStatus @default(PENDING_VERIFICATION)
+  createdAt            DateTime        @default(now()) @db.Timestamptz(6)
+  updatedAt            DateTime        @updatedAt @db.Timestamptz(6)
+
+  order    Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  medicine Medicine @relation(fields: [medicineId], references: [id], onDelete: Restrict)
+  reviews  OrderItemReview[]
+  alternativeProposals OrderItemAlternativeProposal[]
+  h1RegisterEntries    H1RegisterEntry[]
+  stockReservations    StockReservation[]
+  picking              OrderItemPicking?
+  refillEstimates      RefillEstimate[]
+
+  @@index([orderId])
+  @@index([medicineId])
+  @@map("order_items")
+}
+
+model OrderPayment {
+  id                   String             @id @default(uuid()) @db.Uuid
+  orderId              String             @unique @db.Uuid
+  method               OrderPaymentMethod
+  status               OrderPaymentStatus
+  transactionReference String?            @unique
+  amount               Decimal            @db.Decimal(10, 2)
+  provider             String             @default("MOCK")
+  createdAt            DateTime           @default(now()) @db.Timestamptz(6)
+  updatedAt            DateTime           @updatedAt @db.Timestamptz(6)
+
+  order Order @relation(fields: [orderId], references: [id], onDelete: Cascade)
+
+  @@map("order_payments")
+}
+
+model OrderStatusHistory {
+  id              String       @id @default(uuid()) @db.Uuid
+  orderId         String       @db.Uuid
+  previousStatus  OrderStatus?
+  newStatus       OrderStatus
+  changedByUserId String?      @db.Uuid
+  note            String?
+  createdAt       DateTime     @default(now()) @db.Timestamptz(6)
+
+  order         Order @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  changedByUser User? @relation(fields: [changedByUserId], references: [id], onDelete: SetNull)
+
+  @@index([orderId, createdAt])
+  @@map("order_status_history")
+}
+
+model OrderCounter {
+  dateKey      String   @id
+  lastSequence Int      @default(0)
+  updatedAt    DateTime @updatedAt @db.Timestamptz(6)
+
+  @@map("order_counters")
+}
+
+// ==========================================
+// Phase 4: AI-Assisted Prescription Extractions
+// ==========================================
+
+model PrescriptionAIExtraction {
+  id                String               @id @default(uuid()) @db.Uuid
+  prescriptionId    String               @db.Uuid
+  status            PrescriptionAIStatus @default(QUEUED)
+  provider          String
+  model             String
+  attemptNumber     Int                  @default(1)
+  documentReadable  Boolean              @default(true)
+  overallConfidence Decimal?             @db.Decimal(5, 4)
+  extractionResult  Json?
+  matchingResult    Json?
+  errorCode         String?
+  errorMessage      String?
+  startedAt         DateTime             @default(now()) @db.Timestamptz(6)
+  completedAt       DateTime?            @db.Timestamptz(6)
+  createdAt         DateTime             @default(now()) @db.Timestamptz(6)
+  updatedAt         DateTime             @updatedAt @db.Timestamptz(6)
+
+  prescription      Prescription         @relation(fields: [prescriptionId], references: [id], onDelete: Cascade)
+
+  @@index([prescriptionId, createdAt])
+  @@index([status])
+  @@map("prescription_ai_extractions")
+}
+
+// ==========================================
+// Phase 5: Compliance Engine & Pharmacist Verification
+// ==========================================
+
+enum ComplianceRuleSetStatus {
+  DRAFT
+  ACTIVE
+  SUPERSEDED
+}
+
+enum CompliancePolicyAction {
+  ALLOW_WITH_REVIEW
+  REQUIRE_PRESCRIPTION_AND_APPROVAL
+  REQUIRE_H1_REGISTER
+  HARD_BLOCK
+  FAIL_CLOSED
+}
+
+enum PrescriptionReviewStatus {
+  PENDING
+  IN_REVIEW
+  APPROVED
+  REJECTED
+  REUPLOAD_REQUESTED
+}
+
+enum OrderItemReviewStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  BLOCKED
+  ALTERNATIVE_PENDING_CUSTOMER
+  REMOVED
+}
+
+enum AlternativeProposalStatus {
+  PENDING
+  ACCEPTED
+  DECLINED
+}
+
+enum H1RegisterStatus {
+  PENDING_FULFILLMENT
+  COMPLETED
+  CANCELLED
+}
+
+model OrderReviewAssignment {
+  id               String    @id @default(uuid()) @db.Uuid
+  orderId          String    @db.Uuid
+  storeId          String    @db.Uuid
+  assignedByUserId String    @db.Uuid
+  assignedAt       DateTime  @default(now()) @db.Timestamptz(6)
+  unassignedAt     DateTime? @db.Timestamptz(6)
+  reason           String?
+
+  order          Order @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  store          Store @relation(fields: [storeId], references: [id], onDelete: Restrict)
+  assignedByUser User  @relation(fields: [assignedByUserId], references: [id], onDelete: Restrict)
+
+  @@index([orderId, unassignedAt])
+  @@index([storeId, unassignedAt])
+  @@map("order_review_assignments")
+}
+
+model ComplianceRuleSet {
+  id                String                  @id @default(uuid()) @db.Uuid
+  version           String                  @unique
+  name              String
+  description       String?
+  status            ComplianceRuleSetStatus @default(DRAFT)
+  effectiveFrom     DateTime                @default(now()) @db.Timestamptz(6)
+  effectiveUntil    DateTime?               @db.Timestamptz(6)
+  createdByUserId   String                  @db.Uuid
+  activatedByUserId String?                 @db.Uuid
+  activationReason  String?
+  createdAt         DateTime                @default(now()) @db.Timestamptz(6)
+  updatedAt         DateTime                @updatedAt @db.Timestamptz(6)
+
+  createdByUser   User             @relation("RuleSetCreatedBy", fields: [createdByUserId], references: [id], onDelete: Restrict)
+  activatedByUser User?            @relation("RuleSetActivatedBy", fields: [activatedByUserId], references: [id], onDelete: SetNull)
+  rules           ComplianceRule[]
+
+  @@index([status, effectiveFrom])
+  @@map("compliance_rule_sets")
+}
+
+model ComplianceRule {
+  id                         String                 @id @default(uuid()) @db.Uuid
+  ruleSetId                  String                 @db.Uuid
+  medicineSchedule           MedicineSchedule
+  policyAction               CompliancePolicyAction
+  requiresPrescription       Boolean                @default(false)
+  requiresPharmacistApproval Boolean                @default(true)
+  requiresH1Register         Boolean                @default(false)
+  hardBlocked                Boolean                @default(false)
+  description                String?
+  createdAt                  DateTime               @default(now()) @db.Timestamptz(6)
+  updatedAt                  DateTime               @updatedAt @db.Timestamptz(6)
+
+  ruleSet ComplianceRuleSet @relation(fields: [ruleSetId], references: [id], onDelete: Cascade)
+
+  @@unique([ruleSetId, medicineSchedule])
+  @@index([ruleSetId])
+  @@map("compliance_rules")
+}
+
+model PrescriptionReview {
+  id             String                   @id @default(uuid()) @db.Uuid
+  prescriptionId String                   @db.Uuid
+  orderId        String                   @db.Uuid
+  pharmacistId   String                   @db.Uuid
+  storeId        String                   @db.Uuid
+  status         PrescriptionReviewStatus @default(PENDING)
+  reviewedAt     DateTime?                @db.Timestamptz(6)
+  reviewNotes    String?
+  createdAt      DateTime                 @default(now()) @db.Timestamptz(6)
+  updatedAt      DateTime                 @updatedAt @db.Timestamptz(6)
+
+  prescription         Prescription                    @relation(fields: [prescriptionId], references: [id], onDelete: Restrict)
+  order                Order                           @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  pharmacist           User                            @relation(fields: [pharmacistId], references: [id], onDelete: Restrict)
+  store                Store                           @relation(fields: [storeId], references: [id], onDelete: Restrict)
+  itemReviews          OrderItemReview[]
+  alternativeProposals OrderItemAlternativeProposal[]
+
+  @@index([orderId])
+  @@index([storeId, status])
+  @@index([pharmacistId])
+  @@map("prescription_reviews")
+}
+
+model OrderItemReview {
+  id                         String                @id @default(uuid()) @db.Uuid
+  orderItemId                String                @db.Uuid
+  prescriptionReviewId       String                @db.Uuid
+  pharmacistId               String                @db.Uuid
+  medicineId                 String                @db.Uuid
+  status                     OrderItemReviewStatus @default(PENDING)
+  reviewedMedicineName       String?
+  reviewedStrength           String?
+  reviewedDosageForm         String?
+  reviewedDosageInstructions String?
+  reviewedFrequency          String?
+  reviewedDuration           String?
+  reviewedQuantity           Int?
+  unitsPerAdministration     Decimal?              @db.Decimal(10, 2)
+  administrationsPerDay      Decimal?              @db.Decimal(10, 2)
+  verifiedDosageUnit         String?
+  verifiedDosageConfirmed    Boolean               @default(false)
+  decisionReason             String?
+  complianceEvaluation       Json?
+  complianceRuleSetId        String?
+  reviewedAt                 DateTime?             @db.Timestamptz(6)
+  createdAt                  DateTime              @default(now()) @db.Timestamptz(6)
+  updatedAt                  DateTime              @updatedAt @db.Timestamptz(6)
+
+  orderItem            OrderItem                      @relation(fields: [orderItemId], references: [id], onDelete: Cascade)
+  prescriptionReview   PrescriptionReview             @relation(fields: [prescriptionReviewId], references: [id], onDelete: Cascade)
+  pharmacist           User                           @relation(fields: [pharmacistId], references: [id], onDelete: Restrict)
+  medicine             Medicine                       @relation(fields: [medicineId], references: [id], onDelete: Restrict)
+  alternativeProposals OrderItemAlternativeProposal[]
+  h1RegisterEntries    H1RegisterEntry[]
+
+  @@index([orderItemId])
+  @@index([prescriptionReviewId])
+  @@map("order_item_reviews")
+}
+
+model OrderItemAlternativeProposal {
+  id                     String                    @id @default(uuid()) @db.Uuid
+  orderItemId            String                    @db.Uuid
+  orderItemReviewId      String?                   @db.Uuid
+  prescriptionReviewId   String                    @db.Uuid
+  proposedByPharmacistId String                    @db.Uuid
+  originalMedicineId     String                    @db.Uuid
+  proposedMedicineId     String                    @db.Uuid
+  activeIngredient       String
+  strength               String
+  dosageForm             String
+  packSize               String?
+  priceDifference        Decimal                   @db.Decimal(10, 2)
+  reason                 String
+  status                 AlternativeProposalStatus @default(PENDING)
+  customerRespondedAt    DateTime?                 @db.Timestamptz(6)
+  customerNote           String?
+  createdAt              DateTime                  @default(now()) @db.Timestamptz(6)
+  updatedAt              DateTime                  @updatedAt @db.Timestamptz(6)
+
+  orderItem            OrderItem          @relation(fields: [orderItemId], references: [id], onDelete: Cascade)
+  orderItemReview      OrderItemReview?   @relation(fields: [orderItemReviewId], references: [id], onDelete: SetNull)
+  prescriptionReview   PrescriptionReview @relation(fields: [prescriptionReviewId], references: [id], onDelete: Cascade)
+  proposedByPharmacist User               @relation("AlternativeProposedBy", fields: [proposedByPharmacistId], references: [id], onDelete: Restrict)
+  originalMedicine     Medicine           @relation("OriginalMedicineAlternative", fields: [originalMedicineId], references: [id], onDelete: Restrict)
+  proposedMedicine     Medicine           @relation("ProposedMedicineAlternative", fields: [proposedMedicineId], references: [id], onDelete: Restrict)
+
+  @@index([orderItemId, status])
+  @@index([prescriptionReviewId])
+  @@map("order_item_alternative_proposals")
+}
+
+model H1RegisterEntry {
+  id                String           @id @default(uuid()) @db.Uuid
+  orderItemId       String           @db.Uuid
+  orderItemReviewId String?          @db.Uuid
+  prescriptionId    String           @db.Uuid
+  storeId           String           @db.Uuid
+  patientName       String
+  prescriberName    String
+  prescriberDetails String?
+  medicineName      String
+  quantity          Int
+  pharmacistId      String           @db.Uuid
+  status            H1RegisterStatus @default(PENDING_FULFILLMENT)
+  createdAt         DateTime         @default(now()) @db.Timestamptz(6)
+  updatedAt         DateTime         @updatedAt @db.Timestamptz(6)
+
+  orderItem       OrderItem        @relation(fields: [orderItemId], references: [id], onDelete: Cascade)
+  orderItemReview OrderItemReview? @relation(fields: [orderItemReviewId], references: [id], onDelete: SetNull)
+  prescription    Prescription     @relation(fields: [prescriptionId], references: [id], onDelete: Restrict)
+  store           Store            @relation(fields: [storeId], references: [id], onDelete: Restrict)
+  pharmacist      User             @relation("H1RegisterPharmacist", fields: [pharmacistId], references: [id], onDelete: Restrict)
+
+  @@index([storeId, createdAt])
+  @@index([orderItemId])
+  @@map("h1_register_entries")
+}
+
+// ========================================================
+// Phase 6: Store Routing, Inventory Reservation & Fulfilment
+// ========================================================
+
+enum StockReservationStatus {
+  ACTIVE
+  RELEASED
+  CONSUMED
+  EXPIRED
+}
+
+enum OrderRoutingMethod {
+  AUTOMATIC
+  MANUAL
+}
+
+enum OrderRoutingStatus {
+  SUCCESS
+  NO_ELIGIBLE_STORE
+  FAILED
+}
+
+enum PickingItemStatus {
+  PENDING
+  PICKED
+  EXCEPTION
+}
+
+enum HandoverType {
+  DELIVERY_PARTNER
+  CUSTOMER_PICKUP
+}
+
+model StockReservation {
+  id                String                 @id @default(uuid()) @db.Uuid
+  orderId           String                 @db.Uuid
+  orderItemId       String                 @db.Uuid
+  storeId           String                 @db.Uuid
+  medicineId        String                 @db.Uuid
+  quantity          Int
+  status            StockReservationStatus @default(ACTIVE)
+  expiresAt         DateTime               @db.Timestamptz(6)
+  reservedAt        DateTime               @default(now()) @db.Timestamptz(6)
+  releasedAt        DateTime?              @db.Timestamptz(6)
+  consumedAt        DateTime?              @db.Timestamptz(6)
+  releaseReason     String?
+  reservedByUserId  String?                @db.Uuid
+  createdAt         DateTime               @default(now()) @db.Timestamptz(6)
+  updatedAt         DateTime               @updatedAt @db.Timestamptz(6)
+
+  order          Order     @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  orderItem      OrderItem @relation(fields: [orderItemId], references: [id], onDelete: Cascade)
+  store          Store     @relation(fields: [storeId], references: [id], onDelete: Restrict)
+  medicine       Medicine  @relation(fields: [medicineId], references: [id], onDelete: Restrict)
+  reservedByUser User?     @relation(fields: [reservedByUserId], references: [id], onDelete: SetNull)
+
+  @@index([storeId, medicineId, status])
+  @@index([orderId, status])
+  @@index([expiresAt, status])
+  @@map("stock_reservations")
+}
+
+model OrderRoutingDecision {
+  id                 String             @id @default(uuid()) @db.Uuid
+  orderId            String             @db.Uuid
+  storeId            String?            @db.Uuid
+  routingMethod      OrderRoutingMethod @default(AUTOMATIC)
+  status             OrderRoutingStatus
+  distanceKm         Decimal?           @db.Decimal(10, 2)
+  candidateStoreIds  Json?
+  failureReason      String?
+  routedByUserId     String?            @db.Uuid
+  routedAt           DateTime           @default(now()) @db.Timestamptz(6)
+  createdAt          DateTime           @default(now()) @db.Timestamptz(6)
+
+  order        Order  @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  store        Store? @relation(fields: [storeId], references: [id], onDelete: SetNull)
+  routedByUser User?  @relation("ManualRoutedOrders", fields: [routedByUserId], references: [id], onDelete: SetNull)
+
+  @@index([orderId, routedAt])
+  @@index([storeId, status])
+  @@map("order_routing_decisions")
+}
+
+model OrderItemPicking {
+  id               String            @id @default(uuid()) @db.Uuid
+  orderId          String            @db.Uuid
+  orderItemId      String            @unique @db.Uuid
+  medicineId       String            @db.Uuid
+  quantityRequired Int
+  quantityPicked   Int               @default(0)
+  status           PickingItemStatus @default(PENDING)
+  exceptionReason  String?
+  pickedByUserId   String?           @db.Uuid
+  pickedAt         DateTime?         @db.Timestamptz(6)
+  createdAt        DateTime          @default(now()) @db.Timestamptz(6)
+  updatedAt        DateTime          @updatedAt @db.Timestamptz(6)
+
+  order        Order     @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  orderItem    OrderItem @relation(fields: [orderItemId], references: [id], onDelete: Cascade)
+  medicine     Medicine  @relation(fields: [medicineId], references: [id], onDelete: Restrict)
+  pickedByUser User?     @relation(fields: [pickedByUserId], references: [id], onDelete: SetNull)
+
+  @@index([orderId, status])
+  @@map("order_item_pickings")
+}
+
+model Invoice {
+  id            String             @id @default(uuid()) @db.Uuid
+  invoiceNumber String             @unique
+  orderId       String             @unique @db.Uuid
+  storeId       String             @db.Uuid
+  customerId    String             @db.Uuid
+  subtotal      Decimal            @db.Decimal(10, 2)
+  discount      Decimal            @default(0) @db.Decimal(10, 2)
+  deliveryFee   Decimal            @default(0) @db.Decimal(10, 2)
+  tax           Decimal            @default(0) @db.Decimal(10, 2)
+  total         Decimal            @db.Decimal(10, 2)
+  paymentMethod OrderPaymentMethod
+  paymentStatus OrderPaymentStatus
+  issuedByUserId String?           @db.Uuid
+  issuedAt      DateTime           @default(now()) @db.Timestamptz(6)
+  createdAt     DateTime           @default(now()) @db.Timestamptz(6)
+  updatedAt     DateTime           @updatedAt @db.Timestamptz(6)
+
+  order        Order             @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  store        Store             @relation(fields: [storeId], references: [id], onDelete: Restrict)
+  issuedByUser User?             @relation("InvoiceIssuedByUser", fields: [issuedByUserId], references: [id], onDelete: SetNull)
+  items        InvoiceLineItem[]
+
+  @@index([storeId, issuedAt])
+  @@index([customerId])
+  @@map("invoices")
+}
+
+model InvoiceLineItem {
+  id           String   @id @default(uuid()) @db.Uuid
+  invoiceId    String   @db.Uuid
+  medicineId   String   @db.Uuid
+  medicineName String
+  sku          String
+  strength     String?
+  dosageForm   String?
+  quantity     Int
+  unitPrice    Decimal  @db.Decimal(10, 2)
+  lineTotal    Decimal  @db.Decimal(10, 2)
+  createdAt    DateTime @default(now()) @db.Timestamptz(6)
+
+  invoice  Invoice  @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
+  medicine Medicine @relation(fields: [medicineId], references: [id], onDelete: Restrict)
+
+  @@index([invoiceId])
+  @@map("invoice_line_items")
+}
+
+model OrderHandover {
+  id                 String       @id @default(uuid()) @db.Uuid
+  orderId            String       @unique @db.Uuid
+  storeId            String       @db.Uuid
+  handoverType       HandoverType
+  handedOverByUserId String       @db.Uuid
+  recipientName      String
+  recipientPhone     String?
+  deliveryPartnerName String?
+  referenceNumber    String?
+  handedOverAt       DateTime     @default(now()) @db.Timestamptz(6)
+  notes              String?
+  createdAt          DateTime     @default(now()) @db.Timestamptz(6)
+
+  order            Order @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  store            Store @relation(fields: [storeId], references: [id], onDelete: Restrict)
+  handedOverByUser User  @relation("HandoverGivenByUser", fields: [handedOverByUserId], references: [id], onDelete: Restrict)
+
+  @@index([storeId, handedOverAt])
+  @@map("order_handovers")
+}
+
+model OrderCodCollection {
+  id                String   @id @default(uuid()) @db.Uuid
+  orderId           String   @unique @db.Uuid
+  collectedAmount   Decimal  @db.Decimal(10, 2)
+  paymentReference  String?
+  collectedByUserId String   @db.Uuid
+  collectedAt       DateTime @default(now()) @db.Timestamptz(6)
+  createdAt         DateTime @default(now()) @db.Timestamptz(6)
+
+  order             Order @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  collectedByUser   User  @relation("CodCollectedByUser", fields: [collectedByUserId], references: [id], onDelete: Restrict)
+
+  @@map("order_cod_collections")
+}
+
+// ---------------------------------------------------------------------------
+// Phase 7: Refill Automation, Customer Subscriptions & Notifications
+// ---------------------------------------------------------------------------
+
+enum RefillEligibilityStatus {
+  ELIGIBLE
+  CALCULATION_UNAVAILABLE
+  AWAITING_VERIFIED_DOSAGE
+  DISCONTINUED
+  INELIGIBLE
+}
+
+enum RefillSubscriptionStatus {
+  ACTIVE
+  PAUSED
+  CANCELLED
+  COMPLETED
+}
+
+enum RefillReminderStatus {
+  SCHEDULED
+  SENT
+  FAILED
+  CANCELLED
+  SKIPPED
+}
+
+enum NotificationType {
+  REFILL_REMINDER_DUE
+  REFILL_REMINDER_SKIPPED
+  REFILL_SUBSCRIPTION_PAUSED
+  REFILL_SUBSCRIPTION_RESUMED
+  REFILL_SUBSCRIPTION_CANCELLED
+  REFILL_ORDER_INITIATED
+}
+
+model RefillEstimate {
+  id                  String                  @id @default(uuid()) @db.Uuid
+  orderItemId         String                  @db.Uuid
+  customerId          String                  @db.Uuid
+  familyMemberId      String?                 @db.Uuid
+  medicineId          String                  @db.Uuid
+  dispensedQuantity   Int
+  dailyConsumption    Decimal?                @db.Decimal(10, 2)
+  estimatedSupplyDays Decimal?                @db.Decimal(10, 2)
+  dispensedAt         DateTime                @db.Timestamptz(6)
+  estimatedRunOutAt   DateTime?               @db.Timestamptz(6)
+  eligibilityStatus   RefillEligibilityStatus
+  ineligibilityReason String?
+  calculationInputs   Json
+  calculationVersion  Int                     @default(1)
+  calculatedAt        DateTime                @default(now()) @db.Timestamptz(6)
+  createdAt           DateTime                @default(now()) @db.Timestamptz(6)
+  updatedAt           DateTime                @updatedAt @db.Timestamptz(6)
+
+  orderItem     OrderItem            @relation(fields: [orderItemId], references: [id], onDelete: Cascade)
+  customerUser  User                 @relation("CustomerRefillEstimates", fields: [customerId], references: [id], onDelete: Cascade)
+  familyMember  FamilyMember?        @relation(fields: [familyMemberId], references: [id], onDelete: SetNull)
+  medicine      Medicine             @relation(fields: [medicineId], references: [id], onDelete: Restrict)
+  subscriptions RefillSubscription[]
+  reminders     RefillReminder[]
+
+  @@index([customerId, eligibilityStatus])
+  @@index([medicineId])
+  @@index([orderItemId])
+  @@map("refill_estimates")
+}
+
+model RefillSubscription {
+  id                          String                   @id @default(uuid()) @db.Uuid
+  customerId                  String                   @db.Uuid
+  familyMemberId              String?                  @db.Uuid
+  medicineId                  String                   @db.Uuid
+  refillEstimateId            String                   @db.Uuid
+  status                      RefillSubscriptionStatus @default(ACTIVE)
+  reminderDaysBefore          Int                      @default(5)
+  preferredNotificationChannel String                  @default("IN_APP")
+  createdAt                   DateTime                 @default(now()) @db.Timestamptz(6)
+  updatedAt                   DateTime                 @updatedAt @db.Timestamptz(6)
+  pausedAt                    DateTime?                @db.Timestamptz(6)
+  cancelledAt                 DateTime?                @db.Timestamptz(6)
+
+  customerUser   User             @relation("CustomerRefillSubscriptions", fields: [customerId], references: [id], onDelete: Cascade)
+  familyMember   FamilyMember?    @relation(fields: [familyMemberId], references: [id], onDelete: SetNull)
+  medicine       Medicine         @relation(fields: [medicineId], references: [id], onDelete: Restrict)
+  refillEstimate RefillEstimate   @relation(fields: [refillEstimateId], references: [id], onDelete: Restrict)
+  reminders      RefillReminder[]
+
+  @@index([customerId, status])
+  @@index([medicineId])
+  @@map("refill_subscriptions")
+}
+
+model RefillReminder {
+  id               String               @id @default(uuid()) @db.Uuid
+  subscriptionId   String               @db.Uuid
+  refillEstimateId String               @db.Uuid
+  scheduledFor     DateTime             @db.Timestamptz(6)
+  sentAt           DateTime?            @db.Timestamptz(6)
+  status           RefillReminderStatus @default(SCHEDULED)
+  notificationId   String?              @db.Uuid
+  idempotencyKey   String               @unique
+  createdAt        DateTime             @default(now()) @db.Timestamptz(6)
+  updatedAt        DateTime             @updatedAt @db.Timestamptz(6)
+
+  subscription   RefillSubscription    @relation(fields: [subscriptionId], references: [id], onDelete: Cascade)
+  refillEstimate RefillEstimate        @relation(fields: [refillEstimateId], references: [id], onDelete: Cascade)
+  notification   CustomerNotification? @relation(fields: [notificationId], references: [id], onDelete: SetNull)
+
+  @@index([subscriptionId, status])
+  @@index([scheduledFor, status])
+  @@map("refill_reminders")
+}
+
+model CustomerNotification {
+  id         String           @id @default(uuid()) @db.Uuid
+  customerId String           @db.Uuid
+  type       NotificationType
+  title      String
+  message    String
+  resourceId String?
+  isRead     Boolean          @default(false)
+  readAt     DateTime?        @db.Timestamptz(6)
+  createdAt  DateTime         @default(now()) @db.Timestamptz(6)
+
+  customerUser User             @relation("CustomerNotifications", fields: [customerId], references: [id], onDelete: Cascade)
+  reminders    RefillReminder[]
+
+  @@index([customerId, isRead])
+  @@index([customerId, createdAt])
+  @@map("customer_notifications")
+}
+
+
