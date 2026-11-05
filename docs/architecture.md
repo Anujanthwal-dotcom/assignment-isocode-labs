@@ -141,3 +141,28 @@ The workspace packages are isolated from backend business logic and designed for
 - Frontend exposure is restricted strictly to variables prefixed with `NEXT_PUBLIC_` (`NEXT_PUBLIC_API_URL`).
 - All database credentials, Redis passwords, MinIO root secrets, and backend port definitions remain completely hidden from the browser client.
 - `.env` files are ignored by `.gitignore`.
+
+---
+
+## 7. Phase 4: AI-Assisted Prescription Reading Pipeline
+
+Phase 4 introduces an asynchronous AI pipeline to extract medicine, strength, dosage instructions, and quantities from uploaded prescription documents and match them against the catalogue.
+
+```mermaid
+flowchart LR
+    Customer["Customer App"] -->|"POST /prescriptions/:id/extractions"| API["NestJS API"]
+    API -->|"Enqueue Job"| Queue[("BullMQ Queue\nprescription-ai-extraction")]
+    Queue -->|"Process"| Worker["PrescriptionAIProcessor"]
+    Worker -->|"Stream File"| MinIO[("MinIO\nPrivate S3 Storage")]
+    Worker -->|"Extract"| LangChain["LangChain.js\nChatGoogleGenerativeAI\n(or Mock Provider)"]
+    Worker -->|"Match Medicines"| Matching["MedicineMatchingService\nActive Catalogue"]
+    Worker -->|"Save Draft"| DB[("PostgreSQL\nPrescriptionAIExtraction")]
+    Customer -->|"Poll GET /extractions/latest"| API
+```
+
+### Safety & Compliance Invariants
+1. **Preliminary Draft Only:** AI extraction is explicitly not an approval.
+2. **Immutable Orders:** AI extraction never changes Order status, OrderItems, CartItems, or payment states.
+3. **No Independent Authorization:** AI output cannot authorize medicine dispatch or dispensing.
+4. **Data Privacy:** Documents are read privately from MinIO by the backend worker; no public URLs are created. Extraction logs and audit events strictly scrub personal health information (PHI).
+

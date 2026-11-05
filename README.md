@@ -232,3 +232,52 @@ If PostgreSQL or Redis is offline, the endpoint responds with HTTP `503 Service 
   ```bash
   pnpm format:check
   ```
+
+---
+
+## 13. Phase 4: AI-Assisted Prescription Reading
+
+Phase 4 implements an asynchronous AI prescription-reading pipeline behind BullMQ and Redis.
+
+### AI Architecture & Stack
+- **Framework:** [LangChain.js](https://js.langchain.com/) (`@langchain/google-genai`, `@langchain/core`)
+- **Multimodal Provider:** Google Gemini (`gemini-2.5-flash` or configured via `GEMINI_MODEL`)
+- **Structured Outputs:** Zod schemas via `withStructuredOutput`
+- **Background Worker:** BullMQ queue `prescription-ai-extraction` with Redis
+- **Catalogue Matching:** Fuzzy matching considering Brand Name, Generic Name, Strength, and Dosage Form
+- **Storage:** MinIO private bucket (`prescriptions`)
+
+### Environment Configuration
+```env
+# Mock mode (zero credentials needed, default)
+PRESCRIPTION_AI_PROVIDER=mock
+
+# Google Gemini mode
+PRESCRIPTION_AI_PROVIDER=gemini
+GEMINI_API_KEY=your_gemini_api_key_here
+GEMINI_MODEL=gemini-2.5-flash
+PRESCRIPTION_AI_TIMEOUT_MS=60000
+PRESCRIPTION_AI_MAX_RETRIES=2
+```
+
+> [!IMPORTANT]
+> When `PRESCRIPTION_AI_PROVIDER=gemini` is set, `GEMINI_API_KEY` must be configured. Startup fails clearly if the key is missing.
+
+### Deterministic Mock Fixtures
+The mock provider allows local development and automated testing without external credentials:
+1. `readable`: Metformin 500 mg, qty 4, matches catalogue.
+2. `multi`: Metformin 500 mg + Amoxicillin 500 mg.
+3. `ambiguous`: Metformin with ambiguous/missing strength, resulting in `AMBIGUOUS` match for pharmacist review.
+4. `unmatched`: Uncatalogued medicine, returning `NOT_FOUND`.
+5. `unreadable`: Illegible document, status transitions to `NEEDS_REUPLOAD`.
+6. `failure`: Transient failure on attempt 1, succeeds on retry.
+
+Trigger fixtures by setting the upload file name keyword (e.g. `prescription-multi.pdf`, `blurry-unreadable.jpg`) or supplying `mockFixture` in request body.
+
+### Safety Invariants
+1. AI output is strictly a preliminary draft.
+2. AI extraction never changes order status or payment status.
+3. AI extraction never approves a prescription or authorizes medicine sale.
+4. AI matching never modifies cart or order items.
+5. All extraction attempts are recorded in immutable audit logs without logging sensitive personal health information.
+
