@@ -12,6 +12,7 @@ import {
   Pill,
   X,
   Store,
+  ShieldCheck,
 } from 'lucide-react';
 import { useAuth } from '@/lib/auth/auth-context';
 
@@ -22,10 +23,10 @@ interface PharmacistSidebarProps {
 
 const navItems = [
   { label: 'Overview', href: '/pharmacist', icon: LayoutDashboard, exact: true },
-  { label: 'Verification Queue', href: '/pharmacist/queue', icon: ClipboardCheck },
-  { label: 'Orders', href: '/pharmacist/orders', icon: Package },
+  { label: 'Verification Queue', href: '/pharmacist/review-queue', icon: ClipboardCheck },
+  { label: 'Store Fulfilment', href: '/pharmacist/fulfilment', icon: Package },
+  { label: 'H1 Register', href: '/pharmacist/h1-register', icon: ShieldCheck },
   { label: 'Store Inventory', href: '/pharmacist/inventory', icon: Layers },
-  { label: 'History', href: '/pharmacist/history', icon: History },
 ];
 
 export const PharmacistSidebar: React.FC<PharmacistSidebarProps> = ({
