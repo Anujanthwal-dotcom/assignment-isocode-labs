@@ -49,7 +49,10 @@ model Store {
   createdAt   DateTime    @default(now()) @db.Timestamptz(6)
   updatedAt   DateTime    @updatedAt @db.Timestamptz(6)
 
-  pharmacists PharmacistProfile[]
+  pharmacists       PharmacistProfile[]
+  inventoryBalances InventoryBalance[]
+  inventoryMovements InventoryMovement[]
+  inventoryImports  InventoryImport[]
 
   @@map("stores")
 }
@@ -64,10 +67,12 @@ model User {
   createdAt    DateTime    @default(now()) @db.Timestamptz(6)
   updatedAt    DateTime    @updatedAt @db.Timestamptz(6)
 
-  customerProfile   CustomerProfile?
-  pharmacistProfile PharmacistProfile?
-  sessions          AuthSession[]
-  auditLogs         AuditLog[]
+  customerProfile    CustomerProfile?
+  pharmacistProfile  PharmacistProfile?
+  sessions           AuthSession[]
+  auditLogs          AuditLog[]
+  inventoryMovements InventoryMovement[]
+  inventoryImports   InventoryImport[]
 
   @@map("users")
 }
@@ -145,4 +150,188 @@ model AuditLog {
   @@index([actorUserId, createdAt])
   @@index([action, createdAt])
   @@map("audit_logs")
+}
+
+// ==========================================
+// Phase 2: Medicine Catalogue & Inventory
+// ==========================================
+
+enum MedicineStatus {
+  ACTIVE
+  INACTIVE
+}
+
+enum MedicineSchedule {
+  OTC
+  SCHEDULE_H
+  SCHEDULE_H1
+  SCHEDULE_X
+  NARCOTIC
+  UNKNOWN
+}
+
+enum InventoryLocationType {
+  STORE
+  WAREHOUSE
+}
+
+enum InventoryMovementType {
+  OPENING_STOCK
+  STOCK_IMPORT
+  MANUAL_ADJUSTMENT
+  STOCK_CORRECTION
+}
+
+enum InventoryImportStatus {
+  PROCESSING
+  COMPLETED
+  COMPLETED_WITH_ERRORS
+  FAILED
+}
+
+enum InventoryImportRowStatus {
+  PENDING
+  APPLIED
+  REJECTED
+}
+
+model Warehouse {
+  id        String      @id @default(uuid()) @db.Uuid
+  code      String      @unique
+  name      String
+  city      String
+  address   String
+  status    StoreStatus @default(ACTIVE)
+  createdAt DateTime    @default(now()) @db.Timestamptz(6)
+  updatedAt DateTime    @updatedAt @db.Timestamptz(6)
+
+  inventoryBalances  InventoryBalance[]
+  inventoryMovements InventoryMovement[]
+  inventoryImports   InventoryImport[]
+
+  @@map("warehouses")
+}
+
+model Medicine {
+  id           String           @id @default(uuid()) @db.Uuid
+  sku          String           @unique
+  name         String
+  brandName    String?
+  genericName  String?
+  manufacturer String?
+  strength     String?
+  dosageForm   String?
+  packSize     String?
+  schedule     MedicineSchedule @default(UNKNOWN)
+  mrp          Decimal          @db.Decimal(10, 2)
+  status       MedicineStatus   @default(ACTIVE)
+  createdAt    DateTime         @default(now()) @db.Timestamptz(6)
+  updatedAt    DateTime         @updatedAt @db.Timestamptz(6)
+
+  inventoryBalances  InventoryBalance[]
+  inventoryMovements InventoryMovement[]
+  importRows         InventoryImportRow[]
+
+  @@index([name])
+  @@index([genericName])
+  @@index([brandName])
+  @@index([status])
+  @@map("medicines")
+}
+
+model InventoryBalance {
+  id           String   @id @default(uuid()) @db.Uuid
+  medicineId   String   @db.Uuid
+  storeId      String?  @db.Uuid
+  warehouseId  String?  @db.Uuid
+  quantity     Int      @default(0)
+  reorderLevel Int      @default(10)
+  createdAt    DateTime @default(now()) @db.Timestamptz(6)
+  updatedAt    DateTime @updatedAt @db.Timestamptz(6)
+
+  medicine  Medicine   @relation(fields: [medicineId], references: [id], onDelete: Restrict)
+  store     Store?     @relation(fields: [storeId], references: [id], onDelete: Restrict)
+  warehouse Warehouse? @relation(fields: [warehouseId], references: [id], onDelete: Restrict)
+
+  @@unique([medicineId, storeId])
+  @@unique([medicineId, warehouseId])
+  @@index([medicineId])
+  @@index([storeId])
+  @@index([warehouseId])
+  @@index([quantity, reorderLevel])
+  @@map("inventory_balances")
+}
+
+model InventoryMovement {
+  id                 String                @id @default(uuid()) @db.Uuid
+  medicineId         String                @db.Uuid
+  storeId            String?               @db.Uuid
+  warehouseId        String?               @db.Uuid
+  movementType       InventoryMovementType
+  quantityBefore     Int
+  quantityChange     Int
+  quantityAfter      Int
+  reason             String?
+  referenceId        String?
+  performedByUserId  String?               @db.Uuid
+  createdAt          DateTime              @default(now()) @db.Timestamptz(6)
+
+  medicine        Medicine   @relation(fields: [medicineId], references: [id], onDelete: Restrict)
+  store           Store?     @relation(fields: [storeId], references: [id], onDelete: Restrict)
+  warehouse       Warehouse? @relation(fields: [warehouseId], references: [id], onDelete: Restrict)
+  performedByUser User?      @relation(fields: [performedByUserId], references: [id], onDelete: SetNull)
+
+  @@index([medicineId, createdAt])
+  @@index([storeId, createdAt])
+  @@index([warehouseId, createdAt])
+  @@index([movementType, createdAt])
+  @@index([performedByUserId, createdAt])
+  @@map("inventory_movements")
+}
+
+model InventoryImport {
+  id                String                @id @default(uuid()) @db.Uuid
+  fileName          String
+  fileObjectKey     String?
+  locationType      InventoryLocationType
+  storeId           String?               @db.Uuid
+  warehouseId       String?               @db.Uuid
+  status            InventoryImportStatus @default(PROCESSING)
+  totalRows         Int                   @default(0)
+  appliedRows       Int                   @default(0)
+  rejectedRows      Int                   @default(0)
+  errorSummary      Json?
+  importedByUserId  String                @db.Uuid
+  completedAt       DateTime?             @db.Timestamptz(6)
+  createdAt         DateTime              @default(now()) @db.Timestamptz(6)
+
+  store          Store?               @relation(fields: [storeId], references: [id], onDelete: Restrict)
+  warehouse      Warehouse?           @relation(fields: [warehouseId], references: [id], onDelete: Restrict)
+  importedByUser User                 @relation(fields: [importedByUserId], references: [id], onDelete: Restrict)
+  rows           InventoryImportRow[]
+
+  @@index([status, createdAt])
+  @@index([storeId])
+  @@index([warehouseId])
+  @@index([importedByUserId, createdAt])
+  @@map("inventory_imports")
+}
+
+model InventoryImportRow {
+  id           String                   @id @default(uuid()) @db.Uuid
+  importId     String                   @db.Uuid
+  rowNumber    Int
+  sku          String
+  medicineId   String?                  @db.Uuid
+  quantity     Int?
+  status       InventoryImportRowStatus @default(PENDING)
+  errorMessage String?
+  createdAt    DateTime                 @default(now()) @db.Timestamptz(6)
+
+  import   InventoryImport @relation(fields: [importId], references: [id], onDelete: Cascade)
+  medicine Medicine?        @relation(fields: [medicineId], references: [id], onDelete: SetNull)
+
+  @@index([importId, status])
+  @@index([sku])
+  @@map("inventory_import_rows")
 }

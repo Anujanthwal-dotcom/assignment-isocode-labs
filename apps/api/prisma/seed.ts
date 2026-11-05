@@ -1,4 +1,13 @@
-import { PrismaClient, UserRole, UserStatus, StoreStatus } from '@prisma/client';
+import {
+  PrismaClient,
+  UserRole,
+  UserStatus,
+  StoreStatus,
+  MedicineSchedule,
+  MedicineStatus,
+  InventoryMovementType,
+  Prisma,
+} from '@prisma/client';
 import * as argon2 from 'argon2';
 
 const prisma = new PrismaClient();
@@ -50,7 +59,25 @@ async function main() {
     seededStores[store.code] = record.id;
   }
 
-  // 2. Hash Default Staff Password using Argon2id
+  // 2. Seed Central Warehouse
+  const centralWarehouse = await prisma.warehouse.upsert({
+    where: { code: 'CENTRAL-KOL' },
+    update: {
+      name: 'Central Warehouse',
+      city: 'Kolkata',
+      address: 'Plot 99, Logistics Park, Sector V, Salt Lake, Kolkata (Demo Address)',
+      status: StoreStatus.ACTIVE,
+    },
+    create: {
+      code: 'CENTRAL-KOL',
+      name: 'Central Warehouse',
+      city: 'Kolkata',
+      address: 'Plot 99, Logistics Park, Sector V, Salt Lake, Kolkata (Demo Address)',
+      status: StoreStatus.ACTIVE,
+    },
+  });
+
+  // 3. Hash Default Staff Password using Argon2id
   const staffPassword = 'DemoPassword123!';
   const passwordHash = await argon2.hash(staffPassword, {
     type: argon2.argon2id,
@@ -59,7 +86,7 @@ async function main() {
     parallelism: 4,
   });
 
-  // 3. Seed Users
+  // 4. Seed Users
   // Customer: Debasish Ghosh (9876543210)
   const customerUser = await prisma.user.upsert({
     where: { phone: '9876543210' },
@@ -119,7 +146,7 @@ async function main() {
   });
 
   // Admin: Demo Admin (admin@example.com)
-  await prisma.user.upsert({
+  const adminUser = await prisma.user.upsert({
     where: { email: 'admin@example.com' },
     update: {
       role: UserRole.ADMIN,
@@ -150,12 +177,192 @@ async function main() {
     },
   });
 
+  // 5. Seed Catalogue Medicines
+  const medicines = [
+    {
+      sku: 'MED-MET-500-001',
+      name: 'Metformin 500 mg',
+      brandName: 'Glyciphage Demo',
+      genericName: 'Metformin',
+      manufacturer: 'Franco-Indian Demo Ltd',
+      strength: '500 mg',
+      dosageForm: 'Tablet',
+      packSize: '15 tablets',
+      schedule: MedicineSchedule.SCHEDULE_H,
+      mrp: new Prisma.Decimal('30.00'),
+      status: MedicineStatus.ACTIVE,
+    },
+    {
+      sku: 'MED-TEL-40-001',
+      name: 'Telmisartan 40 mg',
+      brandName: 'Telma Demo',
+      genericName: 'Telmisartan',
+      manufacturer: 'Glenmark Demo Labs',
+      strength: '40 mg',
+      dosageForm: 'Tablet',
+      packSize: '10 tablets',
+      schedule: MedicineSchedule.SCHEDULE_H,
+      mrp: new Prisma.Decimal('95.00'),
+      status: MedicineStatus.ACTIVE,
+    },
+    {
+      sku: 'MED-LEV-50-001',
+      name: 'Levothyroxine 50 mcg',
+      brandName: 'Thyronorm Demo',
+      genericName: 'Levothyroxine',
+      manufacturer: 'Abbott Demo Healthcare',
+      strength: '50 mcg',
+      dosageForm: 'Tablet',
+      packSize: '100 tablets',
+      schedule: MedicineSchedule.SCHEDULE_H,
+      mrp: new Prisma.Decimal('190.00'),
+      status: MedicineStatus.ACTIVE,
+    },
+    {
+      sku: 'MED-PAR-500-001',
+      name: 'Paracetamol 500 mg',
+      brandName: 'Crocin Demo',
+      genericName: 'Paracetamol',
+      manufacturer: 'GSK Demo Asia',
+      strength: '500 mg',
+      dosageForm: 'Tablet',
+      packSize: '10 tablets',
+      schedule: MedicineSchedule.OTC,
+      mrp: new Prisma.Decimal('20.00'),
+      status: MedicineStatus.ACTIVE,
+    },
+    {
+      sku: 'MED-ORS-001',
+      name: 'ORS Powder',
+      brandName: 'Electral Demo',
+      genericName: 'Oral Rehydration Salts',
+      manufacturer: 'FDC Demo Ltd',
+      strength: 'Standard',
+      dosageForm: 'Powder',
+      packSize: '1 sachet',
+      schedule: MedicineSchedule.OTC,
+      mrp: new Prisma.Decimal('22.00'),
+      status: MedicineStatus.ACTIVE,
+    },
+    {
+      sku: 'MED-AMX-500-001',
+      name: 'Amoxicillin 500 mg',
+      brandName: 'Novamox Demo',
+      genericName: 'Amoxicillin',
+      manufacturer: 'Cipla Demo Labs',
+      strength: '500 mg',
+      dosageForm: 'Capsule',
+      packSize: '10 capsules',
+      schedule: MedicineSchedule.SCHEDULE_H,
+      mrp: new Prisma.Decimal('80.00'),
+      status: MedicineStatus.ACTIVE,
+    },
+  ];
+
+  const seededMedicines: Record<string, string> = {};
+
+  for (const med of medicines) {
+    const record = await prisma.medicine.upsert({
+      where: { sku: med.sku },
+      update: {
+        name: med.name,
+        brandName: med.brandName,
+        genericName: med.genericName,
+        manufacturer: med.manufacturer,
+        strength: med.strength,
+        dosageForm: med.dosageForm,
+        packSize: med.packSize,
+        schedule: med.schedule,
+        mrp: med.mrp,
+        status: med.status,
+      },
+      create: med,
+    });
+    seededMedicines[med.sku] = record.id;
+  }
+
+  // 6. Seed Deterministic Balances & Opening Stock Movements
+  // Initial demo stock grid
+  const initialStockData = [
+    { sku: 'MED-MET-500-001', saltLake: 120, howrah: 0, warehouse: 500 },
+    { sku: 'MED-TEL-40-001', saltLake: 8, howrah: 75, warehouse: 200 },
+    { sku: 'MED-LEV-50-001', saltLake: 42, howrah: 10, warehouse: 150 },
+    { sku: 'MED-PAR-500-001', saltLake: 200, howrah: 150, warehouse: 1000 },
+    { sku: 'MED-ORS-001', saltLake: 0, howrah: 45, warehouse: 300 },
+    { sku: 'MED-AMX-500-001', saltLake: 12, howrah: 0, warehouse: 100 },
+  ];
+
+  const locations = [
+    { type: 'STORE', id: seededStores['KOL-001'], code: 'KOL-001', key: 'saltLake' as const },
+    { type: 'STORE', id: seededStores['HOW-001'], code: 'HOW-001', key: 'howrah' as const },
+    { type: 'WAREHOUSE', id: centralWarehouse.id, code: 'CENTRAL-KOL', key: 'warehouse' as const },
+  ];
+
+  for (const item of initialStockData) {
+    const medicineId = seededMedicines[item.sku];
+
+    for (const loc of locations) {
+      const initialQuantity = item[loc.key];
+      const storeId = loc.type === 'STORE' ? loc.id : null;
+      const warehouseId = loc.type === 'WAREHOUSE' ? loc.id : null;
+      const refId = `SEED_OPENING_${item.sku}_${loc.code}`;
+
+      // 1. Check if balance already exists
+      const existingBalance = storeId
+        ? await prisma.inventoryBalance.findUnique({
+            where: { medicineId_storeId: { medicineId, storeId } },
+          })
+        : await prisma.inventoryBalance.findUnique({
+            where: { medicineId_warehouseId: { medicineId, warehouseId: warehouseId! } },
+          });
+
+      if (!existingBalance) {
+        // Create initial balance
+        await prisma.inventoryBalance.create({
+          data: {
+            medicineId,
+            storeId,
+            warehouseId,
+            quantity: initialQuantity,
+            reorderLevel: 10,
+          },
+        });
+      }
+
+      // 2. Check if OPENING_STOCK movement already recorded
+      const existingMovement = await prisma.inventoryMovement.findFirst({
+        where: { referenceId: refId },
+      });
+
+      if (!existingMovement) {
+        await prisma.inventoryMovement.create({
+          data: {
+            medicineId,
+            storeId,
+            warehouseId,
+            movementType: InventoryMovementType.OPENING_STOCK,
+            quantityBefore: 0,
+            quantityChange: initialQuantity,
+            quantityAfter: initialQuantity,
+            reason: 'Initial demo opening stock balance',
+            referenceId: refId,
+            performedByUserId: adminUser.id,
+          },
+        });
+      }
+    }
+  }
+
   if (isDev) {
     console.log('✅ Database seeded successfully:');
     console.log('--------------------------------------------------');
     console.log('Stores:');
     console.log('  - KOL-001: Salt Lake Store (Kolkata)');
     console.log('  - HOW-001: Howrah Maidan Store (Howrah)');
+    console.log('Warehouses:');
+    console.log('  - CENTRAL-KOL: Central Warehouse (Kolkata)');
+    console.log('Medicines: 6 demo medicines catalogue seeded.');
+    console.log('Inventory: Balances & Opening stock movements verified.');
     console.log('Demo Accounts:');
     console.log('  - CUSTOMER:         Phone: 9876543210, Mock OTP: 123456');
     console.log('  - PHARMACIST:       Email: pharmacist@example.com, Pass: DemoPassword123!');
