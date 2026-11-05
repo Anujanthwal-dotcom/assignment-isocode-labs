@@ -1,6 +1,13 @@
 import type { Metadata } from 'next';
-import { Inter, Noto_Sans_Bengali, Noto_Sans_Devanagari } from 'next/font/google';
+import { Lexend, Inter, Noto_Sans_Bengali, Noto_Sans_Devanagari } from 'next/font/google';
 import './globals.css';
+
+const lexend = Lexend({
+  subsets: ['latin'],
+  variable: '--font-lexend',
+  display: 'swap',
+  weight: ['400', '500', '600', '700'],
+});
 
 const inter = Inter({
   subsets: ['latin'],
@@ -23,8 +30,8 @@ const notoSansDevanagari = Noto_Sans_Devanagari({
 });
 
 export const metadata: Metadata = {
-  title: 'Pharmacy Platform | Quiet Confidence',
-  description: 'Enterprise pharmacy management and compliance platform',
+  title: 'Pharmacy Platform | Teladoc Health UI',
+  description: 'Enterprise pharmacy management, clinical coordination, and compliance platform',
 };
 
 export default function RootLayout({
@@ -35,7 +42,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${inter.variable} ${notoSansBengali.variable} ${notoSansDevanagari.variable} antialiased min-h-screen bg-[var(--background)] text-[var(--foreground)]`}
+        className={`${lexend.variable} ${inter.variable} ${notoSansBengali.variable} ${notoSansDevanagari.variable} antialiased min-h-screen bg-[var(--background)] text-[var(--foreground)]`}
       >
         {children}
       </body>

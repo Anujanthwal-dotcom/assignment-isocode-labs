@@ -1,65 +1,47 @@
-# Quiet Confidence — Design System
+# Teladoc Health UI — Pharmacy Platform Design System
 
-The Quiet Confidence design system provides a unified visual and interactive language for the Pharmacy Platform across three core portals:
+The Teladoc Health design system provides a patient-first, human-centric, and authoritative clinical visual language across all three portals:
 1. **Customer portal** (`/customer`)
 2. **Pharmacist portal** (`/pharmacist`)
 3. **Admin and operations portal** (`/admin`)
 
-## Core Principles
-- **Light theme only**
-- **White and off-white surfaces**: Dominant backgrounds are `#FFFFFF` and `#F7F9F7`.
-- **Forest green brand identity**: `#176B52` (brand-600) for primary actions, `#125840` (brand-700) on hover.
-- **Strictly minimal aesthetic**: No arbitrary gradients, neon colors, glassmorphism, decorative background illustrations, or arbitrary drop shadows.
-- **Iconography**: Exclusively Lucide icons (`lucide-react`).
+## Core Visual Identity
+- **Primary Electric Purple (`#6240E8`)**: Used for key primary CTAs, interactive states, and focal actions.
+- **Deep Midnight Purple (`#351F65`)**: Used for section headers, corporate branding, and high-contrast anchors.
+- **Vibrant Cyan / Teal (`#00B5E2`)**: Telehealth accent for status highlights and secondary care paths.
+- **Clean Healthcare Surfaces (`#FFFFFF`, `#F8F9FB`, `#F7F5FD`)**: Welcoming, uncluttered digital care experience.
+- **Clinical Readability Typography (`Lexend` + `Inter`)**: Research-backed geometric sans-serif optimized for speed of reading and clarity in medical workflows.
 
 ## Token Reference
 
 ### Brand Palette
-- `brand-50`: `#E9F3EE`
-- `brand-100`: `#D4E8DC`
-- `brand-200`: `#B2D6C3`
-- `brand-500`: `#23845D`
-- `brand-600`: `#176B52` (Primary action)
-- `brand-700`: `#125840` (Primary hover)
-- `brand-800`: `#104735`
+- `brand-50`: `#F7F5FD` (Soft lavender tint)
+- `brand-100`: `#EAE8F0` (Subtle purple-tinted border)
+- `brand-200`: `#D6D1F7`
+- `brand-300`: `#B3A7F4`
+- `brand-400`: `#8C72F2`
+- `brand-500`: `#6240E8` (Teladoc Electric Purple - Primary Action)
+- `brand-600`: `#542F9B` (Hover Dark Violet)
+- `brand-700`: `#351F65` (Teladoc Midnight Purple - Headings)
+- `brand-800`: `#251448`
+- `brand-cyan`: `#00B5E2` (Teladoc Cyan Accent)
+- `brand-cyan-dark`: `#0088AA`
 
 ### Neutral Palette
 - `neutral-0`: `#FFFFFF`
-- `neutral-50`: `#F7F9F7`
-- `neutral-100`: `#F0F3F1`
-- `neutral-200`: `#E5EAE6` (Standard border)
-- `neutral-300`: `#D3DBD5` (Input border)
-- `neutral-400`: `#A4B0A8`
-- `neutral-500`: `#7D8A81`
-- `neutral-600`: `#64736C`
-- `neutral-700`: `#43534A`
-- `neutral-800`: `#24332E` (Primary text)
-- `neutral-900`: `#18251F`
+- `neutral-50`: `#F8F9FB` (Canvas background)
+- `neutral-100`: `#EFF2F7` (Muted surface)
+- `neutral-200`: `#DFE0DF` (Neutral border)
+- `neutral-300`: `#CED4DA` (Input border)
+- `neutral-400`: `#ADB5BD`
+- `neutral-500`: `#78879A`
+- `neutral-600`: `#6C757D`
+- `neutral-700`: `#495057`
+- `neutral-800`: `#351F65`
+- `neutral-900`: `#14161A`
 
 ### Semantic Palette
-- **Success**: Text `#23845D` | Background `#E8F4ED` | Border `#B9DEC9`
-- **Warning**: Text `#A66B16` | Background `#FFF5E5` | Border `#F0D7A8`
-- **Danger**: Text `#C44747` | Background `#FCECEC` | Border `#F0C2C2`
-- **Information**: Text `#3477A5` | Background `#EAF3FA` | Border `#C5DDEC`
-
-### Typography Tokens
-- `display`: 36px / 44px / 600
-- `page-title`: 28px / 36px / 600
-- `section-title`: 22px / 30px / 600
-- `card-title`: 18px / 26px / 600
-- `body`: 16px / 24px / 400
-- `body-medium`: 16px / 24px / 500
-- `secondary`: 14px / 20px / 400
-- `caption`: 12px / 16px / 400
-- `button`: 14px / 20px / 600
-
-### Spacing Scale (4px base)
-`1` (4px), `2` (8px), `3` (12px), `4` (16px), `5` (20px), `6` (24px), `8` (32px), `10` (40px), `12` (48px), `16` (64px).
-
-### Border Radii & Elevation
-- Controls & Badges: 6px
-- Buttons & Inputs & Dropdowns: 8px
-- Cards, Dialogs & Panels: 12px
-- Card shadow: None
-- Dropdown shadow: `0 4px 16px rgba(36, 51, 46, 0.08)`
-- Dialog shadow: `0 12px 32px rgba(36, 51, 46, 0.12)`
+- **Clinical Success**: Text `#0FAC26` | Background `#E8F8EC` | Border `#B0E6BC`
+- **Clinical Warning**: Text `#A66B16` | Background `#FFF8EC` | Border `#F6DCB0`
+- **Clinical Danger / Blocked**: Text `#DC3545` | Background `#FDF2F2` | Border `#F9CACA`
+- **Information / Telehealth**: Text `#0088AA` | Background `#EBF9FD` | Border `#B4EDFB`

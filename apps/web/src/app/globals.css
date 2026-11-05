@@ -1,73 +1,79 @@
 @import "tailwindcss";
 
 @theme {
-  --font-sans: var(--font-inter), var(--font-noto-bengali), var(--font-noto-devanagari), Arial, sans-serif;
+  --font-sans: var(--font-lexend), var(--font-inter), var(--font-noto-bengali), var(--font-noto-devanagari), Arial, sans-serif;
 
-  /* Brand Palette */
-  --color-brand-50: #E9F3EE;
-  --color-brand-100: #D4E8DC;
-  --color-brand-200: #B2D6C3;
-  --color-brand-500: #23845D;
-  --color-brand-600: #176B52;
-  --color-brand-700: #125840;
-  --color-brand-800: #104735;
+  /* Teladoc Health Brand Palette */
+  --color-brand-50: #F7F5FD;
+  --color-brand-100: #EAE8F0;
+  --color-brand-200: #D6D1F7;
+  --color-brand-300: #B3A7F4;
+  --color-brand-400: #8C72F2;
+  --color-brand-500: #6240E8; /* Teladoc Electric Purple */
+  --color-brand-600: #542F9B; /* Hover Dark Violet */
+  --color-brand-700: #351F65; /* Teladoc Midnight Purple */
+  --color-brand-800: #251448;
+  --color-brand-cyan: #00B5E2; /* Teladoc Cyan Accent */
+  --color-brand-cyan-dark: #0088AA;
 
-  /* Neutral Palette */
+  /* Teladoc Neutral Palette */
   --color-neutral-0: #FFFFFF;
-  --color-neutral-50: #F7F9F7;
-  --color-neutral-100: #F0F3F1;
-  --color-neutral-200: #E5EAE6;
-  --color-neutral-300: #D3DBD5;
-  --color-neutral-400: #A4B0A8;
-  --color-neutral-500: #7D8A81;
-  --color-neutral-600: #64736C;
-  --color-neutral-700: #43534A;
-  --color-neutral-800: #24332E;
-  --color-neutral-900: #18251F;
+  --color-neutral-50: #F8F9FB;
+  --color-neutral-100: #EFF2F7;
+  --color-neutral-200: #DFE0DF;
+  --color-neutral-300: #CED4DA;
+  --color-neutral-400: #ADB5BD;
+  --color-neutral-500: #78879A;
+  --color-neutral-600: #6C757D;
+  --color-neutral-700: #495057;
+  --color-neutral-800: #351F65;
+  --color-neutral-900: #14161A;
 
   /* Semantic Palette */
-  --color-success-fg: #23845D;
-  --color-success-bg: #E8F4ED;
-  --color-success-border: #B9DEC9;
+  --color-success-fg: #0FAC26;
+  --color-success-bg: #E8F8EC;
+  --color-success-border: #B0E6BC;
 
   --color-warning-fg: #A66B16;
-  --color-warning-bg: #FFF5E5;
-  --color-warning-border: #F0D7A8;
+  --color-warning-bg: #FFF8EC;
+  --color-warning-border: #F6DCB0;
 
-  --color-danger-fg: #C44747;
-  --color-danger-bg: #FCECEC;
-  --color-danger-border: #F0C2C2;
+  --color-danger-fg: #DC3545;
+  --color-danger-bg: #FDF2F2;
+  --color-danger-border: #F9CACA;
 
-  --color-info-fg: #3477A5;
-  --color-info-bg: #EAF3FA;
-  --color-info-border: #C5DDEC;
+  --color-info-fg: #0088AA;
+  --color-info-bg: #EBF9FD;
+  --color-info-border: #B4EDFB;
 
   /* Elevation Shadows */
-  --shadow-dropdown: 0 4px 16px rgba(36, 51, 46, 0.08);
-  --shadow-dialog: 0 12px 32px rgba(36, 51, 46, 0.12);
+  --shadow-card: 0 4px 20px rgba(53, 31, 101, 0.05);
+  --shadow-dropdown: 0 4px 18px rgba(53, 31, 101, 0.10);
+  --shadow-dialog: 0 16px 36px rgba(53, 31, 101, 0.16);
 
-  /* Exact Radii */
+  /* Radii */
   --radius-sm: 6px;
   --radius-md: 8px;
   --radius-lg: 12px;
+  --radius-full: 9999px;
 }
 
 :root {
-  /* Global Semantic Mapping */
-  --background: #F7F9F7;
-  --foreground: #24332E;
+  /* Global Semantic Mapping (Teladoc Health UI) */
+  --background: #F8F9FB;
+  --foreground: #14161A;
   --card: #FFFFFF;
-  --card-foreground: #24332E;
-  --primary: #176B52;
+  --card-foreground: #351F65;
+  --primary: #6240E8;
   --primary-foreground: #FFFFFF;
-  --secondary: #E9F3EE;
-  --secondary-foreground: #176B52;
-  --muted: #F0F3F1;
-  --muted-foreground: #64736C;
-  --border: #E5EAE6;
-  --input: #D3DBD5;
-  --ring: #23845D;
-  --destructive: #C44747;
+  --secondary: #F7F5FD;
+  --secondary-foreground: #6240E8;
+  --muted: #EFF2F7;
+  --muted-foreground: #6C757D;
+  --border: #EAE8F0;
+  --input: #CED4DA;
+  --ring: #6240E8;
+  --destructive: #DC3545;
   --destructive-foreground: #FFFFFF;
 
   /* Border radius tokens */
@@ -94,12 +100,14 @@ body {
   font-size: 36px;
   line-height: 44px;
   font-weight: 600;
+  letter-spacing: -0.02em;
 }
 
 .typography-page-title {
   font-size: 28px;
   line-height: 36px;
   font-weight: 600;
+  letter-spacing: -0.01em;
 }
 
 .typography-section-title {

@@ -1,70 +1,74 @@
 /**
- * Pharmacy Platform Design System: "Quiet Confidence"
- * Deterministic tokens matching Phase 0.5 specifications exactly.
+ * Pharmacy Platform Design System: "Teladoc Health UI"
+ * Modern, human-centric, patient-first telehealth tokens.
  */
 
 export const BRAND_TOKENS = {
-  50: '#E9F3EE',
-  100: '#D4E8DC',
-  200: '#B2D6C3',
-  500: '#23845D',
-  600: '#176B52', // Primary buttons
-  700: '#125840', // Primary button hover
-  800: '#104735',
+  50: '#F7F5FD',
+  100: '#EAE8F0',
+  200: '#D6D1F7',
+  300: '#B3A7F4',
+  400: '#8C72F2',
+  500: '#6240E8', // Teladoc Electric Purple (Primary Action)
+  600: '#542F9B', // Hover Violet
+  700: '#351F65', // Teladoc Midnight Purple (Headings & Brand Mark)
+  800: '#251448',
+  cyan: '#00B5E2', // Teladoc Cyan Accent
+  cyanDark: '#0088AA',
 } as const;
 
 export const NEUTRAL_TOKENS = {
   0: '#FFFFFF',
-  50: '#F7F9F7',
-  100: '#F0F3F1',
-  200: '#E5EAE6',
-  300: '#D3DBD5',
-  400: '#A4B0A8',
-  500: '#7D8A81',
-  600: '#64736C',
-  700: '#43534A',
-  800: '#24332E',
-  900: '#18251F',
+  50: '#F8F9FB',
+  100: '#EFF2F7',
+  200: '#DFE0DF',
+  300: '#CED4DA',
+  400: '#ADB5BD',
+  500: '#78879A',
+  600: '#6C757D',
+  700: '#495057',
+  800: '#351F65',
+  900: '#14161A',
 } as const;
 
 export const SEMANTIC_TOKENS = {
   success: {
-    foreground: '#23845D',
-    background: '#E8F4ED',
-    border: '#B9DEC9',
+    foreground: '#0FAC26',
+    background: '#E8F8EC',
+    border: '#B0E6BC',
   },
   warning: {
     foreground: '#A66B16',
-    background: '#FFF5E5',
-    border: '#F0D7A8',
+    background: '#FFF8EC',
+    border: '#F6DCB0',
   },
   danger: {
-    foreground: '#C44747',
-    background: '#FCECEC',
-    border: '#F0C2C2',
+    foreground: '#DC3545',
+    background: '#FDF2F2',
+    border: '#F9CACA',
   },
   information: {
-    foreground: '#3477A5',
-    background: '#EAF3FA',
-    border: '#C5DDEC',
+    foreground: '#0088AA',
+    background: '#EBF9FD',
+    border: '#B4EDFB',
   },
 } as const;
 
 export const GLOBAL_SEMANTIC_MAPPING = {
-  background: '#F7F9F7',
-  foreground: '#24332E',
+  background: '#F8F9FB',
+  foreground: '#14161A',
   card: '#FFFFFF',
-  cardForeground: '#24332E',
-  primary: '#176B52',
+  cardForeground: '#351F65',
+  primary: '#6240E8',
   primaryForeground: '#FFFFFF',
-  secondary: '#E9F3EE',
-  secondaryForeground: '#176B52',
-  muted: '#F0F3F1',
-  mutedForeground: '#64736C',
-  border: '#E5EAE6',
-  input: '#D3DBD5',
-  ring: '#23845D',
-  destructive: '#C44747',
+  secondary: '#F7F5FD',
+  secondaryForeground: '#6240E8',
+  muted: '#EFF2F7',
+  mutedForeground: '#6C757D',
+  border: '#EAE8F0',
+  input: '#CED4DA',
+  ring: '#6240E8',
+  destructive: '#DC3545',
 } as const;
 
 export const TYPOGRAPHY_SCALE = {
@@ -104,15 +108,15 @@ export const BORDER_RADII = {
 } as const;
 
 export const ELEVATION_SHADOWS = {
-  card: 'none',
-  dropdown: '0 4px 16px rgba(36, 51, 46, 0.08)',
-  dialog: '0 12px 32px rgba(36, 51, 46, 0.12)',
+  card: '0 4px 20px rgba(53, 31, 101, 0.05)',
+  dropdown: '0 4px 18px rgba(53, 31, 101, 0.10)',
+  dialog: '0 16px 36px rgba(53, 31, 101, 0.16)',
 } as const;
 
 export const BORDER_COLORS = {
-  standard: '#E5EAE6',
-  focus: '#23845D',
-  error: '#C44747',
+  standard: '#EAE8F0',
+  focus: '#6240E8',
+  error: '#DC3545',
 } as const;
 
 export const BREAKPOINTS = {
