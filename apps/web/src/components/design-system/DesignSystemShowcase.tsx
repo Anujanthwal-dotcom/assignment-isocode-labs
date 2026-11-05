@@ -83,48 +83,48 @@ export const DesignSystemShowcase: React.FC = () => {
   ];
 
   const columns: Column<SampleRow>[] = [
-    { key: 'code', header: 'Item Code', render: (r) => <span className="font-mono text-[13px]">{r.code}</span> },
-    { key: 'name', header: 'Medicine Description', render: (r) => <span className="font-medium text-[#24332E]">{r.name}</span> },
+    { key: 'code', header: 'Item Code', render: (r) => <span className="font-mono text-[13px] text-[#6240E8]">{r.code}</span> },
+    { key: 'name', header: 'Medicine Description', render: (r) => <span className="font-semibold text-[#351F65]">{r.name}</span> },
     { key: 'category', header: 'Classification' },
     { key: 'stock', header: 'Stock Units', render: (r) => <span>{r.stock} units</span> },
     { key: 'status', header: 'Status', render: (r) => <StatusBadge status={r.status} /> },
   ];
 
   return (
-    <div className="min-h-screen bg-[#F7F9F7] text-[#24332E] py-12 px-4 sm:px-8 lg:px-12 max-w-6xl mx-auto space-y-16">
+    <div className="min-h-screen bg-[#F8F9FB] text-[#14161A] py-12 px-4 sm:px-8 lg:px-12 max-w-6xl mx-auto space-y-16">
       {/* Title Header */}
-      <div className="border-b border-[#E5EAE6] pb-8 space-y-2">
-        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-[6px] bg-[#E9F3EE] text-[#176B52] text-[12px] font-semibold tracking-wider uppercase">
-          Design Identity: Quiet Confidence
+      <div className="border-b border-[#EAE8F0] pb-8 space-y-2">
+        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-[6px] bg-[#F7F5FD] border border-[#D6D1F7] text-[#6240E8] text-[12px] font-semibold tracking-wider uppercase">
+          Design Identity: Teladoc Health UI
         </div>
-        <h1 className="text-[36px] leading-[44px] font-semibold text-[#24332E]">
-          Pharmacy Platform Design System
+        <h1 className="text-[36px] leading-[44px] font-semibold text-[#351F65]">
+          Teladoc Health Design System
         </h1>
-        <p className="text-[16px] leading-[24px] text-[#64736C]">
-          Deterministic reference guide and component showcase for Customer, Pharmacist, and Admin portals.
+        <p className="text-[16px] leading-[24px] text-[#6C757D]">
+          Modern, patient-first, human-centric visual language for Customer, Pharmacist, and Admin portals.
         </p>
       </div>
 
       {/* 1. Brand Colors */}
       <section id="brand-colors" className="space-y-4">
-        <div className="border-b border-[#E5EAE6] pb-2">
-          <h2 className="text-[22px] leading-[30px] font-semibold text-[#24332E]">
+        <div className="border-b border-[#EAE8F0] pb-2">
+          <h2 className="text-[22px] leading-[30px] font-semibold text-[#351F65]">
             1. Brand Colors
           </h2>
-          <p className="text-[14px] text-[#64736C]">
-            Forest green brand palette. Primary actions use brand-600 (#176B52) with hover brand-700 (#125840).
+          <p className="text-[14px] text-[#78879A]">
+            Teladoc Electric Purple (#6240E8), Midnight Purple (#351F65), and Cyan (#00B5E2) accents.
           </p>
         </div>
-        <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-3">
+        <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-6 gap-3">
           {Object.entries(BRAND_TOKENS).map(([token, hex]) => (
-            <div key={token} className="rounded-[8px] border border-[#E5EAE6] bg-white p-3 space-y-2">
+            <div key={token} className="rounded-[8px] border border-[#EAE8F0] bg-white p-3 space-y-2 shadow-xs">
               <div
                 className="h-16 w-full rounded-[6px] border border-black/5"
                 style={{ backgroundColor: hex }}
               />
               <div>
-                <p className="text-[14px] font-semibold text-[#24332E]">brand-{token}</p>
-                <p className="text-[12px] font-mono text-[#64736C]">{hex}</p>
+                <p className="text-[14px] font-semibold text-[#351F65]">brand-{token}</p>
+                <p className="text-[12px] font-mono text-[#78879A]">{hex}</p>
               </div>
             </div>
           ))}
@@ -133,24 +133,24 @@ export const DesignSystemShowcase: React.FC = () => {
 
       {/* 2. Neutral Colors */}
       <section id="neutral-colors" className="space-y-4">
-        <div className="border-b border-[#E5EAE6] pb-2">
-          <h2 className="text-[22px] leading-[30px] font-semibold text-[#24332E]">
+        <div className="border-b border-[#EAE8F0] pb-2">
+          <h2 className="text-[22px] leading-[30px] font-semibold text-[#351F65]">
             2. Neutral Colors
           </h2>
-          <p className="text-[14px] text-[#64736C]">
-            White (#FFFFFF) and off-white (#F7F9F7) surfaces with neutral slate accents.
+          <p className="text-[14px] text-[#78879A]">
+            Crisp white (#FFFFFF), modern telehealth surface (#F8F9FB), and clean neutral dividers.
           </p>
         </div>
         <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-6 gap-3">
           {Object.entries(NEUTRAL_TOKENS).map(([token, hex]) => (
-            <div key={token} className="rounded-[8px] border border-[#E5EAE6] bg-white p-3 space-y-2">
+            <div key={token} className="rounded-[8px] border border-[#EAE8F0] bg-white p-3 space-y-2 shadow-xs">
               <div
                 className="h-14 w-full rounded-[6px] border border-black/10"
                 style={{ backgroundColor: hex }}
               />
               <div>
-                <p className="text-[13px] font-semibold text-[#24332E]">neutral-{token}</p>
-                <p className="text-[12px] font-mono text-[#64736C]">{hex}</p>
+                <p className="text-[13px] font-semibold text-[#351F65]">neutral-{token}</p>
+                <p className="text-[12px] font-mono text-[#78879A]">{hex}</p>
               </div>
             </div>
           ))}
@@ -159,17 +159,17 @@ export const DesignSystemShowcase: React.FC = () => {
 
       {/* 3. Semantic Colors */}
       <section id="semantic-colors" className="space-y-4">
-        <div className="border-b border-[#E5EAE6] pb-2">
-          <h2 className="text-[22px] leading-[30px] font-semibold text-[#24332E]">
+        <div className="border-b border-[#EAE8F0] pb-2">
+          <h2 className="text-[22px] leading-[30px] font-semibold text-[#351F65]">
             3. Semantic Colors
           </h2>
-          <p className="text-[14px] text-[#64736C]">
-            Deterministic Success, Warning, Danger, and Information tokens.
+          <p className="text-[14px] text-[#78879A]">
+            Clinical Health Green (#0FAC26), Warm Warning (#A66B16), Danger (#DC3545), and Telehealth Cyan (#0088AA).
           </p>
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           {Object.entries(SEMANTIC_TOKENS).map(([name, val]) => (
-            <div key={name} className="rounded-[8px] border border-[#E5EAE6] bg-white p-4 space-y-3">
+            <div key={name} className="rounded-[8px] border border-[#EAE8F0] bg-white p-4 space-y-3 shadow-xs">
               <div
                 className="h-16 w-full rounded-[6px] border flex items-center justify-center font-semibold capitalize text-[14px]"
                 style={{
@@ -178,20 +178,20 @@ export const DesignSystemShowcase: React.FC = () => {
                   borderColor: val.border,
                 }}
               >
-                {name} Preview
+                {name} Status
               </div>
               <div className="space-y-1 text-[12px]">
                 <div className="flex justify-between">
-                  <span className="text-[#64736C]">Foreground:</span>
-                  <span className="font-mono text-[#24332E]">{val.foreground}</span>
+                  <span className="text-[#78879A]">Foreground:</span>
+                  <span className="font-mono text-[#351F65] font-semibold">{val.foreground}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-[#64736C]">Background:</span>
-                  <span className="font-mono text-[#24332E]">{val.background}</span>
+                  <span className="text-[#78879A]">Background:</span>
+                  <span className="font-mono text-[#14161A]">{val.background}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-[#64736C]">Border:</span>
-                  <span className="font-mono text-[#24332E]">{val.border}</span>
+                  <span className="text-[#78879A]">Border:</span>
+                  <span className="font-mono text-[#14161A]">{val.border}</span>
                 </div>
               </div>
             </div>
@@ -201,79 +201,79 @@ export const DesignSystemShowcase: React.FC = () => {
 
       {/* 4. Typography Scale */}
       <section id="typography-scale" className="space-y-4">
-        <div className="border-b border-[#E5EAE6] pb-2">
-          <h2 className="text-[22px] leading-[30px] font-semibold text-[#24332E]">
-            4. Typography Scale
+        <div className="border-b border-[#EAE8F0] pb-2">
+          <h2 className="text-[22px] leading-[30px] font-semibold text-[#351F65]">
+            4. Typography Scale (Lexend + Inter)
           </h2>
-          <p className="text-[14px] text-[#64736C]">
-            Inter font stack with Noto Sans Bengali/Devanagari and Arial fallbacks.
+          <p className="text-[14px] text-[#78879A]">
+            Teladoc&apos;s signature Lexend geometric sans-serif for clinical readability and patient trust.
           </p>
         </div>
-        <div className="divide-y divide-[#E5EAE6] rounded-[12px] border border-[#E5EAE6] bg-white p-6 space-y-6">
+        <div className="divide-y divide-[#EAE8F0] rounded-[12px] border border-[#EAE8F0] bg-white p-6 space-y-6 shadow-xs">
           <div className="pt-2">
-            <span className="text-[12px] text-[#64736C] font-mono block">display (36px / 44px / 600)</span>
-            <p className="typography-display text-[#24332E]">Clinical Pharmacy Network</p>
+            <span className="text-[12px] text-[#78879A] font-mono block">display (36px / 44px / 600)</span>
+            <p className="typography-display text-[#351F65]">Teladoc Health Virtual Pharmacy</p>
           </div>
           <div className="pt-6">
-            <span className="text-[12px] text-[#64736C] font-mono block">page-title (28px / 36px / 600)</span>
-            <p className="typography-page-title text-[#24332E]">Prescription Verification Queue</p>
+            <span className="text-[12px] text-[#78879A] font-mono block">page-title (28px / 36px / 600)</span>
+            <p className="typography-page-title text-[#351F65]">Clinical Prescription Verification</p>
           </div>
           <div className="pt-6">
-            <span className="text-[12px] text-[#64736C] font-mono block">section-title (22px / 30px / 600)</span>
-            <p className="typography-section-title text-[#24332E]">Schedule H Regulatory Guardrails</p>
+            <span className="text-[12px] text-[#78879A] font-mono block">section-title (22px / 30px / 600)</span>
+            <p className="typography-section-title text-[#351F65]">Schedule H Regulatory Compliance Guard</p>
           </div>
           <div className="pt-6">
-            <span className="text-[12px] text-[#64736C] font-mono block">card-title (18px / 26px / 600)</span>
-            <p className="typography-card-title text-[#24332E]">Patient Verification Profile</p>
+            <span className="text-[12px] text-[#78879A] font-mono block">card-title (18px / 26px / 600)</span>
+            <p className="typography-card-title text-[#351F65]">Patient Medication Profile</p>
           </div>
           <div className="pt-6">
-            <span className="text-[12px] text-[#64736C] font-mono block">body (16px / 24px / 400)</span>
-            <p className="typography-body text-[#24332E]">
-              Regular body text for clinical notes, instructions, and customer explanations.
+            <span className="text-[12px] text-[#78879A] font-mono block">body (16px / 24px / 400)</span>
+            <p className="typography-body text-[#14161A]">
+              Regular body text for telehealth care directions, pharmacist notes, and customer instructions.
             </p>
           </div>
           <div className="pt-6">
-            <span className="text-[12px] text-[#64736C] font-mono block">body-medium (16px / 24px / 500)</span>
-            <p className="typography-body-medium text-[#24332E]">
-              Medium weight body text for highlighted dosage and medical precautions.
+            <span className="text-[12px] text-[#78879A] font-mono block">body-medium (16px / 24px / 500)</span>
+            <p className="typography-body-medium text-[#351F65]">
+              Medium weight body text for highlighted dosage instructions and doctor precautions.
             </p>
           </div>
           <div className="pt-6">
-            <span className="text-[12px] text-[#64736C] font-mono block">secondary (14px / 20px / 400)</span>
-            <p className="typography-secondary text-[#64736C]">
+            <span className="text-[12px] text-[#78879A] font-mono block">secondary (14px / 20px / 400)</span>
+            <p className="typography-secondary text-[#78879A]">
               Supporting text for helper hints, secondary labels, and column headers.
             </p>
           </div>
           <div className="pt-6">
-            <span className="text-[12px] text-[#64736C] font-mono block">caption (12px / 16px / 400)</span>
-            <p className="typography-caption text-[#7D8A81]">
-              Metadata, timestamps, license IDs, and fine regulatory details.
+            <span className="text-[12px] text-[#78879A] font-mono block">caption (12px / 16px / 400)</span>
+            <p className="typography-caption text-[#ADB5BD]">
+              Clinical metadata, timestamps, license IDs, and fine regulatory details.
             </p>
           </div>
           <div className="pt-6">
-            <span className="text-[12px] text-[#64736C] font-mono block">button (14px / 20px / 600)</span>
-            <p className="typography-button text-[#176B52]">Button Action Label</p>
+            <span className="text-[12px] text-[#78879A] font-mono block">button (14px / 20px / 600)</span>
+            <p className="typography-button text-[#6240E8]">Primary Action Label</p>
           </div>
         </div>
       </section>
 
       {/* 5. Spacing Scale */}
       <section id="spacing-scale" className="space-y-4">
-        <div className="border-b border-[#E5EAE6] pb-2">
-          <h2 className="text-[22px] leading-[30px] font-semibold text-[#24332E]">
+        <div className="border-b border-[#EAE8F0] pb-2">
+          <h2 className="text-[22px] leading-[30px] font-semibold text-[#351F65]">
             5. Spacing Scale
           </h2>
-          <p className="text-[14px] text-[#64736C]">
+          <p className="text-[14px] text-[#78879A]">
             4px base scale: 1 (4px), 2 (8px), 3 (12px), 4 (16px), 5 (20px), 6 (24px), 8 (32px), 10 (40px), 12 (48px), 16 (64px).
           </p>
         </div>
-        <div className="rounded-[12px] border border-[#E5EAE6] bg-white p-6 space-y-3">
+        <div className="rounded-[12px] border border-[#EAE8F0] bg-white p-6 space-y-3 shadow-xs">
           {Object.entries(SPACING_SCALE).map(([step, px]) => (
             <div key={step} className="flex items-center gap-4 text-[13px]">
-              <span className="w-16 font-mono text-[#64736C]">Space {step}</span>
-              <span className="w-14 font-mono font-semibold text-[#24332E]">{px}px</span>
+              <span className="w-16 font-mono text-[#78879A]">Space {step}</span>
+              <span className="w-14 font-mono font-semibold text-[#351F65]">{px}px</span>
               <div
-                className="h-5 rounded-[4px] bg-[#176B52]"
+                className="h-5 rounded-[4px] bg-[#6240E8]"
                 style={{ width: `${px * 4}px`, maxWidth: '100%' }}
               />
             </div>
@@ -283,58 +283,59 @@ export const DesignSystemShowcase: React.FC = () => {
 
       {/* 6. Border Radius Examples */}
       <section id="border-radius-examples" className="space-y-4">
-        <div className="border-b border-[#E5EAE6] pb-2">
-          <h2 className="text-[22px] leading-[30px] font-semibold text-[#24332E]">
+        <div className="border-b border-[#EAE8F0] pb-2">
+          <h2 className="text-[22px] leading-[30px] font-semibold text-[#351F65]">
             6. Border Radius Examples
           </h2>
-          <p className="text-[14px] text-[#64736C]">
+          <p className="text-[14px] text-[#78879A]">
             Controls &amp; Badges (6px), Buttons &amp; Inputs (8px), Cards &amp; Panels (12px).
           </p>
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-          <div className="rounded-[6px] border border-[#E5EAE6] bg-white p-5 text-center">
-            <span className="text-[14px] font-semibold text-[#24332E] block">6px Radius</span>
-            <span className="text-[12px] text-[#64736C]">Small controls, Badges</span>
+          <div className="rounded-[6px] border border-[#EAE8F0] bg-white p-5 text-center shadow-xs">
+            <span className="text-[14px] font-semibold text-[#351F65] block">6px Radius</span>
+            <span className="text-[12px] text-[#78879A]">Controls, Badges</span>
           </div>
-          <div className="rounded-[8px] border border-[#E5EAE6] bg-white p-5 text-center">
-            <span className="text-[14px] font-semibold text-[#24332E] block">8px Radius</span>
-            <span className="text-[12px] text-[#64736C]">Buttons, Inputs, Dropdowns</span>
+          <div className="rounded-[8px] border border-[#EAE8F0] bg-white p-5 text-center shadow-xs">
+            <span className="text-[14px] font-semibold text-[#351F65] block">8px Radius</span>
+            <span className="text-[12px] text-[#78879A]">Buttons, Inputs, Dropdowns</span>
           </div>
-          <div className="rounded-[12px] border border-[#E5EAE6] bg-white p-5 text-center">
-            <span className="text-[14px] font-semibold text-[#24332E] block">12px Radius</span>
-            <span className="text-[12px] text-[#64736C]">Cards, Dialogs, App Panels</span>
+          <div className="rounded-[12px] border border-[#EAE8F0] bg-white p-5 text-center shadow-xs">
+            <span className="text-[14px] font-semibold text-[#351F65] block">12px Radius</span>
+            <span className="text-[12px] text-[#78879A]">Cards, Dialogs, Panels</span>
           </div>
         </div>
       </section>
 
       {/* 7. Button Variants and Sizes */}
       <section id="button-variants-and-sizes" className="space-y-6">
-        <div className="border-b border-[#E5EAE6] pb-2">
-          <h2 className="text-[22px] leading-[30px] font-semibold text-[#24332E]">
+        <div className="border-b border-[#EAE8F0] pb-2">
+          <h2 className="text-[22px] leading-[30px] font-semibold text-[#351F65]">
             7. Button Variants and Sizes
           </h2>
-          <p className="text-[14px] text-[#64736C]">
-            5 variants: Primary, Secondary, Outline, Ghost, Destructive across Small (32px), Medium (40px), Large (48px), and Icon (40x40).
+          <p className="text-[14px] text-[#78879A]">
+            Primary Electric Purple (#6240E8), Secondary Lilac (#F7F5FD), Teal (#00B5E2), Outline, Ghost, and Destructive.
           </p>
         </div>
 
         {/* Variants */}
-        <div className="rounded-[12px] border border-[#E5EAE6] bg-white p-6 space-y-4">
-          <h3 className="text-[14px] font-semibold uppercase tracking-wider text-[#64736C]">
+        <div className="rounded-[12px] border border-[#EAE8F0] bg-white p-6 space-y-4 shadow-xs">
+          <h3 className="text-[13px] font-semibold uppercase tracking-wider text-[#78879A]">
             Variants (Medium Size - 40px)
           </h3>
           <div className="flex flex-wrap items-center gap-3">
-            <Button variant="primary">Primary Button</Button>
-            <Button variant="secondary">Secondary Button</Button>
-            <Button variant="outline">Outline Button</Button>
-            <Button variant="ghost">Ghost Button</Button>
-            <Button variant="destructive">Destructive Button</Button>
+            <Button variant="primary">Primary (Electric Purple)</Button>
+            <Button variant="secondary">Secondary (Lilac)</Button>
+            <Button variant="teal">Teal Highlight</Button>
+            <Button variant="outline">Outline</Button>
+            <Button variant="ghost">Ghost</Button>
+            <Button variant="destructive">Destructive</Button>
           </div>
         </div>
 
         {/* Sizes & States */}
-        <div className="rounded-[12px] border border-[#E5EAE6] bg-white p-6 space-y-4">
-          <h3 className="text-[14px] font-semibold uppercase tracking-wider text-[#64736C]">
+        <div className="rounded-[12px] border border-[#EAE8F0] bg-white p-6 space-y-4 shadow-xs">
+          <h3 className="text-[13px] font-semibold uppercase tracking-wider text-[#78879A]">
             Sizes &amp; Interaction States
           </h3>
           <div className="flex flex-wrap items-center gap-3">
@@ -342,7 +343,7 @@ export const DesignSystemShowcase: React.FC = () => {
             <Button size="md">Medium (40px)</Button>
             <Button size="lg">Large (48px)</Button>
             <Button size="icon" variant="outline" aria-label="Add item">
-              <Plus className="h-4 w-4" />
+              <Plus className="h-4 w-4 text-[#6240E8]" />
             </Button>
             <Button
               variant="primary"
@@ -363,33 +364,33 @@ export const DesignSystemShowcase: React.FC = () => {
 
       {/* 8. Input Variants and States */}
       <section id="input-variants-and-states" className="space-y-6">
-        <div className="border-b border-[#E5EAE6] pb-2">
-          <h2 className="text-[22px] leading-[30px] font-semibold text-[#24332E]">
+        <div className="border-b border-[#EAE8F0] pb-2">
+          <h2 className="text-[22px] leading-[30px] font-semibold text-[#351F65]">
             8. Input Variants and States
           </h2>
-          <p className="text-[14px] text-[#64736C]">
-            Standard height 44px, radius 8px. Supports Default, Focus, Disabled, Error, and Read-only states.
+          <p className="text-[14px] text-[#78879A]">
+            Standard height 44px, radius 8px, purple focus glow, and high-contrast labels.
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 rounded-[12px] border border-[#E5EAE6] bg-white p-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 rounded-[12px] border border-[#EAE8F0] bg-white p-6 shadow-xs">
           <div className="space-y-1">
-            <label className="text-[14px] font-medium text-[#24332E]">Standard Text Input (Default)</label>
+            <label className="text-[14px] font-medium text-[#351F65]">Standard Text Input (Default)</label>
             <Input placeholder="Enter patient name..." />
           </div>
 
           <div className="space-y-1">
-            <label className="text-[14px] font-medium text-[#24332E]">Search Input</label>
+            <label className="text-[14px] font-medium text-[#351F65]">Search Input</label>
             <SearchInput placeholder="Search medicines by salt or brand..." />
           </div>
 
           <div className="space-y-1">
-            <label className="text-[14px] font-medium text-[#24332E]">Password Input (with Toggle)</label>
+            <label className="text-[14px] font-medium text-[#351F65]">Password Input (with Toggle)</label>
             <PasswordInput defaultValue="secret-license-key" />
           </div>
 
           <div className="space-y-1">
-            <label className="text-[14px] font-medium text-[#24332E]">Error State</label>
+            <label className="text-[14px] font-medium text-[#351F65]">Error State</label>
             <Input
               defaultValue="invalid-order-id"
               error="Valid prescription order reference required (e.g. RX-50214)"
@@ -397,27 +398,27 @@ export const DesignSystemShowcase: React.FC = () => {
           </div>
 
           <div className="space-y-1">
-            <label className="text-[14px] font-medium text-[#24332E]">Disabled State</label>
+            <label className="text-[14px] font-medium text-[#351F65]">Disabled State</label>
             <Input disabled value="System locked field" />
           </div>
 
           <div className="space-y-1">
-            <label className="text-[14px] font-medium text-[#24332E]">Read-Only State</label>
+            <label className="text-[14px] font-medium text-[#351F65]">Read-Only State</label>
             <Input readOnly value="Salt Lake Store Hub #WB-KOL-014" />
           </div>
 
           <div className="space-y-1 md:col-span-2">
-            <label className="text-[14px] font-medium text-[#24332E]">OTP Input (4-6 digits)</label>
+            <label className="text-[14px] font-medium text-[#351F65]">OTP Input (4-6 digits)</label>
             <OtpInput value={otpVal} onChange={setOtpVal} length={6} />
           </div>
 
           <div className="space-y-1 md:col-span-2">
-            <label className="text-[14px] font-medium text-[#24332E]">Textarea (min-height 100px)</label>
+            <label className="text-[14px] font-medium text-[#351F65]">Textarea (min-height 100px)</label>
             <Textarea placeholder="Enter clinical pharmacist verification remarks..." />
           </div>
 
           <div className="space-y-1">
-            <label className="text-[14px] font-medium text-[#24332E]">Select Component</label>
+            <label className="text-[14px] font-medium text-[#351F65]">Select Component</label>
             <Select defaultValue="salt-lake">
               <SelectTrigger>
                 <SelectValue placeholder="Select store hub" />
@@ -431,14 +432,14 @@ export const DesignSystemShowcase: React.FC = () => {
           </div>
 
           <div className="space-y-3 pt-2">
-            <label className="text-[14px] font-medium text-[#24332E] block">Checkbox, Switch &amp; Radio</label>
+            <label className="text-[14px] font-medium text-[#351F65] block">Checkbox, Switch &amp; Radio</label>
             <div className="flex flex-wrap items-center gap-6">
-              <label className="flex items-center gap-2 cursor-pointer text-[14px]">
+              <label className="flex items-center gap-2 cursor-pointer text-[14px] text-[#14161A]">
                 <Checkbox defaultChecked />
                 <span>Verify Doctor Sign-Off</span>
               </label>
 
-              <label className="flex items-center gap-2 cursor-pointer text-[14px]">
+              <label className="flex items-center gap-2 cursor-pointer text-[14px] text-[#14161A]">
                 <Switch defaultChecked />
                 <span>Auto-Dispatch</span>
               </label>
@@ -446,18 +447,18 @@ export const DesignSystemShowcase: React.FC = () => {
               <RadioGroup defaultValue="schedule-h" className="flex items-center gap-4">
                 <div className="flex items-center gap-2">
                   <RadioGroupItem value="schedule-h" id="r1" />
-                  <label htmlFor="r1" className="text-[14px] cursor-pointer">Schedule H</label>
+                  <label htmlFor="r1" className="text-[14px] cursor-pointer text-[#14161A]">Schedule H</label>
                 </div>
                 <div className="flex items-center gap-2">
                   <RadioGroupItem value="schedule-x" id="r2" />
-                  <label htmlFor="r2" className="text-[14px] cursor-pointer">Schedule X</label>
+                  <label htmlFor="r2" className="text-[14px] cursor-pointer text-[#14161A]">Schedule X</label>
                 </div>
               </RadioGroup>
             </div>
           </div>
 
           <div className="space-y-1 md:col-span-2">
-            <label className="text-[14px] font-medium text-[#24332E]">File Upload Dropzone</label>
+            <label className="text-[14px] font-medium text-[#351F65]">File Upload Dropzone</label>
             <FileUpload />
           </div>
         </div>
@@ -465,12 +466,12 @@ export const DesignSystemShowcase: React.FC = () => {
 
       {/* 9. Cards */}
       <section id="cards" className="space-y-4">
-        <div className="border-b border-[#E5EAE6] pb-2">
-          <h2 className="text-[22px] leading-[30px] font-semibold text-[#24332E]">
+        <div className="border-b border-[#EAE8F0] pb-2">
+          <h2 className="text-[22px] leading-[30px] font-semibold text-[#351F65]">
             9. Cards
           </h2>
-          <p className="text-[14px] text-[#64736C]">
-            White background, 1px solid #E5EAE6 border, 12px radius, 20px padding. No default drop shadow.
+          <p className="text-[14px] text-[#78879A]">
+            White background, 1px solid #EAE8F0 border, 12px radius, 20px padding with soft modern shadow.
           </p>
         </div>
         <Card className="max-w-xl">
@@ -479,12 +480,12 @@ export const DesignSystemShowcase: React.FC = () => {
             <CardDescription>Telmisartan 40 mg &bull; Prescribed by Dr. S. Mukherjee</CardDescription>
           </CardHeader>
           <CardContent>
-            <p className="text-[14px] text-[#24332E]">
+            <p className="text-[14px] text-[#14161A]">
               Patient refill is scheduled for dispatch in 5 days. Ensure cold-chain compliance if applicable.
             </p>
           </CardContent>
-          <CardFooter className="justify-between border-t border-[#E5EAE6]">
-            <span className="text-[12px] text-[#64736C]">Prescription ref: RX-50214</span>
+          <CardFooter className="justify-between border-t border-[#EAE8F0]">
+            <span className="text-[12px] text-[#78879A]">Prescription ref: RX-50214</span>
             <Button size="sm" variant="primary">Approve Refill</Button>
           </CardFooter>
         </Card>
@@ -492,30 +493,31 @@ export const DesignSystemShowcase: React.FC = () => {
 
       {/* 10. Status Badges */}
       <section id="status-badges" className="space-y-4">
-        <div className="border-b border-[#E5EAE6] pb-2">
-          <h2 className="text-[22px] leading-[30px] font-semibold text-[#24332E]">
+        <div className="border-b border-[#EAE8F0] pb-2">
+          <h2 className="text-[22px] leading-[30px] font-semibold text-[#351F65]">
             10. Status Badges
           </h2>
-          <p className="text-[14px] text-[#64736C]">
-            Height 24px, padding 8px, font 12px weight 500, radius 6px. Readable text label mandatory.
+          <p className="text-[14px] text-[#78879A]">
+            Height 24px, padding 8px, font 12px weight 500, radius 6px with distinct readable labels.
           </p>
         </div>
-        <div className="flex flex-wrap items-center gap-3 rounded-[12px] border border-[#E5EAE6] bg-white p-6">
+        <div className="flex flex-wrap items-center gap-3 rounded-[12px] border border-[#EAE8F0] bg-white p-6 shadow-xs">
+          <Badge variant="purple">Clinical Care (Purple)</Badge>
           <Badge variant="success">Verified (Success)</Badge>
           <Badge variant="warning">Pending Review (Warning)</Badge>
           <Badge variant="danger">Blocked (Danger)</Badge>
-          <Badge variant="information">Schedule H (Information)</Badge>
+          <Badge variant="information">Schedule H (Info / Cyan)</Badge>
           <Badge variant="neutral">Draft (Neutral)</Badge>
         </div>
       </section>
 
       {/* 11. Alerts */}
       <section id="alerts" className="space-y-4">
-        <div className="border-b border-[#E5EAE6] pb-2">
-          <h2 className="text-[22px] leading-[30px] font-semibold text-[#24332E]">
+        <div className="border-b border-[#EAE8F0] pb-2">
+          <h2 className="text-[22px] leading-[30px] font-semibold text-[#351F65]">
             11. Alerts
           </h2>
-          <p className="text-[14px] text-[#64736C]">
+          <p className="text-[14px] text-[#78879A]">
             Semantic alerts with appropriate Lucide icons, title, description, and optional action.
           </p>
         </div>
@@ -546,15 +548,15 @@ export const DesignSystemShowcase: React.FC = () => {
 
       {/* 12. Dialog Example */}
       <section id="dialog-example" className="space-y-4">
-        <div className="border-b border-[#E5EAE6] pb-2">
-          <h2 className="text-[22px] leading-[30px] font-semibold text-[#24332E]">
+        <div className="border-b border-[#EAE8F0] pb-2">
+          <h2 className="text-[22px] leading-[30px] font-semibold text-[#351F65]">
             12. Dialog Example
           </h2>
-          <p className="text-[14px] text-[#64736C]">
-            Max width 480px, padding 24px, radius 12px, elevation shadow 0 12px 32px rgba(36, 51, 46, 0.12).
+          <p className="text-[14px] text-[#78879A]">
+            Max width 480px, padding 24px, radius 12px, elevation shadow 0 16px 36px rgba(53, 31, 101, 0.16).
           </p>
         </div>
-        <div className="rounded-[12px] border border-[#E5EAE6] bg-white p-6">
+        <div className="rounded-[12px] border border-[#EAE8F0] bg-white p-6 shadow-xs">
           <Dialog>
             <DialogTrigger asChild>
               <Button variant="primary">Open Verification Dialog</Button>
@@ -566,9 +568,9 @@ export const DesignSystemShowcase: React.FC = () => {
                   You are approving prescription RX-50214 for Telmisartan 40 mg under Schedule H guidelines.
                 </DialogDescription>
               </DialogHeader>
-              <div className="py-2 text-[14px] text-[#24332E] space-y-2">
-                <p><strong>Patient:</strong> Mother (Protima Ghosh, 68y)</p>
-                <p><strong>Registered Store:</strong> Salt Lake Hub</p>
+              <div className="py-2 text-[14px] text-[#14161A] space-y-2">
+                <p><strong className="text-[#351F65]">Patient:</strong> Mother (Protima Ghosh, 68y)</p>
+                <p><strong className="text-[#351F65]">Registered Hub:</strong> Salt Lake Hub</p>
               </div>
               <DialogFooter>
                 <DialogClose asChild>
@@ -585,19 +587,19 @@ export const DesignSystemShowcase: React.FC = () => {
 
       {/* 13. Dropdown Example */}
       <section id="dropdown-example" className="space-y-4">
-        <div className="border-b border-[#E5EAE6] pb-2">
-          <h2 className="text-[22px] leading-[30px] font-semibold text-[#24332E]">
+        <div className="border-b border-[#EAE8F0] pb-2">
+          <h2 className="text-[22px] leading-[30px] font-semibold text-[#351F65]">
             13. Dropdown Example
           </h2>
-          <p className="text-[14px] text-[#64736C]">
-            Min width 180px, radius 8px, item height 36px, shadow 0 4px 16px rgba(36, 51, 46, 0.08).
+          <p className="text-[14px] text-[#78879A]">
+            Min width 180px, radius 8px, item height 36px, shadow 0 4px 18px rgba(53, 31, 101, 0.10).
           </p>
         </div>
-        <div className="rounded-[12px] border border-[#E5EAE6] bg-white p-6">
+        <div className="rounded-[12px] border border-[#EAE8F0] bg-white p-6 shadow-xs">
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="outline">
-                Actions Menu <ChevronDown className="ml-2 h-4 w-4" />
+                Actions Menu <ChevronDown className="ml-2 h-4 w-4 text-[#6240E8]" />
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent>
@@ -615,16 +617,16 @@ export const DesignSystemShowcase: React.FC = () => {
 
       {/* 14. Data Table Example */}
       <section id="data-table-example" className="space-y-4">
-        <div className="border-b border-[#E5EAE6] pb-2 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <div className="border-b border-[#EAE8F0] pb-2 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div>
-            <h2 className="text-[22px] leading-[30px] font-semibold text-[#24332E]">
+            <h2 className="text-[22px] leading-[30px] font-semibold text-[#351F65]">
               14. Data Table Example
             </h2>
-            <p className="text-[14px] text-[#64736C]">
-              Header 44px, Body row 52px, Cell px 16px, border #E5EAE6, hover #F7F9F7.
+            <p className="text-[14px] text-[#78879A]">
+              Header 44px, Body row 52px, Cell px 16px, border #EAE8F0, hover #F7F5FD.
             </p>
           </div>
-          <div className="flex items-center gap-1.5 self-start sm:self-auto bg-white p-1 rounded-[8px] border border-[#E5EAE6]">
+          <div className="flex items-center gap-1.5 self-start sm:self-auto bg-white p-1 rounded-[8px] border border-[#EAE8F0] shadow-xs">
             <Button
               size="sm"
               variant={tableState === 'normal' ? 'primary' : 'ghost'}
@@ -660,62 +662,62 @@ export const DesignSystemShowcase: React.FC = () => {
           columns={columns}
           data={tableState === 'empty' ? [] : sampleRows}
           loading={tableState === 'loading'}
-          error={tableState === 'error' ? 'Failed to fetch inventory rows from database.' : null}
+          error={tableState === 'error' ? 'Failed to fetch inventory rows from clinical database.' : null}
           onRetry={() => setTableState('normal')}
         />
       </section>
 
       {/* 15. Responsive Layout Examples */}
       <section id="responsive-layout-examples" className="space-y-4">
-        <div className="border-b border-[#E5EAE6] pb-2">
-          <h2 className="text-[22px] leading-[30px] font-semibold text-[#24332E]">
+        <div className="border-b border-[#EAE8F0] pb-2">
+          <h2 className="text-[22px] leading-[30px] font-semibold text-[#351F65]">
             15. Responsive Layout Examples
           </h2>
-          <p className="text-[14px] text-[#64736C]">
-            Interactive links to the three core portal implementations matching exact specifications.
+          <p className="text-[14px] text-[#78879A]">
+            Portal previews showcasing the Teladoc Health visual language.
           </p>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <Link href="/customer" className="group">
-            <Card className="h-full bg-white hover:border-[#176B52] transition-colors p-5 space-y-3">
+            <Card className="h-full bg-white hover:border-[#6240E8] transition-colors p-5 space-y-3">
               <div className="flex items-center justify-between">
-                <span className="font-semibold text-[16px] text-[#24332E]">Customer Portal</span>
-                <Smartphone className="h-5 w-5 text-[#176B52]" />
+                <span className="font-semibold text-[16px] text-[#351F65]">Customer Care Portal</span>
+                <Smartphone className="h-5 w-5 text-[#6240E8]" />
               </div>
-              <p className="text-[13px] text-[#64736C]">
-                Route: <code className="text-[#176B52]">/customer</code> &bull; Mobile-first bottom nav, 1200px max container, refill card, recent orders.
+              <p className="text-[13px] text-[#78879A]">
+                Route: <code className="text-[#6240E8]">/customer</code> &bull; Mobile-first bottom nav, 1200px max container, refill card, recent orders.
               </p>
-              <div className="flex items-center text-[12px] font-semibold text-[#176B52] group-hover:underline">
+              <div className="flex items-center text-[12px] font-semibold text-[#6240E8] group-hover:underline">
                 Explore Customer Home <ExternalLink className="ml-1 h-3.5 w-3.5" />
               </div>
             </Card>
           </Link>
 
           <Link href="/pharmacist" className="group">
-            <Card className="h-full bg-white hover:border-[#176B52] transition-colors p-5 space-y-3">
+            <Card className="h-full bg-white hover:border-[#6240E8] transition-colors p-5 space-y-3">
               <div className="flex items-center justify-between">
-                <span className="font-semibold text-[16px] text-[#24332E]">Pharmacist Portal</span>
-                <Tablet className="h-5 w-5 text-[#176B52]" />
+                <span className="font-semibold text-[16px] text-[#351F65]">Pharmacist Portal</span>
+                <Tablet className="h-5 w-5 text-[#6240E8]" />
               </div>
-              <p className="text-[13px] text-[#64736C]">
-                Route: <code className="text-[#176B52]">/pharmacist</code> &bull; 240px sidebar, 64px header, drawer on tablet/mobile, 2-column prescription review.
+              <p className="text-[13px] text-[#78879A]">
+                Route: <code className="text-[#6240E8]">/pharmacist</code> &bull; 240px sidebar, 64px header, drawer on tablet/mobile, 2-column prescription review.
               </p>
-              <div className="flex items-center text-[12px] font-semibold text-[#176B52] group-hover:underline">
+              <div className="flex items-center text-[12px] font-semibold text-[#6240E8] group-hover:underline">
                 Explore Verification Queue <ExternalLink className="ml-1 h-3.5 w-3.5" />
               </div>
             </Card>
           </Link>
 
           <Link href="/admin" className="group">
-            <Card className="h-full bg-white hover:border-[#176B52] transition-colors p-5 space-y-3">
+            <Card className="h-full bg-white hover:border-[#6240E8] transition-colors p-5 space-y-3">
               <div className="flex items-center justify-between">
-                <span className="font-semibold text-[16px] text-[#24332E]">Admin Portal</span>
-                <Monitor className="h-5 w-5 text-[#176B52]" />
+                <span className="font-semibold text-[16px] text-[#351F65]">Admin Portal</span>
+                <Monitor className="h-5 w-5 text-[#6240E8]" />
               </div>
-              <p className="text-[13px] text-[#64736C]">
-                Route: <code className="text-[#176B52]">/admin</code> &bull; 1440px wide panel, 4 KPI cards, orders-by-store chart placeholder, recent orders table.
+              <p className="text-[13px] text-[#78879A]">
+                Route: <code className="text-[#6240E8]">/admin</code> &bull; 1440px wide panel, 4 KPI cards, orders-by-store chart placeholder, recent orders table.
               </p>
-              <div className="flex items-center text-[12px] font-semibold text-[#176B52] group-hover:underline">
+              <div className="flex items-center text-[12px] font-semibold text-[#6240E8] group-hover:underline">
                 Explore Operations Overview <ExternalLink className="ml-1 h-3.5 w-3.5" />
               </div>
             </Card>
