@@ -271,6 +271,37 @@ export class InventoryImportsService {
               },
             });
 
+            // Phase 6 Invariant: Reconcile active stock reservations against imported physical on-hand stock
+            if (storeId) {
+              const activeReservedAgg = await tx.stockReservation.aggregate({
+                where: {
+                  storeId,
+                  medicineId: row.medicineId,
+                  status: 'ACTIVE',
+                  expiresAt: { gt: new Date() },
+                },
+                _sum: { quantity: true },
+              });
+              const activeReserved = activeReservedAgg._sum.quantity || 0;
+
+              // If imported physical stock is lower than active reserved quantity, flag discrepancy
+              if (row.quantity < activeReserved) {
+                await tx.inventoryMovement.create({
+                  data: {
+                    medicineId: row.medicineId,
+                    storeId,
+                    movementType: InventoryMovementType.STOCK_DISCREPANCY,
+                    quantityBefore: row.quantity,
+                    quantityChange: 0,
+                    quantityAfter: row.quantity,
+                    reason: `STOCK_DISCREPANCY: Imported on-hand (${row.quantity}) is lower than active reserved stock (${activeReserved}). Requires admin reconciliation.`,
+                    referenceId: importRecord.id,
+                    performedByUserId: user.id,
+                  },
+                });
+              }
+            }
+
             // Record row as APPLIED
             await tx.inventoryImportRow.create({
               data: {
