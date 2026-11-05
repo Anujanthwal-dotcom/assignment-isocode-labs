@@ -2,6 +2,7 @@ import { NestFactory } from '@nestjs/core';
 import { ValidationPipe, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import cookieParser from 'cookie-parser';
 import { AppModule } from './app.module';
 import { AllExceptionsFilter } from './common/filters/all-exceptions.filter';
 
@@ -12,6 +13,10 @@ async function bootstrap() {
   const configService = app.get(ConfigService);
   const port = configService.get<number>('port', 3001);
   const corsOrigin = configService.get<string>('corsOrigin', 'http://localhost:3000');
+
+  // Cookie Parser Middleware
+  const cookieMiddleware = (cookieParser as any)?.default || cookieParser;
+  app.use(cookieMiddleware());
 
   // Global API Prefix
   app.setGlobalPrefix('api/v1');
@@ -46,6 +51,8 @@ async function bootstrap() {
     )
     .setVersion('1.0')
     .addTag('Health', 'Health and infrastructure status endpoints')
+    .addTag('Authentication', 'Customer OTP, staff login, session refresh, and profile endpoints')
+    .addBearerAuth()
     .build();
 
   const document = SwaggerModule.createDocument(app, swaggerConfig);
