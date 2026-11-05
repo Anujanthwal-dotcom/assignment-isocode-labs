@@ -21,12 +21,18 @@ export const OtpInput: React.FC<OtpInputProps> = ({
   className,
 }) => {
   const [internalOtp, setInternalOtp] = React.useState<string[]>(
-    Array(length).fill('').map((_, i) => value[i] || '')
+    Array(length)
+      .fill('')
+      .map((_, i) => value[i] || ''),
   );
   const inputRefs = React.useRef<(HTMLInputElement | null)[]>([]);
 
   React.useEffect(() => {
-    setInternalOtp(Array(length).fill('').map((_, i) => value[i] || ''));
+    setInternalOtp(
+      Array(length)
+        .fill('')
+        .map((_, i) => value[i] || ''),
+    );
   }, [value, length]);
 
   const handleChange = (index: number, e: React.ChangeEvent<HTMLInputElement>) => {
@@ -70,7 +76,7 @@ export const OtpInput: React.FC<OtpInputProps> = ({
               'h-[44px] w-[40px] text-center rounded-[8px] bg-white text-[16px] font-semibold text-[#351F65] border border-[#CED4DA] transition-colors',
               'focus-visible:outline-none focus-visible:border-[#6240E8] focus-visible:ring-2 focus-visible:ring-[#6240E8]/20',
               hasError && 'border-[#DC3545] focus-visible:border-[#DC3545]',
-              disabled && 'opacity-50 cursor-not-allowed bg-[#EFF2F7]'
+              disabled && 'opacity-50 cursor-not-allowed bg-[#EFF2F7]',
             )}
             aria-label={`Digit ${index + 1}`}
           />

@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import { HealthStatusCard } from '@/components/HealthStatusCard';
 
 export default function HomePage() {
@@ -39,36 +40,40 @@ export default function HomePage() {
             </p>
           </div>
 
-          {/* Planned Modules / Portals Roadmap */}
+          {/* Portals & Authentication */}
           <div className="border border-slate-200 rounded-xl p-5 bg-white space-y-3 shadow-xs">
             <h3 className="text-xs font-semibold uppercase tracking-wider text-slate-500">
-              Future Modules &amp; Portals
+              Portals &amp; Role-Based Access
             </h3>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
-              <div className="p-3 bg-slate-50 rounded-lg border border-slate-100">
-                <span className="font-semibold text-slate-800 block">Customer Portal</span>
-                <span className="text-slate-500">
-                  Prescription upload, order tracking &amp; refill alerts
-                </span>
-              </div>
-              <div className="p-3 bg-slate-50 rounded-lg border border-slate-100">
-                <span className="font-semibold text-slate-800 block">Pharmacist Portal</span>
-                <span className="text-slate-500">
-                  Prescription verification &amp; schedule sign-offs
-                </span>
-              </div>
-              <div className="p-3 bg-slate-50 rounded-lg border border-slate-100">
-                <span className="font-semibold text-slate-800 block">Admin Operations</span>
-                <span className="text-slate-500">
-                  Inventory across 46 stores &amp; audit trails
-                </span>
-              </div>
-              <div className="p-3 bg-slate-50 rounded-lg border border-slate-100">
-                <span className="font-semibold text-slate-800 block">Compliance Engine</span>
-                <span className="text-slate-500">
-                  Schedule H / H1 / X regulatory dispatch guards
-                </span>
-              </div>
+              <Link
+                href="/customer"
+                className="p-3 bg-slate-50 hover:bg-purple-50 hover:border-purple-200 rounded-lg border border-slate-100 transition-colors block"
+              >
+                <span className="font-semibold text-slate-800 block">Customer Portal &rarr;</span>
+                <span className="text-slate-500">Mock OTP Login &bull; Role: CUSTOMER</span>
+              </Link>
+              <Link
+                href="/pharmacist"
+                className="p-3 bg-slate-50 hover:bg-teal-50 hover:border-teal-200 rounded-lg border border-slate-100 transition-colors block"
+              >
+                <span className="font-semibold text-slate-800 block">Pharmacist Portal &rarr;</span>
+                <span className="text-slate-500">Email &amp; Password &bull; Role: PHARMACIST</span>
+              </Link>
+              <Link
+                href="/admin"
+                className="p-3 bg-slate-50 hover:bg-indigo-50 hover:border-indigo-200 rounded-lg border border-slate-100 transition-colors block"
+              >
+                <span className="font-semibold text-slate-800 block">Admin Operations &rarr;</span>
+                <span className="text-slate-500">Operations &amp; Compliance Portal</span>
+              </Link>
+              <Link
+                href="/design-system"
+                className="p-3 bg-slate-50 hover:bg-slate-100 rounded-lg border border-slate-100 transition-colors block"
+              >
+                <span className="font-semibold text-slate-800 block">Design System &rarr;</span>
+                <span className="text-slate-500">Phase 0.5 Teladoc UI Showcase</span>
+              </Link>
             </div>
           </div>
 

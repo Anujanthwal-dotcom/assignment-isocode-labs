@@ -6,12 +6,7 @@ import { Button } from '@/components/ui/button';
 import { StatusBadge } from '@/components/shared/StatusBadge';
 import { SemanticAlert } from '@/components/shared/SemanticAlert';
 import { SAMPLE_PHARMACIST } from '@/lib/sample-data';
-import {
-  FileText,
-  AlertTriangle,
-  User,
-  Layers,
-} from 'lucide-react';
+import { FileText, AlertTriangle, User, Layers } from 'lucide-react';
 
 export const PharmacistWorkspacePreview: React.FC = () => {
   const rx = SAMPLE_PHARMACIST.pendingPrescription;
@@ -30,7 +25,8 @@ export const PharmacistWorkspacePreview: React.FC = () => {
           Verification Queue
         </h1>
         <p className="text-[14px] leading-[20px] text-[#78879A] mt-1">
-          Review digital intake, doctor signatures, and regulatory schedule compliance before store dispatch.
+          Review digital intake, doctor signatures, and regulatory schedule compliance before store
+          dispatch.
         </p>
       </div>
 
@@ -44,7 +40,9 @@ export const PharmacistWorkspacePreview: React.FC = () => {
             </span>
             <StatusBadge status="warning" label="Immediate SLA" />
           </div>
-          <span className="text-[11px] text-[#78879A] mt-1 block">Clinical turnaround &lt; 20m</span>
+          <span className="text-[11px] text-[#78879A] mt-1 block">
+            Clinical turnaround &lt; 20m
+          </span>
         </Card>
 
         <Card className="p-4 bg-white border-[#EAE8F0]">
@@ -55,7 +53,9 @@ export const PharmacistWorkspacePreview: React.FC = () => {
             </span>
             <StatusBadge status="danger" label="Schedule H1 / X" />
           </div>
-          <span className="text-[11px] text-[#78879A] mt-1 block">Requires manual MD sign-off check</span>
+          <span className="text-[11px] text-[#78879A] mt-1 block">
+            Requires manual MD sign-off check
+          </span>
         </Card>
 
         <Card className="p-4 bg-white border-[#EAE8F0]">
@@ -85,7 +85,8 @@ export const PharmacistWorkspacePreview: React.FC = () => {
                 <StatusBadge status="warning" label="Awaiting Sign-Off" />
               </div>
               <p className="text-[12px] text-[#78879A] flex items-center gap-2 mt-0.5">
-                <User className="h-3.5 w-3.5 text-[#6240E8]" /> Patient: {rx.forPatient} &bull; Uploaded by {rx.customerName} ({rx.uploadedAt})
+                <User className="h-3.5 w-3.5 text-[#6240E8]" /> Patient: {rx.forPatient} &bull;
+                Uploaded by {rx.customerName} ({rx.uploadedAt})
               </p>
             </div>
           </div>

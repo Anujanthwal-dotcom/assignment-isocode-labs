@@ -72,7 +72,7 @@ export const FileUpload: React.FC<FileUploadProps> = ({
           'border-[#CED4DA] hover:border-[#6240E8] hover:bg-[#F7F5FD]',
           dragActive && 'border-[#6240E8] bg-[#F7F5FD]',
           hasError && 'border-[#DC3545] bg-[#FDF2F2]/40',
-          disabled && 'opacity-50 cursor-not-allowed bg-[#EFF2F7] hover:border-[#CED4DA]'
+          disabled && 'opacity-50 cursor-not-allowed bg-[#EFF2F7] hover:border-[#CED4DA]',
         )}
       >
         <input

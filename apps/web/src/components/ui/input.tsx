@@ -9,7 +9,10 @@ export interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> 
 }
 
 export const Input = React.forwardRef<HTMLInputElement, InputProps>(
-  ({ className, type = 'text', error, helperText, leftIcon, disabled, readOnly, ...props }, ref) => {
+  (
+    { className, type = 'text', error, helperText, leftIcon, disabled, readOnly, ...props },
+    ref,
+  ) => {
     const hasError = Boolean(error);
     const errorMessage = typeof error === 'string' ? error : undefined;
 
@@ -29,11 +32,12 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
               'h-[44px] w-full rounded-[8px] bg-white px-[12px] text-[14px] leading-[20px] text-[#14161A] border placeholder:text-[#ADB5BD] transition-colors',
               'border-[#CED4DA]',
               'focus-visible:outline-none focus-visible:border-[#6240E8] focus-visible:ring-2 focus-visible:ring-[#6240E8]/20',
-              hasError && 'border-[#DC3545] focus-visible:border-[#DC3545] focus-visible:ring-[#DC3545]/20',
+              hasError &&
+                'border-[#DC3545] focus-visible:border-[#DC3545] focus-visible:ring-[#DC3545]/20',
               disabled && 'opacity-50 cursor-not-allowed bg-[#EFF2F7]',
               readOnly && 'bg-[#F8F9FB] cursor-default',
               leftIcon && 'pl-[38px]',
-              className
+              className,
             )}
             ref={ref}
             {...props}
@@ -47,7 +51,7 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
         )}
       </div>
     );
-  }
+  },
 );
 Input.displayName = 'Input';
 
@@ -78,7 +82,7 @@ export const PasswordInput = React.forwardRef<HTMLInputElement, PasswordInputPro
         </button>
       </div>
     );
-  }
+  },
 );
 PasswordInput.displayName = 'PasswordInput';
 
@@ -96,6 +100,6 @@ export const SearchInput = React.forwardRef<HTMLInputElement, SearchInputProps>(
         {...props}
       />
     );
-  }
+  },
 );
 SearchInput.displayName = 'SearchInput';

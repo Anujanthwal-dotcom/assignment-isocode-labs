@@ -41,7 +41,7 @@ export function DataTable<T extends Record<string, unknown>>({
     <div
       className={cn(
         'w-full overflow-hidden rounded-[12px] border border-[#EAE8F0] bg-white shadow-[0_4px_20px_rgba(53,31,101,0.03)]',
-        className
+        className,
       )}
     >
       <div className="overflow-x-auto">
@@ -58,10 +58,7 @@ export function DataTable<T extends Record<string, unknown>>({
           <TableBody>
             {loading ? (
               <TableRow>
-                <TableCell
-                  colSpan={columns.length}
-                  className="h-[180px] text-center"
-                >
+                <TableCell colSpan={columns.length} className="h-[180px] text-center">
                   <div className="flex flex-col items-center justify-center gap-2 text-[#78879A]">
                     <Loader2 className="h-6 w-6 animate-spin text-[#6240E8]" />
                     <span className="text-[14px]">Loading clinical records...</span>
@@ -70,10 +67,7 @@ export function DataTable<T extends Record<string, unknown>>({
               </TableRow>
             ) : error ? (
               <TableRow>
-                <TableCell
-                  colSpan={columns.length}
-                  className="h-[180px] text-center"
-                >
+                <TableCell colSpan={columns.length} className="h-[180px] text-center">
                   <div className="flex flex-col items-center justify-center gap-2 text-[#DC3545]">
                     <AlertCircle className="h-6 w-6" />
                     <span className="text-[14px] font-medium">{error}</span>
@@ -92,10 +86,7 @@ export function DataTable<T extends Record<string, unknown>>({
               </TableRow>
             ) : data.length === 0 ? (
               <TableRow>
-                <TableCell
-                  colSpan={columns.length}
-                  className="h-[180px] text-center"
-                >
+                <TableCell colSpan={columns.length} className="h-[180px] text-center">
                   <div className="flex flex-col items-center justify-center gap-2 text-[#78879A]">
                     <Inbox className="h-6 w-6 opacity-60" />
                     <span className="text-[14px]">{emptyMessage}</span>
@@ -107,9 +98,7 @@ export function DataTable<T extends Record<string, unknown>>({
                 <TableRow key={rowIndex}>
                   {columns.map((col) => (
                     <TableCell key={col.key} className={col.className}>
-                      {col.render
-                        ? col.render(row)
-                        : (row[col.key] as React.ReactNode)}
+                      {col.render ? col.render(row) : (row[col.key] as React.ReactNode)}
                     </TableCell>
                   ))}
                 </TableRow>

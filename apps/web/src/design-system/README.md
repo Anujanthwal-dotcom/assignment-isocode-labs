@@ -1,11 +1,13 @@
 # Teladoc Health UI — Pharmacy Platform Design System
 
 The Teladoc Health design system provides a patient-first, human-centric, and authoritative clinical visual language across all three portals:
+
 1. **Customer portal** (`/customer`)
 2. **Pharmacist portal** (`/pharmacist`)
 3. **Admin and operations portal** (`/admin`)
 
 ## Core Visual Identity
+
 - **Primary Electric Purple (`#6240E8`)**: Used for key primary CTAs, interactive states, and focal actions.
 - **Deep Midnight Purple (`#351F65`)**: Used for section headers, corporate branding, and high-contrast anchors.
 - **Vibrant Cyan / Teal (`#00B5E2`)**: Telehealth accent for status highlights and secondary care paths.
@@ -15,6 +17,7 @@ The Teladoc Health design system provides a patient-first, human-centric, and au
 ## Token Reference
 
 ### Brand Palette
+
 - `brand-50`: `#F7F5FD` (Soft lavender tint)
 - `brand-100`: `#EAE8F0` (Subtle purple-tinted border)
 - `brand-200`: `#D6D1F7`
@@ -28,6 +31,7 @@ The Teladoc Health design system provides a patient-first, human-centric, and au
 - `brand-cyan-dark`: `#0088AA`
 
 ### Neutral Palette
+
 - `neutral-0`: `#FFFFFF`
 - `neutral-50`: `#F8F9FB` (Canvas background)
 - `neutral-100`: `#EFF2F7` (Muted surface)
@@ -41,6 +45,7 @@ The Teladoc Health design system provides a patient-first, human-centric, and au
 - `neutral-900`: `#14161A`
 
 ### Semantic Palette
+
 - **Clinical Success**: Text `#0FAC26` | Background `#E8F8EC` | Border `#B0E6BC`
 - **Clinical Warning**: Text `#A66B16` | Background `#FFF8EC` | Border `#F6DCB0`
 - **Clinical Danger / Blocked**: Text `#DC3545` | Background `#FDF2F2` | Border `#F9CACA`

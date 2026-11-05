@@ -16,22 +16,16 @@ export const alertVariants = cva(
     defaultVariants: {
       variant: 'information',
     },
-  }
+  },
 );
 
 export interface AlertProps
-  extends React.HTMLAttributes<HTMLDivElement>,
-    VariantProps<typeof alertVariants> {}
+  extends React.HTMLAttributes<HTMLDivElement>, VariantProps<typeof alertVariants> {}
 
 export const Alert = React.forwardRef<HTMLDivElement, AlertProps>(
   ({ className, variant, ...props }, ref) => (
-    <div
-      ref={ref}
-      role="alert"
-      className={cn(alertVariants({ variant }), className)}
-      {...props}
-    />
-  )
+    <div ref={ref} role="alert" className={cn(alertVariants({ variant }), className)} {...props} />
+  ),
 );
 Alert.displayName = 'Alert';
 
@@ -41,7 +35,10 @@ export const AlertTitle = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <h5
     ref={ref}
-    className={cn('mb-1 text-[14px] leading-[20px] font-semibold tracking-tight text-current', className)}
+    className={cn(
+      'mb-1 text-[14px] leading-[20px] font-semibold tracking-tight text-current',
+      className,
+    )}
     {...props}
   />
 ));
@@ -51,10 +48,6 @@ export const AlertDescription = React.forwardRef<
   HTMLParagraphElement,
   React.HTMLAttributes<HTMLParagraphElement>
 >(({ className, ...props }, ref) => (
-  <div
-    ref={ref}
-    className={cn('text-[14px] leading-[20px] opacity-90', className)}
-    {...props}
-  />
+  <div ref={ref} className={cn('text-[14px] leading-[20px] opacity-90', className)} {...props} />
 ));
 AlertDescription.displayName = 'AlertDescription';

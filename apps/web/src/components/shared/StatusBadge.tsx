@@ -21,11 +21,7 @@ export interface StatusBadgeProps {
   className?: string;
 }
 
-export const StatusBadge: React.FC<StatusBadgeProps> = ({
-  status,
-  label,
-  className,
-}) => {
+export const StatusBadge: React.FC<StatusBadgeProps> = ({ status, label, className }) => {
   let variant: NonNullable<BadgeProps['variant']> = 'neutral';
   let defaultLabel: string = status;
 
@@ -34,19 +30,26 @@ export const StatusBadge: React.FC<StatusBadgeProps> = ({
     case 'completed':
     case 'verified':
       variant = 'success';
-      defaultLabel = status === 'completed' ? 'Completed' : status === 'verified' ? 'Verified' : 'Success';
+      defaultLabel =
+        status === 'completed' ? 'Completed' : status === 'verified' ? 'Verified' : 'Success';
       break;
     case 'warning':
     case 'pending':
     case 'processing':
       variant = 'warning';
-      defaultLabel = status === 'pending' ? 'Pending Review' : status === 'processing' ? 'Processing' : 'Warning';
+      defaultLabel =
+        status === 'pending'
+          ? 'Pending Review'
+          : status === 'processing'
+            ? 'Processing'
+            : 'Warning';
       break;
     case 'danger':
     case 'rejected':
     case 'blocked':
       variant = 'danger';
-      defaultLabel = status === 'blocked' ? 'Blocked' : status === 'rejected' ? 'Rejected' : 'Action Required';
+      defaultLabel =
+        status === 'blocked' ? 'Blocked' : status === 'rejected' ? 'Rejected' : 'Action Required';
       break;
     case 'information':
       variant = 'information';

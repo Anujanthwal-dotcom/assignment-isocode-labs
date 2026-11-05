@@ -5,11 +5,7 @@ import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { StatusBadge } from '@/components/shared/StatusBadge';
 import { DataTable, type Column } from '@/components/shared/DataTable';
 import { SAMPLE_ADMIN } from '@/lib/sample-data';
-import {
-  Store,
-  BarChart3,
-  Activity,
-} from 'lucide-react';
+import { Store, BarChart3, Activity } from 'lucide-react';
 
 interface OrderRow {
   id: string;
@@ -79,7 +75,8 @@ export const AdminOverviewPreview: React.FC = () => {
           Operations Overview
         </h1>
         <p className="text-[14px] leading-[20px] text-[#78879A] mt-1">
-          High-level operational throughput, regional store compliance, and prescription verification velocity.
+          High-level operational throughput, regional store compliance, and prescription
+          verification velocity.
         </p>
       </div>
 
@@ -130,10 +127,7 @@ export const AdminOverviewPreview: React.FC = () => {
                   <span className="text-[#78879A] font-semibold">{bar.count} orders</span>
                 </div>
                 <div className="h-2.5 w-full rounded-full bg-[#EFF2F7] overflow-hidden">
-                  <div
-                    className={`h-full rounded-full ${bar.color}`}
-                    style={{ width: bar.pct }}
-                  />
+                  <div className={`h-full rounded-full ${bar.color}`} style={{ width: bar.pct }} />
                 </div>
               </div>
             ))}
@@ -161,13 +155,17 @@ export const AdminOverviewPreview: React.FC = () => {
             <div className="rounded-[8px] bg-[#F7F5FD] p-3.5 border border-[#EAE8F0] space-y-1">
               <span className="text-[12px] text-[#78879A] block">Average Turnaround</span>
               <span className="text-[20px] font-semibold text-[#6240E8]">18.4 minutes</span>
-              <span className="text-[11px] text-[#0FAC26] font-medium block">3.2 mins faster than SLA threshold</span>
+              <span className="text-[11px] text-[#0FAC26] font-medium block">
+                3.2 mins faster than SLA threshold
+              </span>
             </div>
 
             <div className="rounded-[8px] bg-[#F7F5FD] p-3.5 border border-[#EAE8F0] space-y-1">
               <span className="text-[12px] text-[#78879A] block">Audit Log Completeness</span>
               <span className="text-[20px] font-semibold text-[#351F65]">100%</span>
-              <span className="text-[11px] text-[#78879A] block">Dual clinical sign-off verified</span>
+              <span className="text-[11px] text-[#78879A] block">
+                Dual clinical sign-off verified
+              </span>
             </div>
 
             <p className="text-[11px] text-[#ADB5BD] pt-2 text-right italic">

@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import { Lexend, Inter, Noto_Sans_Bengali, Noto_Sans_Devanagari } from 'next/font/google';
+import { AuthProvider } from '@/lib/auth/auth-context';
 import './globals.css';
 
 const lexend = Lexend({
@@ -44,7 +45,7 @@ export default function RootLayout({
       <body
         className={`${lexend.variable} ${inter.variable} ${notoSansBengali.variable} ${notoSansDevanagari.variable} antialiased min-h-screen bg-[var(--background)] text-[var(--foreground)]`}
       >
-        {children}
+        <AuthProvider>{children}</AuthProvider>
       </body>
     </html>
   );

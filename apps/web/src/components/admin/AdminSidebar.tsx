@@ -28,10 +28,7 @@ const navItems = [
   { label: 'Compliance Settings', href: '/admin', icon: ShieldCheck },
 ];
 
-export const AdminSidebar: React.FC<AdminSidebarProps> = ({
-  openMobile,
-  onCloseMobile,
-}) => {
+export const AdminSidebar: React.FC<AdminSidebarProps> = ({ openMobile, onCloseMobile }) => {
   return (
     <>
       {/* Mobile Drawer Backdrop */}

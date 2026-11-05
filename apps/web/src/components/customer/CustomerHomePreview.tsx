@@ -80,16 +80,21 @@ export const CustomerHomePreview: React.FC = () => {
                   </span>
                 </div>
                 <div>
-                  <span className="block text-[12px] font-medium text-[#78879A]">Refill Due Date</span>
+                  <span className="block text-[12px] font-medium text-[#78879A]">
+                    Refill Due Date
+                  </span>
                   <span className="text-[#351F65] font-semibold flex items-center gap-1.5">
                     <Calendar className="h-4 w-4 text-[#6240E8]" />
                     {SAMPLE_CUSTOMER.upcomingRefill.dueDate}
                   </span>
                 </div>
                 <div className="sm:col-span-2">
-                  <span className="block text-[12px] font-medium text-[#78879A]">Dosage &amp; Doctor</span>
+                  <span className="block text-[12px] font-medium text-[#78879A]">
+                    Dosage &amp; Doctor
+                  </span>
                   <span className="text-[#14161A]">
-                    {SAMPLE_CUSTOMER.upcomingRefill.dosage} &bull; {SAMPLE_CUSTOMER.upcomingRefill.prescribedBy}
+                    {SAMPLE_CUSTOMER.upcomingRefill.dosage} &bull;{' '}
+                    {SAMPLE_CUSTOMER.upcomingRefill.prescribedBy}
                   </span>
                 </div>
               </div>
@@ -120,8 +125,8 @@ export const CustomerHomePreview: React.FC = () => {
             <div>
               <p className="font-semibold text-[#0088AA]">Teladoc Health Compliance Note</p>
               <p className="text-[12px] mt-0.5 text-[#0088AA]/90">
-                Refills for blood pressure management must be verified by a registered pharmacist
-                at your assigned hub ({SAMPLE_CUSTOMER.recentOrders[0].store} Store).
+                Refills for blood pressure management must be verified by a registered pharmacist at
+                your assigned hub ({SAMPLE_CUSTOMER.recentOrders[0].store} Store).
               </p>
             </div>
           </div>
@@ -138,7 +143,10 @@ export const CustomerHomePreview: React.FC = () => {
 
           <div className="space-y-[12px]">
             {SAMPLE_CUSTOMER.recentOrders.map((order) => (
-              <Card key={order.id} className="p-4 bg-white hover:border-[#6240E8] transition-colors">
+              <Card
+                key={order.id}
+                className="p-4 bg-white hover:border-[#6240E8] transition-colors"
+              >
                 <div className="flex items-start justify-between">
                   <div>
                     <div className="flex items-center gap-2">
