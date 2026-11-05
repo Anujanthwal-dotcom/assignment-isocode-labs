@@ -57,6 +57,13 @@ async function bootstrap() {
     .addTag('Inventory Imports', 'Deterministic daily CSV snapshot imports')
     .addTag('Stores', 'Store locations and metadata')
     .addTag('Warehouses', 'Central warehouse locations and metadata')
+    .addTag('Customer Medicines', 'Customer-safe read-only medicine catalogue')
+    .addTag('Customer Family Members', 'Customer family profiles management')
+    .addTag('Customer Addresses', 'Customer saved delivery addresses')
+    .addTag('Customer Prescriptions', 'Private prescription document upload and retrieval')
+    .addTag('Customer Cart', 'Persistent database-backed customer shopping cart')
+    .addTag('Customer Orders', 'Order placement, tracking, snapshots, and cancellation')
+    .addTag('Customer Payments', 'Mock UPI and COD payment processing')
     .addBearerAuth()
     .build();
 
