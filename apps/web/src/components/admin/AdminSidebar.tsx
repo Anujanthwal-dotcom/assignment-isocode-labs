@@ -13,6 +13,7 @@ import {
   Users,
   ShieldCheck,
   Shield,
+  BarChart3,
   X,
 } from 'lucide-react';
 import { useAuth } from '@/lib/auth/auth-context';
@@ -24,13 +25,14 @@ interface AdminSidebarProps {
 
 const navItems = [
   { label: 'Overview', href: '/admin', icon: LayoutDashboard, exact: true },
+  { label: 'Central Analytics', href: '/admin/analytics', icon: BarChart3 },
+  { label: 'Fulfilment Operations', href: '/admin/fulfilment', icon: Store },
+  { label: 'Review Assignments', href: '/admin/review-assignments', icon: ShoppingCart },
   { label: 'Medicine Catalogue', href: '/admin/medicines', icon: Pill },
   { label: 'Inventory', href: '/admin/inventory', icon: Layers, exact: true },
   { label: 'Stock Imports', href: '/admin/inventory/imports', icon: UploadCloud },
-  { label: 'Orders', href: '/admin', icon: ShoppingCart },
-  { label: 'Stores', href: '/admin', icon: Store },
-  { label: 'Staff', href: '/admin', icon: Users },
-  { label: 'Compliance Settings', href: '/admin', icon: ShieldCheck },
+  { label: 'Compliance Policy', href: '/admin/compliance', icon: ShieldCheck },
+  { label: 'H1 Register', href: '/admin/compliance/h1-register', icon: Shield },
 ];
 
 export const AdminSidebar: React.FC<AdminSidebarProps> = ({ openMobile, onCloseMobile }) => {
