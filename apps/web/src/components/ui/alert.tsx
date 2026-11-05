@@ -7,10 +7,10 @@ export const alertVariants = cva(
   {
     variants: {
       variant: {
-        success: 'bg-[#E8F4ED] text-[#23845D] border-[#B9DEC9]',
-        warning: 'bg-[#FFF5E5] text-[#A66B16] border-[#F0D7A8]',
-        error: 'bg-[#FCECEC] text-[#C44747] border-[#F0C2C2]',
-        information: 'bg-[#EAF3FA] text-[#3477A5] border-[#C5DDEC]',
+        success: 'bg-[#E8F8EC] text-[#0FAC26] border-[#B0E6BC]',
+        warning: 'bg-[#FFF8EC] text-[#A66B16] border-[#F6DCB0]',
+        error: 'bg-[#FDF2F2] text-[#DC3545] border-[#F9CACA]',
+        information: 'bg-[#EBF9FD] text-[#0088AA] border-[#B4EDFB]',
       },
     },
     defaultVariants: {

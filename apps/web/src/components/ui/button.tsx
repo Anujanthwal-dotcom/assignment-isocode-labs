@@ -4,25 +4,27 @@ import { Loader2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 const buttonVariants = cva(
-  'inline-flex items-center justify-center whitespace-nowrap rounded-[8px] text-[14px] font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#23845D] focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50',
+  'inline-flex items-center justify-center whitespace-nowrap rounded-[8px] text-[14px] font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#6240E8] focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50',
   {
     variants: {
       variant: {
         primary:
-          'bg-[#176B52] text-white hover:bg-[#125840] active:bg-[#104735]',
+          'bg-[#6240E8] text-white hover:bg-[#542F9B] active:bg-[#351F65] shadow-xs',
         secondary:
-          'bg-[#E9F3EE] text-[#176B52] hover:bg-[#D4E8DC] active:bg-[#B2D6C3]',
+          'bg-[#F7F5FD] text-[#6240E8] border border-[#EAE8F0] hover:bg-[#EAE8F0] active:bg-[#D6D1F7]',
         outline:
-          'bg-white border border-[#E5EAE6] text-[#24332E] hover:bg-[#F7F9F7] active:bg-[#F0F3F1]',
+          'bg-white border border-[#DFE0DF] text-[#351F65] hover:bg-[#F8F9FB] active:bg-[#EFF2F7]',
         ghost:
-          'bg-transparent text-[#24332E] hover:bg-[#F0F3F1] active:bg-[#E5EAE6]',
+          'bg-transparent text-[#351F65] hover:bg-[#F7F5FD] active:bg-[#EAE8F0]',
         destructive:
-          'bg-[#C44747] text-white hover:bg-[#b03b3b] active:bg-[#993333]',
+          'bg-[#DC3545] text-white hover:bg-[#c82333] active:bg-[#bd2130]',
+        teal:
+          'bg-[#00B5E2] text-white hover:bg-[#009ec5] active:bg-[#0088aa] shadow-xs',
       },
       size: {
-        sm: 'h-[32px] px-[12px] text-[14px] leading-[20px]',
+        sm: 'h-[32px] px-[12px] text-[13px] leading-[18px]',
         md: 'h-[40px] px-[16px] text-[14px] leading-[20px]',
-        lg: 'h-[48px] px-[20px] text-[14px] leading-[20px]',
+        lg: 'h-[48px] px-[20px] text-[15px] leading-[22px]',
         icon: 'h-[40px] w-[40px] p-0',
       },
     },

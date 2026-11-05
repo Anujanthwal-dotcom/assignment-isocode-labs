@@ -17,7 +17,7 @@ export interface FileUploadProps {
 }
 
 export const FileUpload: React.FC<FileUploadProps> = ({
-  label = 'Upload prescription or document',
+  label = 'Upload prescription or clinical document',
   helperText = 'PDF, PNG, JPG up to 10MB',
   accept = 'image/*,.pdf',
   disabled = false,
@@ -69,10 +69,10 @@ export const FileUpload: React.FC<FileUploadProps> = ({
         onClick={() => !disabled && fileInputRef.current?.click()}
         className={cn(
           'flex flex-col items-center justify-center p-[20px] rounded-[8px] border-2 border-dashed transition-colors cursor-pointer text-center bg-white',
-          'border-[#D3DBD5] hover:border-[#176B52] hover:bg-[#F7F9F7]',
-          dragActive && 'border-[#176B52] bg-[#E9F3EE]',
-          hasError && 'border-[#C44747] bg-[#FCECEC]/30',
-          disabled && 'opacity-50 cursor-not-allowed bg-[#F0F3F1] hover:border-[#D3DBD5]'
+          'border-[#CED4DA] hover:border-[#6240E8] hover:bg-[#F7F5FD]',
+          dragActive && 'border-[#6240E8] bg-[#F7F5FD]',
+          hasError && 'border-[#DC3545] bg-[#FDF2F2]/40',
+          disabled && 'opacity-50 cursor-not-allowed bg-[#EFF2F7] hover:border-[#CED4DA]'
         )}
       >
         <input
@@ -86,10 +86,10 @@ export const FileUpload: React.FC<FileUploadProps> = ({
 
         {value ? (
           <div className="flex items-center gap-3">
-            <FileText className="h-6 w-6 text-[#176B52]" />
+            <FileText className="h-6 w-6 text-[#6240E8]" />
             <div className="text-left">
-              <p className="text-[14px] font-medium text-[#24332E]">{value.name}</p>
-              <p className="text-[12px] text-[#64736C]">
+              <p className="text-[14px] font-medium text-[#14161A]">{value.name}</p>
+              <p className="text-[12px] text-[#78879A]">
                 {(value.size / (1024 * 1024)).toFixed(2)} MB
               </p>
             </div>
@@ -100,7 +100,7 @@ export const FileUpload: React.FC<FileUploadProps> = ({
                   e.stopPropagation();
                   onChange?.(null);
                 }}
-                className="ml-2 p-1 text-[#64736C] hover:text-[#C44747]"
+                className="ml-2 p-1 text-[#78879A] hover:text-[#DC3545]"
               >
                 <X className="h-4 w-4" />
               </button>
@@ -108,15 +108,15 @@ export const FileUpload: React.FC<FileUploadProps> = ({
           </div>
         ) : (
           <div className="flex flex-col items-center gap-1.5">
-            <UploadCloud className="h-8 w-8 text-[#176B52]" />
-            <p className="text-[14px] font-medium text-[#24332E]">{label}</p>
-            <p className="text-[12px] text-[#64736C]">{helperText}</p>
+            <UploadCloud className="h-8 w-8 text-[#6240E8]" />
+            <p className="text-[14px] font-medium text-[#351F65]">{label}</p>
+            <p className="text-[12px] text-[#78879A]">{helperText}</p>
           </div>
         )}
       </div>
 
       {hasError && errorMessage && (
-        <p className="text-[12px] leading-[16px] text-[#C44747] font-normal">{errorMessage}</p>
+        <p className="text-[12px] leading-[16px] text-[#DC3545] font-normal">{errorMessage}</p>
       )}
     </div>
   );

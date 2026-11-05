@@ -20,17 +20,17 @@ export const SelectTrigger = React.forwardRef<
     <SelectPrimitive.Trigger
       ref={ref}
       className={cn(
-        'flex h-[44px] w-full items-center justify-between rounded-[8px] border border-[#D3DBD5] bg-white px-[12px] text-[14px] leading-[20px] text-[#24332E] transition-colors',
-        'focus:outline-none focus:border-[#23845D] focus:ring-2 focus:ring-[#23845D]/20',
-        'disabled:cursor-not-allowed disabled:opacity-50 disabled:bg-[#F0F3F1]',
-        hasError && 'border-[#C44747] focus:border-[#C44747] focus:ring-[#C44747]/20',
+        'flex h-[44px] w-full items-center justify-between rounded-[8px] border border-[#CED4DA] bg-white px-[12px] text-[14px] leading-[20px] text-[#14161A] transition-colors',
+        'focus:outline-none focus:border-[#6240E8] focus:ring-2 focus:ring-[#6240E8]/20',
+        'disabled:cursor-not-allowed disabled:opacity-50 disabled:bg-[#EFF2F7]',
+        hasError && 'border-[#DC3545] focus:border-[#DC3545] focus:ring-[#DC3545]/20',
         className
       )}
       {...props}
     >
       {children}
       <SelectPrimitive.Icon asChild>
-        <ChevronDown className="h-4 w-4 text-[#64736C] transition-transform duration-200" />
+        <ChevronDown className="h-4 w-4 text-[#78879A] transition-transform duration-200" />
       </SelectPrimitive.Icon>
     </SelectPrimitive.Trigger>
   );
@@ -45,7 +45,7 @@ export const SelectContent = React.forwardRef<
     <SelectPrimitive.Content
       ref={ref}
       className={cn(
-        'relative z-50 min-w-[180px] overflow-hidden rounded-[8px] border border-[#E5EAE6] bg-white p-[6px] text-[#24332E] shadow-[0_4px_16px_rgba(36,51,46,0.08)] data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0',
+        'relative z-50 min-w-[180px] overflow-hidden rounded-[8px] border border-[#EAE8F0] bg-white p-[6px] text-[#14161A] shadow-[0_4px_18px_rgba(53,31,101,0.10)] data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0',
         position === 'popper' &&
           'data-[side=bottom]:translate-y-1 data-[side=top]:-translate-y-1',
         className
@@ -74,14 +74,14 @@ export const SelectItem = React.forwardRef<
   <SelectPrimitive.Item
     ref={ref}
     className={cn(
-      'relative flex h-[36px] w-full cursor-pointer select-none items-center rounded-[6px] px-[8px] text-[14px] text-[#24332E] outline-none transition-colors data-[disabled]:pointer-events-none data-[disabled]:opacity-50 hover:bg-[#F0F3F1] focus:bg-[#E9F3EE] focus:text-[#176B52]',
+      'relative flex h-[36px] w-full cursor-pointer select-none items-center rounded-[6px] px-[8px] text-[14px] text-[#351F65] outline-none transition-colors data-[disabled]:pointer-events-none data-[disabled]:opacity-50 hover:bg-[#F7F5FD] focus:bg-[#F7F5FD] focus:text-[#6240E8]',
       className
     )}
     {...props}
   >
     <span className="absolute right-[8px] flex h-3.5 w-3.5 items-center justify-center">
       <SelectPrimitive.ItemIndicator>
-        <Check className="h-4 w-4 text-[#176B52]" />
+        <Check className="h-4 w-4 text-[#6240E8]" />
       </SelectPrimitive.ItemIndicator>
     </span>
     <SelectPrimitive.ItemText>{children}</SelectPrimitive.ItemText>

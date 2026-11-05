@@ -7,6 +7,7 @@ export type StatusType =
   | 'danger'
   | 'information'
   | 'neutral'
+  | 'purple'
   | 'completed'
   | 'pending'
   | 'processing'
@@ -50,6 +51,10 @@ export const StatusBadge: React.FC<StatusBadgeProps> = ({
     case 'information':
       variant = 'information';
       defaultLabel = 'Information';
+      break;
+    case 'purple':
+      variant = 'purple';
+      defaultLabel = 'Clinical Care';
       break;
     case 'neutral':
     default:

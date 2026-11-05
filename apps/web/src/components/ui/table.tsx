@@ -8,7 +8,7 @@ export const Table = React.forwardRef<
   <div className="relative w-full overflow-auto">
     <table
       ref={ref}
-      className={cn('w-full caption-bottom text-[14px] text-[#24332E]', className)}
+      className={cn('w-full caption-bottom text-[14px] text-[#14161A]', className)}
       {...props}
     />
   </div>
@@ -19,7 +19,7 @@ export const TableHeader = React.forwardRef<
   HTMLTableSectionElement,
   React.HTMLAttributes<HTMLTableSectionElement>
 >(({ className, ...props }, ref) => (
-  <thead ref={ref} className={cn('[&_tr]:border-b border-[#E5EAE6] bg-[#F7F9F7]', className)} {...props} />
+  <thead ref={ref} className={cn('[&_tr]:border-b border-[#EAE8F0] bg-[#EFF2F7]', className)} {...props} />
 ));
 TableHeader.displayName = 'TableHeader';
 
@@ -41,7 +41,7 @@ export const TableFooter = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <tfoot
     ref={ref}
-    className={cn('border-t border-[#E5EAE6] bg-[#F7F9F7] font-medium [&>tr]:last:border-b-0', className)}
+    className={cn('border-t border-[#EAE8F0] bg-[#EFF2F7] font-medium [&>tr]:last:border-b-0', className)}
     {...props}
   />
 ));
@@ -54,7 +54,7 @@ export const TableRow = React.forwardRef<
   <tr
     ref={ref}
     className={cn(
-      'h-[52px] border-b border-[#E5EAE6] transition-colors hover:bg-[#F7F9F7] data-[state=selected]:bg-[#E9F3EE]',
+      'h-[52px] border-b border-[#EAE8F0] transition-colors hover:bg-[#F7F5FD] data-[state=selected]:bg-[#EAE8F0]',
       className
     )}
     {...props}
@@ -69,7 +69,7 @@ export const TableHead = React.forwardRef<
   <th
     ref={ref}
     className={cn(
-      'h-[44px] px-[16px] text-left align-middle text-[12px] font-semibold text-[#64736C] uppercase tracking-wider [&:has([role=checkbox])]:pr-0',
+      'h-[44px] px-[16px] text-left align-middle text-[12px] font-semibold text-[#351F65] uppercase tracking-wider [&:has([role=checkbox])]:pr-0',
       className
     )}
     {...props}

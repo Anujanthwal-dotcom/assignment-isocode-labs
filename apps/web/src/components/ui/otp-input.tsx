@@ -67,17 +67,17 @@ export const OtpInput: React.FC<OtpInputProps> = ({
             onChange={(e) => handleChange(index, e)}
             onKeyDown={(e) => handleKeyDown(index, e)}
             className={cn(
-              'h-[44px] w-[40px] text-center rounded-[8px] bg-white text-[16px] font-semibold text-[#24332E] border border-[#D3DBD5] transition-colors',
-              'focus-visible:outline-none focus-visible:border-[#23845D] focus-visible:ring-2 focus-visible:ring-[#23845D]/20',
-              hasError && 'border-[#C44747] focus-visible:border-[#C44747]',
-              disabled && 'opacity-50 cursor-not-allowed bg-[#F0F3F1]'
+              'h-[44px] w-[40px] text-center rounded-[8px] bg-white text-[16px] font-semibold text-[#351F65] border border-[#CED4DA] transition-colors',
+              'focus-visible:outline-none focus-visible:border-[#6240E8] focus-visible:ring-2 focus-visible:ring-[#6240E8]/20',
+              hasError && 'border-[#DC3545] focus-visible:border-[#DC3545]',
+              disabled && 'opacity-50 cursor-not-allowed bg-[#EFF2F7]'
             )}
             aria-label={`Digit ${index + 1}`}
           />
         ))}
       </div>
       {hasError && errorMessage && (
-        <p className="text-[12px] leading-[16px] text-[#C44747] font-normal">{errorMessage}</p>
+        <p className="text-[12px] leading-[16px] text-[#DC3545] font-normal">{errorMessage}</p>
       )}
     </div>
   );

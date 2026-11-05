@@ -34,13 +34,13 @@ export function DataTable<T extends Record<string, unknown>>({
   loading = false,
   error = null,
   onRetry,
-  emptyMessage = 'No records found.',
+  emptyMessage = 'No clinical records found.',
   className,
 }: DataTableProps<T>) {
   return (
     <div
       className={cn(
-        'w-full overflow-hidden rounded-[12px] border border-[#E5EAE6] bg-white',
+        'w-full overflow-hidden rounded-[12px] border border-[#EAE8F0] bg-white shadow-[0_4px_20px_rgba(53,31,101,0.03)]',
         className
       )}
     >
@@ -62,9 +62,9 @@ export function DataTable<T extends Record<string, unknown>>({
                   colSpan={columns.length}
                   className="h-[180px] text-center"
                 >
-                  <div className="flex flex-col items-center justify-center gap-2 text-[#64736C]">
-                    <Loader2 className="h-6 w-6 animate-spin text-[#176B52]" />
-                    <span className="text-[14px]">Loading data...</span>
+                  <div className="flex flex-col items-center justify-center gap-2 text-[#78879A]">
+                    <Loader2 className="h-6 w-6 animate-spin text-[#6240E8]" />
+                    <span className="text-[14px]">Loading clinical records...</span>
                   </div>
                 </TableCell>
               </TableRow>
@@ -74,7 +74,7 @@ export function DataTable<T extends Record<string, unknown>>({
                   colSpan={columns.length}
                   className="h-[180px] text-center"
                 >
-                  <div className="flex flex-col items-center justify-center gap-2 text-[#C44747]">
+                  <div className="flex flex-col items-center justify-center gap-2 text-[#DC3545]">
                     <AlertCircle className="h-6 w-6" />
                     <span className="text-[14px] font-medium">{error}</span>
                     {onRetry && (
@@ -82,7 +82,7 @@ export function DataTable<T extends Record<string, unknown>>({
                         variant="outline"
                         size="sm"
                         onClick={onRetry}
-                        className="mt-2 text-[#24332E]"
+                        className="mt-2 text-[#351F65]"
                       >
                         Try again
                       </Button>
@@ -96,7 +96,7 @@ export function DataTable<T extends Record<string, unknown>>({
                   colSpan={columns.length}
                   className="h-[180px] text-center"
                 >
-                  <div className="flex flex-col items-center justify-center gap-2 text-[#64736C]">
+                  <div className="flex flex-col items-center justify-center gap-2 text-[#78879A]">
                     <Inbox className="h-6 w-6 opacity-60" />
                     <span className="text-[14px]">{emptyMessage}</span>
                   </div>
