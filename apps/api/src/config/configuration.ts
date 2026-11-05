@@ -58,5 +58,12 @@ export default () => {
       smtpPort: parseInt(process.env.MAIL_SMTP_PORT || '1025', 10),
       webPort: parseInt(process.env.MAIL_WEB_PORT || '8025', 10),
     },
+    prescriptionAi: {
+      provider: process.env.PRESCRIPTION_AI_PROVIDER || 'mock',
+      geminiApiKey: process.env.GEMINI_API_KEY || '',
+      geminiModel: process.env.GEMINI_MODEL || 'gemini-2.5-flash',
+      timeoutMs: parseInt(process.env.PRESCRIPTION_AI_TIMEOUT_MS || '60000', 10),
+      maxRetries: parseInt(process.env.PRESCRIPTION_AI_MAX_RETRIES || '2', 10),
+    },
   };
 };
