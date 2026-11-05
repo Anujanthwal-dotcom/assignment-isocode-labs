@@ -7,6 +7,7 @@ export default defineConfig({
     environment: 'node',
     setupFiles: ['./test/setup.ts'],
     include: ['**/*.{test,spec,e2e-spec}.?(c|m)[jt]s?(x)'],
+    fileParallelism: false,
   },
   resolve: {
     alias: {

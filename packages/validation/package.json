@@ -12,5 +12,8 @@
   "devDependencies": {
     "@pharmacy/config": "workspace:*",
     "typescript": "^5.7.2"
+  },
+  "dependencies": {
+    "zod": "4.6.7"
   }
 }
