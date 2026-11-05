@@ -1,4 +1,4 @@
-// Prisma schema for Pharmacy Platform (Phase 0 Scaffold)
+// Prisma schema for Pharmacy Platform (Phase 1)
 
 generator client {
   provider = "prisma-client-js"
@@ -7,4 +7,142 @@ generator client {
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
+}
+
+enum UserRole {
+  CUSTOMER
+  PHARMACIST
+  ADMIN
+  COMPLIANCE_ADMIN
+}
+
+enum UserStatus {
+  ACTIVE
+  INACTIVE
+  SUSPENDED
+}
+
+enum StoreStatus {
+  ACTIVE
+  INACTIVE
+}
+
+enum OtpPurpose {
+  LOGIN
+}
+
+enum SessionStatus {
+  ACTIVE
+  REVOKED
+  EXPIRED
+}
+
+model Store {
+  id          String      @id @default(uuid()) @db.Uuid
+  code        String      @unique
+  name        String
+  city        String
+  address     String
+  latitude    Decimal?    @db.Decimal(10, 7)
+  longitude   Decimal?    @db.Decimal(10, 7)
+  status      StoreStatus @default(ACTIVE)
+  createdAt   DateTime    @default(now()) @db.Timestamptz(6)
+  updatedAt   DateTime    @updatedAt @db.Timestamptz(6)
+
+  pharmacists PharmacistProfile[]
+
+  @@map("stores")
+}
+
+model User {
+  id           String      @id @default(uuid()) @db.Uuid
+  role         UserRole
+  status       UserStatus  @default(ACTIVE)
+  phone        String?     @unique
+  email        String?     @unique
+  passwordHash String?
+  createdAt    DateTime    @default(now()) @db.Timestamptz(6)
+  updatedAt    DateTime    @updatedAt @db.Timestamptz(6)
+
+  customerProfile   CustomerProfile?
+  pharmacistProfile PharmacistProfile?
+  sessions          AuthSession[]
+  auditLogs         AuditLog[]
+
+  @@map("users")
+}
+
+model CustomerProfile {
+  id                String   @id @default(uuid()) @db.Uuid
+  userId            String   @unique @db.Uuid
+  fullName          String
+  preferredLanguage String   @default("en")
+  createdAt         DateTime @default(now()) @db.Timestamptz(6)
+  updatedAt         DateTime @updatedAt @db.Timestamptz(6)
+
+  user User @relation(fields: [userId], references: [id], onDelete: Restrict)
+
+  @@map("customer_profiles")
+}
+
+model PharmacistProfile {
+  id                 String   @id @default(uuid()) @db.Uuid
+  userId             String   @unique @db.Uuid
+  storeId            String   @db.Uuid
+  fullName           String
+  registrationNumber String?
+  createdAt          DateTime @default(now()) @db.Timestamptz(6)
+  updatedAt          DateTime @updatedAt @db.Timestamptz(6)
+
+  user  User  @relation(fields: [userId], references: [id], onDelete: Restrict)
+  store Store @relation(fields: [storeId], references: [id], onDelete: Restrict)
+
+  @@map("pharmacist_profiles")
+}
+
+model OtpChallenge {
+  id         String     @id @default(uuid()) @db.Uuid
+  phone      String
+  codeHash   String
+  purpose    OtpPurpose
+  expiresAt  DateTime   @db.Timestamptz(6)
+  consumedAt DateTime?  @db.Timestamptz(6)
+  attempts   Int        @default(0)
+  createdAt  DateTime   @default(now()) @db.Timestamptz(6)
+
+  @@index([phone, purpose, createdAt])
+  @@map("otp_challenges")
+}
+
+model AuthSession {
+  id               String        @id @default(uuid()) @db.Uuid
+  userId           String        @db.Uuid
+  refreshTokenHash String        @unique
+  status           SessionStatus @default(ACTIVE)
+  expiresAt        DateTime      @db.Timestamptz(6)
+  revokedAt        DateTime?     @db.Timestamptz(6)
+  createdAt        DateTime      @default(now()) @db.Timestamptz(6)
+  updatedAt        DateTime      @updatedAt @db.Timestamptz(6)
+
+  user User @relation(fields: [userId], references: [id], onDelete: Restrict)
+
+  @@index([userId, status])
+  @@map("auth_sessions")
+}
+
+model AuditLog {
+  id           String   @id @default(uuid()) @db.Uuid
+  actorUserId  String?  @db.Uuid
+  action       String
+  resourceType String
+  resourceId   String?
+  metadata     Json?
+  ipAddress    String?
+  createdAt    DateTime @default(now()) @db.Timestamptz(6)
+
+  actor User? @relation(fields: [actorUserId], references: [id], onDelete: SetNull)
+
+  @@index([actorUserId, createdAt])
+  @@index([action, createdAt])
+  @@map("audit_logs")
 }
