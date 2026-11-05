@@ -1,0 +1,101 @@
+import * as React from 'react';
+import { Eye, EyeOff, Search } from 'lucide-react';
+import { cn } from '@/lib/utils';
+
+export interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
+  error?: string | boolean;
+  helperText?: string;
+  leftIcon?: React.ReactNode;
+}
+
+export const Input = React.forwardRef<HTMLInputElement, InputProps>(
+  ({ className, type = 'text', error, helperText, leftIcon, disabled, readOnly, ...props }, ref) => {
+    const hasError = Boolean(error);
+    const errorMessage = typeof error === 'string' ? error : undefined;
+
+    return (
+      <div className="w-full space-y-[6px]">
+        <div className="relative flex items-center w-full">
+          {leftIcon && (
+            <div className="absolute left-[12px] flex items-center pointer-events-none text-[#64736C]">
+              {leftIcon}
+            </div>
+          )}
+          <input
+            type={type}
+            disabled={disabled}
+            readOnly={readOnly}
+            className={cn(
+              'h-[44px] w-full rounded-[8px] bg-white px-[12px] text-[14px] leading-[20px] text-[#24332E] border placeholder:text-[#A4B0A8] transition-colors',
+              'border-[#D3DBD5]',
+              'focus-visible:outline-none focus-visible:border-[#23845D] focus-visible:ring-2 focus-visible:ring-[#23845D]/20',
+              hasError && 'border-[#C44747] focus-visible:border-[#C44747] focus-visible:ring-[#C44747]/20',
+              disabled && 'opacity-50 cursor-not-allowed bg-[#F0F3F1]',
+              readOnly && 'bg-[#F7F9F7] cursor-default',
+              leftIcon && 'pl-[38px]',
+              className
+            )}
+            ref={ref}
+            {...props}
+          />
+        </div>
+        {hasError && errorMessage && (
+          <p className="text-[12px] leading-[16px] text-[#C44747] font-normal">{errorMessage}</p>
+        )}
+        {!hasError && helperText && (
+          <p className="text-[12px] leading-[16px] text-[#64736C] font-normal">{helperText}</p>
+        )}
+      </div>
+    );
+  }
+);
+Input.displayName = 'Input';
+
+export interface PasswordInputProps extends Omit<InputProps, 'type' | 'leftIcon'> {
+  showToggle?: boolean;
+}
+
+export const PasswordInput = React.forwardRef<HTMLInputElement, PasswordInputProps>(
+  ({ className, ...props }, ref) => {
+    const [showPassword, setShowPassword] = React.useState(false);
+
+    return (
+      <div className="relative w-full">
+        <Input
+          type={showPassword ? 'text' : 'password'}
+          className={cn('pr-[40px]', className)}
+          ref={ref}
+          {...props}
+        />
+        <button
+          type="button"
+          tabIndex={-1}
+          onClick={() => setShowPassword(!showPassword)}
+          className="absolute right-[12px] top-[14px] text-[#64736C] hover:text-[#24332E] transition-colors"
+          aria-label={showPassword ? 'Hide password' : 'Show password'}
+        >
+          {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+        </button>
+      </div>
+    );
+  }
+);
+PasswordInput.displayName = 'PasswordInput';
+
+export interface SearchInputProps extends Omit<InputProps, 'leftIcon'> {}
+
+export const SearchInput = React.forwardRef<HTMLInputElement, SearchInputProps>(
+  ({ className, placeholder = 'Search...', ...props }, ref) => {
+    return (
+      <Input
+        type="search"
+        leftIcon={<Search className="h-4 w-4" />}
+        placeholder={placeholder}
+        className={className}
+        ref={ref}
+        {...props}
+      />
+    );
+  }
+);
+SearchInput.displayName = 'SearchInput';
