@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
-import { ConfigModule } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { APP_GUARD } from '@nestjs/core';
+import { BullModule } from '@nestjs/bullmq';
 import configuration from './config/configuration';
 import { PrismaModule } from './prisma/prisma.module';
 import { HealthModule } from './health/health.module';
@@ -13,6 +14,22 @@ import { WarehousesModule } from './warehouses/warehouses.module';
 import { MedicinesModule } from './medicines/medicines.module';
 import { InventoryModule } from './inventory/inventory.module';
 import { InventoryImportsModule } from './inventory-imports/inventory-imports.module';
+import { CustomerMedicinesModule } from './customer/customer-medicines.module';
+import { FamilyMembersModule } from './family-members/family-members.module';
+import { CustomerAddressesModule } from './customer-addresses/customer-addresses.module';
+import { PrescriptionsModule } from './prescriptions/prescriptions.module';
+import { CartModule } from './cart/cart.module';
+import { OrdersModule } from './orders/orders.module';
+import { PaymentsModule } from './payments/payments.module';
+import { PrescriptionAiModule } from './prescription-ai/prescription-ai.module';
+import { ComplianceModule } from './compliance/compliance.module';
+import { ReviewAssignmentModule } from './review-assignments/review-assignment.module';
+import { PharmacistVerificationModule } from './pharmacist-verification/pharmacist-verification.module';
+import { OrderRoutingModule } from './order-routing/order-routing.module';
+import { FulfilmentModule } from './fulfilment/fulfilment.module';
+import { NotificationsModule } from './notifications/notifications.module';
+import { RefillsModule } from './refills/refills.module';
+import { AdminAnalyticsModule } from './admin-analytics/admin-analytics.module';
 import { JwtAuthGuard } from './auth/guards/jwt-auth.guard';
 import { RolesGuard } from './auth/guards/roles.guard';
 
@@ -22,6 +39,16 @@ import { RolesGuard } from './auth/guards/roles.guard';
       isGlobal: true,
       load: [configuration],
       envFilePath: ['.env', '../../.env'],
+    }),
+    BullModule.forRootAsync({
+      inject: [ConfigService],
+      useFactory: (config: ConfigService) => ({
+        connection: {
+          host: config.get<string>('redis.host', 'localhost'),
+          port: config.get<number>('redis.port', 6379),
+          password: config.get<string>('redis.password') || undefined,
+        },
+      }),
     }),
     PrismaModule,
     AuditModule,
@@ -34,6 +61,22 @@ import { RolesGuard } from './auth/guards/roles.guard';
     StorageModule,
     AuthModule,
     HealthModule,
+    CustomerMedicinesModule,
+    FamilyMembersModule,
+    CustomerAddressesModule,
+    PrescriptionsModule,
+    CartModule,
+    OrdersModule,
+    PaymentsModule,
+    PrescriptionAiModule,
+    ComplianceModule,
+    ReviewAssignmentModule,
+    PharmacistVerificationModule,
+    OrderRoutingModule,
+    FulfilmentModule,
+    NotificationsModule,
+    RefillsModule,
+    AdminAnalyticsModule,
   ],
   providers: [
     {
