@@ -82,7 +82,7 @@ export const PasswordInput = React.forwardRef<HTMLInputElement, PasswordInputPro
 );
 PasswordInput.displayName = 'PasswordInput';
 
-export interface SearchInputProps extends Omit<InputProps, 'leftIcon'> {}
+export type SearchInputProps = Omit<InputProps, 'leftIcon'>;
 
 export const SearchInput = React.forwardRef<HTMLInputElement, SearchInputProps>(
   ({ className, placeholder = 'Search...', ...props }, ref) => {

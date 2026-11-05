@@ -7,12 +7,8 @@ import { DataTable, type Column } from '@/components/shared/DataTable';
 import { SAMPLE_ADMIN } from '@/lib/sample-data';
 import {
   Store,
-  Clock,
-  ShieldCheck,
-  TrendingUp,
   BarChart3,
   Activity,
-  Layers,
 } from 'lucide-react';
 
 interface OrderRow {

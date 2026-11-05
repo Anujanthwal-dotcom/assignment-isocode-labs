@@ -5,7 +5,7 @@ import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { StatusBadge } from '@/components/shared/StatusBadge';
 import { SAMPLE_CUSTOMER } from '@/lib/sample-data';
-import { Clock, RefreshCw, AlertCircle, FileText, Calendar, Building2 } from 'lucide-react';
+import { RefreshCw, AlertCircle, FileText, Calendar, Building2 } from 'lucide-react';
 
 export const CustomerHomePreview: React.FC = () => {
   const [activeProfile, setActiveProfile] = React.useState<string>(SAMPLE_CUSTOMER.activeProfile);
