@@ -47,10 +47,11 @@ export default () => {
     minio: {
       endpoint: process.env.MINIO_ENDPOINT || 'localhost',
       port: parseInt(process.env.MINIO_PORT || '9000', 10),
-      rootUser: process.env.MINIO_ROOT_USER,
-      rootPassword: process.env.MINIO_ROOT_PASSWORD,
+      rootUser: process.env.MINIO_ROOT_USER || 'minio_admin',
+      rootPassword: process.env.MINIO_ROOT_PASSWORD || 'minio_admin_secret_key',
       useSSL: process.env.MINIO_USE_SSL === 'true',
       bucketPrescriptions: process.env.MINIO_BUCKET_PRESCRIPTIONS || 'prescriptions',
+      bucketInventoryImports: process.env.MINIO_BUCKET_INVENTORY_IMPORTS || 'inventory-imports',
     },
     mail: {
       host: process.env.MAIL_HOST || 'localhost',

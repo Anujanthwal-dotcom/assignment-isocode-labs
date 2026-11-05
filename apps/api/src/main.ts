@@ -52,6 +52,11 @@ async function bootstrap() {
     .setVersion('1.0')
     .addTag('Health', 'Health and infrastructure status endpoints')
     .addTag('Authentication', 'Customer OTP, staff login, session refresh, and profile endpoints')
+    .addTag('Medicines', 'Medicine catalogue management and search')
+    .addTag('Inventory', 'Stock balances, movements, and manual adjustments')
+    .addTag('Inventory Imports', 'Deterministic daily CSV snapshot imports')
+    .addTag('Stores', 'Store locations and metadata')
+    .addTag('Warehouses', 'Central warehouse locations and metadata')
     .addBearerAuth()
     .build();
 

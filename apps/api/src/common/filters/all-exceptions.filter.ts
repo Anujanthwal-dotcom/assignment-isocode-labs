@@ -24,6 +24,7 @@ export class AllExceptionsFilter implements ExceptionFilter {
 
     let message = 'Internal server error';
     let details: unknown = null;
+    let code: string | undefined = undefined;
 
     if (typeof exceptionResponse === 'string') {
       message = exceptionResponse;
@@ -31,6 +32,9 @@ export class AllExceptionsFilter implements ExceptionFilter {
       const resObj = exceptionResponse as Record<string, unknown>;
       message = (resObj.message as string) || message;
       details = resObj.error || null;
+      if (resObj.code && typeof resObj.code === 'string') {
+        code = resObj.code;
+      }
     } else if (exception instanceof Error) {
       message = exception.message;
     }
@@ -48,6 +52,7 @@ export class AllExceptionsFilter implements ExceptionFilter {
 
     response.status(status).json({
       statusCode: status,
+      ...(code ? { code } : {}),
       timestamp: new Date().toISOString(),
       path: request.url,
       message,

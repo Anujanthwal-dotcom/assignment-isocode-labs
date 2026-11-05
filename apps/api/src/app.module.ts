@@ -8,6 +8,11 @@ import { AuditModule } from './audit/audit.module';
 import { UsersModule } from './users/users.module';
 import { StoresModule } from './stores/stores.module';
 import { AuthModule } from './auth/auth.module';
+import { StorageModule } from './storage/storage.module';
+import { WarehousesModule } from './warehouses/warehouses.module';
+import { MedicinesModule } from './medicines/medicines.module';
+import { InventoryModule } from './inventory/inventory.module';
+import { InventoryImportsModule } from './inventory-imports/inventory-imports.module';
 import { JwtAuthGuard } from './auth/guards/jwt-auth.guard';
 import { RolesGuard } from './auth/guards/roles.guard';
 
@@ -22,6 +27,11 @@ import { RolesGuard } from './auth/guards/roles.guard';
     AuditModule,
     UsersModule,
     StoresModule,
+    WarehousesModule,
+    MedicinesModule,
+    InventoryModule,
+    InventoryImportsModule,
+    StorageModule,
     AuthModule,
     HealthModule,
   ],
