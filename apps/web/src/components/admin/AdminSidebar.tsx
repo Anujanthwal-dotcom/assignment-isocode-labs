@@ -2,17 +2,20 @@
 
 import * as React from 'react';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import {
   LayoutDashboard,
+  Pill,
+  Layers,
+  UploadCloud,
   ShoppingCart,
   Store,
-  Layers,
   Users,
   ShieldCheck,
   Shield,
   X,
 } from 'lucide-react';
-import { SAMPLE_ADMIN } from '@/lib/sample-data';
+import { useAuth } from '@/lib/auth/auth-context';
 
 interface AdminSidebarProps {
   openMobile: boolean;
@@ -20,15 +23,20 @@ interface AdminSidebarProps {
 }
 
 const navItems = [
-  { label: 'Overview', href: '/admin', icon: LayoutDashboard, active: true },
+  { label: 'Overview', href: '/admin', icon: LayoutDashboard, exact: true },
+  { label: 'Medicine Catalogue', href: '/admin/medicines', icon: Pill },
+  { label: 'Inventory', href: '/admin/inventory', icon: Layers, exact: true },
+  { label: 'Stock Imports', href: '/admin/inventory/imports', icon: UploadCloud },
   { label: 'Orders', href: '/admin', icon: ShoppingCart },
   { label: 'Stores', href: '/admin', icon: Store },
-  { label: 'Inventory', href: '/admin', icon: Layers },
   { label: 'Staff', href: '/admin', icon: Users },
   { label: 'Compliance Settings', href: '/admin', icon: ShieldCheck },
 ];
 
 export const AdminSidebar: React.FC<AdminSidebarProps> = ({ openMobile, onCloseMobile }) => {
+  const pathname = usePathname();
+  const { user } = useAuth();
+
   return (
     <>
       {/* Mobile Drawer Backdrop */}
@@ -68,10 +76,13 @@ export const AdminSidebar: React.FC<AdminSidebarProps> = ({ openMobile, onCloseM
         </div>
 
         {/* Navigation Items */}
-        <nav className="flex-1 space-y-[4px] px-3 py-4">
+        <nav className="flex-1 space-y-[4px] px-3 py-4 overflow-y-auto">
           {navItems.map((item) => {
             const Icon = item.icon;
-            const isActive = item.active;
+            const isActive = item.exact
+              ? pathname === item.href
+              : pathname.startsWith(item.href);
+
             return (
               <Link
                 key={item.label}
@@ -93,8 +104,8 @@ export const AdminSidebar: React.FC<AdminSidebarProps> = ({ openMobile, onCloseM
         {/* Administrator Profile Card in Sidebar Footer */}
         <div className="border-t border-[#EAE8F0] p-3">
           <div className="rounded-[8px] bg-[#F8F9FB] p-2.5 text-[12px] border border-[#EAE8F0]">
-            <p className="font-semibold text-[#351F65]">{SAMPLE_ADMIN.name}</p>
-            <p className="text-[11px] text-[#78879A]">{SAMPLE_ADMIN.role}</p>
+            <p className="font-semibold text-[#351F65] truncate">{user?.profile?.fullName || 'Administrator'}</p>
+            <p className="text-[11px] text-[#78879A]">{user?.role || 'ADMIN'}</p>
           </div>
         </div>
       </aside>

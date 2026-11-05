@@ -2,6 +2,7 @@
 
 import * as React from 'react';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import {
   LayoutDashboard,
   ClipboardCheck,
@@ -12,7 +13,7 @@ import {
   X,
   Store,
 } from 'lucide-react';
-import { SAMPLE_PHARMACIST } from '@/lib/sample-data';
+import { useAuth } from '@/lib/auth/auth-context';
 
 interface PharmacistSidebarProps {
   openMobile: boolean;
@@ -20,17 +21,20 @@ interface PharmacistSidebarProps {
 }
 
 const navItems = [
-  { label: 'Overview', href: '/pharmacist', icon: LayoutDashboard },
-  { label: 'Verification Queue', href: '/pharmacist', icon: ClipboardCheck, active: true },
-  { label: 'Orders', href: '/pharmacist', icon: Package },
-  { label: 'Store Inventory', href: '/pharmacist', icon: Layers },
-  { label: 'History', href: '/pharmacist', icon: History },
+  { label: 'Overview', href: '/pharmacist', icon: LayoutDashboard, exact: true },
+  { label: 'Verification Queue', href: '/pharmacist/queue', icon: ClipboardCheck },
+  { label: 'Orders', href: '/pharmacist/orders', icon: Package },
+  { label: 'Store Inventory', href: '/pharmacist/inventory', icon: Layers },
+  { label: 'History', href: '/pharmacist/history', icon: History },
 ];
 
 export const PharmacistSidebar: React.FC<PharmacistSidebarProps> = ({
   openMobile,
   onCloseMobile,
 }) => {
+  const pathname = usePathname();
+  const { user } = useAuth();
+
   return (
     <>
       {/* Mobile Drawer Overlay */}
@@ -75,20 +79,23 @@ export const PharmacistSidebar: React.FC<PharmacistSidebarProps> = ({
             <Store className="h-4 w-4 text-[#6240E8] shrink-0" />
             <div className="overflow-hidden">
               <span className="font-semibold block truncate">
-                {SAMPLE_PHARMACIST.storeName} Hub
+                {user?.store?.name || 'Salt Lake Store'}
               </span>
               <span className="text-[11px] text-[#78879A] block truncate">
-                {SAMPLE_PHARMACIST.storeCode}
+                {user?.store?.code || 'KOL-001'} (Assigned Store)
               </span>
             </div>
           </div>
         </div>
 
         {/* Navigation list */}
-        <nav className="flex-1 space-y-[4px] px-3 py-2">
+        <nav className="flex-1 space-y-[4px] px-3 py-2 overflow-y-auto">
           {navItems.map((item) => {
             const Icon = item.icon;
-            const isActive = item.active;
+            const isActive = item.exact
+              ? pathname === item.href
+              : pathname.startsWith(item.href);
+
             return (
               <Link
                 key={item.label}
@@ -110,8 +117,8 @@ export const PharmacistSidebar: React.FC<PharmacistSidebarProps> = ({
         {/* Pharmacist Footer Profile */}
         <div className="border-t border-[#EAE8F0] p-3">
           <div className="text-[12px]">
-            <p className="font-semibold text-[#351F65] truncate">{SAMPLE_PHARMACIST.name}</p>
-            <p className="text-[11px] text-[#78879A] truncate">{SAMPLE_PHARMACIST.role}</p>
+            <p className="font-semibold text-[#351F65] truncate">{user?.profile?.fullName || 'Demo Pharmacist'}</p>
+            <p className="text-[11px] text-[#78879A] truncate">{user?.role || 'PHARMACIST'}</p>
           </div>
         </div>
       </aside>
