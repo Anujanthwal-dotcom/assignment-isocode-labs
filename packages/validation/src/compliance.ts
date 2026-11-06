@@ -24,7 +24,10 @@ export const createComplianceRuleSetSchema = z.object({
   version: z
     .string()
     .min(1, 'Version is required')
-    .regex(/^v?[0-9]+\.[0-9]+\.[0-9]+(-[0-9A-Za-z.-]+)?$/, 'Version must be semver formatted (e.g. 1.0.0)'),
+    .regex(
+      /^v?[0-9]+\.[0-9]+\.[0-9]+(-[0-9A-Za-z.-]+)?$/,
+      'Version must be semver formatted (e.g. 1.0.0)',
+    ),
   name: z.string().min(2, 'Name must be at least 2 characters').max(100),
   description: z.string().max(1000).optional().nullable(),
   rules: z.array(complianceRuleItemSchema).optional(),

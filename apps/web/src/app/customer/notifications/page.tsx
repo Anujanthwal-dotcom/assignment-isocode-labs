@@ -44,9 +44,7 @@ export default function CustomerNotificationsPage() {
   const handleMarkRead = async (id: string) => {
     try {
       await apiFetch(`/customer/notifications/${id}/read`, { method: 'PATCH' });
-      setNotifications((prev) =>
-        prev.map((n) => (n.id === id ? { ...n, isRead: true } : n)),
-      );
+      setNotifications((prev) => prev.map((n) => (n.id === id ? { ...n, isRead: true } : n)));
     } catch {
       // Handled
     }
@@ -105,19 +103,17 @@ export default function CustomerNotificationsPage() {
             >
               <div className="flex items-start justify-between gap-3">
                 <div className="flex items-start gap-3">
-                  <div className={`p-2 rounded-lg shrink-0 mt-0.5 ${notif.isRead ? 'bg-slate-100 text-slate-500' : 'bg-[#6240E8]/10 text-[#6240E8]'}`}>
+                  <div
+                    className={`p-2 rounded-lg shrink-0 mt-0.5 ${notif.isRead ? 'bg-slate-100 text-slate-500' : 'bg-[#6240E8]/10 text-[#6240E8]'}`}
+                  >
                     <Bell className="h-4 w-4" />
                   </div>
                   <div>
                     <div className="flex items-center gap-2">
                       <h4 className="text-sm font-bold text-[#351F65]">{notif.title}</h4>
-                      {!notif.isRead && (
-                        <span className="h-2 w-2 rounded-full bg-[#6240E8]" />
-                      )}
+                      {!notif.isRead && <span className="h-2 w-2 rounded-full bg-[#6240E8]" />}
                     </div>
-                    <p className="text-xs text-[#55476D] mt-1 leading-relaxed">
-                      {notif.message}
-                    </p>
+                    <p className="text-xs text-[#55476D] mt-1 leading-relaxed">{notif.message}</p>
                     <span className="text-[10px] text-[#78879A] mt-2 block">
                       {new Date(notif.createdAt).toLocaleString()}
                     </span>

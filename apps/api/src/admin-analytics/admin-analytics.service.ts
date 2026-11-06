@@ -13,7 +13,11 @@ export class AdminAnalyticsService {
 
   constructor(private readonly prisma: PrismaService) {}
 
-  private parseDateRange(period?: string, fromStr?: string, toStr?: string): { from: Date; to: Date; period: string } {
+  private parseDateRange(
+    period?: string,
+    fromStr?: string,
+    toStr?: string,
+  ): { from: Date; to: Date; period: string } {
     const to = toStr ? new Date(toStr) : new Date();
     let from: Date;
 
@@ -258,7 +262,12 @@ export class AdminAnalyticsService {
   /**
    * Verification Performance: Median & average verification duration, rejection categories.
    */
-  async getVerificationAnalytics(period?: string, fromStr?: string, toStr?: string, storeId?: string) {
+  async getVerificationAnalytics(
+    period?: string,
+    fromStr?: string,
+    toStr?: string,
+    storeId?: string,
+  ) {
     const { from, to } = this.parseDateRange(period, fromStr, toStr);
 
     const reviews = await this.prisma.prescriptionReview.findMany({
@@ -372,9 +381,13 @@ export class AdminAnalyticsService {
             : (storeDurations[mid - 1] + storeDurations[mid]) / 2;
       }
 
-      const storeRejections = storeReviews.filter((r) => r.status === PrescriptionReviewStatus.REJECTED).length;
+      const storeRejections = storeReviews.filter(
+        (r) => r.status === PrescriptionReviewStatus.REJECTED,
+      ).length;
       const rejectionRate =
-        storeReviews.length > 0 ? Number(((storeRejections / storeReviews.length) * 100).toFixed(1)) : 0;
+        storeReviews.length > 0
+          ? Number(((storeRejections / storeReviews.length) * 100).toFixed(1))
+          : 0;
 
       return {
         storeId: s.id,
@@ -402,36 +415,43 @@ export class AdminAnalyticsService {
   /**
    * Fulfilment Analytics: Picking & Packing durations, stock reservation holds, handover counts.
    */
-  async getFulfilmentAnalytics(period?: string, fromStr?: string, toStr?: string, storeId?: string) {
+  async getFulfilmentAnalytics(
+    period?: string,
+    fromStr?: string,
+    toStr?: string,
+    storeId?: string,
+  ) {
     const { from, to } = this.parseDateRange(period, fromStr, toStr);
 
-    const [ordersRouted, stockReserved, handedOverCount, stockUnavailableCount] = await Promise.all([
-      this.prisma.orderRoutingDecision.count({
-        where: {
-          createdAt: { gte: from, lte: to },
-          ...(storeId ? { storeId } : {}),
-        },
-      }),
-      this.prisma.stockReservation.count({
-        where: {
-          createdAt: { gte: from, lte: to },
-          ...(storeId ? { storeId } : {}),
-        },
-      }),
-      this.prisma.orderHandover.count({
-        where: {
-          handedOverAt: { gte: from, lte: to },
-          ...(storeId ? { storeId } : {}),
-        },
-      }),
-      this.prisma.order.count({
-        where: {
-          status: OrderStatus.STOCK_UNAVAILABLE,
-          createdAt: { gte: from, lte: to },
-          ...(storeId ? { fulfilmentStoreId: storeId } : {}),
-        },
-      }),
-    ]);
+    const [ordersRouted, stockReserved, handedOverCount, stockUnavailableCount] = await Promise.all(
+      [
+        this.prisma.orderRoutingDecision.count({
+          where: {
+            createdAt: { gte: from, lte: to },
+            ...(storeId ? { storeId } : {}),
+          },
+        }),
+        this.prisma.stockReservation.count({
+          where: {
+            createdAt: { gte: from, lte: to },
+            ...(storeId ? { storeId } : {}),
+          },
+        }),
+        this.prisma.orderHandover.count({
+          where: {
+            handedOverAt: { gte: from, lte: to },
+            ...(storeId ? { storeId } : {}),
+          },
+        }),
+        this.prisma.order.count({
+          where: {
+            status: OrderStatus.STOCK_UNAVAILABLE,
+            createdAt: { gte: from, lte: to },
+            ...(storeId ? { fulfilmentStoreId: storeId } : {}),
+          },
+        }),
+      ],
+    );
 
     // Compute median picking duration from OrderStatusHistory
     const pickingTransitions = await this.prisma.orderStatusHistory.findMany({
@@ -534,8 +554,12 @@ export class AdminAnalyticsService {
       this.prisma.refillSubscription.count({ where: { status: 'ACTIVE' } }),
       this.prisma.refillEstimate.count({ where: { createdAt: { gte: from, lte: to } } }),
       this.prisma.refillReminder.count({ where: { scheduledFor: { gte: from, lte: to } } }),
-      this.prisma.refillReminder.count({ where: { status: 'SENT', sentAt: { gte: from, lte: to } } }),
-      this.prisma.refillReminder.count({ where: { status: 'SKIPPED', createdAt: { gte: from, lte: to } } }),
+      this.prisma.refillReminder.count({
+        where: { status: 'SENT', sentAt: { gte: from, lte: to } },
+      }),
+      this.prisma.refillReminder.count({
+        where: { status: 'SKIPPED', createdAt: { gte: from, lte: to } },
+      }),
       this.prisma.auditLog.count({
         where: {
           action: 'REFILL_ORDER_INITIATED',
@@ -565,7 +589,10 @@ export class AdminAnalyticsService {
       select: { sentAt: true },
     });
 
-    const timeMap = new Map<string, { date: string; remindersSent: number; refillOrders: number }>();
+    const timeMap = new Map<
+      string,
+      { date: string; remindersSent: number; refillOrders: number }
+    >();
     for (const r of reminders) {
       if (r.sentAt) {
         const d = r.sentAt.toISOString().slice(0, 10);

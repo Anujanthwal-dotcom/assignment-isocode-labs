@@ -78,7 +78,11 @@ export class RefillCalculationService {
       };
     }
 
-    if (!input.dispensedAt || !(input.dispensedAt instanceof Date) || isNaN(input.dispensedAt.getTime())) {
+    if (
+      !input.dispensedAt ||
+      !(input.dispensedAt instanceof Date) ||
+      isNaN(input.dispensedAt.getTime())
+    ) {
       return {
         eligibilityStatus: 'CALCULATION_UNAVAILABLE',
         ineligibilityReason: 'Valid physical handover / dispensing timestamp is required.',
@@ -91,7 +95,8 @@ export class RefillCalculationService {
     if (input.isPrnOrVariable) {
       return {
         eligibilityStatus: 'CALCULATION_UNAVAILABLE',
-        ineligibilityReason: 'Variable or PRN (as-needed) dosage schedules do not have a predictable run-out date.',
+        ineligibilityReason:
+          'Variable or PRN (as-needed) dosage schedules do not have a predictable run-out date.',
         calculationInputs: rawInputs,
         calculationVersion: this.CALCULATION_VERSION,
       };
@@ -143,7 +148,9 @@ export class RefillCalculationService {
 
     // 5. Deterministic calculation
     // dailyConsumption = unitsPerAdministration * administrationsPerDay
-    const dailyConsumption = Number((input.unitsPerAdministration * input.administrationsPerDay).toFixed(2));
+    const dailyConsumption = Number(
+      (input.unitsPerAdministration * input.administrationsPerDay).toFixed(2),
+    );
     if (dailyConsumption <= 0) {
       return {
         eligibilityStatus: 'CALCULATION_UNAVAILABLE',
@@ -157,7 +164,8 @@ export class RefillCalculationService {
     const estimatedSupplyDays = Number((input.dispensedQuantity / dailyConsumption).toFixed(2));
 
     // estimatedRunOutDate = dispensingDate + estimatedSupplyDays (in ms: days * 24 * 60 * 60 * 1000)
-    const runOutMs = input.dispensedAt.getTime() + Math.round(estimatedSupplyDays * 24 * 60 * 60 * 1000);
+    const runOutMs =
+      input.dispensedAt.getTime() + Math.round(estimatedSupplyDays * 24 * 60 * 60 * 1000);
     const estimatedRunOutAt = new Date(runOutMs);
 
     return {

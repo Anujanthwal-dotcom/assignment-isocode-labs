@@ -92,7 +92,9 @@ export class PharmacistVerificationService {
       const term = query.search.trim();
       where.OR = [
         { orderNumber: { contains: term, mode: 'insensitive' } },
-        { customerUser: { customerProfile: { fullName: { contains: term, mode: 'insensitive' } } } },
+        {
+          customerUser: { customerProfile: { fullName: { contains: term, mode: 'insensitive' } } },
+        },
         { items: { some: { medicineNameSnapshot: { contains: term, mode: 'insensitive' } } } },
       ];
     }
@@ -130,9 +132,7 @@ export class PharmacistVerificationService {
           orderId: o.id,
           orderNumber: o.orderNumber,
           customerName:
-            o.familyMember?.fullName ||
-            o.customerUser.customerProfile?.fullName ||
-            'Customer',
+            o.familyMember?.fullName || o.customerUser.customerProfile?.fullName || 'Customer',
           placedAt: o.placedAt,
           orderStatus: o.status,
           prescriptionId: o.prescriptionId,
@@ -169,7 +169,9 @@ export class PharmacistVerificationService {
     });
 
     if (!activeAssignment) {
-      throw new ForbiddenException('This order is not assigned to any store for pharmacist review.');
+      throw new ForbiddenException(
+        'This order is not assigned to any store for pharmacist review.',
+      );
     }
 
     if (activeAssignment.storeId !== store.id) {
@@ -324,9 +326,7 @@ export class PharmacistVerificationService {
 
         const matchingResult =
           latestAi?.matchingResult && Array.isArray(latestAi.matchingResult as any)
-            ? (latestAi.matchingResult as any).find(
-                (m: any) => m.extractedItemIndex === idx,
-              )
+            ? (latestAi.matchingResult as any).find((m: any) => m.extractedItemIndex === idx)
             : null;
 
         return {
@@ -399,7 +399,9 @@ export class PharmacistVerificationService {
             status: latestAi.status,
             provider: latestAi.provider,
             model: latestAi.model,
-            overallConfidence: latestAi.overallConfidence ? Number(latestAi.overallConfidence) : null,
+            overallConfidence: latestAi.overallConfidence
+              ? Number(latestAi.overallConfidence)
+              : null,
             documentReadable: latestAi.documentReadable,
             extractionResult: latestAi.extractionResult,
             matchingResult: latestAi.matchingResult,
@@ -625,12 +627,7 @@ export class PharmacistVerificationService {
   /**
    * Rejects an individual medicine item with mandatory reason.
    */
-  async rejectItem(
-    reviewId: string,
-    orderItemId: string,
-    dto: RejectOrderItemDto,
-    userId: string,
-  ) {
+  async rejectItem(reviewId: string, orderItemId: string, dto: RejectOrderItemDto, userId: string) {
     const store = await this.getPharmacistStore(userId);
     const review = await this.verifyReviewAccess(reviewId, store.id);
 
@@ -680,12 +677,7 @@ export class PharmacistVerificationService {
   /**
    * Marks an individual medicine item as BLOCKED due to compliance policy.
    */
-  async blockItem(
-    reviewId: string,
-    orderItemId: string,
-    dto: BlockOrderItemDto,
-    userId: string,
-  ) {
+  async blockItem(reviewId: string, orderItemId: string, dto: BlockOrderItemDto, userId: string) {
     const store = await this.getPharmacistStore(userId);
     const review = await this.verifyReviewAccess(reviewId, store.id);
 
@@ -914,9 +906,7 @@ export class PharmacistVerificationService {
     }
 
     const isPartial = nonApprovedItems.length > 0;
-    const finalOrderStatus = isPartial
-      ? OrderStatus.PARTIALLY_APPROVED
-      : OrderStatus.APPROVED;
+    const finalOrderStatus = isPartial ? OrderStatus.PARTIALLY_APPROVED : OrderStatus.APPROVED;
 
     const now = new Date();
 
@@ -976,11 +966,7 @@ export class PharmacistVerificationService {
   /**
    * Rejects entire prescription with mandatory reason.
    */
-  async rejectPrescription(
-    reviewId: string,
-    dto: RejectPrescriptionDto,
-    userId: string,
-  ) {
+  async rejectPrescription(reviewId: string, dto: RejectPrescriptionDto, userId: string) {
     const store = await this.getPharmacistStore(userId);
     const review = await this.verifyReviewAccess(reviewId, store.id);
 
@@ -1036,11 +1022,7 @@ export class PharmacistVerificationService {
   /**
    * Requests prescription re-upload from customer with mandatory reason.
    */
-  async requestReupload(
-    reviewId: string,
-    dto: RequestReuploadDto,
-    userId: string,
-  ) {
+  async requestReupload(reviewId: string, dto: RequestReuploadDto, userId: string) {
     const store = await this.getPharmacistStore(userId);
     const review = await this.verifyReviewAccess(reviewId, store.id);
 

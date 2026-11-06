@@ -1,12 +1,4 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Param,
-  Body,
-  Query,
-  ForbiddenException,
-} from '@nestjs/common';
+import { Controller, Get, Post, Param, Body, Query, ForbiddenException } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 import { Roles } from '../auth/decorators/roles.decorator';
 import { CurrentUser } from '../auth/decorators/current-user.decorator';
@@ -17,14 +9,7 @@ import { PackingService } from './packing.service';
 import { InvoiceService } from './invoice.service';
 import { HandoverService } from './handover.service';
 import { PrismaService } from '../prisma/prisma.service';
-import {
-  IsString,
-  IsNotEmpty,
-  IsOptional,
-  IsNumber,
-  IsEnum,
-  IsBoolean,
-} from 'class-validator';
+import { IsString, IsNotEmpty, IsOptional, IsNumber, IsEnum, IsBoolean } from 'class-validator';
 
 export class ConfirmPickItemDto {
   @IsNumber()
@@ -126,10 +111,7 @@ export class FulfilmentController {
   @Get(':orderId')
   @Roles(UserRole.PHARMACIST)
   @ApiOperation({ summary: 'Store fulfilment order detail' })
-  async getOrderDetail(
-    @Param('orderId') orderId: string,
-    @CurrentUser('id') userId: string,
-  ) {
+  async getOrderDetail(@Param('orderId') orderId: string, @CurrentUser('id') userId: string) {
     const storeId = await this.getPharmacistStoreId(userId);
     return this.fulfilmentService.getOrderFulfilmentDetail(orderId, storeId);
   }
@@ -137,10 +119,7 @@ export class FulfilmentController {
   @Post(':orderId/picking/start')
   @Roles(UserRole.PHARMACIST)
   @ApiOperation({ summary: 'Start picking workflow for order' })
-  async startPicking(
-    @Param('orderId') orderId: string,
-    @CurrentUser('id') userId: string,
-  ) {
+  async startPicking(@Param('orderId') orderId: string, @CurrentUser('id') userId: string) {
     const storeId = await this.getPharmacistStoreId(userId);
     return this.pickingService.startPicking(orderId, storeId, userId);
   }
@@ -148,10 +127,7 @@ export class FulfilmentController {
   @Get(':orderId/picking')
   @Roles(UserRole.PHARMACIST)
   @ApiOperation({ summary: 'Get order picking checklist' })
-  async getPickingChecklist(
-    @Param('orderId') orderId: string,
-    @CurrentUser('id') userId: string,
-  ) {
+  async getPickingChecklist(@Param('orderId') orderId: string, @CurrentUser('id') userId: string) {
     const storeId = await this.getPharmacistStoreId(userId);
     return this.pickingService.getPickingChecklist(orderId, storeId);
   }
@@ -209,10 +185,7 @@ export class FulfilmentController {
   @Get(':orderId/invoice')
   @Roles(UserRole.PHARMACIST)
   @ApiOperation({ summary: 'Get store invoice for order' })
-  async getInvoice(
-    @Param('orderId') orderId: string,
-    @CurrentUser('id') userId: string,
-  ) {
+  async getInvoice(@Param('orderId') orderId: string, @CurrentUser('id') userId: string) {
     const storeId = await this.getPharmacistStoreId(userId);
     return this.invoiceService.getInvoiceByOrderId(orderId);
   }

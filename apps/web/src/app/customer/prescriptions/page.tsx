@@ -4,23 +4,9 @@ import * as React from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { apiFetch } from '@/lib/api/client';
-import {
-  FileText,
-  Upload,
-  Eye,
-  Trash2,
-  AlertCircle,
-  Clock,
-  User,
-  Sparkles,
-} from 'lucide-react';
+import { FileText, Upload, Eye, Trash2, AlertCircle, Clock, User, Sparkles } from 'lucide-react';
 import Link from 'next/link';
 import { PrescriptionDTO, FamilyMemberDTO } from '@pharmacy/shared-types';
 
@@ -155,9 +141,7 @@ export default function CustomerPrescriptionsPage() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-2 border-b border-[#EAE8F0]">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight text-[#351F65]">
-            Prescriptions
-          </h1>
+          <h1 className="text-2xl font-bold tracking-tight text-[#351F65]">Prescriptions</h1>
           <p className="text-sm text-[#78879A] mt-1">
             Securely uploaded medical prescriptions stored privately for you and your family.
           </p>
@@ -182,15 +166,16 @@ export default function CustomerPrescriptionsPage() {
           <span className="font-semibold block text-[#6240E8] mb-0.5">
             Prescription Verification Process
           </span>
-          Uploaded prescriptions remain in status <strong className="text-amber-700">Uploaded — awaiting pharmacist review</strong> until attached to an order and reviewed by a registered pharmacist at our Kolkata/Howrah fulfillment hubs.
+          Uploaded prescriptions remain in status{' '}
+          <strong className="text-amber-700">Uploaded — awaiting pharmacist review</strong> until
+          attached to an order and reviewed by a registered pharmacist at our Kolkata/Howrah
+          fulfillment hubs.
         </div>
       </div>
 
       {/* Prescription List */}
       {loading ? (
-        <div className="py-12 text-center text-xs text-slate-500">
-          Loading prescriptions...
-        </div>
+        <div className="py-12 text-center text-xs text-slate-500">Loading prescriptions...</div>
       ) : error ? (
         <Card className="p-8 border-red-200 bg-red-50 text-center">
           <AlertCircle className="h-8 w-8 text-red-500 mx-auto mb-2" />
@@ -201,7 +186,8 @@ export default function CustomerPrescriptionsPage() {
           <FileText className="h-10 w-10 text-slate-300 mx-auto mb-3" />
           <h3 className="text-base font-semibold text-slate-800">No Prescriptions Uploaded</h3>
           <p className="text-xs text-slate-500 mt-1 max-w-sm mx-auto">
-            Upload your doctor&apos;s prescription (JPEG, PNG, or PDF up to 10 MB) to conveniently order Schedule H or chronic refills.
+            Upload your doctor&apos;s prescription (JPEG, PNG, or PDF up to 10 MB) to conveniently
+            order Schedule H or chronic refills.
           </p>
           <Button
             size="sm"
@@ -225,11 +211,15 @@ export default function CustomerPrescriptionsPage() {
                       <FileText className="h-5 w-5" />
                     </div>
                     <div>
-                      <h3 className="font-bold text-sm text-[#351F65] truncate max-w-[200px]" title={rx.originalFileName}>
+                      <h3
+                        className="font-bold text-sm text-[#351F65] truncate max-w-[200px]"
+                        title={rx.originalFileName}
+                      >
                         {rx.originalFileName}
                       </h3>
                       <span className="text-[11px] text-slate-400 block font-mono">
-                        {(rx.fileSizeBytes / 1024).toFixed(0)} KB &bull; {rx.mimeType.split('/')[1]?.toUpperCase()}
+                        {(rx.fileSizeBytes / 1024).toFixed(0)} KB &bull;{' '}
+                        {rx.mimeType.split('/')[1]?.toUpperCase()}
                       </span>
                     </div>
                   </div>
@@ -244,7 +234,9 @@ export default function CustomerPrescriptionsPage() {
                     <span className="text-slate-400">Patient:</span>
                     <span className="font-semibold text-slate-800 flex items-center gap-1">
                       <User className="h-3 w-3 text-[#6240E8]" />
-                      {rx.familyMember ? `${rx.familyMember.fullName} (${rx.familyMember.relationship})` : 'Self (Account Owner)'}
+                      {rx.familyMember
+                        ? `${rx.familyMember.fullName} (${rx.familyMember.relationship})`
+                        : 'Self (Account Owner)'}
                     </span>
                   </div>
                   <div className="flex justify-between items-center">
@@ -317,7 +309,9 @@ export default function CustomerPrescriptionsPage() {
             )}
 
             <div className="space-y-1.5">
-              <label className="text-xs font-semibold text-slate-700">Whose prescription is this? *</label>
+              <label className="text-xs font-semibold text-slate-700">
+                Whose prescription is this? *
+              </label>
               <select
                 value={familyMemberId}
                 onChange={(e) => setFamilyMemberId(e.target.value)}
@@ -333,7 +327,9 @@ export default function CustomerPrescriptionsPage() {
             </div>
 
             <div className="space-y-1.5">
-              <label className="text-xs font-semibold text-slate-700">Prescription File (JPEG, PNG, PDF up to 10 MB) *</label>
+              <label className="text-xs font-semibold text-slate-700">
+                Prescription File (JPEG, PNG, PDF up to 10 MB) *
+              </label>
               <div className="border-2 border-dashed border-slate-300 rounded-xl p-6 text-center hover:border-[#6240E8] transition-colors bg-slate-50/50">
                 <input
                   type="file"
@@ -398,7 +394,9 @@ export default function CustomerPrescriptionsPage() {
 
           <div className="flex-1 overflow-auto p-2 bg-slate-900/5 rounded-lg flex items-center justify-center min-h-[400px]">
             {previewLoading ? (
-              <div className="text-xs text-slate-500">Generating secure 5-minute pre-signed link...</div>
+              <div className="text-xs text-slate-500">
+                Generating secure 5-minute pre-signed link...
+              </div>
             ) : previewUrl ? (
               previewMime.includes('pdf') ? (
                 <iframe

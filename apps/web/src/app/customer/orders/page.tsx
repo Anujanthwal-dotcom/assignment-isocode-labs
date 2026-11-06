@@ -7,14 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { StatusBadge } from '@/components/shared/StatusBadge';
 import { apiFetch } from '@/lib/api/client';
-import {
-  Package,
-  Search,
-  ChevronLeft,
-  ChevronRight,
-  Calendar,
-  AlertCircle,
-} from 'lucide-react';
+import { Package, Search, ChevronLeft, ChevronRight, Calendar, AlertCircle } from 'lucide-react';
 import { OrderDTO, OrderStatus } from '@pharmacy/shared-types';
 
 export default function CustomerOrdersPage() {
@@ -78,7 +71,9 @@ export default function CustomerOrdersPage() {
     };
   }, [debouncedSearch, statusFilter, page]);
 
-  const getStatusColor = (status: OrderStatus): 'warning' | 'purple' | 'success' | 'danger' | 'information' => {
+  const getStatusColor = (
+    status: OrderStatus,
+  ): 'warning' | 'purple' | 'success' | 'danger' | 'information' => {
     switch (status) {
       case 'PENDING_VERIFICATION':
         return 'warning';
@@ -100,9 +95,7 @@ export default function CustomerOrdersPage() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-2 border-b border-[#EAE8F0]">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight text-[#351F65]">
-            My Orders
-          </h1>
+          <h1 className="text-2xl font-bold tracking-tight text-[#351F65]">My Orders</h1>
           <p className="text-sm text-[#78879A] mt-1">
             Track and view previous pharmacy orders. Total {totalCount} order(s).
           </p>
@@ -146,9 +139,7 @@ export default function CustomerOrdersPage() {
 
       {/* Orders List */}
       {loading ? (
-        <div className="py-12 text-center text-xs text-slate-500">
-          Loading your orders...
-        </div>
+        <div className="py-12 text-center text-xs text-slate-500">Loading your orders...</div>
       ) : error ? (
         <Card className="p-8 border-red-200 bg-red-50 text-center">
           <AlertCircle className="h-8 w-8 text-red-500 mx-auto mb-2" />
@@ -222,7 +213,13 @@ export default function CustomerOrdersPage() {
                 <span>
                   {order.items?.length || 0} item(s) &bull; Payment:{' '}
                   <strong className="text-slate-800">{order.paymentMethod}</strong> (
-                  <span className={order.paymentStatus === 'SUCCESS' ? 'text-emerald-600 font-medium' : 'text-slate-600'}>
+                  <span
+                    className={
+                      order.paymentStatus === 'SUCCESS'
+                        ? 'text-emerald-600 font-medium'
+                        : 'text-slate-600'
+                    }
+                  >
                     {order.paymentStatus}
                   </span>
                   )

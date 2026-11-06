@@ -1,12 +1,7 @@
 export type MedicineStatus = 'ACTIVE' | 'INACTIVE';
 
 export type MedicineSchedule =
-  | 'OTC'
-  | 'SCHEDULE_H'
-  | 'SCHEDULE_H1'
-  | 'SCHEDULE_X'
-  | 'NARCOTIC'
-  | 'UNKNOWN';
+  'OTC' | 'SCHEDULE_H' | 'SCHEDULE_H1' | 'SCHEDULE_X' | 'NARCOTIC' | 'UNKNOWN';
 
 export interface MedicineDTO {
   id: string;

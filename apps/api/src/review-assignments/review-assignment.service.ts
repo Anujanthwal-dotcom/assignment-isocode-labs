@@ -1,9 +1,4 @@
-import {
-  Injectable,
-  NotFoundException,
-  BadRequestException,
-  Logger,
-} from '@nestjs/common';
+import { Injectable, NotFoundException, BadRequestException, Logger } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { AuditService } from '../audit/audit.service';
 import { OrderStatus, StoreStatus } from '@prisma/client';
@@ -67,7 +62,8 @@ export class ReviewAssignmentService {
         orderNumber: o.orderNumber,
         placedAt: o.placedAt,
         status: o.status,
-        customerName: o.familyMember?.fullName || o.customerUser.customerProfile?.fullName || 'Customer',
+        customerName:
+          o.familyMember?.fullName || o.customerUser.customerProfile?.fullName || 'Customer',
         prescriptionId: o.prescriptionId,
         prescriptionFileName: o.prescription.originalFileName,
         itemCount: o.items.length,
@@ -129,7 +125,9 @@ export class ReviewAssignmentService {
           storeId: dto.storeId,
           assignedByUserId: adminUserId,
           assignedAt: now,
-          reason: dto.reason || (isReassignment ? 'Store reassignment by Admin' : 'Initial review assignment by Admin'),
+          reason:
+            dto.reason ||
+            (isReassignment ? 'Store reassignment by Admin' : 'Initial review assignment by Admin'),
         },
         include: {
           store: { select: { id: true, name: true, code: true } },
@@ -152,7 +150,9 @@ export class ReviewAssignmentService {
       },
     });
 
-    this.logger.log(`Order ${order.orderNumber} assigned to store ${assignment.store.code} (${dto.storeId})`);
+    this.logger.log(
+      `Order ${order.orderNumber} assigned to store ${assignment.store.code} (${dto.storeId})`,
+    );
     return assignment;
   }
 

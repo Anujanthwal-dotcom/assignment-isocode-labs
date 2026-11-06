@@ -12,7 +12,10 @@ export class CreateFamilyMemberDto {
   @IsEnum(FamilyMemberRelationship)
   relationship!: FamilyMemberRelationship;
 
-  @ApiPropertyOptional({ description: 'Optional date of birth (YYYY-MM-DD)', example: '1965-04-12' })
+  @ApiPropertyOptional({
+    description: 'Optional date of birth (YYYY-MM-DD)',
+    example: '1965-04-12',
+  })
   @IsOptional()
   @IsDateString()
   dateOfBirth?: string;
@@ -30,7 +33,10 @@ export class UpdateFamilyMemberDto {
   @IsEnum(FamilyMemberRelationship)
   relationship?: FamilyMemberRelationship;
 
-  @ApiPropertyOptional({ description: 'Optional date of birth (YYYY-MM-DD)', example: '1965-04-12' })
+  @ApiPropertyOptional({
+    description: 'Optional date of birth (YYYY-MM-DD)',
+    example: '1965-04-12',
+  })
   @IsOptional()
   @IsDateString()
   dateOfBirth?: string;

@@ -57,7 +57,9 @@ export default function StockImportsPage() {
 
   // Import Details Modal
   const [detailsImportId, setDetailsImportId] = React.useState<string | null>(null);
-  const [importDetails, setImportDetails] = React.useState<(InventoryImportDTO & { rows?: InventoryImportRowDTO[] }) | null>(null);
+  const [importDetails, setImportDetails] = React.useState<
+    (InventoryImportDTO & { rows?: InventoryImportRowDTO[] }) | null
+  >(null);
   const [loadingDetails, setLoadingDetails] = React.useState(false);
 
   // Pagination
@@ -128,7 +130,8 @@ export default function StockImportsPage() {
 
   // Download Sample CSV
   const handleDownloadSample = () => {
-    const sampleContent = 'sku,quantity,reorderLevel\nMED-MET-500-001,120,20\nMED-TEL-40-001,75,15\nMED-LEV-50-001,42,10\nMED-PAR-500-001,200,30\nMED-ORS-001,50,10\nMED-AMX-500-001,25,10';
+    const sampleContent =
+      'sku,quantity,reorderLevel\nMED-MET-500-001,120,20\nMED-TEL-40-001,75,15\nMED-LEV-50-001,42,10\nMED-PAR-500-001,200,30\nMED-ORS-001,50,10\nMED-AMX-500-001,25,10';
     const blob = new Blob([sampleContent], { type: 'text/csv;charset=utf-8;' });
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
@@ -170,7 +173,9 @@ export default function StockImportsPage() {
         body: formData,
       });
 
-      setUploadSuccess(`Import batch completed successfully! Applied ${res.appliedRows} stock rows.`);
+      setUploadSuccess(
+        `Import batch completed successfully! Applied ${res.appliedRows} stock rows.`,
+      );
       setSelectedFile(null);
       setTimeout(() => {
         setIsUploadOpen(false);
@@ -190,11 +195,10 @@ export default function StockImportsPage() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-[24px] font-bold tracking-tight text-[#351F65]">
-            Stock Imports
-          </h1>
+          <h1 className="text-[24px] font-bold tracking-tight text-[#351F65]">Stock Imports</h1>
           <p className="text-[14px] text-[#78879A]">
-            Import daily stock data snapshots using all-or-nothing deterministic CSV processing and private MinIO storage.
+            Import daily stock data snapshots using all-or-nothing deterministic CSV processing and
+            private MinIO storage.
           </p>
         </div>
         <div className="flex items-center gap-2">
@@ -220,13 +224,7 @@ export default function StockImportsPage() {
         </div>
       </div>
 
-      {error && (
-        <SemanticAlert
-          type="error"
-          title="Import Service Error"
-          description={error}
-        />
-      )}
+      {error && <SemanticAlert type="error" title="Import Service Error" description={error} />}
 
       {/* CSV Policy Information Card */}
       <div className="rounded-[12px] border border-[#B4EDFB] bg-[#EBF9FD] p-4 text-[13px] text-[#0088AA] flex flex-col md:flex-row items-start md:items-center justify-between gap-3">
@@ -236,8 +234,12 @@ export default function StockImportsPage() {
             Daily Stock Snapshot Format & Rules
           </p>
           <p className="text-[12px] text-[#0088AA]/90">
-            Headers must be exact: <code className="font-mono bg-white/70 px-1.5 py-0.5 rounded font-bold">sku,quantity,reorderLevel</code>. Max size: 5 MB (10,000 rows).
-            All-or-nothing validation ensures that if any row is invalid, zero stock changes occur.
+            Headers must be exact:{' '}
+            <code className="font-mono bg-white/70 px-1.5 py-0.5 rounded font-bold">
+              sku,quantity,reorderLevel
+            </code>
+            . Max size: 5 MB (10,000 rows). All-or-nothing validation ensures that if any row is
+            invalid, zero stock changes occur.
           </p>
         </div>
       </div>
@@ -274,7 +276,10 @@ export default function StockImportsPage() {
                   <td colSpan={9} className="py-12 text-center text-[#78879A]">
                     <div className="flex flex-col items-center justify-center gap-1">
                       <p className="font-semibold text-[#351F65]">No stock imports recorded</p>
-                      <p className="text-[12px]">Click &apos;Upload CSV&apos; above to submit the daily stock snapshot for a store or warehouse.</p>
+                      <p className="text-[12px]">
+                        Click &apos;Upload CSV&apos; above to submit the daily stock snapshot for a
+                        store or warehouse.
+                      </p>
                     </div>
                   </td>
                 </tr>
@@ -299,9 +304,7 @@ export default function StockImportsPage() {
                         <span>{item.locationName}</span>
                       </div>
                     </td>
-                    <td className="py-3 px-4 text-[#6C757D]">
-                      {item.importedByEmail}
-                    </td>
+                    <td className="py-3 px-4 text-[#6C757D]">{item.importedByEmail}</td>
                     <td className="py-3 px-4 text-center">
                       {item.status === 'COMPLETED' && (
                         <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[11px] font-medium bg-[#E8F8EC] text-[#0FAC26] border border-[#B0E6BC]">
@@ -390,26 +393,16 @@ export default function StockImportsPage() {
       <Dialog open={isUploadOpen} onOpenChange={setIsUploadOpen}>
         <DialogContent className="max-w-[480px]">
           <DialogHeader>
-            <DialogTitle className="text-[#351F65] text-[18px]">
-              Upload Daily Stock CSV
-            </DialogTitle>
+            <DialogTitle className="text-[#351F65] text-[18px]">Upload Daily Stock CSV</DialogTitle>
           </DialogHeader>
 
           <form onSubmit={handleUploadSubmit} className="space-y-4">
             {uploadError && (
-              <SemanticAlert
-                type="error"
-                title="Import Rejected"
-                description={uploadError}
-              />
+              <SemanticAlert type="error" title="Import Rejected" description={uploadError} />
             )}
 
             {uploadSuccess && (
-              <SemanticAlert
-                type="success"
-                title="Import Completed"
-                description={uploadSuccess}
-              />
+              <SemanticAlert type="success" title="Import Completed" description={uploadSuccess} />
             )}
 
             <div>
@@ -498,12 +491,13 @@ export default function StockImportsPage() {
       </Dialog>
 
       {/* Import Details Dialog */}
-      <Dialog open={Boolean(detailsImportId)} onOpenChange={(open) => !open && setDetailsImportId(null)}>
+      <Dialog
+        open={Boolean(detailsImportId)}
+        onOpenChange={(open) => !open && setDetailsImportId(null)}
+      >
         <DialogContent className="max-w-[620px]">
           <DialogHeader>
-            <DialogTitle className="text-[#351F65] text-[18px]">
-              Import Batch Outcome
-            </DialogTitle>
+            <DialogTitle className="text-[#351F65] text-[18px]">Import Batch Outcome</DialogTitle>
           </DialogHeader>
 
           {loadingDetails ? (
@@ -516,7 +510,9 @@ export default function StockImportsPage() {
               <div className="grid grid-cols-2 gap-3 text-[12px] bg-[#F8F9FB] p-3 rounded-[8px] border border-[#EAE8F0]">
                 <div>
                   <span className="text-[#78879A]">File:</span>{' '}
-                  <span className="font-semibold text-[#14161A] font-mono">{importDetails.fileName}</span>
+                  <span className="font-semibold text-[#14161A] font-mono">
+                    {importDetails.fileName}
+                  </span>
                 </div>
                 <div>
                   <span className="text-[#78879A]">Target Location:</span>{' '}
@@ -545,7 +541,8 @@ export default function StockImportsPage() {
               {/* Omitted medicines policy notice */}
               {importDetails.status === 'COMPLETED' && (
                 <div className="p-2.5 rounded-[6px] bg-[#E8F8EC] border border-[#B0E6BC] text-[12px] text-[#0FAC26]">
-                  Stock snapshot applied successfully. Medicines omitted from this CSV remained untouched.
+                  Stock snapshot applied successfully. Medicines omitted from this CSV remained
+                  untouched.
                 </div>
               )}
 
@@ -574,9 +571,13 @@ export default function StockImportsPage() {
                             <td className="p-2 text-right">{r.quantity ?? '—'}</td>
                             <td className="p-2 text-center">
                               {r.status === 'APPLIED' ? (
-                                <span className="text-[#0FAC26] font-semibold text-[11px]">Applied</span>
+                                <span className="text-[#0FAC26] font-semibold text-[11px]">
+                                  Applied
+                                </span>
                               ) : (
-                                <span className="text-[#DC3545] font-semibold text-[11px]">Rejected</span>
+                                <span className="text-[#DC3545] font-semibold text-[11px]">
+                                  Rejected
+                                </span>
                               )}
                             </td>
                             <td className="p-2 text-[#DC3545] text-[11px]">

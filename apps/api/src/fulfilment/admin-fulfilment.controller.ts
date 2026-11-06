@@ -1,9 +1,4 @@
-import {
-  Controller,
-  Get,
-  Param,
-  Query,
-} from '@nestjs/common';
+import { Controller, Get, Param, Query } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 import { Roles } from '../auth/decorators/roles.decorator';
 import { CurrentUser } from '../auth/decorators/current-user.decorator';
@@ -83,7 +78,9 @@ export class AdminFulfilmentController {
         paymentStatus: o.paymentStatus,
         placedAt: o.placedAt.toISOString(),
         routingMethod: o.routingDecisions[0]?.routingMethod || null,
-        distanceKm: o.routingDecisions[0]?.distanceKm ? Number(o.routingDecisions[0].distanceKm) : null,
+        distanceKm: o.routingDecisions[0]?.distanceKm
+          ? Number(o.routingDecisions[0].distanceKm)
+          : null,
       })),
       pagination: {
         page: pageNum,

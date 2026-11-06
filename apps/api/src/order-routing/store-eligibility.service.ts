@@ -49,7 +49,11 @@ export class StoreEligibilityService {
     });
 
     const eligibleStores: EligibleStoreCandidate[] = [];
-    const storesWithoutStock: Array<{ storeCode: string; storeName: string; missingCount: number }> = [];
+    const storesWithoutStock: Array<{
+      storeCode: string;
+      storeName: string;
+      missingCount: number;
+    }> = [];
 
     const hasValidCustomerCoords =
       customerCoords && this.storeDistanceService.isValidCoordinates(customerCoords);

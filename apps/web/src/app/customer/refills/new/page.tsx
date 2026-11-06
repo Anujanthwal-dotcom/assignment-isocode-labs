@@ -45,7 +45,10 @@ export default function NewRefillSubscriptionPage() {
 
   return (
     <div className="max-w-xl mx-auto py-8 px-4 space-y-6">
-      <Link href="/customer/refills" className="inline-flex items-center text-xs font-semibold text-[#6240E8] hover:underline">
+      <Link
+        href="/customer/refills"
+        className="inline-flex items-center text-xs font-semibold text-[#6240E8] hover:underline"
+      >
         <ArrowLeft className="mr-1.5 h-3.5 w-3.5" /> Back to Refills
       </Link>
 
@@ -96,7 +99,8 @@ export default function NewRefillSubscriptionPage() {
                 <span>Explicit Consent &amp; Privacy Guarantee</span>
               </div>
               <p>
-                We will only notify you in-app. Reminders do not place orders automatically or charge your account. You can pause or cancel at any time.
+                We will only notify you in-app. Reminders do not place orders automatically or
+                charge your account. You can pause or cancel at any time.
               </p>
             </div>
 

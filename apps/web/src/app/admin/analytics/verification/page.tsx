@@ -4,7 +4,14 @@ import * as React from 'react';
 import Link from 'next/link';
 import { apiFetch } from '@/lib/api/client';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
 import { Clock, ArrowLeft, CheckCircle2, XCircle, AlertCircle, RefreshCw } from 'lucide-react';
 import { VerificationAnalyticsDto } from '@pharmacy/shared-types';
@@ -17,7 +24,9 @@ export default function AdminAnalyticsVerificationPage() {
   const loadData = React.useCallback(async (selectedPeriod: string) => {
     try {
       setLoading(true);
-      const res = await apiFetch<VerificationAnalyticsDto>(`/admin/analytics/verification?period=${selectedPeriod}`);
+      const res = await apiFetch<VerificationAnalyticsDto>(
+        `/admin/analytics/verification?period=${selectedPeriod}`,
+      );
       setData(res);
     } catch {
       // Handled
@@ -32,7 +41,10 @@ export default function AdminAnalyticsVerificationPage() {
 
   return (
     <div className="space-y-6 max-w-7xl mx-auto py-6 px-4">
-      <Link href="/admin/analytics" className="inline-flex items-center text-xs font-semibold text-[#6240E8] hover:underline">
+      <Link
+        href="/admin/analytics"
+        className="inline-flex items-center text-xs font-semibold text-[#6240E8] hover:underline"
+      >
         <ArrowLeft className="mr-1.5 h-3.5 w-3.5" /> Back to Analytics Overview
       </Link>
 
@@ -54,7 +66,9 @@ export default function AdminAnalyticsVerificationPage() {
               type="button"
               onClick={() => setPeriod(val)}
               className={`px-3 py-1.5 rounded-lg font-medium transition-all ${
-                period === val ? 'bg-white text-slate-900 shadow-xs font-semibold' : 'text-slate-600'
+                period === val
+                  ? 'bg-white text-slate-900 shadow-xs font-semibold'
+                  : 'text-slate-600'
               }`}
             >
               {val}
@@ -72,7 +86,9 @@ export default function AdminAnalyticsVerificationPage() {
             <Card className="border-slate-200 shadow-xs">
               <CardContent className="p-4 space-y-1">
                 <span className="text-xs text-slate-500 font-medium">Total Reviewed</span>
-                <div className="text-2xl font-bold text-slate-900">{data.totalPrescriptionsReviewed}</div>
+                <div className="text-2xl font-bold text-slate-900">
+                  {data.totalPrescriptionsReviewed}
+                </div>
                 <span className="text-[11px] text-slate-400">Completed reviews</span>
               </CardContent>
             </Card>
@@ -80,7 +96,9 @@ export default function AdminAnalyticsVerificationPage() {
             <Card className="border-slate-200 shadow-xs">
               <CardContent className="p-4 space-y-1">
                 <span className="text-xs text-slate-500 font-medium">Median Verification Time</span>
-                <div className="text-2xl font-bold text-[#6240E8]">{data.medianVerificationMinutes} min</div>
+                <div className="text-2xl font-bold text-[#6240E8]">
+                  {data.medianVerificationMinutes} min
+                </div>
                 <span className="text-[11px] text-slate-400">p50 review turnaround</span>
               </CardContent>
             </Card>
@@ -88,18 +106,24 @@ export default function AdminAnalyticsVerificationPage() {
             <Card className="border-slate-200 shadow-xs">
               <CardContent className="p-4 space-y-1">
                 <span className="text-xs text-slate-500 font-medium">Average Time</span>
-                <div className="text-2xl font-bold text-slate-700">{data.averageVerificationMinutes} min</div>
+                <div className="text-2xl font-bold text-slate-700">
+                  {data.averageVerificationMinutes} min
+                </div>
                 <span className="text-[11px] text-slate-400">Arithmetic mean</span>
               </CardContent>
             </Card>
 
             <Card className="border-slate-200 shadow-xs">
               <CardContent className="p-4 space-y-1">
-                <span className="text-xs text-slate-500 font-medium">Rejections &amp; Re-uploads</span>
+                <span className="text-xs text-slate-500 font-medium">
+                  Rejections &amp; Re-uploads
+                </span>
                 <div className="text-2xl font-bold text-red-600">
                   {data.rejectedCount + data.reuploadRequestedCount}
                 </div>
-                <span className="text-[11px] text-slate-400">{data.rejectedCount} rejected / {data.reuploadRequestedCount} re-upload</span>
+                <span className="text-[11px] text-slate-400">
+                  {data.rejectedCount} rejected / {data.reuploadRequestedCount} re-upload
+                </span>
               </CardContent>
             </Card>
           </div>
@@ -153,13 +177,21 @@ export default function AdminAnalyticsVerificationPage() {
               </CardHeader>
               <CardContent>
                 {data.rejectionReasons.length === 0 ? (
-                  <p className="text-xs text-slate-400 py-6 text-center">No rejections recorded in period.</p>
+                  <p className="text-xs text-slate-400 py-6 text-center">
+                    No rejections recorded in period.
+                  </p>
                 ) : (
                   <div className="space-y-3">
                     {data.rejectionReasons.map((r, i) => (
-                      <div key={i} className="flex items-center justify-between text-xs p-2.5 rounded-lg bg-slate-50 border border-slate-100">
+                      <div
+                        key={i}
+                        className="flex items-center justify-between text-xs p-2.5 rounded-lg bg-slate-50 border border-slate-100"
+                      >
                         <span className="font-medium text-slate-800">{r.reason}</span>
-                        <Badge variant="danger" className="font-bold text-red-600 border-red-200 bg-red-50">
+                        <Badge
+                          variant="danger"
+                          className="font-bold text-red-600 border-red-200 bg-red-50"
+                        >
                           {r.count} incidents
                         </Badge>
                       </div>

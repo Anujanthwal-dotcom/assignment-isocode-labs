@@ -6,7 +6,10 @@ export const manualRouteOrderSchema = z.object({
 });
 
 export const pickItemConfirmSchema = z.object({
-  quantityPicked: z.number().int().positive({ message: 'Quantity picked must be a positive integer.' }),
+  quantityPicked: z
+    .number()
+    .int()
+    .positive({ message: 'Quantity picked must be a positive integer.' }),
 });
 
 export const pickItemExceptionSchema = z.object({

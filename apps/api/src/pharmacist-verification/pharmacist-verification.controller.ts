@@ -1,13 +1,4 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Patch,
-  Param,
-  Body,
-  Query,
-  ParseUUIDPipe,
-} from '@nestjs/common';
+import { Controller, Get, Post, Patch, Param, Body, Query, ParseUUIDPipe } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 import { Roles } from '../auth/decorators/roles.decorator';
 import { CurrentUser } from '../auth/decorators/current-user.decorator';
@@ -29,16 +20,11 @@ import {
 @Roles(UserRole.PHARMACIST)
 @Controller('pharmacist')
 export class PharmacistVerificationController {
-  constructor(
-    private readonly verificationService: PharmacistVerificationService,
-  ) {}
+  constructor(private readonly verificationService: PharmacistVerificationService) {}
 
   @Get('review-queue')
   @ApiOperation({ summary: 'Store-scoped queue of orders requiring prescription verification' })
-  async getQueue(
-    @CurrentUser('id') userId: string,
-    @Query() query: PharmacistQueueQueryDto,
-  ) {
+  async getQueue(@CurrentUser('id') userId: string, @Query() query: PharmacistQueueQueryDto) {
     return this.verificationService.getQueue(userId, query);
   }
 
@@ -63,7 +49,9 @@ export class PharmacistVerificationController {
   }
 
   @Post('reviews/:reviewId/items/:orderItemId/approve')
-  @ApiOperation({ summary: 'Approve an individual medicine item after deterministic compliance checks' })
+  @ApiOperation({
+    summary: 'Approve an individual medicine item after deterministic compliance checks',
+  })
   async approveItem(
     @Param('reviewId', ParseUUIDPipe) reviewId: string,
     @Param('orderItemId', ParseUUIDPipe) orderItemId: string,

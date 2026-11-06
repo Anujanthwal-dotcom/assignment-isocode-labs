@@ -15,24 +15,8 @@ import { CustomerInvoiceController } from './customer-invoice.controller';
 
 @Module({
   imports: [PrismaModule, AuditModule, OrdersModule, OrderRoutingModule, RefillsModule],
-  controllers: [
-    FulfilmentController,
-    AdminFulfilmentController,
-    CustomerInvoiceController,
-  ],
-  providers: [
-    FulfilmentService,
-    PickingService,
-    PackingService,
-    InvoiceService,
-    HandoverService,
-  ],
-  exports: [
-    FulfilmentService,
-    PickingService,
-    PackingService,
-    InvoiceService,
-    HandoverService,
-  ],
+  controllers: [FulfilmentController, AdminFulfilmentController, CustomerInvoiceController],
+  providers: [FulfilmentService, PickingService, PackingService, InvoiceService, HandoverService],
+  exports: [FulfilmentService, PickingService, PackingService, InvoiceService, HandoverService],
 })
 export class FulfilmentModule {}

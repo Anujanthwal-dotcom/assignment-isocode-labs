@@ -32,7 +32,9 @@ export default function AdminAnalyticsOverviewPage() {
     try {
       setLoading(true);
       setError(null);
-      const res = await apiFetch<AdminAnalyticsOverviewDto>(`/admin/analytics/overview?period=${selectedPeriod}`);
+      const res = await apiFetch<AdminAnalyticsOverviewDto>(
+        `/admin/analytics/overview?period=${selectedPeriod}`,
+      );
       setData(res);
     } catch (err: any) {
       setError(err.message || 'Failed to load central analytics.');
@@ -113,7 +115,9 @@ export default function AdminAnalyticsOverviewPage() {
                   Awaiting Verification
                   <Clock className="h-4 w-4 text-amber-500" />
                 </span>
-                <div className="text-2xl font-bold text-amber-600">{data.pendingVerificationOrders}</div>
+                <div className="text-2xl font-bold text-amber-600">
+                  {data.pendingVerificationOrders}
+                </div>
                 <span className="text-[11px] text-slate-500">Pending pharmacist review</span>
               </CardContent>
             </Card>
@@ -179,7 +183,9 @@ export default function AdminAnalyticsOverviewPage() {
                   Refill Subscriptions
                   <RefreshCw className="h-4 w-4 text-[#6240E8]" />
                 </span>
-                <div className="text-2xl font-bold text-[#6240E8]">{data.activeRefillSubscriptionsCount}</div>
+                <div className="text-2xl font-bold text-[#6240E8]">
+                  {data.activeRefillSubscriptionsCount}
+                </div>
                 <span className="text-[11px] text-slate-500">Customer active reminders</span>
               </CardContent>
             </Card>
@@ -208,7 +214,9 @@ export default function AdminAnalyticsOverviewPage() {
               <Card className="p-5 border-slate-200 hover:border-[#6240E8] transition-all cursor-pointer h-full flex flex-col justify-between">
                 <div className="space-y-2">
                   <div className="flex items-center justify-between">
-                    <span className="font-bold text-slate-900 text-sm">Verification Performance</span>
+                    <span className="font-bold text-slate-900 text-sm">
+                      Verification Performance
+                    </span>
                     <Clock className="h-4 w-4 text-[#6240E8]" />
                   </div>
                   <p className="text-xs text-slate-500 leading-relaxed">

@@ -1,11 +1,5 @@
 export type FamilyMemberRelationship =
-  | 'SELF'
-  | 'MOTHER'
-  | 'FATHER'
-  | 'SPOUSE'
-  | 'CHILD'
-  | 'SIBLING'
-  | 'OTHER';
+  'SELF' | 'MOTHER' | 'FATHER' | 'SPOUSE' | 'CHILD' | 'SIBLING' | 'OTHER';
 
 export interface FamilyMemberDTO {
   id: string;
@@ -73,11 +67,7 @@ export interface UpdateCustomerAddressDTO {
 }
 
 export type PrescriptionStatus =
-  | 'UPLOADED'
-  | 'UNDER_REVIEW'
-  | 'APPROVED'
-  | 'REJECTED'
-  | 'REUPLOAD_REQUIRED';
+  'UPLOADED' | 'UNDER_REVIEW' | 'APPROVED' | 'REJECTED' | 'REUPLOAD_REQUIRED';
 
 export interface PrescriptionDTO {
   id: string;
@@ -187,11 +177,7 @@ export type OrderPaymentMethod = 'UPI' | 'COD';
 
 export type OrderPaymentStatus = 'PENDING' | 'SUCCESS' | 'FAILED' | 'NOT_REQUIRED';
 
-export type OrderItemStatus =
-  | 'PENDING_VERIFICATION'
-  | 'APPROVED'
-  | 'REJECTED'
-  | 'REMOVED';
+export type OrderItemStatus = 'PENDING_VERIFICATION' | 'APPROVED' | 'REJECTED' | 'REMOVED';
 
 export interface OrderItemDTO {
   id: string;
@@ -294,11 +280,7 @@ export interface MockPaymentResponseDTO {
 // ==========================================
 
 export type PrescriptionAIStatus =
-  | 'QUEUED'
-  | 'PROCESSING'
-  | 'COMPLETED'
-  | 'NEEDS_REUPLOAD'
-  | 'FAILED';
+  'QUEUED' | 'PROCESSING' | 'COMPLETED' | 'NEEDS_REUPLOAD' | 'FAILED';
 
 export interface ExtractedPrescriptionItemDTO {
   rawMedicineName: string;
@@ -376,4 +358,3 @@ export interface RequestPrescriptionExtractionResponseDTO {
   attemptNumber: number;
   createdAt: string;
 }
-

@@ -23,11 +23,7 @@ export class AdminAnalyticsController {
   @Get('orders/by-store')
   async getOrdersByStore(@Query() query: Record<string, string>) {
     const validated = analyticsQuerySchema.parse(query);
-    return this.analyticsService.getOrdersByStore(
-      validated.period,
-      validated.from,
-      validated.to,
-    );
+    return this.analyticsService.getOrdersByStore(validated.period, validated.from, validated.to);
   }
 
   @Get('orders/timeline')
@@ -66,11 +62,7 @@ export class AdminAnalyticsController {
   @Get('refills')
   async getRefillAnalytics(@Query() query: Record<string, string>) {
     const validated = analyticsQuerySchema.parse(query);
-    return this.analyticsService.getRefillAnalytics(
-      validated.period,
-      validated.from,
-      validated.to,
-    );
+    return this.analyticsService.getRefillAnalytics(validated.period, validated.from, validated.to);
   }
 
   @Get('stores/:storeId')

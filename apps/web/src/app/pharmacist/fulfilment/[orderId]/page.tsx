@@ -55,9 +55,7 @@ export default function OrderInvoiceDetailPage() {
           >
             <ArrowLeft className="w-4 h-4" />
           </Link>
-          <h1 className="text-xl font-bold text-[#14161A] tracking-tight">
-            Order Invoice
-          </h1>
+          <h1 className="text-xl font-bold text-[#14161A] tracking-tight">Order Invoice</h1>
         </div>
 
         {invoice && (
@@ -72,9 +70,7 @@ export default function OrderInvoiceDetailPage() {
       </div>
 
       {loading ? (
-        <div className="p-12 text-center text-xs text-[#78879A]">
-          Loading invoice record...
-        </div>
+        <div className="p-12 text-center text-xs text-[#78879A]">Loading invoice record...</div>
       ) : error ? (
         <div className="p-8 text-center text-xs text-rose-600 bg-rose-50 rounded-2xl border border-rose-200">
           <AlertTriangle className="w-6 h-6 mx-auto mb-2 text-rose-500" />
@@ -111,7 +107,11 @@ export default function OrderInvoiceDetailPage() {
                 Order #: <strong>{invoice.orderNumber}</strong>
               </span>
               <span className="text-[11px] text-[#78879A] block">
-                Issued: {new Date(invoice.issuedAt).toLocaleString('en-IN', { dateStyle: 'medium', timeStyle: 'short' })}
+                Issued:{' '}
+                {new Date(invoice.issuedAt).toLocaleString('en-IN', {
+                  dateStyle: 'medium',
+                  timeStyle: 'short',
+                })}
               </span>
             </div>
           </div>
@@ -124,7 +124,9 @@ export default function OrderInvoiceDetailPage() {
               </span>
               <strong className="text-sm block">{invoice.customerName}</strong>
               {invoice.customerPhone && (
-                <span className="text-[11px] text-[#78879A] block">+91 {invoice.customerPhone}</span>
+                <span className="text-[11px] text-[#78879A] block">
+                  +91 {invoice.customerPhone}
+                </span>
               )}
               {invoice.customerEmail && (
                 <span className="text-[11px] text-[#78879A] block">{invoice.customerEmail}</span>
@@ -187,7 +189,9 @@ export default function OrderInvoiceDetailPage() {
               </div>
               <div className="flex justify-between text-[#78879A]">
                 <span>Delivery Fee:</span>
-                <span className="font-semibold text-[#14161A]">₹{invoice.deliveryFee.toFixed(2)}</span>
+                <span className="font-semibold text-[#14161A]">
+                  ₹{invoice.deliveryFee.toFixed(2)}
+                </span>
               </div>
               {invoice.discount > 0 && (
                 <div className="flex justify-between text-emerald-600">
@@ -208,7 +212,8 @@ export default function OrderInvoiceDetailPage() {
               This is a computer-generated tax invoice issued by a licensed registered pharmacy.
             </p>
             <p>
-              Medicines dispensed under registered pharmacist clinical verification in compliance with statutory pharmacy acts.
+              Medicines dispensed under registered pharmacist clinical verification in compliance
+              with statutory pharmacy acts.
             </p>
           </div>
         </div>

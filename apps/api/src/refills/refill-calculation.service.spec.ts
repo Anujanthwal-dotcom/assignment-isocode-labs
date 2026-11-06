@@ -122,7 +122,11 @@ describe('RefillCalculationService', () => {
     expect(res.eligibilityStatus).toBe('ELIGIBLE');
     expect(res.estimatedSupplyDays).toBe(10);
     // Verified it's exactly physicalHandoverAt + 10 days, not orderCreatedAt + 10 days
-    expect(res.estimatedRunOutAt?.getTime()).toBe(physicalHandoverAt.getTime() + 10 * 24 * 60 * 60 * 1000);
-    expect(res.estimatedRunOutAt?.getTime()).not.toBe(orderCreatedAt.getTime() + 10 * 24 * 60 * 60 * 1000);
+    expect(res.estimatedRunOutAt?.getTime()).toBe(
+      physicalHandoverAt.getTime() + 10 * 24 * 60 * 60 * 1000,
+    );
+    expect(res.estimatedRunOutAt?.getTime()).not.toBe(
+      orderCreatedAt.getTime() + 10 * 24 * 60 * 60 * 1000,
+    );
   });
 });

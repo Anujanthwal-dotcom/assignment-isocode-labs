@@ -3,7 +3,18 @@
 import * as React from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
-import { Pill, User, ShoppingBag, LogOut, MapPin, Users, FileText, Package, Bell, RefreshCw } from 'lucide-react';
+import {
+  Pill,
+  User,
+  ShoppingBag,
+  LogOut,
+  MapPin,
+  Users,
+  FileText,
+  Package,
+  Bell,
+  RefreshCw,
+} from 'lucide-react';
 import {
   DropdownMenu,
   DropdownMenuTrigger,
@@ -167,7 +178,10 @@ export const CustomerNavbar: React.FC = () => {
                 <span>Medicine Refills</span>
               </DropdownMenuItem>
               <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={handleLogout} className="text-red-600 focus:text-red-600 focus:bg-red-50">
+              <DropdownMenuItem
+                onClick={handleLogout}
+                className="text-red-600 focus:text-red-600 focus:bg-red-50"
+              >
                 <LogOut className="mr-2 h-4 w-4 text-red-600" />
                 <span>Sign Out</span>
               </DropdownMenuItem>

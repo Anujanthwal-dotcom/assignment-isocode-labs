@@ -7,11 +7,7 @@ import {
 import { ConfigService } from '@nestjs/config';
 import { PrismaService } from '../prisma/prisma.service';
 import { AuditService } from '../audit/audit.service';
-import {
-  StockReservationStatus,
-  InventoryMovementType,
-  Prisma,
-} from '@prisma/client';
+import { StockReservationStatus, InventoryMovementType, Prisma } from '@prisma/client';
 
 export interface ReserveStockItemParam {
   orderItemId: string;
@@ -75,8 +71,7 @@ export class StockReservationService {
 
           for (const item of sortedItems) {
             // Lock the inventory balance row with FOR UPDATE using raw query
-            const lockedBalances: Array<{ id: string; quantity: number }> =
-              await tx.$queryRaw`
+            const lockedBalances: Array<{ id: string; quantity: number }> = await tx.$queryRaw`
                 SELECT id, quantity 
                 FROM inventory_balances 
                 WHERE "storeId" = ${storeId}::uuid AND "medicineId" = ${item.medicineId}::uuid
@@ -84,9 +79,7 @@ export class StockReservationService {
               `;
 
             if (!lockedBalances || lockedBalances.length === 0) {
-              throw new Error(
-                `Store has no inventory record for medicine ${item.medicineId}.`,
-              );
+              throw new Error(`Store has no inventory record for medicine ${item.medicineId}.`);
             }
 
             const onHand = lockedBalances[0].quantity;

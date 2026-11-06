@@ -36,18 +36,12 @@ export class PrescriptionAiService {
     @InjectQueue(PRESCRIPTION_AI_QUEUE)
     private readonly extractionQueue: Queue,
   ) {
-    this.providerName = this.configService.get<string>(
-      'prescriptionAi.provider',
-      'mock',
-    );
+    this.providerName = this.configService.get<string>('prescriptionAi.provider', 'mock');
     this.modelName =
       this.providerName === 'gemini'
         ? this.configService.get<string>('prescriptionAi.geminiModel', 'gemini-2.5-flash')
         : 'mock-deterministic';
-    this.maxRetries = this.configService.get<number>(
-      'prescriptionAi.maxRetries',
-      2,
-    );
+    this.maxRetries = this.configService.get<number>('prescriptionAi.maxRetries', 2);
   }
 
   async requestExtraction(

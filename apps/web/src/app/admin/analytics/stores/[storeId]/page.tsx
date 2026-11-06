@@ -32,7 +32,9 @@ export default function AdminAnalyticsStoreDetailPage() {
   }, [storeId]);
 
   if (loading) {
-    return <div className="py-20 text-center text-slate-400">Loading store operations report...</div>;
+    return (
+      <div className="py-20 text-center text-slate-400">Loading store operations report...</div>
+    );
   }
 
   if (!data || !data.store) {
@@ -50,7 +52,10 @@ export default function AdminAnalyticsStoreDetailPage() {
 
   return (
     <div className="space-y-6 max-w-6xl mx-auto py-6 px-4">
-      <Link href="/admin/analytics/orders" className="inline-flex items-center text-xs font-semibold text-[#6240E8] hover:underline">
+      <Link
+        href="/admin/analytics/orders"
+        className="inline-flex items-center text-xs font-semibold text-[#6240E8] hover:underline"
+      >
         <ArrowLeft className="mr-1.5 h-3.5 w-3.5" /> Back to Stores Overview
       </Link>
 
@@ -58,7 +63,9 @@ export default function AdminAnalyticsStoreDetailPage() {
         <div>
           <div className="flex items-center gap-2">
             <h1 className="text-2xl font-bold tracking-tight text-slate-900">{store.name}</h1>
-            <Badge variant="neutral" className="font-mono text-xs">{store.code}</Badge>
+            <Badge variant="neutral" className="font-mono text-xs">
+              {store.code}
+            </Badge>
           </div>
           <p className="text-xs text-slate-500 mt-1">
             {store.city} &bull; {store.address}
@@ -80,7 +87,9 @@ export default function AdminAnalyticsStoreDetailPage() {
         <Card className="border-slate-200 shadow-xs">
           <CardContent className="p-4 space-y-1">
             <span className="text-xs text-slate-500 font-medium">Median Verification Time</span>
-            <div className="text-2xl font-bold text-[#6240E8]">{verification.medianVerificationMinutes} min</div>
+            <div className="text-2xl font-bold text-[#6240E8]">
+              {verification.medianVerificationMinutes} min
+            </div>
           </CardContent>
         </Card>
 
@@ -94,7 +103,9 @@ export default function AdminAnalyticsStoreDetailPage() {
         <Card className="border-slate-200 shadow-xs">
           <CardContent className="p-4 space-y-1">
             <span className="text-xs text-slate-500 font-medium">Stockout Incidents</span>
-            <div className="text-2xl font-bold text-red-600">{fulfilment.stockUnavailableCount}</div>
+            <div className="text-2xl font-bold text-red-600">
+              {fulfilment.stockUnavailableCount}
+            </div>
           </CardContent>
         </Card>
       </div>
@@ -107,7 +118,9 @@ export default function AdminAnalyticsStoreDetailPage() {
         </CardHeader>
         <CardContent className="space-y-4 text-xs text-slate-600">
           <p>
-            Store <strong>{store.code}</strong> serves localized prescription review queues and fulfillment dispatches. All metrics reflect actual PostgreSQL transactional records without simulated data points.
+            Store <strong>{store.code}</strong> serves localized prescription review queues and
+            fulfillment dispatches. All metrics reflect actual PostgreSQL transactional records
+            without simulated data points.
           </p>
         </CardContent>
       </Card>

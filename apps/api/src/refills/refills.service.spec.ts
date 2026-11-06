@@ -185,7 +185,12 @@ describe('RefillsService - Subscriptions & Lifecycle', () => {
       customerId: 'cust-1',
       refillEstimate: {
         dispensedQuantity: 60,
-        medicine: { id: 'med-1', name: 'Metformin 500mg', status: 'ACTIVE', schedule: 'SCHEDULE_H' },
+        medicine: {
+          id: 'med-1',
+          name: 'Metformin 500mg',
+          status: 'ACTIVE',
+          schedule: 'SCHEDULE_H',
+        },
       },
     });
 

@@ -47,7 +47,7 @@ describe('StoreEligibilityService', () => {
     });
 
     const items = [{ medicineId: 'm1', quantityRequired: 2 }];
-    const customerCoords = { latitude: 22.58, longitude: 88.40 };
+    const customerCoords = { latitude: 22.58, longitude: 88.4 };
 
     const result = await service.findEligibleStores(items, customerCoords);
 

@@ -52,11 +52,12 @@ describe('Phase 4 AI-Assisted Prescription Reading E2E Tests', () => {
 
     // Setup Customer 1
     const phone1 = `98${Math.floor(10000000 + Math.random() * 90000000)}`;
-    const otp1 = (
-      await request(app.getHttpServer())
-        .post('/api/v1/auth/customer/request-otp')
-        .send({ phone: phone1 })
-    ).body.developmentOtp || '123456';
+    const otp1 =
+      (
+        await request(app.getHttpServer())
+          .post('/api/v1/auth/customer/request-otp')
+          .send({ phone: phone1 })
+      ).body.developmentOtp || '123456';
 
     const login1 = await request(app.getHttpServer())
       .post('/api/v1/auth/customer/verify-otp')
@@ -66,11 +67,12 @@ describe('Phase 4 AI-Assisted Prescription Reading E2E Tests', () => {
 
     // Setup Customer 2
     const phone2 = `98${Math.floor(10000000 + Math.random() * 90000000)}`;
-    const otp2 = (
-      await request(app.getHttpServer())
-        .post('/api/v1/auth/customer/request-otp')
-        .send({ phone: phone2 })
-    ).body.developmentOtp || '123456';
+    const otp2 =
+      (
+        await request(app.getHttpServer())
+          .post('/api/v1/auth/customer/request-otp')
+          .send({ phone: phone2 })
+      ).body.developmentOtp || '123456';
 
     const login2 = await request(app.getHttpServer())
       .post('/api/v1/auth/customer/verify-otp')

@@ -61,7 +61,8 @@ export class PackingService {
 
     // Filter approved items
     const approvedItems = order.items.filter(
-      (i) => i.reviews[0]?.status === 'APPROVED' && i.status !== 'REJECTED' && i.status !== 'REMOVED',
+      (i) =>
+        i.reviews[0]?.status === 'APPROVED' && i.status !== 'REJECTED' && i.status !== 'REMOVED',
     );
 
     if (approvedItems.length === 0) {

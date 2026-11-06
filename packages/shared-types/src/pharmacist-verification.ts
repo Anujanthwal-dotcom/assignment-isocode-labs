@@ -1,19 +1,10 @@
 import { ComplianceEvaluationResult } from './compliance.js';
 
 export type PrescriptionReviewStatus =
-  | 'PENDING'
-  | 'IN_REVIEW'
-  | 'APPROVED'
-  | 'REJECTED'
-  | 'REUPLOAD_REQUESTED';
+  'PENDING' | 'IN_REVIEW' | 'APPROVED' | 'REJECTED' | 'REUPLOAD_REQUESTED';
 
 export type OrderItemReviewStatus =
-  | 'PENDING'
-  | 'APPROVED'
-  | 'REJECTED'
-  | 'BLOCKED'
-  | 'ALTERNATIVE_PENDING_CUSTOMER'
-  | 'REMOVED';
+  'PENDING' | 'APPROVED' | 'REJECTED' | 'BLOCKED' | 'ALTERNATIVE_PENDING_CUSTOMER' | 'REMOVED';
 
 export type AlternativeProposalStatus = 'PENDING' | 'ACCEPTED' | 'DECLINED';
 

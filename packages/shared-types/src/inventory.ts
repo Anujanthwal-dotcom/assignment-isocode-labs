@@ -3,16 +3,9 @@ import { MedicineDTO } from './catalogue.js';
 export type InventoryLocationType = 'STORE' | 'WAREHOUSE';
 
 export type InventoryMovementType =
-  | 'OPENING_STOCK'
-  | 'STOCK_IMPORT'
-  | 'MANUAL_ADJUSTMENT'
-  | 'STOCK_CORRECTION';
+  'OPENING_STOCK' | 'STOCK_IMPORT' | 'MANUAL_ADJUSTMENT' | 'STOCK_CORRECTION';
 
-export type InventoryImportStatus =
-  | 'PROCESSING'
-  | 'COMPLETED'
-  | 'COMPLETED_WITH_ERRORS'
-  | 'FAILED';
+export type InventoryImportStatus = 'PROCESSING' | 'COMPLETED' | 'COMPLETED_WITH_ERRORS' | 'FAILED';
 
 export type InventoryImportRowStatus = 'PENDING' | 'APPLIED' | 'REJECTED';
 

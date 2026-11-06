@@ -1,13 +1,4 @@
-import {
-  IsUUID,
-  IsEnum,
-  IsOptional,
-  IsString,
-  MaxLength,
-  IsInt,
-  Min,
-  Max,
-} from 'class-validator';
+import { IsUUID, IsEnum, IsOptional, IsString, MaxLength, IsInt, Min, Max } from 'class-validator';
 import { Type } from 'class-transformer';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { OrderPaymentMethod, OrderStatus } from '@prisma/client';
@@ -76,4 +67,10 @@ export class RespondAlternativeDto {
   @IsString()
   @MaxLength(500)
   note?: string;
+}
+
+export class ReplacePrescriptionDto {
+  @ApiProperty({ description: 'UUID of the newly uploaded replacement prescription' })
+  @IsUUID()
+  prescriptionId!: string;
 }

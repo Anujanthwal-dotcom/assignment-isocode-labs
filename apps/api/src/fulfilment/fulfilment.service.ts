@@ -1,9 +1,4 @@
-import {
-  Injectable,
-  Logger,
-  NotFoundException,
-  ForbiddenException,
-} from '@nestjs/common';
+import { Injectable, Logger, NotFoundException, ForbiddenException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { OrderStatus, StockReservationStatus, Prisma } from '@prisma/client';
 
@@ -178,7 +173,10 @@ export class FulfilmentService {
       distanceKm: latestRouting?.distanceKm ? Number(latestRouting.distanceKm) : null,
       items: order.items
         .filter(
-          (i) => i.reviews[0]?.status === 'APPROVED' && i.status !== 'REJECTED' && i.status !== 'REMOVED',
+          (i) =>
+            i.reviews[0]?.status === 'APPROVED' &&
+            i.status !== 'REJECTED' &&
+            i.status !== 'REMOVED',
         )
         .map((i) => ({
           orderItemId: i.id,

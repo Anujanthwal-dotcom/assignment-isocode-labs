@@ -1,12 +1,4 @@
-import {
-  Controller,
-  Post,
-  Get,
-  Param,
-  Body,
-  UseGuards,
-  Query,
-} from '@nestjs/common';
+import { Controller, Post, Get, Param, Body, UseGuards, Query } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiBearerAuth, ApiResponse } from '@nestjs/swagger';
 import { Roles } from '../auth/decorators/roles.decorator';
 import { CurrentUser } from '../auth/decorators/current-user.decorator';
@@ -39,10 +31,7 @@ export class OrderRoutingController {
   @Post(':orderId/route')
   @Roles(UserRole.ADMIN)
   @ApiOperation({ summary: 'Initiate automatic store routing and stock reservation for an order' })
-  async triggerRoute(
-    @Param('orderId') orderId: string,
-    @CurrentUser('id') userId: string,
-  ) {
+  async triggerRoute(@Param('orderId') orderId: string, @CurrentUser('id') userId: string) {
     return this.orderRoutingService.routeOrder(orderId, {
       triggeredByUserId: userId,
       isManual: false,
@@ -51,11 +40,10 @@ export class OrderRoutingController {
 
   @Post(':orderId/routing/retry')
   @Roles(UserRole.ADMIN)
-  @ApiOperation({ summary: 'Retry automatic store routing for an order in STOCK_UNAVAILABLE state' })
-  async retryRoute(
-    @Param('orderId') orderId: string,
-    @CurrentUser('id') userId: string,
-  ) {
+  @ApiOperation({
+    summary: 'Retry automatic store routing for an order in STOCK_UNAVAILABLE state',
+  })
+  async retryRoute(@Param('orderId') orderId: string, @CurrentUser('id') userId: string) {
     return this.orderRoutingService.routeOrder(orderId, {
       triggeredByUserId: userId,
       isManual: false,
@@ -64,7 +52,9 @@ export class OrderRoutingController {
 
   @Post(':orderId/routing/manual-assignment')
   @Roles(UserRole.ADMIN)
-  @ApiOperation({ summary: 'Manually assign an order to an eligible store (still validates complete stock)' })
+  @ApiOperation({
+    summary: 'Manually assign an order to an eligible store (still validates complete stock)',
+  })
   async manualAssign(
     @Param('orderId') orderId: string,
     @Body() dto: ManualAssignStoreDto,
@@ -80,7 +70,9 @@ export class OrderRoutingController {
 
   @Get(':orderId/routing')
   @Roles(UserRole.ADMIN)
-  @ApiOperation({ summary: 'Get routing decision history and current candidate availability for an order' })
+  @ApiOperation({
+    summary: 'Get routing decision history and current candidate availability for an order',
+  })
   async getRoutingDetails(@Param('orderId') orderId: string) {
     const [decisions, order] = await Promise.all([
       this.prisma.orderRoutingDecision.findMany({

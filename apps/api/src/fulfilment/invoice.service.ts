@@ -25,11 +25,7 @@ export class InvoiceService {
    * Concurrency-safe and idempotent: an invoice is never generated twice for the same order.
    * On successful generation, transitions order to READY_FOR_HANDOVER.
    */
-  async generateInvoiceForOrder(
-    orderId: string,
-    storeId: string,
-    userId?: string,
-  ) {
+  async generateInvoiceForOrder(orderId: string, storeId: string, userId?: string) {
     // 1. Check if invoice already exists
     const existing = await this.prisma.invoice.findUnique({
       where: { orderId },
@@ -83,11 +79,14 @@ export class InvoiceService {
 
     // Filter approved items
     const approvedItems = order.items.filter(
-      (i) => i.reviews[0]?.status === 'APPROVED' && i.status !== 'REJECTED' && i.status !== 'REMOVED',
+      (i) =>
+        i.reviews[0]?.status === 'APPROVED' && i.status !== 'REJECTED' && i.status !== 'REMOVED',
     );
 
     if (approvedItems.length === 0) {
-      throw new UnprocessableEntityException('Cannot generate invoice for order with no approved items.');
+      throw new UnprocessableEntityException(
+        'Cannot generate invoice for order with no approved items.',
+      );
     }
 
     // Calculate line totals and subtotal

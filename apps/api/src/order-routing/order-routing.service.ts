@@ -185,7 +185,8 @@ export class OrderRoutingService {
           routingMethod: OrderRoutingMethod.AUTOMATIC,
           status: OrderRoutingStatus.NO_ELIGIBLE_STORE,
           candidateStoreIds: candidateStoreIds.length > 0 ? candidateStoreIds : Prisma.JsonNull,
-          failureReason: 'No single active store had complete available stock for all approved items.',
+          failureReason:
+            'No single active store had complete available stock for all approved items.',
         },
       });
 
@@ -284,7 +285,8 @@ export class OrderRoutingService {
         routingMethod: OrderRoutingMethod.AUTOMATIC,
         status: OrderRoutingStatus.FAILED,
         candidateStoreIds: candidateStoreIds,
-        failureReason: 'Stock reservation failed on all candidate stores due to concurrent availability changes.',
+        failureReason:
+          'Stock reservation failed on all candidate stores due to concurrent availability changes.',
       },
     });
 

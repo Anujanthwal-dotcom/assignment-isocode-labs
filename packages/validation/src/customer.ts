@@ -38,10 +38,7 @@ export function isValidIndianPinCode(pin: string): boolean {
  */
 export function isValidCartQuantity(quantity: number): boolean {
   return (
-    typeof quantity === 'number' &&
-    Number.isInteger(quantity) &&
-    quantity >= 1 &&
-    quantity <= 100
+    typeof quantity === 'number' && Number.isInteger(quantity) && quantity >= 1 && quantity <= 100
   );
 }
 
@@ -113,9 +110,7 @@ export const PrescriptionExtractionResultZodSchema = z.object({
   generalWarnings: z.array(z.string()).default([]),
 });
 
-export type ExtractedPrescriptionItemValidated = z.infer<
-  typeof ExtractedPrescriptionItemZodSchema
->;
+export type ExtractedPrescriptionItemValidated = z.infer<typeof ExtractedPrescriptionItemZodSchema>;
 export type PrescriptionExtractionResultValidated = z.infer<
   typeof PrescriptionExtractionResultZodSchema
 >;
@@ -138,5 +133,3 @@ export function validatePrescriptionExtraction(data: unknown): {
     errors: [],
   };
 }
-
-

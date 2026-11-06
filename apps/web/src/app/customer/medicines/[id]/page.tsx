@@ -6,14 +6,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { apiFetch } from '@/lib/api/client';
-import {
-  ShoppingBag,
-  Check,
-  ChevronLeft,
-  AlertCircle,
-  ShieldAlert,
-  Info,
-} from 'lucide-react';
+import { ShoppingBag, Check, ChevronLeft, AlertCircle, ShieldAlert, Info } from 'lucide-react';
 import { CustomerMedicineDTO } from '@pharmacy/shared-types';
 
 export default function CustomerMedicineDetailPage() {
@@ -73,7 +66,8 @@ export default function CustomerMedicineDetailPage() {
           <Info className="h-4 w-4 text-emerald-600 mt-0.5 shrink-0" />
           <div>
             <strong className="block">Over-The-Counter (OTC)</strong>
-            This item is classified as OTC in the medicine catalogue. Note that all customer orders undergo review by a registered pharmacist before processing.
+            This item is classified as OTC in the medicine catalogue. Note that all customer orders
+            undergo review by a registered pharmacist before processing.
           </div>
         </div>
       );
@@ -83,7 +77,9 @@ export default function CustomerMedicineDetailPage() {
         <ShieldAlert className="h-4 w-4 text-amber-600 mt-0.5 shrink-0" />
         <div>
           <strong className="block">Prescription Required ({schedule.replace(/_/g, ' ')})</strong>
-          Under Indian Drugs and Cosmetics Rules, this medicine requires a valid prescription written by a registered medical practitioner. You will be prompted to upload or select a prescription during checkout.
+          Under Indian Drugs and Cosmetics Rules, this medicine requires a valid prescription
+          written by a registered medical practitioner. You will be prompted to upload or select a
+          prescription during checkout.
         </div>
       </div>
     );
@@ -103,7 +99,9 @@ export default function CustomerMedicineDetailPage() {
         <Card className="p-8 text-center border-red-200 bg-red-50">
           <AlertCircle className="h-8 w-8 text-red-500 mx-auto mb-2" />
           <h2 className="text-base font-semibold text-red-800">Medicine Unavailable</h2>
-          <p className="text-xs text-red-600 mt-1">{error || 'This medicine is inactive or was not found.'}</p>
+          <p className="text-xs text-red-600 mt-1">
+            {error || 'This medicine is inactive or was not found.'}
+          </p>
           <Button
             size="sm"
             onClick={() => router.push('/customer/medicines')}
@@ -137,12 +135,11 @@ export default function CustomerMedicineDetailPage() {
               <span className="text-xs font-mono text-slate-400 uppercase tracking-wider block mb-1">
                 SKU: {medicine.sku}
               </span>
-              <h1 className="text-2xl font-bold tracking-tight text-[#351F65]">
-                {medicine.name}
-              </h1>
+              <h1 className="text-2xl font-bold tracking-tight text-[#351F65]">{medicine.name}</h1>
               {medicine.genericName && (
                 <p className="text-sm text-slate-600 mt-1">
-                  Salt Composition: <span className="font-semibold text-slate-900">{medicine.genericName}</span>
+                  Salt Composition:{' '}
+                  <span className="font-semibold text-slate-900">{medicine.genericName}</span>
                 </p>
               )}
             </div>
@@ -156,7 +153,9 @@ export default function CustomerMedicineDetailPage() {
           {/* Pricing & Cart Action Box */}
           <div className="p-5 rounded-xl bg-[#F8F9FB] border border-[#EAE8F0] flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div>
-              <span className="text-xs text-slate-400 font-medium uppercase block">Maximum Retail Price</span>
+              <span className="text-xs text-slate-400 font-medium uppercase block">
+                Maximum Retail Price
+              </span>
               <div className="flex items-baseline gap-2 mt-0.5">
                 <span className="text-3xl font-extrabold text-[#351F65]">
                   ₹{medicine.mrp.toFixed(2)}

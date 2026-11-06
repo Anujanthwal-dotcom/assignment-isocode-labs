@@ -123,7 +123,10 @@ export default function CustomerFamilyPage() {
       });
       await fetchMembers();
     } catch (err: unknown) {
-      alert((err as Error).message || 'Cannot delete family member profile in use by orders or prescriptions.');
+      alert(
+        (err as Error).message ||
+          'Cannot delete family member profile in use by orders or prescriptions.',
+      );
     }
   };
 
@@ -132,11 +135,10 @@ export default function CustomerFamilyPage() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-2 border-b border-[#EAE8F0]">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight text-[#351F65]">
-            Family Profiles
-          </h1>
+          <h1 className="text-2xl font-bold tracking-tight text-[#351F65]">Family Profiles</h1>
           <p className="text-sm text-[#78879A] mt-1">
-            Maintain profiles for relatives and dependents to easily associate prescriptions and orders.
+            Maintain profiles for relatives and dependents to easily associate prescriptions and
+            orders.
           </p>
         </div>
         <Button
@@ -149,9 +151,7 @@ export default function CustomerFamilyPage() {
       </div>
 
       {loading ? (
-        <div className="py-12 text-center text-xs text-slate-500">
-          Loading family profiles...
-        </div>
+        <div className="py-12 text-center text-xs text-slate-500">Loading family profiles...</div>
       ) : error ? (
         <Card className="p-8 border-red-200 bg-red-50 text-center">
           <AlertCircle className="h-8 w-8 text-red-500 mx-auto mb-2" />
@@ -162,7 +162,8 @@ export default function CustomerFamilyPage() {
           <Users className="h-10 w-10 text-slate-300 mx-auto mb-3" />
           <h3 className="text-base font-semibold text-slate-800">No Family Profiles Yet</h3>
           <p className="text-xs text-slate-500 mt-1 max-w-sm mx-auto">
-            Add profiles for your parents, children, or spouse to order medicines and upload prescriptions on their behalf.
+            Add profiles for your parents, children, or spouse to order medicines and upload
+            prescriptions on their behalf.
           </p>
           <Button
             size="sm"
@@ -201,7 +202,14 @@ export default function CustomerFamilyPage() {
                 {member.dateOfBirth && (
                   <div className="text-xs text-slate-500 flex items-center gap-1.5 pt-2 border-t border-slate-100">
                     <Calendar className="h-3.5 w-3.5 text-slate-400" />
-                    <span>Born: {new Date(member.dateOfBirth).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}</span>
+                    <span>
+                      Born:{' '}
+                      {new Date(member.dateOfBirth).toLocaleDateString('en-IN', {
+                        day: 'numeric',
+                        month: 'short',
+                        year: 'numeric',
+                      })}
+                    </span>
                   </div>
                 )}
               </div>

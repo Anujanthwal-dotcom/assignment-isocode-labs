@@ -25,7 +25,9 @@ export default function HandoverWorkspacePage() {
   const [orderDetail, setOrderDetail] = React.useState<any>(null);
 
   // Handover form state
-  const [handoverType, setHandoverType] = React.useState<'DELIVERY_PARTNER' | 'CUSTOMER_PICKUP'>('DELIVERY_PARTNER');
+  const [handoverType, setHandoverType] = React.useState<'DELIVERY_PARTNER' | 'CUSTOMER_PICKUP'>(
+    'DELIVERY_PARTNER',
+  );
   const [recipientName, setRecipientName] = React.useState('');
   const [recipientPhone, setRecipientPhone] = React.useState('');
   const [deliveryPartnerName, setDeliveryPartnerName] = React.useState('Shadowfax');
@@ -73,7 +75,8 @@ export default function HandoverWorkspacePage() {
           handoverType,
           recipientName: recipientName.trim(),
           recipientPhone: recipientPhone.trim() || undefined,
-          deliveryPartnerName: handoverType === 'DELIVERY_PARTNER' ? deliveryPartnerName.trim() : undefined,
+          deliveryPartnerName:
+            handoverType === 'DELIVERY_PARTNER' ? deliveryPartnerName.trim() : undefined,
           referenceNumber: referenceNumber.trim() || undefined,
           notes: notes.trim() || undefined,
         }),
@@ -127,7 +130,8 @@ export default function HandoverWorkspacePage() {
             </h1>
           </div>
           <p className="text-xs text-[#78879A] mt-1">
-            Record physical parcel transfer to logistics delivery partner or direct customer counter pickup.
+            Record physical parcel transfer to logistics delivery partner or direct customer counter
+            pickup.
           </p>
         </div>
 
@@ -143,9 +147,7 @@ export default function HandoverWorkspacePage() {
       </div>
 
       {loading ? (
-        <div className="p-12 text-center text-xs text-[#78879A]">
-          Loading handover workspace...
-        </div>
+        <div className="p-12 text-center text-xs text-[#78879A]">Loading handover workspace...</div>
       ) : error ? (
         <div className="p-8 text-center text-xs text-rose-600 bg-rose-50 rounded-2xl border border-rose-200">
           <AlertTriangle className="w-6 h-6 mx-auto mb-2 text-rose-500" />
@@ -161,17 +163,22 @@ export default function HandoverWorkspacePage() {
                 <span>Order Handed Over Successfully</span>
               </div>
               <p className="text-xs text-emerald-700">
-                Physical stock has been decremented, reservations consumed, and Schedule H1 statutory entries marked COMPLETED.
+                Physical stock has been decremented, reservations consumed, and Schedule H1
+                statutory entries marked COMPLETED.
               </p>
               {orderDetail?.handoverDetails && (
                 <div className="mt-2 p-3 bg-white/70 rounded-xl border border-emerald-200 text-[11px] grid grid-cols-2 sm:grid-cols-4 gap-2">
                   <div>
                     <span className="text-[#78879A] block">Type</span>
-                    <strong className="text-[#14161A]">{orderDetail.handoverDetails.handoverType}</strong>
+                    <strong className="text-[#14161A]">
+                      {orderDetail.handoverDetails.handoverType}
+                    </strong>
                   </div>
                   <div>
                     <span className="text-[#78879A] block">Recipient</span>
-                    <strong className="text-[#14161A]">{orderDetail.handoverDetails.recipientName}</strong>
+                    <strong className="text-[#14161A]">
+                      {orderDetail.handoverDetails.recipientName}
+                    </strong>
                   </div>
                   <div>
                     <span className="text-[#78879A] block">Courier / Ref</span>
@@ -289,7 +296,9 @@ export default function HandoverWorkspacePage() {
                     className="px-5 py-2 rounded-xl text-xs font-semibold bg-[#6240E8] text-white hover:bg-[#5232d4] disabled:opacity-50 shadow-xs flex items-center gap-1.5"
                   >
                     <CheckCircle2 className="w-4 h-4" />
-                    <span>{handoverBusy ? 'Dispensing Stock...' : 'Confirm Handover & Dispense Stock'}</span>
+                    <span>
+                      {handoverBusy ? 'Dispensing Stock...' : 'Confirm Handover & Dispense Stock'}
+                    </span>
                   </button>
                 </div>
               </form>
@@ -317,12 +326,15 @@ export default function HandoverWorkspacePage() {
 
               {orderDetail?.paymentStatus === 'SUCCESS' ? (
                 <div className="p-3 bg-emerald-50 rounded-xl text-xs text-emerald-800">
-                  Payment of <strong>₹{orderDetail.totalAmount.toFixed(2)}</strong> has been collected and recorded.
+                  Payment of <strong>₹{orderDetail.totalAmount.toFixed(2)}</strong> has been
+                  collected and recorded.
                 </div>
               ) : (
                 <form onSubmit={handleRecordCod} className="space-y-4">
                   <p className="text-[#78879A] text-xs">
-                    Under operational safety policy, the exact order amount due (<strong>₹{orderDetail?.totalAmount.toFixed(2)}</strong>) must be confirmed as collected.
+                    Under operational safety policy, the exact order amount due (
+                    <strong>₹{orderDetail?.totalAmount.toFixed(2)}</strong>) must be confirmed as
+                    collected.
                   </p>
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">

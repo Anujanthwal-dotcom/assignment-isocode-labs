@@ -1,12 +1,4 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Patch,
-  Param,
-  Body,
-  ParseUUIDPipe,
-} from '@nestjs/common';
+import { Controller, Get, Post, Patch, Param, Body, ParseUUIDPipe } from '@nestjs/common';
 import { Roles } from '../auth/decorators/roles.decorator';
 import { CurrentUser } from '../auth/decorators/current-user.decorator';
 import { UserRole } from '@prisma/client';
@@ -32,10 +24,7 @@ export class CustomerRefillsController {
   }
 
   @Post('subscriptions')
-  async createSubscription(
-    @CurrentUser('id') customerUserId: string,
-    @Body() body: unknown,
-  ) {
+  async createSubscription(@CurrentUser('id') customerUserId: string, @Body() body: unknown) {
     const validated = createRefillSubscriptionSchema.parse(body);
     return this.refillsService.createSubscription(customerUserId, validated);
   }

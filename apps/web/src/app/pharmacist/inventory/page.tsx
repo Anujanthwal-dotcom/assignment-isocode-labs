@@ -1,13 +1,7 @@
 'use client';
 
 import * as React from 'react';
-import {
-  Search,
-  Filter,
-  History,
-  Store,
-  Loader2,
-} from 'lucide-react';
+import { Search, Filter, History, Store, Loader2 } from 'lucide-react';
 import { apiFetch, ApiError } from '@/lib/api/client';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -77,7 +71,9 @@ export default function PharmacistInventoryPage() {
       params.set('medicineId', balance.medicineId);
       params.set('limit', '50');
 
-      const res = await apiFetch<{ data: InventoryMovementDTO[] }>(`/inventory/movements?${params.toString()}`);
+      const res = await apiFetch<{ data: InventoryMovementDTO[] }>(
+        `/inventory/movements?${params.toString()}`,
+      );
       setMovements(res.data);
     } catch {
       setMovements([]);
@@ -105,13 +101,7 @@ export default function PharmacistInventoryPage() {
         </div>
       </div>
 
-      {error && (
-        <SemanticAlert
-          type="error"
-          title="Inventory Error"
-          description={error}
-        />
-      )}
+      {error && <SemanticAlert type="error" title="Inventory Error" description={error} />}
 
       {/* Filter Toolbar */}
       <div className="rounded-[12px] border border-[#EAE8F0] bg-white p-4 shadow-xs flex flex-col sm:flex-row gap-3 items-stretch sm:items-center justify-between">
@@ -178,7 +168,9 @@ export default function PharmacistInventoryPage() {
                 <tr>
                   <td colSpan={7} className="py-12 text-center text-[#78879A]">
                     <div className="flex flex-col items-center justify-center gap-1">
-                      <p className="font-semibold text-[#351F65]">No medicines found in store stock</p>
+                      <p className="font-semibold text-[#351F65]">
+                        No medicines found in store stock
+                      </p>
                       <p className="text-[12px]">Try modifying your search or status filter.</p>
                     </div>
                   </td>
@@ -190,9 +182,7 @@ export default function PharmacistInventoryPage() {
                       {item.medicine?.sku}
                     </td>
                     <td className="py-3 px-4">
-                      <div className="font-semibold text-[#14161A]">
-                        {item.medicine?.name}
-                      </div>
+                      <div className="font-semibold text-[#14161A]">{item.medicine?.name}</div>
                       {item.medicine?.genericName && (
                         <div className="text-[11px] text-[#78879A]">
                           {item.medicine?.genericName}
@@ -202,9 +192,7 @@ export default function PharmacistInventoryPage() {
                     <td className="py-3 px-4 text-right font-bold text-[15px] text-[#14161A]">
                       {item.quantity.toLocaleString('en-IN')}
                     </td>
-                    <td className="py-3 px-4 text-right text-[#6C757D]">
-                      {item.reorderLevel}
-                    </td>
+                    <td className="py-3 px-4 text-right text-[#6C757D]">{item.reorderLevel}</td>
                     <td className="py-3 px-4 text-center">
                       {item.stockStatus === 'IN_STOCK' && (
                         <span className="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-medium bg-[#E8F8EC] text-[#0FAC26] border border-[#B0E6BC]">
@@ -286,7 +274,10 @@ export default function PharmacistInventoryPage() {
       </div>
 
       {/* Movement Audit Trail Modal (Read Only) */}
-      <Dialog open={Boolean(historyBalance)} onOpenChange={(open) => !open && setHistoryBalance(null)}>
+      <Dialog
+        open={Boolean(historyBalance)}
+        onOpenChange={(open) => !open && setHistoryBalance(null)}
+      >
         <DialogContent className="max-w-[620px]">
           <DialogHeader>
             <DialogTitle className="text-[#351F65] text-[18px]">
@@ -338,23 +329,26 @@ export default function PharmacistInventoryPage() {
                               minute: '2-digit',
                             })}
                           </td>
-                          <td className="p-2.5 font-medium text-[#351F65]">
-                            {m.movementType}
-                          </td>
+                          <td className="p-2.5 font-medium text-[#351F65]">{m.movementType}</td>
                           <td className="p-2.5 text-right text-[#6C757D]">{m.quantityBefore}</td>
                           <td
                             className={`p-2.5 text-right font-bold ${
                               m.quantityChange > 0
                                 ? 'text-[#0FAC26]'
                                 : m.quantityChange < 0
-                                ? 'text-[#DC3545]'
-                                : 'text-[#78879A]'
+                                  ? 'text-[#DC3545]'
+                                  : 'text-[#78879A]'
                             }`}
                           >
                             {m.quantityChange > 0 ? `+${m.quantityChange}` : m.quantityChange}
                           </td>
-                          <td className="p-2.5 text-right font-bold text-[#14161A]">{m.quantityAfter}</td>
-                          <td className="p-2.5 text-[#6C757D] max-w-[180px] truncate" title={m.reason || ''}>
+                          <td className="p-2.5 text-right font-bold text-[#14161A]">
+                            {m.quantityAfter}
+                          </td>
+                          <td
+                            className="p-2.5 text-[#6C757D] max-w-[180px] truncate"
+                            title={m.reason || ''}
+                          >
                             {m.reason || '—'}
                           </td>
                         </tr>

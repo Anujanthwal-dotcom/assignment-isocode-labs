@@ -4,7 +4,14 @@ import * as React from 'react';
 import Link from 'next/link';
 import { apiFetch } from '@/lib/api/client';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
 import { Truck, ArrowLeft, Layers, AlertCircle, Clock } from 'lucide-react';
 import { FulfilmentAnalyticsDto } from '@pharmacy/shared-types';
@@ -17,7 +24,9 @@ export default function AdminAnalyticsFulfilmentPage() {
   const loadData = React.useCallback(async (selectedPeriod: string) => {
     try {
       setLoading(true);
-      const res = await apiFetch<FulfilmentAnalyticsDto>(`/admin/analytics/fulfilment?period=${selectedPeriod}`);
+      const res = await apiFetch<FulfilmentAnalyticsDto>(
+        `/admin/analytics/fulfilment?period=${selectedPeriod}`,
+      );
       setData(res);
     } catch {
       // Handled
@@ -32,7 +41,10 @@ export default function AdminAnalyticsFulfilmentPage() {
 
   return (
     <div className="space-y-6 max-w-7xl mx-auto py-6 px-4">
-      <Link href="/admin/analytics" className="inline-flex items-center text-xs font-semibold text-[#6240E8] hover:underline">
+      <Link
+        href="/admin/analytics"
+        className="inline-flex items-center text-xs font-semibold text-[#6240E8] hover:underline"
+      >
         <ArrowLeft className="mr-1.5 h-3.5 w-3.5" /> Back to Analytics Overview
       </Link>
 
@@ -54,7 +66,9 @@ export default function AdminAnalyticsFulfilmentPage() {
               type="button"
               onClick={() => setPeriod(val)}
               className={`px-3 py-1.5 rounded-lg font-medium transition-all ${
-                period === val ? 'bg-white text-slate-900 shadow-xs font-semibold' : 'text-slate-600'
+                period === val
+                  ? 'bg-white text-slate-900 shadow-xs font-semibold'
+                  : 'text-slate-600'
               }`}
             >
               {val}
@@ -64,7 +78,9 @@ export default function AdminAnalyticsFulfilmentPage() {
       </div>
 
       {loading ? (
-        <div className="py-16 text-center text-slate-400">Loading fulfilment operations data...</div>
+        <div className="py-16 text-center text-slate-400">
+          Loading fulfilment operations data...
+        </div>
       ) : data ? (
         <>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
@@ -121,11 +137,19 @@ export default function AdminAnalyticsFulfilmentPage() {
                 <TableBody>
                   {data.byStore.map((s) => (
                     <TableRow key={s.storeId}>
-                      <TableCell className="font-mono text-xs font-bold text-slate-900">{s.storeCode}</TableCell>
+                      <TableCell className="font-mono text-xs font-bold text-slate-900">
+                        {s.storeCode}
+                      </TableCell>
                       <TableCell className="text-slate-900 font-medium">{s.storeName}</TableCell>
-                      <TableCell className="text-right text-xs font-semibold text-slate-900">{s.routedCount}</TableCell>
-                      <TableCell className="text-right text-xs font-semibold text-emerald-600">{s.handedOverCount}</TableCell>
-                      <TableCell className="text-right text-xs text-slate-500">{s.stockUnavailableCount}</TableCell>
+                      <TableCell className="text-right text-xs font-semibold text-slate-900">
+                        {s.routedCount}
+                      </TableCell>
+                      <TableCell className="text-right text-xs font-semibold text-emerald-600">
+                        {s.handedOverCount}
+                      </TableCell>
+                      <TableCell className="text-right text-xs text-slate-500">
+                        {s.stockUnavailableCount}
+                      </TableCell>
                     </TableRow>
                   ))}
                 </TableBody>

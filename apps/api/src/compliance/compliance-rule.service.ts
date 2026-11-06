@@ -7,11 +7,7 @@ import {
 } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { AuditService } from '../audit/audit.service';
-import {
-  ComplianceRuleSetStatus,
-  MedicineSchedule,
-  CompliancePolicyAction,
-} from '@prisma/client';
+import { ComplianceRuleSetStatus, MedicineSchedule, CompliancePolicyAction } from '@prisma/client';
 import {
   CreateComplianceRuleSetDto,
   UpdateComplianceRuleDto,
@@ -81,20 +77,21 @@ export class ComplianceRuleService {
     });
 
     if (existing) {
-      throw new ConflictException(
-        `Compliance rule set version '${dto.version}' already exists.`,
-      );
+      throw new ConflictException(`Compliance rule set version '${dto.version}' already exists.`);
     }
 
     // Default policy mapping if not all rules provided
-    const defaultRules: Record<MedicineSchedule, {
-      policyAction: CompliancePolicyAction;
-      requiresPrescription: boolean;
-      requiresPharmacistApproval: boolean;
-      requiresH1Register: boolean;
-      hardBlocked: boolean;
-      description: string;
-    }> = {
+    const defaultRules: Record<
+      MedicineSchedule,
+      {
+        policyAction: CompliancePolicyAction;
+        requiresPrescription: boolean;
+        requiresPharmacistApproval: boolean;
+        requiresH1Register: boolean;
+        hardBlocked: boolean;
+        description: string;
+      }
+    > = {
       [MedicineSchedule.OTC]: {
         policyAction: CompliancePolicyAction.ALLOW_WITH_REVIEW,
         requiresPrescription: false,
@@ -109,7 +106,8 @@ export class ComplianceRuleService {
         requiresPharmacistApproval: true,
         requiresH1Register: false,
         hardBlocked: false,
-        description: 'Schedule H medicines require valid prescription and explicit pharmacist approval.',
+        description:
+          'Schedule H medicines require valid prescription and explicit pharmacist approval.',
       },
       [MedicineSchedule.SCHEDULE_H1]: {
         policyAction: CompliancePolicyAction.REQUIRE_H1_REGISTER,
@@ -117,7 +115,8 @@ export class ComplianceRuleService {
         requiresPharmacistApproval: true,
         requiresH1Register: true,
         hardBlocked: false,
-        description: 'Schedule H1 medicines require valid prescription, pharmacist approval, and H1 register recording.',
+        description:
+          'Schedule H1 medicines require valid prescription, pharmacist approval, and H1 register recording.',
       },
       [MedicineSchedule.SCHEDULE_X]: {
         policyAction: CompliancePolicyAction.HARD_BLOCK,
@@ -125,7 +124,8 @@ export class ComplianceRuleService {
         requiresPharmacistApproval: false,
         requiresH1Register: false,
         hardBlocked: true,
-        description: 'Schedule X substances are hard-blocked from dispensing under the assignment policy.',
+        description:
+          'Schedule X substances are hard-blocked from dispensing under the assignment policy.',
       },
       [MedicineSchedule.NARCOTIC]: {
         policyAction: CompliancePolicyAction.HARD_BLOCK,
@@ -141,7 +141,8 @@ export class ComplianceRuleService {
         requiresPharmacistApproval: false,
         requiresH1Register: false,
         hardBlocked: false,
-        description: 'Unclassified medicines fail closed and cannot be approved until classified by compliance admin.',
+        description:
+          'Unclassified medicines fail closed and cannot be approved until classified by compliance admin.',
       },
     };
 
@@ -152,7 +153,8 @@ export class ComplianceRuleService {
         medicineSchedule: schedule,
         policyAction: customRule?.policyAction ?? defaults.policyAction,
         requiresPrescription: customRule?.requiresPrescription ?? defaults.requiresPrescription,
-        requiresPharmacistApproval: customRule?.requiresPharmacistApproval ?? defaults.requiresPharmacistApproval,
+        requiresPharmacistApproval:
+          customRule?.requiresPharmacistApproval ?? defaults.requiresPharmacistApproval,
         requiresH1Register: customRule?.requiresH1Register ?? defaults.requiresH1Register,
         hardBlocked: customRule?.hardBlocked ?? defaults.hardBlocked,
         description: customRule?.description ?? defaults.description,
@@ -211,7 +213,9 @@ export class ComplianceRuleService {
     });
 
     if (!rule || rule.ruleSetId !== ruleSetId) {
-      throw new NotFoundException(`Compliance rule with ID '${ruleId}' not found in this rule set.`);
+      throw new NotFoundException(
+        `Compliance rule with ID '${ruleId}' not found in this rule set.`,
+      );
     }
 
     const updated = await this.prisma.complianceRule.update({

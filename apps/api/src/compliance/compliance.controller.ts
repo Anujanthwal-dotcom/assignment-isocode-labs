@@ -1,13 +1,4 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Patch,
-  Param,
-  Body,
-  Query,
-  ParseUUIDPipe,
-} from '@nestjs/common';
+import { Controller, Get, Post, Patch, Param, Body, Query, ParseUUIDPipe } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 import { Roles } from '../auth/decorators/roles.decorator';
 import { CurrentUser } from '../auth/decorators/current-user.decorator';
@@ -60,10 +51,7 @@ export class ComplianceController {
   @Post('rule-sets')
   @Roles(UserRole.COMPLIANCE_ADMIN)
   @ApiOperation({ summary: 'Create new draft compliance rule set version' })
-  async createRuleSet(
-    @Body() dto: CreateComplianceRuleSetDto,
-    @CurrentUser('id') userId: string,
-  ) {
+  async createRuleSet(@Body() dto: CreateComplianceRuleSetDto, @CurrentUser('id') userId: string) {
     return this.ruleService.createRuleSet(dto, userId);
   }
 
@@ -93,10 +81,7 @@ export class ComplianceController {
   @Get('decisions')
   @Roles(UserRole.COMPLIANCE_ADMIN, UserRole.ADMIN)
   @ApiOperation({ summary: 'Audit log of compliance decisions made on reviewed items' })
-  async getDecisions(
-    @Query('page') page?: string,
-    @Query('limit') limit?: string,
-  ) {
+  async getDecisions(@Query('page') page?: string, @Query('limit') limit?: string) {
     return this.complianceService.getDecisionsHistory({
       page: page ? parseInt(page, 10) : undefined,
       limit: limit ? parseInt(limit, 10) : undefined,

@@ -5,7 +5,14 @@ import Link from 'next/link';
 import { apiFetch } from '@/lib/api/client';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
 import { Store, ArrowLeft, RefreshCw, ChevronRight } from 'lucide-react';
 import { StoreOrderAnalyticsDto } from '@pharmacy/shared-types';
@@ -18,7 +25,9 @@ export default function AdminAnalyticsOrdersPage() {
   const loadData = React.useCallback(async (selectedPeriod: string) => {
     try {
       setLoading(true);
-      const res = await apiFetch<StoreOrderAnalyticsDto[]>(`/admin/analytics/orders/by-store?period=${selectedPeriod}`);
+      const res = await apiFetch<StoreOrderAnalyticsDto[]>(
+        `/admin/analytics/orders/by-store?period=${selectedPeriod}`,
+      );
       setStores(res || []);
     } catch {
       // Handled
@@ -33,7 +42,10 @@ export default function AdminAnalyticsOrdersPage() {
 
   return (
     <div className="space-y-6 max-w-7xl mx-auto py-6 px-4">
-      <Link href="/admin/analytics" className="inline-flex items-center text-xs font-semibold text-[#6240E8] hover:underline">
+      <Link
+        href="/admin/analytics"
+        className="inline-flex items-center text-xs font-semibold text-[#6240E8] hover:underline"
+      >
         <ArrowLeft className="mr-1.5 h-3.5 w-3.5" /> Back to Analytics Overview
       </Link>
 
@@ -55,7 +67,9 @@ export default function AdminAnalyticsOrdersPage() {
               type="button"
               onClick={() => setPeriod(val)}
               className={`px-3 py-1.5 rounded-lg font-medium transition-all ${
-                period === val ? 'bg-white text-slate-900 shadow-xs font-semibold' : 'text-slate-600'
+                period === val
+                  ? 'bg-white text-slate-900 shadow-xs font-semibold'
+                  : 'text-slate-600'
               }`}
             >
               {val}
@@ -74,7 +88,9 @@ export default function AdminAnalyticsOrdersPage() {
           {loading ? (
             <div className="py-16 text-center text-slate-400">Loading store order metrics...</div>
           ) : stores.length === 0 ? (
-            <div className="py-12 text-center text-slate-400">No store order data found for period.</div>
+            <div className="py-12 text-center text-slate-400">
+              No store order data found for period.
+            </div>
           ) : (
             <div className="overflow-x-auto">
               <Table>
@@ -98,9 +114,7 @@ export default function AdminAnalyticsOrdersPage() {
                       <TableCell className="font-mono text-xs font-bold text-slate-900">
                         {s.storeCode}
                       </TableCell>
-                      <TableCell className="font-medium text-slate-900">
-                        {s.storeName}
-                      </TableCell>
+                      <TableCell className="font-medium text-slate-900">{s.storeName}</TableCell>
                       <TableCell className="text-right font-bold text-slate-900">
                         {s.totalOrders}
                       </TableCell>

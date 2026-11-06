@@ -161,8 +161,8 @@ flowchart LR
 ```
 
 ### Safety & Compliance Invariants
+
 1. **Preliminary Draft Only:** AI extraction is explicitly not an approval.
 2. **Immutable Orders:** AI extraction never changes Order status, OrderItems, CartItems, or payment states.
 3. **No Independent Authorization:** AI output cannot authorize medicine dispatch or dispensing.
 4. **Data Privacy:** Documents are read privately from MinIO by the backend worker; no public URLs are created. Extraction logs and audit events strictly scrub personal health information (PHI).
-

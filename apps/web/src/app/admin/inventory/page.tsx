@@ -147,7 +147,8 @@ export default function AdminInventoryPage() {
   // Live resulting calculation
   const parsedChange = parseInt(adjustQuantity, 10);
   const isValidNumber = !isNaN(parsedChange) && parsedChange !== 0;
-  const resultingStock = adjustingBalance && isValidNumber ? adjustingBalance.quantity + parsedChange : null;
+  const resultingStock =
+    adjustingBalance && isValidNumber ? adjustingBalance.quantity + parsedChange : null;
   const isNegativeResult = resultingStock !== null && resultingStock < 0;
 
   // Submit Adjustment
@@ -173,7 +174,8 @@ export default function AdminInventoryPage() {
         method: 'POST',
         body: JSON.stringify({
           medicineId: adjustingBalance.medicineId,
-          locationType: adjustingBalance.location?.type || (adjustingBalance.storeId ? 'STORE' : 'WAREHOUSE'),
+          locationType:
+            adjustingBalance.location?.type || (adjustingBalance.storeId ? 'STORE' : 'WAREHOUSE'),
           locationId: adjustingBalance.storeId || adjustingBalance.warehouseId,
           quantityChange: parsedChange,
           reason: adjustReason.trim(),
@@ -203,7 +205,9 @@ export default function AdminInventoryPage() {
       if (balance.warehouseId) params.set('warehouseId', balance.warehouseId);
       params.set('limit', '50');
 
-      const res = await apiFetch<{ data: InventoryMovementDTO[] }>(`/inventory/movements?${params.toString()}`);
+      const res = await apiFetch<{ data: InventoryMovementDTO[] }>(
+        `/inventory/movements?${params.toString()}`,
+      );
       setMovements(res.data);
     } catch {
       setMovements([]);
@@ -216,21 +220,14 @@ export default function AdminInventoryPage() {
     <div className="space-y-6">
       {/* Header */}
       <div>
-        <h1 className="text-[24px] font-bold tracking-tight text-[#351F65]">
-          Chain Inventory
-        </h1>
+        <h1 className="text-[24px] font-bold tracking-tight text-[#351F65]">Chain Inventory</h1>
         <p className="text-[14px] text-[#78879A]">
-          Track physical inventory quantities, reorder thresholds, and historical stock movements across all 46 stores and the Kolkata central warehouse.
+          Track physical inventory quantities, reorder thresholds, and historical stock movements
+          across all 46 stores and the Kolkata central warehouse.
         </p>
       </div>
 
-      {error && (
-        <SemanticAlert
-          type="error"
-          title="Inventory Error"
-          description={error}
-        />
-      )}
+      {error && <SemanticAlert type="error" title="Inventory Error" description={error} />}
 
       {/* Summary Metrics Cards */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
@@ -377,7 +374,9 @@ export default function AdminInventoryPage() {
                   <td colSpan={8} className="py-12 text-center text-[#78879A]">
                     <div className="flex flex-col items-center justify-center gap-1">
                       <p className="font-semibold text-[#351F65]">No inventory records found</p>
-                      <p className="text-[12px]">No balances match your selected filters or locations.</p>
+                      <p className="text-[12px]">
+                        No balances match your selected filters or locations.
+                      </p>
                     </div>
                   </td>
                 </tr>
@@ -390,9 +389,7 @@ export default function AdminInventoryPage() {
                         {item.medicine?.sku}
                       </td>
                       <td className="py-3 px-4">
-                        <div className="font-semibold text-[#14161A]">
-                          {item.medicine?.name}
-                        </div>
+                        <div className="font-semibold text-[#14161A]">{item.medicine?.name}</div>
                         {item.medicine?.genericName && (
                           <div className="text-[11px] text-[#78879A]">
                             {item.medicine?.genericName}
@@ -415,9 +412,7 @@ export default function AdminInventoryPage() {
                       <td className="py-3 px-4 text-right font-bold text-[#14161A]">
                         {item.quantity.toLocaleString('en-IN')}
                       </td>
-                      <td className="py-3 px-4 text-right text-[#6C757D]">
-                        {item.reorderLevel}
-                      </td>
+                      <td className="py-3 px-4 text-right text-[#6C757D]">{item.reorderLevel}</td>
                       <td className="py-3 px-4 text-center">
                         {item.stockStatus === 'IN_STOCK' && (
                           <span className="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-medium bg-[#E8F8EC] text-[#0FAC26] border border-[#B0E6BC]">
@@ -507,12 +502,13 @@ export default function AdminInventoryPage() {
       </div>
 
       {/* Stock Adjustment Dialog */}
-      <Dialog open={Boolean(adjustingBalance)} onOpenChange={(open) => !open && setAdjustingBalance(null)}>
+      <Dialog
+        open={Boolean(adjustingBalance)}
+        onOpenChange={(open) => !open && setAdjustingBalance(null)}
+      >
         <DialogContent className="max-w-[480px]">
           <DialogHeader>
-            <DialogTitle className="text-[#351F65] text-[18px]">
-              Adjust Inventory Stock
-            </DialogTitle>
+            <DialogTitle className="text-[#351F65] text-[18px]">Adjust Inventory Stock</DialogTitle>
           </DialogHeader>
 
           {adjustingBalance && (
@@ -522,27 +518,22 @@ export default function AdminInventoryPage() {
                   {adjustingBalance.medicine?.name}
                 </div>
                 <div className="text-[11px] font-mono text-[#78879A]">
-                  SKU: {adjustingBalance.medicine?.sku} • Location: {adjustingBalance.location?.name} ({adjustingBalance.location?.code})
+                  SKU: {adjustingBalance.medicine?.sku} • Location:{' '}
+                  {adjustingBalance.location?.name} ({adjustingBalance.location?.code})
                 </div>
                 <div className="mt-2 text-[12px] font-medium text-[#14161A]">
-                  Current Stock: <span className="font-bold text-[#6240E8]">{adjustingBalance.quantity}</span> units
+                  Current Stock:{' '}
+                  <span className="font-bold text-[#6240E8]">{adjustingBalance.quantity}</span>{' '}
+                  units
                 </div>
               </div>
 
               {adjustError && (
-                <SemanticAlert
-                  type="error"
-                  title="Adjustment Denied"
-                  description={adjustError}
-                />
+                <SemanticAlert type="error" title="Adjustment Denied" description={adjustError} />
               )}
 
               {adjustSuccess && (
-                <SemanticAlert
-                  type="success"
-                  title="Success"
-                  description={adjustSuccess}
-                />
+                <SemanticAlert type="success" title="Success" description={adjustSuccess} />
               )}
 
               <div>
@@ -558,7 +549,8 @@ export default function AdminInventoryPage() {
                   className="font-mono text-[14px]"
                 />
                 <p className="text-[11px] text-[#78879A] mt-1">
-                  Enter a positive integer to increment stock, or negative to deduct. Cannot be zero.
+                  Enter a positive integer to increment stock, or negative to deduct. Cannot be
+                  zero.
                 </p>
               </div>
 
@@ -574,7 +566,9 @@ export default function AdminInventoryPage() {
                   <div className="flex items-center justify-between font-medium">
                     <span>Resulting Stock Preview:</span>
                     <span className="font-bold text-[15px]">
-                      {adjustingBalance.quantity} {parsedChange >= 0 ? `+ ${parsedChange}` : `- ${Math.abs(parsedChange)}`} = {resultingStock} units
+                      {adjustingBalance.quantity}{' '}
+                      {parsedChange >= 0 ? `+ ${parsedChange}` : `- ${Math.abs(parsedChange)}`} ={' '}
+                      {resultingStock} units
                     </span>
                   </div>
                   {isNegativeResult && (
@@ -621,7 +615,10 @@ export default function AdminInventoryPage() {
       </Dialog>
 
       {/* Movement History Dialog */}
-      <Dialog open={Boolean(historyBalance)} onOpenChange={(open) => !open && setHistoryBalance(null)}>
+      <Dialog
+        open={Boolean(historyBalance)}
+        onOpenChange={(open) => !open && setHistoryBalance(null)}
+      >
         <DialogContent className="max-w-[640px]">
           <DialogHeader>
             <DialogTitle className="text-[#351F65] text-[18px]">
@@ -634,7 +631,8 @@ export default function AdminInventoryPage() {
               <div className="rounded-[8px] bg-[#F8F9FB] p-3 border border-[#EAE8F0] text-[12px]">
                 <p className="font-semibold text-[#351F65]">{historyBalance.medicine?.name}</p>
                 <p className="text-[#78879A] font-mono">
-                  {historyBalance.medicine?.sku} • {historyBalance.location?.name} ({historyBalance.location?.code})
+                  {historyBalance.medicine?.sku} • {historyBalance.location?.name} (
+                  {historyBalance.location?.code})
                 </p>
               </div>
 
@@ -676,26 +674,32 @@ export default function AdminInventoryPage() {
                               minute: '2-digit',
                             })}
                           </td>
-                          <td className="p-2.5 font-medium text-[#351F65]">
-                            {m.movementType}
-                          </td>
+                          <td className="p-2.5 font-medium text-[#351F65]">{m.movementType}</td>
                           <td className="p-2.5 text-right text-[#6C757D]">{m.quantityBefore}</td>
                           <td
                             className={`p-2.5 text-right font-bold ${
                               m.quantityChange > 0
                                 ? 'text-[#0FAC26]'
                                 : m.quantityChange < 0
-                                ? 'text-[#DC3545]'
-                                : 'text-[#78879A]'
+                                  ? 'text-[#DC3545]'
+                                  : 'text-[#78879A]'
                             }`}
                           >
                             {m.quantityChange > 0 ? `+${m.quantityChange}` : m.quantityChange}
                           </td>
-                          <td className="p-2.5 text-right font-bold text-[#14161A]">{m.quantityAfter}</td>
-                          <td className="p-2.5 text-[#6C757D] max-w-[140px] truncate" title={m.reason || ''}>
+                          <td className="p-2.5 text-right font-bold text-[#14161A]">
+                            {m.quantityAfter}
+                          </td>
+                          <td
+                            className="p-2.5 text-[#6C757D] max-w-[140px] truncate"
+                            title={m.reason || ''}
+                          >
                             {m.reason || '—'}
                           </td>
-                          <td className="p-2.5 text-[#78879A] text-[11px] truncate max-w-[100px]" title={m.actorEmail || ''}>
+                          <td
+                            className="p-2.5 text-[#78879A] text-[11px] truncate max-w-[100px]"
+                            title={m.actorEmail || ''}
+                          >
                             {m.actorEmail || 'System'}
                           </td>
                         </tr>

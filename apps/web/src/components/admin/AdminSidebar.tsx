@@ -81,9 +81,7 @@ export const AdminSidebar: React.FC<AdminSidebarProps> = ({ openMobile, onCloseM
         <nav className="flex-1 space-y-[4px] px-3 py-4 overflow-y-auto">
           {navItems.map((item) => {
             const Icon = item.icon;
-            const isActive = item.exact
-              ? pathname === item.href
-              : pathname.startsWith(item.href);
+            const isActive = item.exact ? pathname === item.href : pathname.startsWith(item.href);
 
             return (
               <Link
@@ -106,7 +104,9 @@ export const AdminSidebar: React.FC<AdminSidebarProps> = ({ openMobile, onCloseM
         {/* Administrator Profile Card in Sidebar Footer */}
         <div className="border-t border-[#EAE8F0] p-3">
           <div className="rounded-[8px] bg-[#F8F9FB] p-2.5 text-[12px] border border-[#EAE8F0]">
-            <p className="font-semibold text-[#351F65] truncate">{user?.profile?.fullName || 'Administrator'}</p>
+            <p className="font-semibold text-[#351F65] truncate">
+              {user?.profile?.fullName || 'Administrator'}
+            </p>
             <p className="text-[11px] text-[#78879A]">{user?.role || 'ADMIN'}</p>
           </div>
         </div>

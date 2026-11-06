@@ -9,15 +9,7 @@ import { ComplianceController } from './compliance.controller';
 @Module({
   imports: [PrismaModule, AuditModule],
   controllers: [ComplianceController],
-  providers: [
-    ComplianceRuleService,
-    ComplianceEvaluatorService,
-    ComplianceService,
-  ],
-  exports: [
-    ComplianceRuleService,
-    ComplianceEvaluatorService,
-    ComplianceService,
-  ],
+  providers: [ComplianceRuleService, ComplianceEvaluatorService, ComplianceService],
+  exports: [ComplianceRuleService, ComplianceEvaluatorService, ComplianceService],
 })
 export class ComplianceModule {}

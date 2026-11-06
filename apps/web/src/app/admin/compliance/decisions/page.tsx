@@ -2,10 +2,18 @@
 
 import * as React from 'react';
 import { apiFetch } from '@/lib/api/client';
-import { Scale, Search, AlertTriangle, FileText, CheckCircle2, XCircle, ShieldAlert } from 'lucide-react';
+import {
+  Scale,
+  Search,
+  AlertTriangle,
+  FileText,
+  CheckCircle2,
+  XCircle,
+  ShieldAlert,
+} from 'lucide-react';
 
 export default function AdminComplianceDecisionsPage() {
-    const [loading, setLoading] = React.useState(true);
+  const [loading, setLoading] = React.useState(true);
   const [error, setError] = React.useState<string | null>(null);
   const [decisions, setDecisions] = React.useState<any[]>([]);
   const [searchQuery, setSearchQuery] = React.useState('');
@@ -81,111 +89,109 @@ export default function AdminComplianceDecisionsPage() {
 
   return (
     <div className="flex-1 p-6 max-w-7xl w-full mx-auto space-y-6">
-          <div className="pb-2 border-b border-[#EAE8F0] flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-            <div>
-              <h1 className="text-2xl font-bold text-[#14161A] tracking-tight flex items-center gap-2">
-                <Scale className="w-6 h-6 text-[#6240E8]" />
-                Compliance Decision Audit Log
-              </h1>
-              <p className="text-sm text-[#78879A] mt-1">
-                Deterministic compliance evaluations snapshot at time of review, linked to versioned rule sets.
-              </p>
-            </div>
-          </div>
-
-          {/* Search Bar */}
-          <div className="relative max-w-md">
-            <Search className="absolute left-3 top-2.5 h-4 w-4 text-[#78879A]" />
-            <input
-              type="text"
-              placeholder="Search by order #, medicine, schedule or decision..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-9 pr-4 py-2 border border-[#EAE8F0] rounded-xl text-xs bg-white focus:outline-none focus:ring-2 focus:ring-[#6240E8]/20 focus:border-[#6240E8]"
-            />
-          </div>
-
-          {/* Table Container */}
-          <div className="bg-white rounded-2xl border border-[#EAE8F0] shadow-xs overflow-hidden">
-            {loading ? (
-              <div className="p-12 text-center text-xs text-[#78879A]">
-                Loading compliance decision history...
-              </div>
-            ) : error ? (
-              <div className="p-8 text-center text-xs text-rose-600 bg-rose-50/50">
-                <AlertTriangle className="w-6 h-6 mx-auto mb-2 text-rose-500" />
-                {error}
-              </div>
-            ) : filteredDecisions.length === 0 ? (
-              <div className="p-12 text-center text-xs text-[#78879A]">
-                <FileText className="w-8 h-8 text-[#78879A]/40 mx-auto mb-2" />
-                No compliance decisions logged yet. Decisions are snapshot deterministically during pharmacist item verification.
-              </div>
-            ) : (
-              <div className="overflow-x-auto">
-                <table className="w-full text-left text-xs">
-                  <thead className="bg-[#F8F9FB] border-b border-[#EAE8F0] text-[#78879A] uppercase tracking-wider text-[10px]">
-                    <tr>
-                      <th className="py-3 px-4">Evaluation Timestamp</th>
-                      <th className="py-3 px-4">Order #</th>
-                      <th className="py-3 px-4">Medicine</th>
-                      <th className="py-3 px-4">Schedule</th>
-                      <th className="py-3 px-4">Deterministic Decision</th>
-                      <th className="py-3 px-4">Rule Reasons</th>
-                      <th className="py-3 px-4">Item Status</th>
-                      <th className="py-3 px-4">Pharmacist</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-[#EAE8F0] text-[#14161A]">
-                    {filteredDecisions.map((row) => (
-                      <tr key={row.id} className="hover:bg-[#F8F9FB]/50">
-                        <td className="py-3 px-4 font-mono text-[11px] text-[#78879A]">
-                          {new Date(row.evaluatedAt).toLocaleString('en-IN', {
-                            dateStyle: 'medium',
-                            timeStyle: 'short',
-                          })}
-                        </td>
-                        <td className="py-3 px-4 font-mono font-bold text-[#6240E8]">
-                          {row.orderNumber}
-                        </td>
-                        <td className="py-3 px-4">
-                          <span className="font-semibold text-[#14161A] block">{row.medicineName}</span>
-                          <span className="text-[10px] text-[#78879A] font-mono">{row.sku}</span>
-                        </td>
-                        <td className="py-3 px-4">
-                          <span className="px-2 py-0.5 rounded-md text-[10px] font-bold tracking-wider bg-slate-100 text-slate-700 border border-slate-200">
-                            {row.schedule}
-                          </span>
-                        </td>
-                        <td className="py-3 px-4">
-                          {getDecisionBadge(row.decision)}
-                        </td>
-                        <td className="py-3 px-4 max-w-xs">
-                          {row.reasons && row.reasons.length > 0 ? (
-                            <ul className="list-disc list-inside text-[11px] text-[#78879A] space-y-0.5">
-                              {row.reasons.map((r: string, idx: number) => (
-                                <li key={idx} className="truncate" title={r}>
-                                  {r}
-                                </li>
-                              ))}
-                            </ul>
-                          ) : (
-                            <span className="text-[#78879A] italic text-[11px]">—</span>
-                          )}
-                        </td>
-                        <td className="py-3 px-4 font-semibold text-[11px]">
-                          {row.status}
-                        </td>
-                        <td className="py-3 px-4 text-[#78879A] text-[11px]">
-                          {row.pharmacistEmail || '—'}
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            )}
-          </div>
+      <div className="pb-2 border-b border-[#EAE8F0] flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div>
+          <h1 className="text-2xl font-bold text-[#14161A] tracking-tight flex items-center gap-2">
+            <Scale className="w-6 h-6 text-[#6240E8]" />
+            Compliance Decision Audit Log
+          </h1>
+          <p className="text-sm text-[#78879A] mt-1">
+            Deterministic compliance evaluations snapshot at time of review, linked to versioned
+            rule sets.
+          </p>
         </div>
+      </div>
+
+      {/* Search Bar */}
+      <div className="relative max-w-md">
+        <Search className="absolute left-3 top-2.5 h-4 w-4 text-[#78879A]" />
+        <input
+          type="text"
+          placeholder="Search by order #, medicine, schedule or decision..."
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          className="w-full pl-9 pr-4 py-2 border border-[#EAE8F0] rounded-xl text-xs bg-white focus:outline-none focus:ring-2 focus:ring-[#6240E8]/20 focus:border-[#6240E8]"
+        />
+      </div>
+
+      {/* Table Container */}
+      <div className="bg-white rounded-2xl border border-[#EAE8F0] shadow-xs overflow-hidden">
+        {loading ? (
+          <div className="p-12 text-center text-xs text-[#78879A]">
+            Loading compliance decision history...
+          </div>
+        ) : error ? (
+          <div className="p-8 text-center text-xs text-rose-600 bg-rose-50/50">
+            <AlertTriangle className="w-6 h-6 mx-auto mb-2 text-rose-500" />
+            {error}
+          </div>
+        ) : filteredDecisions.length === 0 ? (
+          <div className="p-12 text-center text-xs text-[#78879A]">
+            <FileText className="w-8 h-8 text-[#78879A]/40 mx-auto mb-2" />
+            No compliance decisions logged yet. Decisions are snapshot deterministically during
+            pharmacist item verification.
+          </div>
+        ) : (
+          <div className="overflow-x-auto">
+            <table className="w-full text-left text-xs">
+              <thead className="bg-[#F8F9FB] border-b border-[#EAE8F0] text-[#78879A] uppercase tracking-wider text-[10px]">
+                <tr>
+                  <th className="py-3 px-4">Evaluation Timestamp</th>
+                  <th className="py-3 px-4">Order #</th>
+                  <th className="py-3 px-4">Medicine</th>
+                  <th className="py-3 px-4">Schedule</th>
+                  <th className="py-3 px-4">Deterministic Decision</th>
+                  <th className="py-3 px-4">Rule Reasons</th>
+                  <th className="py-3 px-4">Item Status</th>
+                  <th className="py-3 px-4">Pharmacist</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-[#EAE8F0] text-[#14161A]">
+                {filteredDecisions.map((row) => (
+                  <tr key={row.id} className="hover:bg-[#F8F9FB]/50">
+                    <td className="py-3 px-4 font-mono text-[11px] text-[#78879A]">
+                      {new Date(row.evaluatedAt).toLocaleString('en-IN', {
+                        dateStyle: 'medium',
+                        timeStyle: 'short',
+                      })}
+                    </td>
+                    <td className="py-3 px-4 font-mono font-bold text-[#6240E8]">
+                      {row.orderNumber}
+                    </td>
+                    <td className="py-3 px-4">
+                      <span className="font-semibold text-[#14161A] block">{row.medicineName}</span>
+                      <span className="text-[10px] text-[#78879A] font-mono">{row.sku}</span>
+                    </td>
+                    <td className="py-3 px-4">
+                      <span className="px-2 py-0.5 rounded-md text-[10px] font-bold tracking-wider bg-slate-100 text-slate-700 border border-slate-200">
+                        {row.schedule}
+                      </span>
+                    </td>
+                    <td className="py-3 px-4">{getDecisionBadge(row.decision)}</td>
+                    <td className="py-3 px-4 max-w-xs">
+                      {row.reasons && row.reasons.length > 0 ? (
+                        <ul className="list-disc list-inside text-[11px] text-[#78879A] space-y-0.5">
+                          {row.reasons.map((r: string, idx: number) => (
+                            <li key={idx} className="truncate" title={r}>
+                              {r}
+                            </li>
+                          ))}
+                        </ul>
+                      ) : (
+                        <span className="text-[#78879A] italic text-[11px]">—</span>
+                      )}
+                    </td>
+                    <td className="py-3 px-4 font-semibold text-[11px]">{row.status}</td>
+                    <td className="py-3 px-4 text-[#78879A] text-[11px]">
+                      {row.pharmacistEmail || '—'}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </div>
+    </div>
   );
 }

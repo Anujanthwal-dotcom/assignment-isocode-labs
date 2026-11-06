@@ -30,7 +30,7 @@ export default function PharmacistOrderReviewPage() {
   const orderId = params?.orderId as string;
   const router = useRouter();
 
-    const [loading, setLoading] = React.useState(true);
+  const [loading, setLoading] = React.useState(true);
   const [actionLoading, setActionLoading] = React.useState(false);
   const [error, setError] = React.useState<string | null>(null);
   const [successMessage, setSuccessMessage] = React.useState<string | null>(null);
@@ -108,13 +108,10 @@ export default function PharmacistOrderReviewPage() {
 
     try {
       setActionLoading(true);
-      await apiFetch(
-        `/pharmacist/reviews/${reviewData.review.id}/items/${itemId}`,
-        {
-          method: 'PATCH',
-          body: JSON.stringify(payload),
-        },
-      );
+      await apiFetch(`/pharmacist/reviews/${reviewData.review.id}/items/${itemId}`, {
+        method: 'PATCH',
+        body: JSON.stringify(payload),
+      });
       setSuccessMessage('Medicine review corrections saved.');
       setTimeout(() => setSuccessMessage(null), 3000);
       await fetchDetail();
@@ -134,13 +131,10 @@ export default function PharmacistOrderReviewPage() {
     try {
       setActionLoading(true);
       setError(null);
-      await apiFetch(
-        `/pharmacist/reviews/${reviewData.review.id}/items/${itemId}/approve`,
-        {
-          method: 'POST',
-          body: JSON.stringify({}),
-        },
-      );
+      await apiFetch(`/pharmacist/reviews/${reviewData.review.id}/items/${itemId}/approve`, {
+        method: 'POST',
+        body: JSON.stringify({}),
+      });
       setSuccessMessage('Item verified and approved.');
       setTimeout(() => setSuccessMessage(null), 3000);
       await fetchDetail();
@@ -241,12 +235,9 @@ export default function PharmacistOrderReviewPage() {
     try {
       setActionLoading(true);
       setError(null);
-      await apiFetch(
-        `/pharmacist/reviews/${reviewData.review.id}/approve`,
-        {
-          method: 'POST',
-        },
-      );
+      await apiFetch(`/pharmacist/reviews/${reviewData.review.id}/approve`, {
+        method: 'POST',
+      });
       setSuccessMessage('Prescription review completed successfully!');
       setTimeout(() => {
         router.push('/pharmacist/review-queue');
@@ -264,13 +255,10 @@ export default function PharmacistOrderReviewPage() {
     try {
       setActionLoading(true);
       setError(null);
-      await apiFetch(
-        `/pharmacist/reviews/${reviewData.review.id}/reject`,
-        {
-          method: 'POST',
-          body: JSON.stringify({ reason: rejectPrescriptionReason.trim() }),
-        },
-      );
+      await apiFetch(`/pharmacist/reviews/${reviewData.review.id}/reject`, {
+        method: 'POST',
+        body: JSON.stringify({ reason: rejectPrescriptionReason.trim() }),
+      });
       setRejectPrescriptionModal(false);
       setSuccessMessage('Prescription rejected.');
       setTimeout(() => {
@@ -289,13 +277,10 @@ export default function PharmacistOrderReviewPage() {
     try {
       setActionLoading(true);
       setError(null);
-      await apiFetch(
-        `/pharmacist/reviews/${reviewData.review.id}/request-reupload`,
-        {
-          method: 'POST',
-          body: JSON.stringify({ reason: reuploadReason.trim() }),
-        },
-      );
+      await apiFetch(`/pharmacist/reviews/${reviewData.review.id}/request-reupload`, {
+        method: 'POST',
+        body: JSON.stringify({ reason: reuploadReason.trim() }),
+      });
       setReuploadModal(false);
       setSuccessMessage('Re-upload request sent to customer.');
       setTimeout(() => {
@@ -354,385 +339,426 @@ export default function PharmacistOrderReviewPage() {
   return (
     <div className="flex flex-col space-y-4">
       {/* Top Sticky Bar */}
-        <div className="sticky top-[64px] z-30 bg-white border-b border-[#EAE8F0] px-6 py-3 flex flex-wrap items-center justify-between gap-4 shadow-2xs">
-          <div className="flex items-center gap-3">
-            <Link
-              href="/pharmacist/review-queue"
-              className="p-1.5 rounded-lg text-[#78879A] hover:bg-[#F8F9FB] transition-colors"
-            >
-              <ArrowLeft className="w-4 h-4" />
-            </Link>
-            <div>
-              <div className="flex items-center gap-2">
-                <span className="text-sm font-bold text-[#14161A]">
-                  Order {order.orderNumber}
-                </span>
-                <span className="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-[#F7F5FD] text-[#6240E8] border border-[#EAE8F0]">
-                  {order.status}
-                </span>
-              </div>
-              <span className="text-[11px] text-[#78879A]">
-                Customer: {order.customerUser.fullName} &bull; Placed {new Date(order.placedAt).toLocaleDateString()}
+      <div className="sticky top-[64px] z-30 bg-white border-b border-[#EAE8F0] px-6 py-3 flex flex-wrap items-center justify-between gap-4 shadow-2xs">
+        <div className="flex items-center gap-3">
+          <Link
+            href="/pharmacist/review-queue"
+            className="p-1.5 rounded-lg text-[#78879A] hover:bg-[#F8F9FB] transition-colors"
+          >
+            <ArrowLeft className="w-4 h-4" />
+          </Link>
+          <div>
+            <div className="flex items-center gap-2">
+              <span className="text-sm font-bold text-[#14161A]">Order {order.orderNumber}</span>
+              <span className="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-[#F7F5FD] text-[#6240E8] border border-[#EAE8F0]">
+                {order.status}
               </span>
             </div>
-          </div>
-
-          <div className="flex items-center gap-2">
-            <button
-              onClick={() => setReuploadModal(true)}
-              disabled={actionLoading}
-              className="px-3 py-1.5 rounded-lg text-xs font-semibold border border-amber-300 bg-amber-50 text-amber-800 hover:bg-amber-100 transition-colors"
-            >
-              Request Re-upload
-            </button>
-            <button
-              onClick={() => setRejectPrescriptionModal(true)}
-              disabled={actionLoading}
-              className="px-3 py-1.5 rounded-lg text-xs font-semibold border border-rose-300 bg-rose-50 text-rose-700 hover:bg-rose-100 transition-colors"
-            >
-              Reject Prescription
-            </button>
-            <button
-              onClick={handleApprovePrescription}
-              disabled={actionLoading || !canCompletePrescriptionApproval}
-              className={`px-4 py-1.5 rounded-lg text-xs font-semibold text-white shadow-xs transition-colors flex items-center gap-1.5 ${
-                canCompletePrescriptionApproval
-                  ? 'bg-emerald-600 hover:bg-emerald-700'
-                  : 'bg-slate-300 cursor-not-allowed text-slate-500'
-              }`}
-            >
-              <CheckCircle2 className="w-3.5 h-3.5" />
-              <span>Approve Prescription</span>
-            </button>
+            <span className="text-[11px] text-[#78879A]">
+              Customer: {order.customerUser.fullName} &bull; Placed{' '}
+              {new Date(order.placedAt).toLocaleDateString()}
+            </span>
           </div>
         </div>
 
-        {/* Status Banners */}
-        {error && (
-          <div className="mx-6 mt-4 p-3 rounded-lg bg-rose-50 border border-rose-200 text-rose-700 text-xs flex items-center gap-2">
-            <AlertTriangle className="w-4 h-4 shrink-0" />
-            <span>{error}</span>
-          </div>
-        )}
-        {successMessage && (
-          <div className="mx-6 mt-4 p-3 rounded-lg bg-emerald-50 border border-emerald-200 text-emerald-700 text-xs flex items-center gap-2">
-            <CheckCircle2 className="w-4 h-4 shrink-0" />
-            <span>{successMessage}</span>
-          </div>
-        )}
+        <div className="flex items-center gap-2">
+          <button
+            onClick={() => setReuploadModal(true)}
+            disabled={actionLoading}
+            className="px-3 py-1.5 rounded-lg text-xs font-semibold border border-amber-300 bg-amber-50 text-amber-800 hover:bg-amber-100 transition-colors"
+          >
+            Request Re-upload
+          </button>
+          <button
+            onClick={() => setRejectPrescriptionModal(true)}
+            disabled={actionLoading}
+            className="px-3 py-1.5 rounded-lg text-xs font-semibold border border-rose-300 bg-rose-50 text-rose-700 hover:bg-rose-100 transition-colors"
+          >
+            Reject Prescription
+          </button>
+          <button
+            onClick={handleApprovePrescription}
+            disabled={actionLoading || !canCompletePrescriptionApproval}
+            className={`px-4 py-1.5 rounded-lg text-xs font-semibold text-white shadow-xs transition-colors flex items-center gap-1.5 ${
+              canCompletePrescriptionApproval
+                ? 'bg-emerald-600 hover:bg-emerald-700'
+                : 'bg-slate-300 cursor-not-allowed text-slate-500'
+            }`}
+          >
+            <CheckCircle2 className="w-3.5 h-3.5" />
+            <span>Approve Prescription</span>
+          </button>
+        </div>
+      </div>
 
-        {/* Side-by-side workspace: Desktop 2-column layout */}
-        <div className="flex-1 p-6 grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-          {/* Left Column: Original Prescription Viewer (5 cols) */}
-          <div className="lg:col-span-5 bg-white rounded-xl border border-[#EAE8F0] shadow-2xs overflow-hidden flex flex-col sticky top-[130px] max-h-[calc(100vh-160px)]">
-            <div className="p-3 bg-[#F8F9FB] border-b border-[#EAE8F0] flex items-center justify-between">
-              <span className="text-xs font-semibold text-[#351F65] flex items-center gap-1.5">
-                <FileText className="w-4 h-4 text-[#6240E8]" />
-                Original Prescription Document
-              </span>
-              <div className="flex items-center gap-1">
-                <button
-                  onClick={() => setZoomLevel((z) => Math.max(50, z - 20))}
-                  className="p-1 rounded bg-white border border-[#EAE8F0] text-[#78879A] hover:bg-slate-50"
-                  title="Zoom Out"
+      {/* Status Banners */}
+      {error && (
+        <div className="mx-6 mt-4 p-3 rounded-lg bg-rose-50 border border-rose-200 text-rose-700 text-xs flex items-center gap-2">
+          <AlertTriangle className="w-4 h-4 shrink-0" />
+          <span>{error}</span>
+        </div>
+      )}
+      {successMessage && (
+        <div className="mx-6 mt-4 p-3 rounded-lg bg-emerald-50 border border-emerald-200 text-emerald-700 text-xs flex items-center gap-2">
+          <CheckCircle2 className="w-4 h-4 shrink-0" />
+          <span>{successMessage}</span>
+        </div>
+      )}
+
+      {/* Side-by-side workspace: Desktop 2-column layout */}
+      <div className="flex-1 p-6 grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+        {/* Left Column: Original Prescription Viewer (5 cols) */}
+        <div className="lg:col-span-5 bg-white rounded-xl border border-[#EAE8F0] shadow-2xs overflow-hidden flex flex-col sticky top-[130px] max-h-[calc(100vh-160px)]">
+          <div className="p-3 bg-[#F8F9FB] border-b border-[#EAE8F0] flex items-center justify-between">
+            <span className="text-xs font-semibold text-[#351F65] flex items-center gap-1.5">
+              <FileText className="w-4 h-4 text-[#6240E8]" />
+              Original Prescription Document
+            </span>
+            <div className="flex items-center gap-1">
+              <button
+                onClick={() => setZoomLevel((z) => Math.max(50, z - 20))}
+                className="p-1 rounded bg-white border border-[#EAE8F0] text-[#78879A] hover:bg-slate-50"
+                title="Zoom Out"
+              >
+                <ZoomOut className="w-3.5 h-3.5" />
+              </button>
+              <span className="text-[10px] text-[#78879A] px-1">{zoomLevel}%</span>
+              <button
+                onClick={() => setZoomLevel((z) => Math.min(200, z + 20))}
+                className="p-1 rounded bg-white border border-[#EAE8F0] text-[#78879A] hover:bg-slate-50"
+                title="Zoom In"
+              >
+                <ZoomIn className="w-3.5 h-3.5" />
+              </button>
+              <button
+                onClick={() => setZoomLevel(100)}
+                className="p-1 rounded bg-white border border-[#EAE8F0] text-[#78879A] hover:bg-slate-50"
+                title="Reset Zoom"
+              >
+                <RotateCcw className="w-3.5 h-3.5" />
+              </button>
+            </div>
+          </div>
+
+          {/* Document display area */}
+          <div className="flex-1 overflow-auto p-4 bg-slate-900/5 min-h-[420px] flex items-center justify-center">
+            {prescription.viewUrl ? (
+              prescription.mimeType === 'application/pdf' ? (
+                <iframe
+                  src={prescription.viewUrl}
+                  className="w-full h-[520px] rounded border border-slate-200"
+                  title="Prescription PDF"
+                />
+              ) : (
+                <div
+                  style={{ transform: `scale(${zoomLevel / 100})`, transformOrigin: 'top center' }}
+                  className="transition-transform duration-150"
                 >
-                  <ZoomOut className="w-3.5 h-3.5" />
-                </button>
-                <span className="text-[10px] text-[#78879A] px-1">{zoomLevel}%</span>
-                <button
-                  onClick={() => setZoomLevel((z) => Math.min(200, z + 20))}
-                  className="p-1 rounded bg-white border border-[#EAE8F0] text-[#78879A] hover:bg-slate-50"
-                  title="Zoom In"
-                >
-                  <ZoomIn className="w-3.5 h-3.5" />
-                </button>
-                <button
-                  onClick={() => setZoomLevel(100)}
-                  className="p-1 rounded bg-white border border-[#EAE8F0] text-[#78879A] hover:bg-slate-50"
-                  title="Reset Zoom"
-                >
-                  <RotateCcw className="w-3.5 h-3.5" />
-                </button>
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={prescription.viewUrl}
+                    alt="Uploaded Prescription"
+                    className="max-w-full rounded shadow-md object-contain"
+                  />
+                </div>
+              )
+            ) : (
+              <div className="text-center p-6 text-[#78879A] text-xs">
+                <FileText className="w-8 h-8 mx-auto mb-2 opacity-50" />
+                Prescription preview unavailable. Short-lived signed URL expired.
+              </div>
+            )}
+          </div>
+
+          {/* Document details footer */}
+          <div className="p-3 bg-white border-t border-[#EAE8F0] text-[11px] text-[#78879A] space-y-1">
+            <div>
+              Filename: <strong className="text-[#14161A]">{prescription.originalFileName}</strong>
+            </div>
+            <div>Uploaded at: {new Date(prescription.uploadedAt).toLocaleString()}</div>
+          </div>
+        </div>
+
+        {/* Right Column: AI Extraction & Item Verification (7 cols) */}
+        <div className="lg:col-span-7 space-y-4">
+          {/* AI Warning Banner (Mandatory requirement) */}
+          <div className="rounded-xl bg-[#F7F5FD] border border-[#6240E8]/30 p-4 shadow-2xs">
+            <div className="flex items-start gap-3">
+              <div className="p-1.5 rounded-lg bg-[#6240E8] text-white shrink-0 mt-0.5">
+                <Bot className="w-4 h-4" />
+              </div>
+              <div>
+                <h4 className="text-xs font-bold text-[#351F65] flex items-center gap-1.5">
+                  AI-generated draft — pharmacist verification required.
+                </h4>
+                <p className="text-[11px] text-[#78879A] mt-1 leading-relaxed">
+                  AI extraction and catalogue matches are assistive drafts. AI output never
+                  authorizes dispensing. Only your explicit verified decision as a registered
+                  pharmacist can approve medicine items.
+                </p>
+                {aiExtraction && (
+                  <div className="mt-2 flex items-center gap-3 text-[10px] text-[#6C757D]">
+                    <span>
+                      Model: <strong>{aiExtraction.model}</strong>
+                    </span>
+                    {aiExtraction.overallConfidence !== null && (
+                      <span>
+                        Confidence:{' '}
+                        <strong>{(aiExtraction.overallConfidence * 100).toFixed(0)}%</strong>{' '}
+                        (Informational only)
+                      </span>
+                    )}
+                  </div>
+                )}
               </div>
             </div>
-
-            {/* Document display area */}
-            <div className="flex-1 overflow-auto p-4 bg-slate-900/5 min-h-[420px] flex items-center justify-center">
-              {prescription.viewUrl ? (
-                prescription.mimeType === 'application/pdf' ? (
-                  <iframe
-                    src={prescription.viewUrl}
-                    className="w-full h-[520px] rounded border border-slate-200"
-                    title="Prescription PDF"
-                  />
-                ) : (
-                  <div
-                    style={{ transform: `scale(${zoomLevel / 100})`, transformOrigin: 'top center' }}
-                    className="transition-transform duration-150"
-                  >
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img
-                      src={prescription.viewUrl}
-                      alt="Uploaded Prescription"
-                      className="max-w-full rounded shadow-md object-contain"
-                    />
-                  </div>
-                )
-              ) : (
-                <div className="text-center p-6 text-[#78879A] text-xs">
-                  <FileText className="w-8 h-8 mx-auto mb-2 opacity-50" />
-                  Prescription preview unavailable. Short-lived signed URL expired.
-                </div>
-              )}
-            </div>
-
-            {/* Document details footer */}
-            <div className="p-3 bg-white border-t border-[#EAE8F0] text-[11px] text-[#78879A] space-y-1">
-              <div>Filename: <strong className="text-[#14161A]">{prescription.originalFileName}</strong></div>
-              <div>Uploaded at: {new Date(prescription.uploadedAt).toLocaleString()}</div>
-            </div>
           </div>
 
-          {/* Right Column: AI Extraction & Item Verification (7 cols) */}
-          <div className="lg:col-span-7 space-y-4">
-            {/* AI Warning Banner (Mandatory requirement) */}
-            <div className="rounded-xl bg-[#F7F5FD] border border-[#6240E8]/30 p-4 shadow-2xs">
-              <div className="flex items-start gap-3">
-                <div className="p-1.5 rounded-lg bg-[#6240E8] text-white shrink-0 mt-0.5">
-                  <Bot className="w-4 h-4" />
-                </div>
-                <div>
-                  <h4 className="text-xs font-bold text-[#351F65] flex items-center gap-1.5">
-                    AI-generated draft — pharmacist verification required.
-                  </h4>
-                  <p className="text-[11px] text-[#78879A] mt-1 leading-relaxed">
-                    AI extraction and catalogue matches are assistive drafts. AI output never authorizes dispensing.
-                    Only your explicit verified decision as a registered pharmacist can approve medicine items.
-                  </p>
-                  {aiExtraction && (
-                    <div className="mt-2 flex items-center gap-3 text-[10px] text-[#6C757D]">
-                      <span>Model: <strong>{aiExtraction.model}</strong></span>
-                      {aiExtraction.overallConfidence !== null && (
-                        <span>Confidence: <strong>{(aiExtraction.overallConfidence * 100).toFixed(0)}%</strong> (Informational only)</span>
+          {/* Extracted medicines list */}
+          <div className="space-y-4">
+            {items.map((item: any, idx: number) => {
+              const draft = item.extractedDraft;
+              const match = item.matchingResult;
+              const reviewRecord = item.review;
+              const evalRes = item.complianceEvaluation;
+              const isBlocked = evalRes?.decision === 'BLOCKED';
+              const isApproved = reviewRecord?.status === 'APPROVED';
+              const isRejected = reviewRecord?.status === 'REJECTED';
+              const isAlternativePending = reviewRecord?.status === 'ALTERNATIVE_PENDING_CUSTOMER';
+
+              return (
+                <div
+                  key={item.orderItemId}
+                  className={`bg-white rounded-xl border p-5 shadow-2xs space-y-4 transition-all ${
+                    isApproved
+                      ? 'border-emerald-300 ring-1 ring-emerald-300/40 bg-emerald-50/10'
+                      : isRejected
+                        ? 'border-rose-300 bg-rose-50/10'
+                        : isBlocked
+                          ? 'border-rose-400 bg-rose-50/20'
+                          : 'border-[#EAE8F0]'
+                  }`}
+                >
+                  {/* Item Top Bar */}
+                  <div className="flex items-start justify-between gap-3">
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <span className="text-xs font-bold text-slate-400">#{idx + 1}</span>
+                        <h3 className="text-sm font-bold text-[#14161A] flex items-center gap-2">
+                          <Pill className="w-4 h-4 text-[#6240E8]" />
+                          {item.medicineName}
+                        </h3>
+                      </div>
+                      <span className="text-xs text-[#78879A]">
+                        SKU: {item.sku} &bull; Qty: {item.quantity} &bull; Line Total: ₹
+                        {item.lineTotal.toFixed(2)}
+                      </span>
+                    </div>
+
+                    {/* Status / Compliance Badge */}
+                    <div className="flex flex-col items-end gap-1">
+                      <span
+                        className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold tracking-wide uppercase ${
+                          item.schedule === 'OTC'
+                            ? 'bg-blue-50 text-blue-700 border border-blue-200'
+                            : item.schedule === 'SCHEDULE_H'
+                              ? 'bg-purple-50 text-purple-700 border border-purple-200'
+                              : item.schedule === 'SCHEDULE_H1'
+                                ? 'bg-amber-50 text-amber-800 border border-amber-300'
+                                : 'bg-rose-100 text-rose-800 border border-rose-300'
+                        }`}
+                      >
+                        {item.schedule}
+                      </span>
+
+                      {isApproved && (
+                        <span className="text-[11px] font-semibold text-emerald-600 flex items-center gap-1">
+                          <CheckCircle2 className="w-3.5 h-3.5" /> Approved
+                        </span>
+                      )}
+                      {isRejected && (
+                        <span className="text-[11px] font-semibold text-rose-600 flex items-center gap-1">
+                          <XCircle className="w-3.5 h-3.5" /> Rejected
+                        </span>
+                      )}
+                      {isAlternativePending && (
+                        <span className="text-[11px] font-semibold text-amber-600 flex items-center gap-1">
+                          <Clock className="w-3.5 h-3.5" /> Alternative Pending Customer Consent
+                        </span>
                       )}
                     </div>
-                  )}
-                </div>
-              </div>
-            </div>
+                  </div>
 
-            {/* Extracted medicines list */}
-            <div className="space-y-4">
-              {items.map((item: any, idx: number) => {
-                const draft = item.extractedDraft;
-                const match = item.matchingResult;
-                const reviewRecord = item.review;
-                const evalRes = item.complianceEvaluation;
-                const isBlocked = evalRes?.decision === 'BLOCKED';
-                const isApproved = reviewRecord?.status === 'APPROVED';
-                const isRejected = reviewRecord?.status === 'REJECTED';
-                const isAlternativePending = reviewRecord?.status === 'ALTERNATIVE_PENDING_CUSTOMER';
-
-                return (
+                  {/* Deterministic Compliance Decision Banner */}
                   <div
-                    key={item.orderItemId}
-                    className={`bg-white rounded-xl border p-5 shadow-2xs space-y-4 transition-all ${
-                      isApproved
-                        ? 'border-emerald-300 ring-1 ring-emerald-300/40 bg-emerald-50/10'
-                        : isRejected
-                          ? 'border-rose-300 bg-rose-50/10'
-                          : isBlocked
-                            ? 'border-rose-400 bg-rose-50/20'
-                            : 'border-[#EAE8F0]'
+                    className={`p-3 rounded-lg text-xs flex items-start gap-2.5 ${
+                      isBlocked
+                        ? 'bg-rose-50 border border-rose-300 text-rose-800'
+                        : evalRes?.decision === 'REQUIRES_H1_REGISTER'
+                          ? 'bg-amber-50 border border-amber-300 text-amber-800'
+                          : evalRes?.decision === 'REQUIRES_PRESCRIPTION'
+                            ? 'bg-purple-50 border border-purple-200 text-purple-800'
+                            : 'bg-emerald-50 border border-emerald-200 text-emerald-800'
                     }`}
                   >
-                    {/* Item Top Bar */}
-                    <div className="flex items-start justify-between gap-3">
-                      <div>
-                        <div className="flex items-center gap-2">
-                          <span className="text-xs font-bold text-slate-400">#{idx + 1}</span>
-                          <h3 className="text-sm font-bold text-[#14161A] flex items-center gap-2">
-                            <Pill className="w-4 h-4 text-[#6240E8]" />
-                            {item.medicineName}
-                          </h3>
-                        </div>
-                        <span className="text-xs text-[#78879A]">
-                          SKU: {item.sku} &bull; Qty: {item.quantity} &bull; Line Total: ₹{item.lineTotal.toFixed(2)}
-                        </span>
-                      </div>
-
-                      {/* Status / Compliance Badge */}
-                      <div className="flex flex-col items-end gap-1">
-                        <span
-                          className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold tracking-wide uppercase ${
-                            item.schedule === 'OTC'
-                              ? 'bg-blue-50 text-blue-700 border border-blue-200'
-                              : item.schedule === 'SCHEDULE_H'
-                                ? 'bg-purple-50 text-purple-700 border border-purple-200'
-                                : item.schedule === 'SCHEDULE_H1'
-                                  ? 'bg-amber-50 text-amber-800 border border-amber-300'
-                                  : 'bg-rose-100 text-rose-800 border border-rose-300'
-                          }`}
-                        >
-                          {item.schedule}
-                        </span>
-
-                        {isApproved && (
-                          <span className="text-[11px] font-semibold text-emerald-600 flex items-center gap-1">
-                            <CheckCircle2 className="w-3.5 h-3.5" /> Approved
-                          </span>
-                        )}
-                        {isRejected && (
-                          <span className="text-[11px] font-semibold text-rose-600 flex items-center gap-1">
-                            <XCircle className="w-3.5 h-3.5" /> Rejected
-                          </span>
-                        )}
-                        {isAlternativePending && (
-                          <span className="text-[11px] font-semibold text-amber-600 flex items-center gap-1">
-                            <Clock className="w-3.5 h-3.5" /> Alternative Pending Customer Consent
-                          </span>
-                        )}
-                      </div>
-                    </div>
-
-                    {/* Deterministic Compliance Decision Banner */}
-                    <div
-                      className={`p-3 rounded-lg text-xs flex items-start gap-2.5 ${
-                        isBlocked
-                          ? 'bg-rose-50 border border-rose-300 text-rose-800'
-                          : evalRes?.decision === 'REQUIRES_H1_REGISTER'
-                            ? 'bg-amber-50 border border-amber-300 text-amber-800'
-                            : evalRes?.decision === 'REQUIRES_PRESCRIPTION'
-                              ? 'bg-purple-50 border border-purple-200 text-purple-800'
-                              : 'bg-emerald-50 border border-emerald-200 text-emerald-800'
-                      }`}
-                    >
-                      {isBlocked ? (
-                        <ShieldAlert className="w-4 h-4 text-rose-600 shrink-0 mt-0.5" />
-                      ) : (
-                        <ShieldCheck className="w-4 h-4 text-[#6240E8] shrink-0 mt-0.5" />
-                      )}
-                      <div>
-                        <strong className="font-semibold block">
-                          Policy Evaluation: {evalRes?.decision || 'ALLOWED_FOR_REVIEW'}
-                        </strong>
-                        <ul className="list-disc list-inside mt-0.5 text-[11px] space-y-0.5 opacity-90">
-                          {evalRes?.reasons?.map((r: string, i: number) => (
-                            <li key={i}>{r}</li>
-                          ))}
-                        </ul>
-                      </div>
-                    </div>
-
-                    {/* AI Extracted draft info */}
-                    {draft && (
-                      <div className="p-3 bg-[#F8F9FB] rounded-lg border border-[#EAE8F0] space-y-2 text-xs">
-                        <div className="flex items-center justify-between text-[11px] text-[#78879A]">
-                          <span className="flex items-center gap-1 font-medium text-[#351F65]">
-                            <Sparkles className="w-3.5 h-3.5 text-[#6240E8]" /> AI Draft Extraction
-                          </span>
-                          <span>Confidence: <strong>{(draft.confidence * 100).toFixed(0)}%</strong></span>
-                        </div>
-                        <div className="grid grid-cols-2 gap-2 text-[11px]">
-                          <div>Raw Text: <strong className="text-[#14161A]">{draft.rawMedicineName}</strong></div>
-                          <div>Dosage: <strong className="text-[#14161A]">{draft.dosageInstructions || 'As directed'}</strong></div>
-                          <div>Strength: <strong className="text-[#14161A]">{draft.strength || 'N/A'}</strong></div>
-                          <div>Duration: <strong className="text-[#14161A]">{draft.duration || 'N/A'}</strong></div>
-                        </div>
-                      </div>
+                    {isBlocked ? (
+                      <ShieldAlert className="w-4 h-4 text-rose-600 shrink-0 mt-0.5" />
+                    ) : (
+                      <ShieldCheck className="w-4 h-4 text-[#6240E8] shrink-0 mt-0.5" />
                     )}
-
-                    {/* Editable Pharmacist Verification Inputs */}
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2 text-xs">
-                      <div>
-                        <label className="block text-[11px] font-medium text-[#78879A] mb-1">
-                          Dosage Instructions
-                        </label>
-                        <input
-                          type="text"
-                          defaultValue={reviewRecord?.reviewedDosageInstructions || draft?.dosageInstructions || ''}
-                          onChange={(e) => handleFieldChange(item.orderItemId, 'reviewedDosageInstructions', e.target.value)}
-                          placeholder="e.g. 1 tablet twice daily"
-                          className="w-full px-2.5 py-1.5 rounded-lg border border-[#EAE8F0] text-xs focus:outline-none focus:ring-1 focus:ring-[#6240E8]"
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-[11px] font-medium text-[#78879A] mb-1">
-                          Duration
-                        </label>
-                        <input
-                          type="text"
-                          defaultValue={reviewRecord?.reviewedDuration || draft?.duration || ''}
-                          onChange={(e) => handleFieldChange(item.orderItemId, 'reviewedDuration', e.target.value)}
-                          placeholder="e.g. 7 days"
-                          className="w-full px-2.5 py-1.5 rounded-lg border border-[#EAE8F0] text-xs focus:outline-none focus:ring-1 focus:ring-[#6240E8]"
-                        />
-                      </div>
-                    </div>
-
-                    {/* Pending Alternative Alert if proposed */}
-                    {item.activeAlternativeProposal && (
-                      <div className="p-3 rounded-lg bg-amber-50 border border-amber-300 text-xs text-amber-900 space-y-1">
-                        <strong className="block font-semibold">
-                          Proposed Generic Alternative: {item.activeAlternativeProposal.proposedMedicine.name}
-                        </strong>
-                        <p className="text-[11px]">
-                          Awaiting customer acceptance. Price diff: ₹{Number(item.activeAlternativeProposal.priceDifference).toFixed(2)}.
-                          Reason: {item.activeAlternativeProposal.reason}
-                        </p>
-                      </div>
-                    )}
-
-                    {/* Item Decision Buttons */}
-                    <div className="pt-2 border-t border-[#EAE8F0] flex flex-wrap items-center justify-between gap-2">
-                      <div className="flex items-center gap-1.5">
-                        <button
-                          type="button"
-                          onClick={() => handleSaveFields(item.orderItemId)}
-                          className="px-2.5 py-1 rounded text-[11px] font-medium text-[#6240E8] hover:bg-[#F7F5FD] border border-[#EAE8F0]"
-                        >
-                          Save Corrections
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => setAlternativeModal({ itemId: item.orderItemId })}
-                          disabled={isBlocked || isApproved}
-                          className="px-2.5 py-1 rounded text-[11px] font-medium text-[#351F65] hover:bg-[#F8F9FB] border border-[#EAE8F0] disabled:opacity-50"
-                        >
-                          Propose Generic
-                        </button>
-                      </div>
-
-                      <div className="flex items-center gap-2">
-                        <button
-                          type="button"
-                          onClick={() => setRejectItemModal({ itemId: item.orderItemId })}
-                          disabled={isApproved || actionLoading}
-                          className="px-3 py-1.5 rounded-lg text-xs font-semibold text-rose-600 hover:bg-rose-50 border border-rose-200 transition-colors"
-                        >
-                          Reject Item
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => handleApproveItem(item.orderItemId, item.schedule)}
-                          disabled={isBlocked || isApproved || actionLoading}
-                          className={`px-3 py-1.5 rounded-lg text-xs font-semibold text-white shadow-2xs transition-colors flex items-center gap-1 ${
-                            isBlocked
-                              ? 'bg-slate-300 cursor-not-allowed text-slate-500'
-                              : 'bg-emerald-600 hover:bg-emerald-700'
-                          }`}
-                        >
-                          <CheckCircle2 className="w-3.5 h-3.5" />
-                          <span>{item.schedule === 'SCHEDULE_H1' ? 'Enter H1 & Approve' : 'Approve Item'}</span>
-                        </button>
-                      </div>
+                    <div>
+                      <strong className="font-semibold block">
+                        Policy Evaluation: {evalRes?.decision || 'ALLOWED_FOR_REVIEW'}
+                      </strong>
+                      <ul className="list-disc list-inside mt-0.5 text-[11px] space-y-0.5 opacity-90">
+                        {evalRes?.reasons?.map((r: string, i: number) => (
+                          <li key={i}>{r}</li>
+                        ))}
+                      </ul>
                     </div>
                   </div>
-                );
-              })}
-            </div>
+
+                  {/* AI Extracted draft info */}
+                  {draft && (
+                    <div className="p-3 bg-[#F8F9FB] rounded-lg border border-[#EAE8F0] space-y-2 text-xs">
+                      <div className="flex items-center justify-between text-[11px] text-[#78879A]">
+                        <span className="flex items-center gap-1 font-medium text-[#351F65]">
+                          <Sparkles className="w-3.5 h-3.5 text-[#6240E8]" /> AI Draft Extraction
+                        </span>
+                        <span>
+                          Confidence: <strong>{(draft.confidence * 100).toFixed(0)}%</strong>
+                        </span>
+                      </div>
+                      <div className="grid grid-cols-2 gap-2 text-[11px]">
+                        <div>
+                          Raw Text:{' '}
+                          <strong className="text-[#14161A]">{draft.rawMedicineName}</strong>
+                        </div>
+                        <div>
+                          Dosage:{' '}
+                          <strong className="text-[#14161A]">
+                            {draft.dosageInstructions || 'As directed'}
+                          </strong>
+                        </div>
+                        <div>
+                          Strength:{' '}
+                          <strong className="text-[#14161A]">{draft.strength || 'N/A'}</strong>
+                        </div>
+                        <div>
+                          Duration:{' '}
+                          <strong className="text-[#14161A]">{draft.duration || 'N/A'}</strong>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Editable Pharmacist Verification Inputs */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2 text-xs">
+                    <div>
+                      <label className="block text-[11px] font-medium text-[#78879A] mb-1">
+                        Dosage Instructions
+                      </label>
+                      <input
+                        type="text"
+                        defaultValue={
+                          reviewRecord?.reviewedDosageInstructions ||
+                          draft?.dosageInstructions ||
+                          ''
+                        }
+                        onChange={(e) =>
+                          handleFieldChange(
+                            item.orderItemId,
+                            'reviewedDosageInstructions',
+                            e.target.value,
+                          )
+                        }
+                        placeholder="e.g. 1 tablet twice daily"
+                        className="w-full px-2.5 py-1.5 rounded-lg border border-[#EAE8F0] text-xs focus:outline-none focus:ring-1 focus:ring-[#6240E8]"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-[11px] font-medium text-[#78879A] mb-1">
+                        Duration
+                      </label>
+                      <input
+                        type="text"
+                        defaultValue={reviewRecord?.reviewedDuration || draft?.duration || ''}
+                        onChange={(e) =>
+                          handleFieldChange(item.orderItemId, 'reviewedDuration', e.target.value)
+                        }
+                        placeholder="e.g. 7 days"
+                        className="w-full px-2.5 py-1.5 rounded-lg border border-[#EAE8F0] text-xs focus:outline-none focus:ring-1 focus:ring-[#6240E8]"
+                      />
+                    </div>
+                  </div>
+
+                  {/* Pending Alternative Alert if proposed */}
+                  {item.activeAlternativeProposal && (
+                    <div className="p-3 rounded-lg bg-amber-50 border border-amber-300 text-xs text-amber-900 space-y-1">
+                      <strong className="block font-semibold">
+                        Proposed Generic Alternative:{' '}
+                        {item.activeAlternativeProposal.proposedMedicine.name}
+                      </strong>
+                      <p className="text-[11px]">
+                        Awaiting customer acceptance. Price diff: ₹
+                        {Number(item.activeAlternativeProposal.priceDifference).toFixed(2)}. Reason:{' '}
+                        {item.activeAlternativeProposal.reason}
+                      </p>
+                    </div>
+                  )}
+
+                  {/* Item Decision Buttons */}
+                  <div className="pt-2 border-t border-[#EAE8F0] flex flex-wrap items-center justify-between gap-2">
+                    <div className="flex items-center gap-1.5">
+                      <button
+                        type="button"
+                        onClick={() => handleSaveFields(item.orderItemId)}
+                        className="px-2.5 py-1 rounded text-[11px] font-medium text-[#6240E8] hover:bg-[#F7F5FD] border border-[#EAE8F0]"
+                      >
+                        Save Corrections
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setAlternativeModal({ itemId: item.orderItemId })}
+                        disabled={isBlocked || isApproved}
+                        className="px-2.5 py-1 rounded text-[11px] font-medium text-[#351F65] hover:bg-[#F8F9FB] border border-[#EAE8F0] disabled:opacity-50"
+                      >
+                        Propose Generic
+                      </button>
+                    </div>
+
+                    <div className="flex items-center gap-2">
+                      <button
+                        type="button"
+                        onClick={() => setRejectItemModal({ itemId: item.orderItemId })}
+                        disabled={isApproved || actionLoading}
+                        className="px-3 py-1.5 rounded-lg text-xs font-semibold text-rose-600 hover:bg-rose-50 border border-rose-200 transition-colors"
+                      >
+                        Reject Item
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => handleApproveItem(item.orderItemId, item.schedule)}
+                        disabled={isBlocked || isApproved || actionLoading}
+                        className={`px-3 py-1.5 rounded-lg text-xs font-semibold text-white shadow-2xs transition-colors flex items-center gap-1 ${
+                          isBlocked
+                            ? 'bg-slate-300 cursor-not-allowed text-slate-500'
+                            : 'bg-emerald-600 hover:bg-emerald-700'
+                        }`}
+                      >
+                        <CheckCircle2 className="w-3.5 h-3.5" />
+                        <span>
+                          {item.schedule === 'SCHEDULE_H1' ? 'Enter H1 & Approve' : 'Approve Item'}
+                        </span>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
           </div>
         </div>
+      </div>
 
       {/* MODAL: Schedule H1 Details */}
       {h1Modal && (
@@ -743,7 +769,8 @@ export default function PharmacistOrderReviewPage() {
               Schedule H1 Register Details
             </h3>
             <p className="text-xs text-[#78879A]">
-              Under regulatory requirements, Schedule H1 substances require recorded patient and prescriber doctor details before dispensing.
+              Under regulatory requirements, Schedule H1 substances require recorded patient and
+              prescriber doctor details before dispensing.
             </p>
             <div className="space-y-3 text-xs">
               <div>
@@ -757,7 +784,9 @@ export default function PharmacistOrderReviewPage() {
                 />
               </div>
               <div>
-                <label className="block font-medium text-[#351F65] mb-1">Prescribing Doctor *</label>
+                <label className="block font-medium text-[#351F65] mb-1">
+                  Prescribing Doctor *
+                </label>
                 <input
                   type="text"
                   value={h1PrescriberName}
@@ -767,7 +796,9 @@ export default function PharmacistOrderReviewPage() {
                 />
               </div>
               <div>
-                <label className="block font-medium text-[#351F65] mb-1">Clinic / Hospital / Reg No</label>
+                <label className="block font-medium text-[#351F65] mb-1">
+                  Clinic / Hospital / Reg No
+                </label>
                 <input
                   type="text"
                   value={h1PrescriberDetails}
@@ -807,7 +838,8 @@ export default function PharmacistOrderReviewPage() {
               Reject Medicine Item
             </h3>
             <p className="text-xs text-[#78879A]">
-              Provide a clear reason for rejecting this item. The customer will see this explanation in their portal.
+              Provide a clear reason for rejecting this item. The customer will see this explanation
+              in their portal.
             </p>
             <textarea
               rows={3}
@@ -846,11 +878,14 @@ export default function PharmacistOrderReviewPage() {
               Propose Generic Alternative
             </h3>
             <p className="text-xs text-[#78879A]">
-              Propose an active-ingredient equivalent catalogue medicine. Customer must explicitly accept or decline.
+              Propose an active-ingredient equivalent catalogue medicine. Customer must explicitly
+              accept or decline.
             </p>
             <div className="space-y-3 text-xs">
               <div>
-                <label className="block font-medium text-[#351F65] mb-1">Select Catalogue Alternative</label>
+                <label className="block font-medium text-[#351F65] mb-1">
+                  Select Catalogue Alternative
+                </label>
                 <select
                   value={altProposedMedicineId}
                   onChange={(e) => setAltProposedMedicineId(e.target.value)}
@@ -905,7 +940,8 @@ export default function PharmacistOrderReviewPage() {
               Reject Entire Prescription
             </h3>
             <p className="text-xs text-[#78879A]">
-              Rejecting this prescription marks the order as REJECTED. Please provide an explicit regulatory or clinical reason.
+              Rejecting this prescription marks the order as REJECTED. Please provide an explicit
+              regulatory or clinical reason.
             </p>
             <textarea
               rows={3}
@@ -944,7 +980,8 @@ export default function PharmacistOrderReviewPage() {
               Request Prescription Re-upload
             </h3>
             <p className="text-xs text-[#78879A]">
-              The customer will be notified in the customer app to upload a clearer replacement prescription.
+              The customer will be notified in the customer app to upload a clearer replacement
+              prescription.
             </p>
             <textarea
               rows={3}

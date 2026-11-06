@@ -15,7 +15,10 @@
     "prisma:migrate": "prisma migrate dev",
     "prisma:seed": "prisma db seed",
     "test": "vitest run",
-    "test:e2e": "vitest run test/auth.e2e-spec.ts"
+    "test:unit": "vitest run src/",
+    "test:integration": "vitest run test/",
+    "test:e2e": "vitest run test/",
+    "test:coverage": "vitest run --coverage"
   },
   "prisma": {
     "seed": "ts-node prisma/seed.ts"
@@ -30,6 +33,7 @@
     "@nestjs/jwt": "^12.0.3",
     "@nestjs/platform-express": "^11.0.10",
     "@nestjs/swagger": "^11.0.5",
+    "@nestjs/throttler": "^6.7.1",
     "@pharmacy/shared-types": "workspace:*",
     "@pharmacy/validation": "workspace:*",
     "@prisma/client": "^6.4.0",
@@ -60,6 +64,7 @@
     "@types/multer": "^2.3.0",
     "@types/node": "^22.13.4",
     "@types/supertest": "^7.2.1",
+    "@vitest/coverage-v8": "5.1.0",
     "eslint": "^9.20.1",
     "jest": "^30.5.2",
     "prisma": "^6.4.0",

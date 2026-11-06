@@ -135,7 +135,8 @@ export default function AdminFulfilmentOrdersPage() {
             </h1>
           </div>
           <p className="text-sm text-[#78879A] mt-1">
-            Platform-wide visibility into routing decisions, active reservations, picking, and delivery handovers.
+            Platform-wide visibility into routing decisions, active reservations, picking, and
+            delivery handovers.
           </p>
         </div>
       </div>
@@ -182,9 +183,7 @@ export default function AdminFulfilmentOrdersPage() {
       {/* Orders Table */}
       <div className="bg-white rounded-2xl border border-[#EAE8F0] shadow-xs overflow-hidden">
         {loading ? (
-          <div className="p-12 text-center text-xs text-[#78879A]">
-            Loading orders...
-          </div>
+          <div className="p-12 text-center text-xs text-[#78879A]">Loading orders...</div>
         ) : error ? (
           <div className="p-8 text-center text-xs text-rose-600 bg-rose-50/50">
             <AlertTriangle className="w-6 h-6 mx-auto mb-2 text-rose-500" />
@@ -230,7 +229,9 @@ export default function AdminFulfilmentOrdersPage() {
                     <td className="py-3 px-4">
                       {row.assignedStore ? (
                         <>
-                          <span className="font-bold text-[#14161A] block">{row.assignedStore.name}</span>
+                          <span className="font-bold text-[#14161A] block">
+                            {row.assignedStore.name}
+                          </span>
                           <span className="text-[10px] text-[#78879A] font-mono">
                             {row.assignedStore.code}{' '}
                             {row.distanceKm ? `(${row.distanceKm} km)` : ''}
@@ -241,8 +242,12 @@ export default function AdminFulfilmentOrdersPage() {
                       )}
                     </td>
                     <td className="py-3 px-4">
-                      <span className="font-bold text-[#14161A]">₹{row.totalAmount.toFixed(2)}</span>
-                      <span className="block text-[10px] text-[#78879A]">{row.itemCount} item(s)</span>
+                      <span className="font-bold text-[#14161A]">
+                        ₹{row.totalAmount.toFixed(2)}
+                      </span>
+                      <span className="block text-[10px] text-[#78879A]">
+                        {row.itemCount} item(s)
+                      </span>
                     </td>
                     <td className="py-3 px-4">
                       <span
@@ -250,10 +255,10 @@ export default function AdminFulfilmentOrdersPage() {
                           row.status === 'STOCK_RESERVED'
                             ? 'bg-amber-50 text-amber-700 border border-amber-200'
                             : row.status === 'STOCK_UNAVAILABLE'
-                            ? 'bg-rose-50 text-rose-700 border border-rose-200'
-                            : row.status === 'HANDED_OVER'
-                            ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
-                            : 'bg-purple-50 text-purple-700 border border-purple-200'
+                              ? 'bg-rose-50 text-rose-700 border border-rose-200'
+                              : row.status === 'HANDED_OVER'
+                                ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
+                                : 'bg-purple-50 text-purple-700 border border-purple-200'
                         }`}
                       >
                         {row.status}
@@ -272,7 +277,9 @@ export default function AdminFulfilmentOrdersPage() {
                               className="px-2.5 py-1 rounded-lg text-xs font-semibold bg-[#6240E8] text-white hover:bg-[#5232d4] disabled:opacity-50 inline-flex items-center gap-1 shadow-xs"
                             >
                               <Compass className="w-3.5 h-3.5" />
-                              <span>{row.status === 'STOCK_UNAVAILABLE' ? 'Retry Route' : 'Auto Route'}</span>
+                              <span>
+                                {row.status === 'STOCK_UNAVAILABLE' ? 'Retry Route' : 'Auto Route'}
+                              </span>
                             </button>
                             <button
                               onClick={() => {
@@ -311,7 +318,8 @@ export default function AdminFulfilmentOrdersPage() {
               Manually Assign Store: {manualModalOrder.orderNumber}
             </h3>
             <p className="text-[#78879A]">
-              Under safety rules, manual assignment will still strictly verify complete available stock and atomically create reservations.
+              Under safety rules, manual assignment will still strictly verify complete available
+              stock and atomically create reservations.
             </p>
 
             <div className="space-y-3">

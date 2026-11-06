@@ -4,7 +4,14 @@ import * as React from 'react';
 import Link from 'next/link';
 import { apiFetch } from '@/lib/api/client';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
 import { RefreshCw, ArrowLeft, Bell, ShoppingCart, TrendingUp, CheckCircle2 } from 'lucide-react';
 import { RefillAnalyticsDto } from '@pharmacy/shared-types';
@@ -17,7 +24,9 @@ export default function AdminAnalyticsRefillsPage() {
   const loadData = React.useCallback(async (selectedPeriod: string) => {
     try {
       setLoading(true);
-      const res = await apiFetch<RefillAnalyticsDto>(`/admin/analytics/refills?period=${selectedPeriod}`);
+      const res = await apiFetch<RefillAnalyticsDto>(
+        `/admin/analytics/refills?period=${selectedPeriod}`,
+      );
       setData(res);
     } catch {
       // Handled
@@ -32,7 +41,10 @@ export default function AdminAnalyticsRefillsPage() {
 
   return (
     <div className="space-y-6 max-w-7xl mx-auto py-6 px-4">
-      <Link href="/admin/analytics" className="inline-flex items-center text-xs font-semibold text-[#6240E8] hover:underline">
+      <Link
+        href="/admin/analytics"
+        className="inline-flex items-center text-xs font-semibold text-[#6240E8] hover:underline"
+      >
         <ArrowLeft className="mr-1.5 h-3.5 w-3.5" /> Back to Analytics Overview
       </Link>
 
@@ -43,7 +55,8 @@ export default function AdminAnalyticsRefillsPage() {
             Refill Automation &amp; Reminder Analytics
           </h1>
           <p className="text-sm text-slate-500 mt-1">
-            Customer subscription adoption, reminder delivery tracking, and reorder conversion funnel.
+            Customer subscription adoption, reminder delivery tracking, and reorder conversion
+            funnel.
           </p>
         </div>
 
@@ -54,7 +67,9 @@ export default function AdminAnalyticsRefillsPage() {
               type="button"
               onClick={() => setPeriod(val)}
               className={`px-3 py-1.5 rounded-lg font-medium transition-all ${
-                period === val ? 'bg-white text-slate-900 shadow-xs font-semibold' : 'text-slate-600'
+                period === val
+                  ? 'bg-white text-slate-900 shadow-xs font-semibold'
+                  : 'text-slate-600'
               }`}
             >
               {val}
@@ -78,7 +93,9 @@ export default function AdminAnalyticsRefillsPage() {
 
             <Card className="border-slate-200 shadow-xs">
               <CardContent className="p-4 space-y-1">
-                <span className="text-xs text-slate-500 font-medium">Supply Estimates Generated</span>
+                <span className="text-xs text-slate-500 font-medium">
+                  Supply Estimates Generated
+                </span>
                 <div className="text-2xl font-bold text-slate-900">{data.estimatesGenerated}</div>
                 <span className="text-[11px] text-slate-400">From physical dispensing</span>
               </CardContent>
@@ -88,14 +105,18 @@ export default function AdminAnalyticsRefillsPage() {
               <CardContent className="p-4 space-y-1">
                 <span className="text-xs text-slate-500 font-medium">Reminders Sent</span>
                 <div className="text-2xl font-bold text-emerald-600">{data.remindersSent}</div>
-                <span className="text-[11px] text-slate-400">{data.remindersScheduled} scheduled ({data.remindersSkipped} skipped)</span>
+                <span className="text-[11px] text-slate-400">
+                  {data.remindersScheduled} scheduled ({data.remindersSkipped} skipped)
+                </span>
               </CardContent>
             </Card>
 
             <Card className="border-slate-200 shadow-xs">
               <CardContent className="p-4 space-y-1">
                 <span className="text-xs text-slate-500 font-medium">Conversion Rate</span>
-                <div className="text-2xl font-bold text-indigo-600">{data.conversionRatePercentage}%</div>
+                <div className="text-2xl font-bold text-indigo-600">
+                  {data.conversionRatePercentage}%
+                </div>
                 <span className="text-[11px] text-slate-400">Handed over / Reminders sent</span>
               </CardContent>
             </Card>
@@ -109,7 +130,9 @@ export default function AdminAnalyticsRefillsPage() {
             </CardHeader>
             <CardContent>
               {data.timeline.length === 0 ? (
-                <p className="text-xs text-slate-400 py-6 text-center">No reminder events recorded in this period.</p>
+                <p className="text-xs text-slate-400 py-6 text-center">
+                  No reminder events recorded in this period.
+                </p>
               ) : (
                 <Table>
                   <TableHeader>
@@ -122,7 +145,9 @@ export default function AdminAnalyticsRefillsPage() {
                   <TableBody>
                     {data.timeline.map((row) => (
                       <TableRow key={row.date}>
-                        <TableCell className="font-mono text-xs text-slate-900">{row.date}</TableCell>
+                        <TableCell className="font-mono text-xs text-slate-900">
+                          {row.date}
+                        </TableCell>
                         <TableCell className="text-right font-semibold text-emerald-600 text-xs">
                           {row.remindersSent}
                         </TableCell>

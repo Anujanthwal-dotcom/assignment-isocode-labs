@@ -28,7 +28,10 @@ export class RefillSchedulerService {
    * Lead time (3, 5, or 7 days) is deducted from the estimated run-out date.
    * Safety: Asia/Kolkata timezone default 09:00 AM.
    */
-  async scheduleReminderForSubscription(subscriptionId: string, customNow = new Date()): Promise<void> {
+  async scheduleReminderForSubscription(
+    subscriptionId: string,
+    customNow = new Date(),
+  ): Promise<void> {
     const subscription = await this.prisma.refillSubscription.findUnique({
       where: { id: subscriptionId },
       include: {

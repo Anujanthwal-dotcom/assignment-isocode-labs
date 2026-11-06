@@ -74,9 +74,7 @@ describe('Phase 4 Safety Invariants: Order and Prescription Non-Mutability', () 
     };
 
     mockStorage = {
-      getPrescriptionBuffer: vi
-        .fn()
-        .mockResolvedValue(Buffer.from('sample prescription image')),
+      getPrescriptionBuffer: vi.fn().mockResolvedValue(Buffer.from('sample prescription image')),
     };
 
     mockAudit = {

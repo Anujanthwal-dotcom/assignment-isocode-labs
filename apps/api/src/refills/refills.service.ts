@@ -47,7 +47,9 @@ export class RefillsService {
    * Safety invariant: Must be called upon OrderHandover / HANDED_OVER, never prior.
    */
   async generateEstimatesForHandedOverOrder(orderId: string, dispensedAt: Date) {
-    this.logger.log(`Generating refill estimates for handed-over order ${orderId} at ${dispensedAt.toISOString()}`);
+    this.logger.log(
+      `Generating refill estimates for handed-over order ${orderId} at ${dispensedAt.toISOString()}`,
+    );
 
     const order = await this.prisma.order.findUnique({
       where: { id: orderId },
@@ -76,11 +78,17 @@ export class RefillsService {
       const review = item.reviews[0];
 
       let calculationResult;
-      if (!review || !review.verifiedDosageConfirmed || !review.unitsPerAdministration || !review.administrationsPerDay) {
+      if (
+        !review ||
+        !review.verifiedDosageConfirmed ||
+        !review.unitsPerAdministration ||
+        !review.administrationsPerDay
+      ) {
         // Dosage was not confirmed by pharmacist
         calculationResult = {
           eligibilityStatus: 'AWAITING_VERIFIED_DOSAGE' as const,
-          ineligibilityReason: 'Pharmacist has not confirmed structured dosage for this dispensed item.',
+          ineligibilityReason:
+            'Pharmacist has not confirmed structured dosage for this dispensed item.',
           calculationInputs: {
             orderItemId: item.id,
             medicineId: item.medicineId,
@@ -312,7 +320,9 @@ export class RefillsService {
     });
 
     if (existing) {
-      throw new BadRequestException('An active refill subscription already exists for this medicine.');
+      throw new BadRequestException(
+        'An active refill subscription already exists for this medicine.',
+      );
     }
 
     const leadDays = dto.reminderDaysBefore || 5;

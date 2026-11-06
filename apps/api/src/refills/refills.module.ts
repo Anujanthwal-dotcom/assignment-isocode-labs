@@ -5,10 +5,7 @@ import { AuditModule } from '../audit/audit.module';
 import { NotificationsModule } from '../notifications/notifications.module';
 import { CartModule } from '../cart/cart.module';
 import { RefillCalculationService } from './refill-calculation.service';
-import {
-  RefillSchedulerService,
-  REFILL_REMINDERS_QUEUE,
-} from './refill-scheduler.service';
+import { RefillSchedulerService, REFILL_REMINDERS_QUEUE } from './refill-scheduler.service';
 import { RefillReminderProcessor } from './refill-reminder.processor';
 import { RefillsService } from './refills.service';
 import { CustomerRefillsController } from './customer-refills.controller';

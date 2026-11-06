@@ -1,8 +1,4 @@
-import {
-  Injectable,
-  NotFoundException,
-  BadRequestException,
-} from '@nestjs/common';
+import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateCustomerAddressDto, UpdateCustomerAddressDto } from './customer-addresses.dto';
 import {
@@ -134,7 +130,9 @@ export class CustomerAddressesService {
           ...(dto.recipientName ? { recipientName: dto.recipientName.trim() } : {}),
           ...(normalizedPhoneNumber ? { phone: normalizedPhoneNumber } : {}),
           ...(dto.addressLine1 ? { addressLine1: dto.addressLine1.trim() } : {}),
-          ...(dto.addressLine2 !== undefined ? { addressLine2: dto.addressLine2?.trim() || null } : {}),
+          ...(dto.addressLine2 !== undefined
+            ? { addressLine2: dto.addressLine2?.trim() || null }
+            : {}),
           ...(dto.landmark !== undefined ? { landmark: dto.landmark?.trim() || null } : {}),
           ...(dto.city ? { city: dto.city.trim() } : {}),
           ...(dto.state ? { state: dto.state.trim() } : {}),

@@ -56,8 +56,7 @@ export class OrderStatusService {
     // ROUTING_PENDING -> STOCK_RESERVED or STOCK_UNAVAILABLE
     if (
       currentStatus === OrderStatus.ROUTING_PENDING &&
-      (newStatus === OrderStatus.STOCK_RESERVED ||
-        newStatus === OrderStatus.STOCK_UNAVAILABLE)
+      (newStatus === OrderStatus.STOCK_RESERVED || newStatus === OrderStatus.STOCK_UNAVAILABLE)
     ) {
       return;
     }
@@ -73,33 +72,25 @@ export class OrderStatusService {
     // Picking lifecycle
     if (
       currentStatus === OrderStatus.STOCK_RESERVED &&
-      (newStatus === OrderStatus.PICKING ||
-        newStatus === OrderStatus.FULFILMENT_CANCELLED)
+      (newStatus === OrderStatus.PICKING || newStatus === OrderStatus.FULFILMENT_CANCELLED)
     ) {
       return;
     }
 
     if (
       currentStatus === OrderStatus.PICKING &&
-      (newStatus === OrderStatus.PACKED ||
-        newStatus === OrderStatus.FULFILMENT_CANCELLED)
+      (newStatus === OrderStatus.PACKED || newStatus === OrderStatus.FULFILMENT_CANCELLED)
     ) {
       return;
     }
 
     // Packing -> Ready for Handover
-    if (
-      currentStatus === OrderStatus.PACKED &&
-      newStatus === OrderStatus.READY_FOR_HANDOVER
-    ) {
+    if (currentStatus === OrderStatus.PACKED && newStatus === OrderStatus.READY_FOR_HANDOVER) {
       return;
     }
 
     // Ready for Handover -> Handed Over
-    if (
-      currentStatus === OrderStatus.READY_FOR_HANDOVER &&
-      newStatus === OrderStatus.HANDED_OVER
-    ) {
+    if (currentStatus === OrderStatus.READY_FOR_HANDOVER && newStatus === OrderStatus.HANDED_OVER) {
       return;
     }
 

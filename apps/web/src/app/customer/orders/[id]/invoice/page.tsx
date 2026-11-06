@@ -47,9 +47,7 @@ export default function CustomerOrderInvoicePage() {
           >
             <ArrowLeft className="w-4 h-4" />
           </Link>
-          <h1 className="text-xl font-bold text-[#14161A] tracking-tight">
-            Order Invoice
-          </h1>
+          <h1 className="text-xl font-bold text-[#14161A] tracking-tight">Order Invoice</h1>
         </div>
 
         {invoice && (
@@ -64,9 +62,7 @@ export default function CustomerOrderInvoicePage() {
       </div>
 
       {loading ? (
-        <div className="p-12 text-center text-xs text-[#78879A]">
-          Loading invoice...
-        </div>
+        <div className="p-12 text-center text-xs text-[#78879A]">Loading invoice...</div>
       ) : error ? (
         <div className="p-8 text-center text-xs text-rose-600 bg-rose-50 rounded-2xl border border-rose-200">
           <AlertTriangle className="w-6 h-6 mx-auto mb-2 text-rose-500" />
@@ -101,7 +97,11 @@ export default function CustomerOrderInvoicePage() {
                 Order #: <strong>{invoice.orderNumber}</strong>
               </span>
               <span className="text-[11px] text-[#78879A] block">
-                Issued: {new Date(invoice.issuedAt).toLocaleString('en-IN', { dateStyle: 'medium', timeStyle: 'short' })}
+                Issued:{' '}
+                {new Date(invoice.issuedAt).toLocaleString('en-IN', {
+                  dateStyle: 'medium',
+                  timeStyle: 'short',
+                })}
               </span>
             </div>
           </div>
@@ -113,7 +113,9 @@ export default function CustomerOrderInvoicePage() {
               </span>
               <strong className="text-sm block">{invoice.customerName}</strong>
               {invoice.customerPhone && (
-                <span className="text-[11px] text-[#78879A] block">+91 {invoice.customerPhone}</span>
+                <span className="text-[11px] text-[#78879A] block">
+                  +91 {invoice.customerPhone}
+                </span>
               )}
             </div>
             <div className="text-right">
@@ -171,7 +173,9 @@ export default function CustomerOrderInvoicePage() {
               </div>
               <div className="flex justify-between text-[#78879A]">
                 <span>Delivery Fee:</span>
-                <span className="font-semibold text-[#14161A]">₹{invoice.deliveryFee.toFixed(2)}</span>
+                <span className="font-semibold text-[#14161A]">
+                  ₹{invoice.deliveryFee.toFixed(2)}
+                </span>
               </div>
               <div className="flex justify-between border-t border-[#EAE8F0] pt-2 font-bold text-sm text-[#351F65]">
                 <span>Total Amount:</span>

@@ -48,7 +48,8 @@ export default function AdminFulfilmentOverviewPage() {
             Fulfilment Operations
           </h1>
           <p className="text-sm text-[#78879A] mt-1">
-            Store routing, concurrency-safe inventory reservations, and end-to-end pharmacy dispensing lifecycle.
+            Store routing, concurrency-safe inventory reservations, and end-to-end pharmacy
+            dispensing lifecycle.
           </p>
         </div>
       </div>
@@ -83,7 +84,9 @@ export default function AdminFulfilmentOverviewPage() {
             </div>
 
             <div className="p-5 bg-white rounded-2xl border border-[#EAE8F0] shadow-xs">
-              <span className="text-xs font-semibold text-[#78879A] block">Picking &amp; Packed</span>
+              <span className="text-xs font-semibold text-[#78879A] block">
+                Picking &amp; Packed
+              </span>
               <span className="text-2xl font-extrabold text-[#6240E8] mt-1 block">
                 {(metrics?.picking || 0) + (metrics?.packed || 0)}
               </span>
@@ -95,7 +98,9 @@ export default function AdminFulfilmentOverviewPage() {
               <span className="text-2xl font-extrabold text-emerald-600 mt-1 block">
                 {metrics?.handedOver || 0}
               </span>
-              <span className="text-[10px] text-emerald-700 font-medium">Dispensed &amp; completed</span>
+              <span className="text-[10px] text-emerald-700 font-medium">
+                Dispensed &amp; completed
+              </span>
             </div>
           </div>
 
@@ -108,7 +113,8 @@ export default function AdminFulfilmentOverviewPage() {
                 Fulfilment Management
               </h3>
               <p className="text-xs text-[#78879A]">
-                Monitor store-routed orders, trigger automatic nearest-store routing, or manually assign store exceptions.
+                Monitor store-routed orders, trigger automatic nearest-store routing, or manually
+                assign store exceptions.
               </p>
               <div className="pt-2 space-y-2">
                 <Link
@@ -145,7 +151,8 @@ export default function AdminFulfilmentOverviewPage() {
                 {metrics?.stockUnavailable || 0}
               </div>
               <p className="text-xs text-[#78879A]">
-                Orders where no single active fulfillment store had complete available stock for all approved items. Multi-store splitting is prohibited under policy.
+                Orders where no single active fulfillment store had complete available stock for all
+                approved items. Multi-store splitting is prohibited under policy.
               </p>
               <div className="pt-2">
                 <Link
@@ -166,20 +173,25 @@ export default function AdminFulfilmentOverviewPage() {
               </h3>
               <div className="flex items-baseline gap-3">
                 <div>
-                  <span className="text-[10px] text-[#78879A] block uppercase font-bold">Active Holds</span>
+                  <span className="text-[10px] text-[#78879A] block uppercase font-bold">
+                    Active Holds
+                  </span>
                   <span className="text-2xl font-extrabold text-[#14161A]">
                     {metrics?.activeReservationsCount || 0}
                   </span>
                 </div>
                 <div>
-                  <span className="text-[10px] text-[#78879A] block uppercase font-bold">TTL Expired</span>
+                  <span className="text-[10px] text-[#78879A] block uppercase font-bold">
+                    TTL Expired
+                  </span>
                   <span className="text-2xl font-extrabold text-slate-400">
                     {metrics?.expiredReservationsCount || 0}
                   </span>
                 </div>
               </div>
               <p className="text-xs text-[#78879A]">
-                formula: <code>availableStock = onHand - reserved</code>. Reservations auto-expire after TTL (30 mins) if unpicked.
+                formula: <code>availableStock = onHand - reserved</code>. Reservations auto-expire
+                after TTL (30 mins) if unpicked.
               </p>
               <div className="pt-2">
                 <Link

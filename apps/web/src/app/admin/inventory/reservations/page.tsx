@@ -162,15 +162,15 @@ export default function AdminReservationsPage() {
                     </td>
                     <td className="py-3 px-4 font-semibold">
                       {row.storeName}
-                      <span className="block text-[10px] text-[#78879A] font-mono">{row.storeCode}</span>
+                      <span className="block text-[10px] text-[#78879A] font-mono">
+                        {row.storeCode}
+                      </span>
                     </td>
                     <td className="py-3 px-4">
                       <span className="font-bold text-[#14161A] block">{row.medicineName}</span>
                       <span className="text-[10px] text-[#78879A] font-mono">{row.sku}</span>
                     </td>
-                    <td className="py-3 px-4 font-bold text-sm text-[#351F65]">
-                      {row.quantity}
-                    </td>
+                    <td className="py-3 px-4 font-bold text-sm text-[#351F65]">{row.quantity}</td>
                     <td className="py-3 px-4 text-[11px] text-[#78879A] font-mono">
                       {new Date(row.expiresAt).toLocaleTimeString('en-IN', {
                         hour: '2-digit',
@@ -183,8 +183,8 @@ export default function AdminReservationsPage() {
                           row.status === 'ACTIVE'
                             ? 'bg-amber-50 text-amber-700 border border-amber-200'
                             : row.status === 'CONSUMED'
-                            ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
-                            : 'bg-slate-100 text-slate-700 border border-slate-200'
+                              ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
+                              : 'bg-slate-100 text-slate-700 border border-slate-200'
                         }`}
                       >
                         {row.status}

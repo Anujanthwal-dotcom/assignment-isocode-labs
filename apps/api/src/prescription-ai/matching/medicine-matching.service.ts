@@ -34,10 +34,9 @@ export class MedicineMatchingService {
     extractedItemIndex: number,
     catalogue: Medicine[],
   ): MedicineMatchResultDTO {
-    const searchTerms = [
-      item.normalizedMedicineName,
-      item.rawMedicineName,
-    ].filter(Boolean) as string[];
+    const searchTerms = [item.normalizedMedicineName, item.rawMedicineName].filter(
+      Boolean,
+    ) as string[];
 
     const normalizedExtractedStrength = this.normalizeStrength(item.strength);
     const normalizedExtractedForm = this.normalizeDosageForm(item.dosageForm);
@@ -119,11 +118,7 @@ export class MedicineMatchingService {
     }
 
     // Optional Generic Alternatives suggestion
-    const genericAlternatives = this.findGenericAlternatives(
-      item,
-      selectedMedicineId,
-      catalogue,
-    );
+    const genericAlternatives = this.findGenericAlternatives(item, selectedMedicineId, catalogue);
 
     return {
       extractedItemIndex,
@@ -165,17 +160,28 @@ export class MedicineMatchingService {
       const cleanTerm = this.cleanName(term);
       if (!cleanTerm) continue;
 
-      if (medGeneric && (cleanTerm === medGeneric || cleanTerm.includes(medGeneric) || medGeneric.includes(cleanTerm))) {
+      if (
+        medGeneric &&
+        (cleanTerm === medGeneric ||
+          cleanTerm.includes(medGeneric) ||
+          medGeneric.includes(cleanTerm))
+      ) {
         score += 0.45;
         reasons.push('GENERIC_NAME_MATCH');
         nameMatched = true;
         break;
-      } else if (medBrand && (cleanTerm === medBrand || cleanTerm.includes(medBrand) || medBrand.includes(cleanTerm))) {
+      } else if (
+        medBrand &&
+        (cleanTerm === medBrand || cleanTerm.includes(medBrand) || medBrand.includes(cleanTerm))
+      ) {
         score += 0.45;
         reasons.push('BRAND_NAME_MATCH');
         nameMatched = true;
         break;
-      } else if (cleanTerm === this.cleanName(medName) || cleanTerm.includes(this.cleanName(medName))) {
+      } else if (
+        cleanTerm === this.cleanName(medName) ||
+        cleanTerm.includes(this.cleanName(medName))
+      ) {
         score += 0.4;
         reasons.push('NAME_MATCH');
         nameMatched = true;
@@ -217,11 +223,9 @@ export class MedicineMatchingService {
     selectedMedicineId: string | null,
     catalogue: Medicine[],
   ): GenericAlternativeDTO[] {
-    const rawTarget = (
-      item.normalizedMedicineName ||
-      item.rawMedicineName ||
-      ''
-    ).toLowerCase().trim();
+    const rawTarget = (item.normalizedMedicineName || item.rawMedicineName || '')
+      .toLowerCase()
+      .trim();
 
     if (!rawTarget) return [];
 
@@ -258,10 +262,7 @@ export class MedicineMatchingService {
 
   private normalizeStrength(strength: string | null | undefined): string | null {
     if (!strength) return null;
-    return strength
-      .toLowerCase()
-      .replace(/\s+/g, '')
-      .trim();
+    return strength.toLowerCase().replace(/\s+/g, '').trim();
   }
 
   private normalizeDosageForm(form: string | null | undefined): string | null {

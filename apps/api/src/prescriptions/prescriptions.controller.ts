@@ -41,10 +41,7 @@ export class PrescriptionsController {
   @Get()
   @ApiOperation({ summary: 'List prescriptions owned by customer' })
   @ApiResponse({ status: 200, description: 'Prescription list' })
-  async list(
-    @CurrentUser('id') customerUserId: string,
-    @Query() query: ListPrescriptionsQueryDto,
-  ) {
+  async list(@CurrentUser('id') customerUserId: string, @Query() query: ListPrescriptionsQueryDto) {
     return this.prescriptionsService.listPrescriptions(customerUserId, query);
   }
 
@@ -52,10 +49,7 @@ export class PrescriptionsController {
   @ApiOperation({ summary: 'Get prescription metadata and order associations' })
   @ApiResponse({ status: 200, description: 'Prescription details' })
   @ApiResponse({ status: 404, description: 'Prescription not found' })
-  async findOne(
-    @CurrentUser('id') customerUserId: string,
-    @Param('id') id: string,
-  ) {
+  async findOne(@CurrentUser('id') customerUserId: string, @Param('id') id: string) {
     return this.prescriptionsService.getPrescription(customerUserId, id);
   }
 
@@ -63,10 +57,7 @@ export class PrescriptionsController {
   @ApiOperation({ summary: 'Get a temporary signed viewing URL (valid for 5 minutes)' })
   @ApiResponse({ status: 200, description: 'Pre-signed URL with 5-minute expiry' })
   @ApiResponse({ status: 404, description: 'Prescription not found' })
-  async getFile(
-    @CurrentUser('id') customerUserId: string,
-    @Param('id') id: string,
-  ) {
+  async getFile(@CurrentUser('id') customerUserId: string, @Param('id') id: string) {
     return this.prescriptionsService.getPrescriptionFileUrl(customerUserId, id);
   }
 
@@ -75,10 +66,7 @@ export class PrescriptionsController {
   @ApiResponse({ status: 200, description: 'Prescription deleted' })
   @ApiResponse({ status: 404, description: 'Prescription not found' })
   @ApiResponse({ status: 409, description: 'Prescription is linked to an existing order' })
-  async delete(
-    @CurrentUser('id') customerUserId: string,
-    @Param('id') id: string,
-  ) {
+  async delete(@CurrentUser('id') customerUserId: string, @Param('id') id: string) {
     return this.prescriptionsService.deletePrescription(customerUserId, id);
   }
 }

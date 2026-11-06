@@ -97,7 +97,11 @@ export class StorageService implements OnModuleInit {
     mimeType: string,
   ): Promise<string> {
     let extension = '';
-    if (mimeType === 'image/jpeg' || originalName.toLowerCase().endsWith('.jpg') || originalName.toLowerCase().endsWith('.jpeg')) {
+    if (
+      mimeType === 'image/jpeg' ||
+      originalName.toLowerCase().endsWith('.jpg') ||
+      originalName.toLowerCase().endsWith('.jpeg')
+    ) {
       extension = '.jpg';
     } else if (mimeType === 'image/png' || originalName.toLowerCase().endsWith('.png')) {
       extension = '.png';
@@ -116,15 +120,25 @@ export class StorageService implements OnModuleInit {
       this.logger.log(`Successfully uploaded prescription to private MinIO storage: ${objectKey}`);
       return objectKey;
     } catch (err: any) {
-      this.logger.error(`MinIO upload failed for prescription ${originalName}: ${err.message}`, err.stack);
+      this.logger.error(
+        `MinIO upload failed for prescription ${originalName}: ${err.message}`,
+        err.stack,
+      );
       throw new InternalServerErrorException('Failed to securely store prescription document.');
     }
   }
 
-  async getPresignedPrescriptionUrl(objectKey: string, expirySeconds: number = 300): Promise<string> {
+  async getPresignedPrescriptionUrl(
+    objectKey: string,
+    expirySeconds: number = 300,
+  ): Promise<string> {
     try {
       // Pre-signed URL expiry strictly 5 minutes (300 seconds)
-      return await this.client.presignedGetObject(this.prescriptionBucket, objectKey, expirySeconds);
+      return await this.client.presignedGetObject(
+        this.prescriptionBucket,
+        objectKey,
+        expirySeconds,
+      );
     } catch (err: any) {
       this.logger.error(`Failed to generate signed URL for prescription: ${objectKey}`, err.stack);
       throw new InternalServerErrorException('Failed to generate secure prescription access URL.');
@@ -136,7 +150,9 @@ export class StorageService implements OnModuleInit {
       return await this.client.getObject(this.prescriptionBucket, objectKey);
     } catch (err: any) {
       this.logger.error(`Failed to retrieve prescription from MinIO: ${objectKey}`, err.stack);
-      throw new InternalServerErrorException('Unable to retrieve prescription file from secure storage.');
+      throw new InternalServerErrorException(
+        'Unable to retrieve prescription file from secure storage.',
+      );
     }
   }
 
@@ -155,7 +171,9 @@ export class StorageService implements OnModuleInit {
       await this.client.removeObject(this.prescriptionBucket, objectKey);
       this.logger.log(`Deleted prescription file from MinIO: ${objectKey}`);
     } catch (err: any) {
-      this.logger.warn(`Failed to delete prescription file from MinIO: ${objectKey} - ${err.message}`);
+      this.logger.warn(
+        `Failed to delete prescription file from MinIO: ${objectKey} - ${err.message}`,
+      );
     }
   }
 }

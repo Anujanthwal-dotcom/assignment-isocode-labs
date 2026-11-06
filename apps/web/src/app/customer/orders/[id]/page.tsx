@@ -5,12 +5,7 @@ import { useParams, useRouter, useSearchParams } from 'next/navigation';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { StatusBadge } from '@/components/shared/StatusBadge';
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { apiFetch } from '@/lib/api/client';
 import {
   ChevronLeft,
@@ -102,7 +97,9 @@ export default function CustomerOrderDetailPage() {
       const [orderRes, histRes, verifRes] = await Promise.all([
         apiFetch<OrderDTO>(`/customer/orders/${orderId}`),
         apiFetch<OrderStatusHistoryDTO[]>(`/customer/orders/${orderId}/history`),
-        apiFetch<VerificationStatusData>(`/customer/orders/${orderId}/verification`).catch(() => null),
+        apiFetch<VerificationStatusData>(`/customer/orders/${orderId}/verification`).catch(
+          () => null,
+        ),
       ]);
       setOrder(orderRes);
       setHistory(histRes || []);
@@ -140,7 +137,9 @@ export default function CustomerOrderDetailPage() {
     setPreviewLoading(true);
     setPreviewOpen(true);
     try {
-      const res = await apiFetch<{ viewUrl: string }>(`/customer/prescriptions/${prescriptionId}/file`);
+      const res = await apiFetch<{ viewUrl: string }>(
+        `/customer/prescriptions/${prescriptionId}/file`,
+      );
       setPreviewUrl(res.viewUrl);
     } catch (err: unknown) {
       alert((err as Error).message || 'Failed to load prescription document.');
@@ -151,7 +150,11 @@ export default function CustomerOrderDetailPage() {
   };
 
   const handleRemoveItem = async (orderItemId: string) => {
-    if (!confirm('Are you sure you want to remove this item from your order? The total amount will be recalculated.')) {
+    if (
+      !confirm(
+        'Are you sure you want to remove this item from your order? The total amount will be recalculated.',
+      )
+    ) {
       return;
     }
     setActionLoading(`remove-${orderItemId}`);
@@ -182,7 +185,9 @@ export default function CustomerOrderDetailPage() {
     }
   };
 
-  const getStatusColor = (status: string): 'warning' | 'purple' | 'success' | 'danger' | 'information' => {
+  const getStatusColor = (
+    status: string,
+  ): 'warning' | 'purple' | 'success' | 'danger' | 'information' => {
     switch (status) {
       case 'PENDING_VERIFICATION':
         return 'warning';
@@ -225,12 +230,10 @@ export default function CustomerOrderDetailPage() {
       <Card className="max-w-[700px] mx-auto p-8 border-red-200 bg-red-50 text-center">
         <AlertCircle className="h-8 w-8 text-red-500 mx-auto mb-2" />
         <h2 className="text-base font-semibold text-red-800">Order Not Found</h2>
-        <p className="text-xs text-red-600 mt-1">{error || 'This order does not exist or belongs to another user.'}</p>
-        <Button
-          size="sm"
-          onClick={() => router.push('/customer/orders')}
-          className="mt-4 text-xs"
-        >
+        <p className="text-xs text-red-600 mt-1">
+          {error || 'This order does not exist or belongs to another user.'}
+        </p>
+        <Button size="sm" onClick={() => router.push('/customer/orders')} className="mt-4 text-xs">
           Back to Orders
         </Button>
       </Card>
@@ -265,7 +268,8 @@ export default function CustomerOrderDetailPage() {
               />
             </div>
             <p className="text-xs text-[#78879A] mt-1">
-              Placed on {new Date(order.placedAt).toLocaleDateString('en-IN', {
+              Placed on{' '}
+              {new Date(order.placedAt).toLocaleDateString('en-IN', {
                 weekday: 'long',
                 year: 'numeric',
                 month: 'long',
@@ -277,7 +281,9 @@ export default function CustomerOrderDetailPage() {
           </div>
 
           <div className="flex items-center gap-2">
-            {(order.status === 'PACKED' || order.status === 'READY_FOR_HANDOVER' || order.status === 'HANDED_OVER') && (
+            {(order.status === 'PACKED' ||
+              order.status === 'READY_FOR_HANDOVER' ||
+              order.status === 'HANDED_OVER') && (
               <Button
                 variant="outline"
                 size="sm"
@@ -312,7 +318,9 @@ export default function CustomerOrderDetailPage() {
             <strong className="block font-semibold text-emerald-900 mb-0.5">
               Order Submitted Successfully
             </strong>
-            Your order has been recorded in <span className="font-mono">PENDING_VERIFICATION</span> status. A licensed pharmacist will inspect your attached prescription and verify medicines prior to hub dispatch.
+            Your order has been recorded in <span className="font-mono">PENDING_VERIFICATION</span>{' '}
+            status. A licensed pharmacist will inspect your attached prescription and verify
+            medicines prior to hub dispatch.
           </div>
         </div>
       )}
@@ -337,7 +345,8 @@ export default function CustomerOrderDetailPage() {
                 )}
               </div>
               <p className="text-[11px] text-amber-700">
-                Please upload a clearer, complete photo or PDF showing doctor name, date, patient details, and signatures.
+                Please upload a clearer, complete photo or PDF showing doctor name, date, patient
+                details, and signatures.
               </p>
               <div className="pt-1">
                 <Button
@@ -363,8 +372,9 @@ export default function CustomerOrderDetailPage() {
               Stock Temporarily Unavailable at Fulfillment Stores
             </strong>
             <p className="leading-relaxed">
-              Our automated system checked candidate fulfillment stores, but none currently hold complete available stock for your prescribed items.
-              An admin has been alerted to review replenishment and retry store routing shortly.
+              Our automated system checked candidate fulfillment stores, but none currently hold
+              complete available stock for your prescribed items. An admin has been alerted to
+              review replenishment and retry store routing shortly.
             </p>
           </div>
         </div>
@@ -376,9 +386,11 @@ export default function CustomerOrderDetailPage() {
           <Clock className="h-5 w-5 text-[#6240E8] shrink-0 mt-0.5" />
           <div className="leading-relaxed">
             <strong className="block font-semibold text-[#6240E8] mb-0.5">
-              Pharmacist Verification Status: {verification?.reviewStatus?.replace(/_/g, ' ') || 'PENDING'}
+              Pharmacist Verification Status:{' '}
+              {verification?.reviewStatus?.replace(/_/g, ' ') || 'PENDING'}
             </strong>
-            Orders undergo deterministic compliance evaluation and registered pharmacist verification. Only authenticated pharmacists can authorize dispensing.
+            Orders undergo deterministic compliance evaluation and registered pharmacist
+            verification. Only authenticated pharmacists can authorize dispensing.
           </div>
         </div>
       )}
@@ -397,8 +409,11 @@ export default function CustomerOrderDetailPage() {
               <div className="divide-y divide-slate-100">
                 {order.items.map((item) => {
                   const verifItem = verification?.items.find((v) => v.orderItemId === item.id);
-                  const isRejected = verifItem?.reviewStatus === 'REJECTED' || item.status === 'REJECTED';
-                  const isBlocked = verifItem?.reviewStatus === 'BLOCKED' || (item.status as string) === 'CANCELLED';
+                  const isRejected =
+                    verifItem?.reviewStatus === 'REJECTED' || item.status === 'REJECTED';
+                  const isBlocked =
+                    verifItem?.reviewStatus === 'BLOCKED' ||
+                    (item.status as string) === 'CANCELLED';
                   const isApproved = verifItem?.reviewStatus === 'APPROVED';
                   const proposal = verifItem?.pendingAlternative;
 
@@ -449,7 +464,9 @@ export default function CustomerOrderDetailPage() {
                               className="mt-2 text-[11px] h-7 px-2.5 text-rose-600 border-rose-200 hover:bg-rose-50 inline-flex items-center gap-1"
                             >
                               <Trash2 className="w-3 h-3" />
-                              {actionLoading === `remove-${item.id}` ? 'Removing...' : 'Remove Item'}
+                              {actionLoading === `remove-${item.id}`
+                                ? 'Removing...'
+                                : 'Remove Item'}
                             </Button>
                           )}
                         </div>
@@ -479,21 +496,34 @@ export default function CustomerOrderDetailPage() {
                             </span>
                           </div>
                           <p className="text-[11px] text-[#78879A]">
-                            The pharmacist suggested this bioequivalent alternative with active molecule{' '}
-                            <strong>{proposal.activeIngredient}</strong> ({proposal.strength}, {proposal.dosageForm}):
+                            The pharmacist suggested this bioequivalent alternative with active
+                            molecule <strong>{proposal.activeIngredient}</strong> (
+                            {proposal.strength}, {proposal.dosageForm}):
                           </p>
                           <div className="grid grid-cols-2 gap-2 p-2 bg-white rounded-lg border border-purple-100 text-[11px]">
                             <div>
-                              <span className="text-slate-400 block text-[10px]">Current Selection</span>
-                              <span className="font-bold text-slate-800">{proposal.originalMedicine.name}</span>
-                              <div className="text-slate-500 font-mono">₹{proposal.originalMedicine.mrp.toFixed(2)}</div>
+                              <span className="text-slate-400 block text-[10px]">
+                                Current Selection
+                              </span>
+                              <span className="font-bold text-slate-800">
+                                {proposal.originalMedicine.name}
+                              </span>
+                              <div className="text-slate-500 font-mono">
+                                ₹{proposal.originalMedicine.mrp.toFixed(2)}
+                              </div>
                             </div>
                             <div>
-                              <span className="text-slate-400 block text-[10px]">Proposed Alternative</span>
-                              <span className="font-bold text-[#6240E8]">{proposal.proposedMedicine.name}</span>
+                              <span className="text-slate-400 block text-[10px]">
+                                Proposed Alternative
+                              </span>
+                              <span className="font-bold text-[#6240E8]">
+                                {proposal.proposedMedicine.name}
+                              </span>
                               <div className="text-emerald-600 font-mono font-bold">
                                 ₹{proposal.proposedMedicine.mrp.toFixed(2)}
-                                {proposal.priceDifference < 0 ? ` (Save ₹${Math.abs(proposal.priceDifference).toFixed(2)})` : ''}
+                                {proposal.priceDifference < 0
+                                  ? ` (Save ₹${Math.abs(proposal.priceDifference).toFixed(2)})`
+                                  : ''}
                               </div>
                             </div>
                           </div>
@@ -547,7 +577,8 @@ export default function CustomerOrderDetailPage() {
                   {order.addressSnapshot.landmark && ` (Near ${order.addressSnapshot.landmark})`}
                 </p>
                 <p className="font-medium text-slate-800">
-                  {order.addressSnapshot.city}, {order.addressSnapshot.state} — {order.addressSnapshot.postalCode}
+                  {order.addressSnapshot.city}, {order.addressSnapshot.state} —{' '}
+                  {order.addressSnapshot.postalCode}
                 </p>
               </div>
             </Card>
@@ -572,7 +603,10 @@ export default function CustomerOrderDetailPage() {
                   <div>
                     <span className="text-slate-400 block text-[11px]">Attached Rx:</span>
                     <div className="flex items-center justify-between gap-2 mt-0.5">
-                      <span className="font-medium text-slate-800 truncate" title={order.prescription.originalFileName}>
+                      <span
+                        className="font-medium text-slate-800 truncate"
+                        title={order.prescription.originalFileName}
+                      >
                         {order.prescription.originalFileName}
                       </span>
                       <Button
@@ -612,7 +646,9 @@ export default function CustomerOrderDetailPage() {
                       })}
                     </span>
                     {hist.note && (
-                      <p className="text-slate-600 mt-0.5 text-[11px] leading-normal">{hist.note}</p>
+                      <p className="text-slate-600 mt-0.5 text-[11px] leading-normal">
+                        {hist.note}
+                      </p>
                     )}
                   </div>
                 </div>
@@ -624,9 +660,7 @@ export default function CustomerOrderDetailPage() {
         {/* Right Column: Payment & Price Breakdown (Col 4) */}
         <div className="lg:col-span-4 space-y-4">
           <Card className="border-[#EAE8F0] bg-white p-5 space-y-4">
-            <CardTitle className="text-sm font-bold text-[#351F65]">
-              Payment Summary
-            </CardTitle>
+            <CardTitle className="text-sm font-bold text-[#351F65]">Payment Summary</CardTitle>
 
             <div className="p-3 bg-slate-50 rounded-lg border border-slate-100 text-xs space-y-1.5">
               <div className="flex justify-between items-center">
@@ -650,11 +684,15 @@ export default function CustomerOrderDetailPage() {
             <div className="space-y-2 text-xs text-slate-600 border-b border-slate-100 pb-3">
               <div className="flex justify-between">
                 <span>Subtotal:</span>
-                <span className="font-semibold text-slate-900">₹{(verification?.subtotal ?? order.subtotal).toFixed(2)}</span>
+                <span className="font-semibold text-slate-900">
+                  ₹{(verification?.subtotal ?? order.subtotal).toFixed(2)}
+                </span>
               </div>
               <div className="flex justify-between text-emerald-700">
                 <span>Delivery Fee:</span>
-                <span className="font-semibold">₹{(verification?.deliveryFee ?? order.deliveryFee).toFixed(2)}</span>
+                <span className="font-semibold">
+                  ₹{(verification?.deliveryFee ?? order.deliveryFee).toFixed(2)}
+                </span>
               </div>
               <div className="flex justify-between text-slate-500">
                 <span>Discount:</span>

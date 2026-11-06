@@ -52,13 +52,10 @@ export default function PickingWorkspacePage() {
   const handleConfirmPick = async (orderItemId: string, quantityRequired: number) => {
     setActionLoading(`pick-${orderItemId}`);
     try {
-      await apiFetch(
-        `/pharmacist/fulfilment/${orderId}/picking/items/${orderItemId}/confirm`,
-        {
-          method: 'POST',
-          body: JSON.stringify({ quantityPicked: quantityRequired }),
-        },
-      );
+      await apiFetch(`/pharmacist/fulfilment/${orderId}/picking/items/${orderItemId}/confirm`, {
+        method: 'POST',
+        body: JSON.stringify({ quantityPicked: quantityRequired }),
+      });
       await fetchChecklist();
     } catch (err: any) {
       alert(err?.message || 'Failed to confirm item picked.');
@@ -106,7 +103,8 @@ export default function PickingWorkspacePage() {
             </h1>
           </div>
           <p className="text-xs text-[#78879A] mt-1">
-            Carefully verify each physical medicine, dosage, batch, and quantity against approved prescription specifications.
+            Carefully verify each physical medicine, dosage, batch, and quantity against approved
+            prescription specifications.
           </p>
         </div>
 
@@ -122,9 +120,7 @@ export default function PickingWorkspacePage() {
       </div>
 
       {loading ? (
-        <div className="p-12 text-center text-xs text-[#78879A]">
-          Loading picking checklist...
-        </div>
+        <div className="p-12 text-center text-xs text-[#78879A]">Loading picking checklist...</div>
       ) : error ? (
         <div className="p-8 text-center text-xs text-rose-600 bg-rose-50 rounded-2xl border border-rose-200">
           <AlertTriangle className="w-6 h-6 mx-auto mb-2 text-rose-500" />
@@ -137,7 +133,8 @@ export default function PickingWorkspacePage() {
               <AlertTriangle className="w-5 h-5 text-rose-600 shrink-0 mt-0.5" />
               <div>
                 <strong className="block font-bold">Picking Exception Reported</strong>
-                Fulfilment is halted because an item was flagged as damaged, missing, or unsuitable. Contact the compliance admin or re-route.
+                Fulfilment is halted because an item was flagged as damaged, missing, or unsuitable.
+                Contact the compliance admin or re-route.
               </div>
             </div>
           )}
@@ -161,10 +158,15 @@ export default function PickingWorkspacePage() {
                 const isException = item.picking?.status === 'EXCEPTION';
 
                 return (
-                  <div key={item.orderItemId} className="p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4 text-xs">
+                  <div
+                    key={item.orderItemId}
+                    className="p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4 text-xs"
+                  >
                     <div className="space-y-1">
                       <div className="flex items-center gap-2">
-                        <span className="font-bold text-sm text-[#14161A]">{item.medicineName}</span>
+                        <span className="font-bold text-sm text-[#14161A]">
+                          {item.medicineName}
+                        </span>
                         <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-slate-100 text-slate-700">
                           {item.schedule}
                         </span>
@@ -198,7 +200,9 @@ export default function PickingWorkspacePage() {
                       {!isPicked && (
                         <>
                           <button
-                            onClick={() => handleConfirmPick(item.orderItemId, item.quantityRequired)}
+                            onClick={() =>
+                              handleConfirmPick(item.orderItemId, item.quantityRequired)
+                            }
                             disabled={actionLoading === `pick-${item.orderItemId}`}
                             className="px-3 py-1.5 rounded-lg text-xs font-semibold bg-emerald-600 text-white hover:bg-emerald-700 disabled:opacity-50 inline-flex items-center gap-1"
                           >
@@ -234,7 +238,8 @@ export default function PickingWorkspacePage() {
               Report Picking Exception
             </h3>
             <p className="text-[#78879A]">
-              Report an issue with <strong>{exceptionItem.medicineName}</strong> (e.g. damaged blister, broken seal, expired batch, or physical stock shortage).
+              Report an issue with <strong>{exceptionItem.medicineName}</strong> (e.g. damaged
+              blister, broken seal, expired batch, or physical stock shortage).
             </p>
             <textarea
               rows={3}
@@ -254,7 +259,9 @@ export default function PickingWorkspacePage() {
               <button
                 type="button"
                 onClick={handleReportException}
-                disabled={actionLoading === `exc-${exceptionItem.orderItemId}` || !exceptionReason.trim()}
+                disabled={
+                  actionLoading === `exc-${exceptionItem.orderItemId}` || !exceptionReason.trim()
+                }
                 className="px-4 py-1.5 rounded-lg font-semibold bg-rose-600 text-white hover:bg-rose-700 disabled:opacity-50"
               >
                 Log Exception

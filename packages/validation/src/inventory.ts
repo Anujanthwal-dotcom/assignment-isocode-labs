@@ -21,7 +21,8 @@ export function validateCsvRow(
   rowNumber: number,
 ): CsvRowValidationResult {
   const rawSku = raw.sku !== undefined && raw.sku !== null ? String(raw.sku).trim() : '';
-  const rawQty = raw.quantity !== undefined && raw.quantity !== null ? String(raw.quantity).trim() : '';
+  const rawQty =
+    raw.quantity !== undefined && raw.quantity !== null ? String(raw.quantity).trim() : '';
   const rawReorder =
     raw.reorderLevel !== undefined && raw.reorderLevel !== null
       ? String(raw.reorderLevel).trim()

@@ -1,19 +1,5 @@
-import {
-  Controller,
-  Post,
-  Get,
-  Param,
-  Body,
-  HttpCode,
-  HttpStatus,
-} from '@nestjs/common';
-import {
-  ApiTags,
-  ApiOperation,
-  ApiResponse,
-  ApiBearerAuth,
-  ApiParam,
-} from '@nestjs/swagger';
+import { Controller, Post, Get, Param, Body, HttpCode, HttpStatus } from '@nestjs/common';
+import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth, ApiParam } from '@nestjs/swagger';
 import { PrescriptionAiService } from './prescription-ai.service';
 import {
   RequestPrescriptionExtractionDto,
@@ -47,11 +33,7 @@ export class PrescriptionAiController {
     @Param('prescriptionId') prescriptionId: string,
     @Body() dto: RequestPrescriptionExtractionDto,
   ) {
-    return this.prescriptionAiService.requestExtraction(
-      customerUserId,
-      prescriptionId,
-      dto,
-    );
+    return this.prescriptionAiService.requestExtraction(customerUserId, prescriptionId, dto);
   }
 
   @Get(':prescriptionId/extractions/latest')

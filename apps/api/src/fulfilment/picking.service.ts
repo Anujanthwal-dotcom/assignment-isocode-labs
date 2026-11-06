@@ -9,12 +9,7 @@ import {
 import { PrismaService } from '../prisma/prisma.service';
 import { AuditService } from '../audit/audit.service';
 import { OrderStatusService } from '../orders/order-status.service';
-import {
-  OrderStatus,
-  PickingItemStatus,
-  StockReservationStatus,
-  Prisma,
-} from '@prisma/client';
+import { OrderStatus, PickingItemStatus, StockReservationStatus, Prisma } from '@prisma/client';
 
 @Injectable()
 export class PickingService {
@@ -286,7 +281,8 @@ export class PickingService {
 
     // Only approved items
     const approvedItems = order.items.filter(
-      (i) => i.reviews[0]?.status === 'APPROVED' && i.status !== 'REJECTED' && i.status !== 'REMOVED',
+      (i) =>
+        i.reviews[0]?.status === 'APPROVED' && i.status !== 'REJECTED' && i.status !== 'REMOVED',
     );
 
     const allPicked =

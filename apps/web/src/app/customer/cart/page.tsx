@@ -7,13 +7,7 @@ import { Card, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { apiFetch } from '@/lib/api/client';
-import {
-  ShoppingBag,
-  Trash2,
-  ChevronLeft,
-  ArrowRight,
-  AlertTriangle,
-} from 'lucide-react';
+import { ShoppingBag, Trash2, ChevronLeft, ArrowRight, AlertTriangle } from 'lucide-react';
 import { CartDTO } from '@pharmacy/shared-types';
 
 export default function CustomerCartPage() {
@@ -86,9 +80,7 @@ export default function CustomerCartPage() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-2 border-b border-[#EAE8F0]">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight text-[#351F65]">
-            Shopping Cart
-          </h1>
+          <h1 className="text-2xl font-bold tracking-tight text-[#351F65]">Shopping Cart</h1>
           <p className="text-sm text-[#78879A] mt-1">
             Review your selected medicines before prescription verification and checkout.
           </p>
@@ -106,9 +98,7 @@ export default function CustomerCartPage() {
       </div>
 
       {loading ? (
-        <div className="py-12 text-center text-xs text-slate-500">
-          Loading your cart...
-        </div>
+        <div className="py-12 text-center text-xs text-slate-500">Loading your cart...</div>
       ) : error ? (
         <Card className="p-8 border-red-200 bg-red-50 text-center">
           <p className="text-sm text-red-700 font-medium">{error}</p>
@@ -118,7 +108,8 @@ export default function CustomerCartPage() {
           <ShoppingBag className="h-12 w-12 text-slate-300 mx-auto mb-3" />
           <h3 className="text-base font-semibold text-slate-800">Your Cart is Empty</h3>
           <p className="text-xs text-slate-500 mt-1 max-w-sm mx-auto">
-            You don&apos;t have any medicines in your cart yet. Browse our catalogue to select required medications.
+            You don&apos;t have any medicines in your cart yet. Browse our catalogue to select
+            required medications.
           </p>
           <Button
             size="sm"
@@ -137,7 +128,8 @@ export default function CustomerCartPage() {
                 <AlertTriangle className="h-5 w-5 text-red-600 shrink-0 mt-0.5" />
                 <div className="text-xs text-red-800 leading-relaxed">
                   <strong className="block font-semibold">Inactive Medicines in Cart</strong>
-                  One or more items in your cart are no longer active in our pharmacy catalogue. You must remove them before proceeding to checkout.
+                  One or more items in your cart are no longer active in our pharmacy catalogue. You
+                  must remove them before proceeding to checkout.
                 </div>
               </div>
             )}
@@ -167,7 +159,9 @@ export default function CustomerCartPage() {
                         )}
                       </div>
                       <p className="text-xs text-slate-500">
-                        SKU: <span className="font-mono">{item.medicine.sku}</span> &bull; {item.medicine.dosageForm || 'Unit'} &bull; {item.medicine.packSize || '1 pack'}
+                        SKU: <span className="font-mono">{item.medicine.sku}</span> &bull;{' '}
+                        {item.medicine.dosageForm || 'Unit'} &bull;{' '}
+                        {item.medicine.packSize || '1 pack'}
                       </p>
                       <p className="text-xs font-semibold text-slate-700">
                         MRP: ₹{item.unitPrice.toFixed(2)} each
@@ -234,9 +228,7 @@ export default function CustomerCartPage() {
           {/* Cart Summary (Col 4) */}
           <div className="lg:col-span-4 space-y-4">
             <Card className="border-[#EAE8F0] bg-white p-5 space-y-4">
-              <CardTitle className="text-base font-bold text-[#351F65]">
-                Order Summary
-              </CardTitle>
+              <CardTitle className="text-base font-bold text-[#351F65]">Order Summary</CardTitle>
 
               <div className="space-y-2 text-xs text-slate-600 border-b border-slate-100 pb-3">
                 <div className="flex justify-between">

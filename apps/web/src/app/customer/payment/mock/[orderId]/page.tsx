@@ -79,11 +79,7 @@ export default function CustomerMockPaymentPage() {
       <Card className="max-w-[600px] mx-auto p-8 border-red-200 bg-red-50 text-center">
         <AlertTriangle className="h-8 w-8 text-red-500 mx-auto mb-2" />
         <p className="text-sm text-red-700 font-medium">{error || 'Order not found.'}</p>
-        <Button
-          size="sm"
-          onClick={() => router.push('/customer/orders')}
-          className="mt-4 text-xs"
-        >
+        <Button size="sm" onClick={() => router.push('/customer/orders')} className="mt-4 text-xs">
           View Orders
         </Button>
       </Card>
@@ -99,7 +95,9 @@ export default function CustomerMockPaymentPage() {
           <strong className="block font-semibold text-amber-800">
             TEST ENVIRONMENT — Mock UPI Gateway Simulation
           </strong>
-          This is an automated simulation screen for testing the customer ordering workflow. No real financial transaction will take place and no real UPI credentials or PINs will ever be requested.
+          This is an automated simulation screen for testing the customer ordering workflow. No real
+          financial transaction will take place and no real UPI credentials or PINs will ever be
+          requested.
         </div>
       </div>
 
@@ -125,7 +123,9 @@ export default function CustomerMockPaymentPage() {
             </div>
             <div className="flex justify-between">
               <span className="text-slate-500">Recipient:</span>
-              <span className="font-semibold text-slate-800">{order.addressSnapshot.recipientName}</span>
+              <span className="font-semibold text-slate-800">
+                {order.addressSnapshot.recipientName}
+              </span>
             </div>
             <div className="flex justify-between">
               <span className="text-slate-500">Payment Status:</span>
@@ -150,7 +150,9 @@ export default function CustomerMockPaymentPage() {
                 <>
                   <CheckCircle2 className="h-10 w-10 text-emerald-600 mx-auto" />
                   <div>
-                    <h3 className="font-bold text-base text-emerald-900">Payment Simulation Successful</h3>
+                    <h3 className="font-bold text-base text-emerald-900">
+                      Payment Simulation Successful
+                    </h3>
                     <p className="text-xs text-emerald-700 mt-1">{result.message}</p>
                     {result.transactionReference && (
                       <p className="text-xs font-mono font-medium text-emerald-800 mt-1">
@@ -173,7 +175,8 @@ export default function CustomerMockPaymentPage() {
                     <h3 className="font-bold text-base text-red-900">Payment Simulation Failed</h3>
                     <p className="text-xs text-red-700 mt-1">{result.message}</p>
                     <p className="text-[11px] text-red-600 mt-0.5">
-                      The order has been transitioned to CANCELLED. Your cart items have been preserved for retry.
+                      The order has been transitioned to CANCELLED. Your cart items have been
+                      preserved for retry.
                     </p>
                   </div>
                   <div className="flex items-center justify-center gap-3 pt-2">
@@ -223,8 +226,8 @@ export default function CustomerMockPaymentPage() {
               </div>
 
               <p className="text-[11px] text-slate-400 text-center leading-normal">
-                SUCCESS sets payment status to SUCCESS and keeps order in PENDING_VERIFICATION for pharmacist review.
-                FAILURE cancels the order and keeps your cart intact for retry.
+                SUCCESS sets payment status to SUCCESS and keeps order in PENDING_VERIFICATION for
+                pharmacist review. FAILURE cancels the order and keeps your cart intact for retry.
               </p>
             </div>
           )}

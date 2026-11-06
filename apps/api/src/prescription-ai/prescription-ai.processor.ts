@@ -5,10 +5,7 @@ import { PrismaService } from '../prisma/prisma.service';
 import { StorageService } from '../storage/storage.service';
 import { AuditService } from '../audit/audit.service';
 import { MedicineMatchingService } from './matching/medicine-matching.service';
-import {
-  PRESCRIPTION_READER,
-  PrescriptionReader,
-} from './providers/prescription-reader.interface';
+import { PRESCRIPTION_READER, PrescriptionReader } from './providers/prescription-reader.interface';
 import { PrescriptionAIStatus } from '@prisma/client';
 import { validatePrescriptionExtraction } from '@pharmacy/validation';
 import { PDFDocument } from 'pdf-lib';
@@ -104,9 +101,7 @@ export class PrescriptionAiProcessor extends WorkerHost {
       // 6. Validate extraction contract
       const validation = validatePrescriptionExtraction(extractionResult);
       if (!validation.valid || !validation.data) {
-        throw new Error(
-          `AI output failed schema validation: ${validation.errors.join('; ')}`,
-        );
+        throw new Error(`AI output failed schema validation: ${validation.errors.join('; ')}`);
       }
 
       // 7. Perform catalogue medicine matching

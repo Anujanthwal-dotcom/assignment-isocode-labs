@@ -86,7 +86,9 @@ describe('PharmacistVerificationService', () => {
     };
 
     mockStorage = {
-      getPresignedPrescriptionUrl: vi.fn().mockResolvedValue('https://minio.internal/presigned-url?token=xyz'),
+      getPresignedPrescriptionUrl: vi
+        .fn()
+        .mockResolvedValue('https://minio.internal/presigned-url?token=xyz'),
     };
 
     mockAudit = {
@@ -321,9 +323,9 @@ describe('PharmacistVerificationService', () => {
       ruleVersionId: 'ruleset-1',
     });
 
-    await expect(
-      service.approveItem('rev-1', 'item-x', {}, 'user-pharm-1'),
-    ).rejects.toThrow(UnprocessableEntityException);
+    await expect(service.approveItem('rev-1', 'item-x', {}, 'user-pharm-1')).rejects.toThrow(
+      UnprocessableEntityException,
+    );
   });
 
   it('8. Pharmacist can reject an item with mandatory reason', async () => {

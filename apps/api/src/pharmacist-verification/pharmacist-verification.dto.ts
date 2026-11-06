@@ -60,7 +60,9 @@ export class UpdateOrderItemReviewDto {
   @Min(1)
   reviewedQuantity?: number;
 
-  @ApiPropertyOptional({ description: 'Pharmacist-verified units consumed per administration (e.g. 1)' })
+  @ApiPropertyOptional({
+    description: 'Pharmacist-verified units consumed per administration (e.g. 1)',
+  })
   @IsOptional()
   unitsPerAdministration?: number;
 

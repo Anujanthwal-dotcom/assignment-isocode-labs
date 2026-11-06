@@ -108,7 +108,10 @@ export default function PharmacistFulfilmentQueuePage() {
         return { label: 'Pick Medicines', href: `/pharmacist/fulfilment/${order.orderId}/pick` };
       case 'PACKED':
       case 'READY_FOR_HANDOVER':
-        return { label: 'Handover / Dispense', href: `/pharmacist/fulfilment/${order.orderId}/handover` };
+        return {
+          label: 'Handover / Dispense',
+          href: `/pharmacist/fulfilment/${order.orderId}/handover`,
+        };
       case 'HANDED_OVER':
       default:
         return { label: 'View Details', href: `/pharmacist/fulfilment/${order.orderId}` };
@@ -202,7 +205,10 @@ export default function PharmacistFulfilmentQueuePage() {
                   return (
                     <tr key={row.orderId} className="hover:bg-[#F8F9FB]/50">
                       <td className="py-3 px-4 font-mono font-bold text-[#6240E8]">
-                        <Link href={`/pharmacist/fulfilment/${row.orderId}`} className="hover:underline">
+                        <Link
+                          href={`/pharmacist/fulfilment/${row.orderId}`}
+                          className="hover:underline"
+                        >
                           {row.orderNumber}
                         </Link>
                         <div className="text-[10px] text-[#78879A] font-normal">
@@ -221,13 +227,17 @@ export default function PharmacistFulfilmentQueuePage() {
                         )}
                       </td>
                       <td className="py-3 px-4">
-                        <span className="font-bold text-[#14161A]">₹{row.totalAmount.toFixed(2)}</span>
+                        <span className="font-bold text-[#14161A]">
+                          ₹{row.totalAmount.toFixed(2)}
+                        </span>
                         <span className="block text-[10px] text-[#78879A] font-medium">
                           {row.itemCount} item(s)
                         </span>
                       </td>
                       <td className="py-3 px-4">
-                        <span className="font-semibold block text-[#14161A]">{row.paymentMethod}</span>
+                        <span className="font-semibold block text-[#14161A]">
+                          {row.paymentMethod}
+                        </span>
                         <span
                           className={`text-[10px] font-bold ${
                             row.paymentStatus === 'SUCCESS' ? 'text-emerald-600' : 'text-amber-600'

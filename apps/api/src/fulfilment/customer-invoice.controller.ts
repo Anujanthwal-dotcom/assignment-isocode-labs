@@ -1,9 +1,4 @@
-import {
-  Controller,
-  Get,
-  Param,
-  ForbiddenException,
-} from '@nestjs/common';
+import { Controller, Get, Param, ForbiddenException } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 import { CurrentUser } from '../auth/decorators/current-user.decorator';
 import { InvoiceService } from './invoice.service';

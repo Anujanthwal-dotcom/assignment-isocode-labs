@@ -1,9 +1,6 @@
 import { Injectable, Logger, BadRequestException, OnModuleInit } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import {
-  PrescriptionReader,
-  PrescriptionReaderInput,
-} from './prescription-reader.interface';
+import { PrescriptionReader, PrescriptionReaderInput } from './prescription-reader.interface';
 import { PrescriptionExtractionResultDTO } from '@pharmacy/shared-types';
 import {
   PrescriptionExtractionResultZodSchema,
@@ -60,9 +57,7 @@ export class GeminiLangChainPrescriptionReader implements PrescriptionReader, On
         temperature: 0,
       });
 
-      this.structuredLlm = this.model.withStructuredOutput(
-        PrescriptionExtractionResultZodSchema,
-      );
+      this.structuredLlm = this.model.withStructuredOutput(PrescriptionExtractionResultZodSchema);
 
       this.logger.log(`Initialized Gemini LangChain provider with model: ${this.geminiModel}`);
     }
@@ -118,9 +113,7 @@ export class GeminiLangChainPrescriptionReader implements PrescriptionReader, On
         this.logger.error(
           `Gemini extraction failed schema validation: ${validated.errors.join('; ')}`,
         );
-        throw new Error(
-          `AI output validation failed: ${validated.errors.slice(0, 3).join(', ')}`,
-        );
+        throw new Error(`AI output validation failed: ${validated.errors.slice(0, 3).join(', ')}`);
       }
 
       return validated.data as PrescriptionExtractionResultDTO;

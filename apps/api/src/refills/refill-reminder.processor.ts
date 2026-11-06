@@ -4,15 +4,8 @@ import { Job } from 'bullmq';
 import { PrismaService } from '../prisma/prisma.service';
 import { NotificationsService } from '../notifications/notifications.service';
 import { AuditService } from '../audit/audit.service';
-import {
-  REFILL_REMINDERS_QUEUE,
-  ScheduleReminderJobPayload,
-} from './refill-scheduler.service';
-import {
-  RefillReminderStatus,
-  RefillSubscriptionStatus,
-  NotificationType,
-} from '@prisma/client';
+import { REFILL_REMINDERS_QUEUE, ScheduleReminderJobPayload } from './refill-scheduler.service';
+import { RefillReminderStatus, RefillSubscriptionStatus, NotificationType } from '@prisma/client';
 
 @Processor(REFILL_REMINDERS_QUEUE)
 export class RefillReminderProcessor extends WorkerHost {
@@ -55,7 +48,10 @@ export class RefillReminderProcessor extends WorkerHost {
       return;
     }
 
-    if (reminder.status === RefillReminderStatus.CANCELLED || reminder.status === RefillReminderStatus.SKIPPED) {
+    if (
+      reminder.status === RefillReminderStatus.CANCELLED ||
+      reminder.status === RefillReminderStatus.SKIPPED
+    ) {
       this.logger.log(`Reminder ${idempotencyKey} was cancelled/skipped.`);
       return;
     }
@@ -63,7 +59,9 @@ export class RefillReminderProcessor extends WorkerHost {
     const sub = reminder.subscription;
     // 3. Subscription state check
     if (!sub || sub.status !== RefillSubscriptionStatus.ACTIVE) {
-      this.logger.log(`Subscription ${subscriptionId} is not ACTIVE (status: ${sub?.status}). Skipping.`);
+      this.logger.log(
+        `Subscription ${subscriptionId} is not ACTIVE (status: ${sub?.status}). Skipping.`,
+      );
       await this.prisma.refillReminder.update({
         where: { id: reminder.id },
         data: { status: RefillReminderStatus.CANCELLED },
@@ -125,6 +123,8 @@ export class RefillReminderProcessor extends WorkerHost {
       },
     });
 
-    this.logger.log(`Successfully sent refill reminder ${reminder.id} to customer ${sub.customerId}`);
+    this.logger.log(
+      `Successfully sent refill reminder ${reminder.id} to customer ${sub.customerId}`,
+    );
   }
 }

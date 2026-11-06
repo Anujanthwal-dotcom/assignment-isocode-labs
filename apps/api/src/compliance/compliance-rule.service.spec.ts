@@ -37,13 +37,13 @@ describe('ComplianceRuleService', () => {
   });
 
   it('prevents creating duplicate semver versions', async () => {
-    mockPrisma.complianceRuleSet.findUnique.mockResolvedValue({ id: 'exists-id', version: '1.0.0' });
+    mockPrisma.complianceRuleSet.findUnique.mockResolvedValue({
+      id: 'exists-id',
+      version: '1.0.0',
+    });
 
     await expect(
-      service.createRuleSet(
-        { version: '1.0.0', name: 'Duplicate Version' },
-        'user-admin-1',
-      ),
+      service.createRuleSet({ version: '1.0.0', name: 'Duplicate Version' }, 'user-admin-1'),
     ).rejects.toThrow(ConflictException);
   });
 

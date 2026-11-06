@@ -1,9 +1,4 @@
-import {
-  Controller,
-  Post,
-  Param,
-  Body,
-} from '@nestjs/common';
+import { Controller, Post, Param, Body } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
 import { MockPaymentService } from './mock-payment.service';
 import { MockPaymentDto } from './payments.dto';

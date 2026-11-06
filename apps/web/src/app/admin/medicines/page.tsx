@@ -1,15 +1,7 @@
 'use client';
 
 import * as React from 'react';
-import {
-  Plus,
-  Search,
-  Filter,
-  Edit2,
-  PowerOff,
-  Power,
-  Loader2,
-} from 'lucide-react';
+import { Plus, Search, Filter, Edit2, PowerOff, Power, Loader2 } from 'lucide-react';
 import { apiFetch, ApiError } from '@/lib/api/client';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -237,13 +229,7 @@ export default function MedicineCataloguePage() {
         </Button>
       </div>
 
-      {error && (
-        <SemanticAlert
-          type="error"
-          title="Error Loading Catalogue"
-          description={error}
-        />
-      )}
+      {error && <SemanticAlert type="error" title="Error Loading Catalogue" description={error} />}
 
       {/* Filter & Search Bar */}
       <div className="rounded-[12px] border border-[#EAE8F0] bg-white p-4 shadow-xs flex flex-col md:flex-row gap-3 items-stretch md:items-center justify-between">
@@ -330,7 +316,9 @@ export default function MedicineCataloguePage() {
                   <td colSpan={8} className="py-12 text-center text-[#78879A]">
                     <div className="flex flex-col items-center justify-center gap-1">
                       <p className="font-semibold text-[#351F65]">No medicines found</p>
-                      <p className="text-[12px]">Try adjusting your search criteria or add a new medicine.</p>
+                      <p className="text-[12px]">
+                        Try adjusting your search criteria or add a new medicine.
+                      </p>
                     </div>
                   </td>
                 </tr>
@@ -346,9 +334,7 @@ export default function MedicineCataloguePage() {
                         <div className="text-[11px] text-[#78879A]">{med.brandName}</div>
                       )}
                     </td>
-                    <td className="py-3 px-4 text-[#6C757D]">
-                      {med.genericName || '—'}
-                    </td>
+                    <td className="py-3 px-4 text-[#6C757D]">{med.genericName || '—'}</td>
                     <td className="py-3 px-4 text-[#6C757D]">
                       {med.strength || med.dosageForm
                         ? `${med.strength || ''} ${med.dosageForm ? `(${med.dosageForm})` : ''}`
@@ -389,7 +375,9 @@ export default function MedicineCataloguePage() {
                               ? 'text-[#78879A] hover:text-[#DC3545] hover:bg-[#FDF2F2]'
                               : 'text-[#78879A] hover:text-[#0FAC26] hover:bg-[#E8F8EC]'
                           }`}
-                          title={med.status === 'ACTIVE' ? 'Deactivate Medicine' : 'Activate Medicine'}
+                          title={
+                            med.status === 'ACTIVE' ? 'Deactivate Medicine' : 'Activate Medicine'
+                          }
                         >
                           {med.status === 'ACTIVE' ? (
                             <PowerOff className="h-4 w-4" />
@@ -448,11 +436,7 @@ export default function MedicineCataloguePage() {
 
           <form onSubmit={handleFormSubmit} className="space-y-4">
             {formError && (
-              <SemanticAlert
-                type="error"
-                title="Validation Error"
-                description={formError}
-              />
+              <SemanticAlert type="error" title="Validation Error" description={formError} />
             )}
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -646,7 +630,9 @@ export default function MedicineCataloguePage() {
               }
             >
               {statusSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-              {deactivatingMedicine?.status === 'ACTIVE' ? 'Confirm Deactivation' : 'Confirm Activation'}
+              {deactivatingMedicine?.status === 'ACTIVE'
+                ? 'Confirm Deactivation'
+                : 'Confirm Activation'}
             </Button>
           </DialogFooter>
         </DialogContent>

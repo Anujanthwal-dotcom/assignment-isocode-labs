@@ -6,7 +6,16 @@ import { apiFetch } from '@/lib/api/client';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { RefreshCw, Bell, Calendar, Clock, AlertCircle, CheckCircle2, ChevronRight, ShoppingCart } from 'lucide-react';
+import {
+  RefreshCw,
+  Bell,
+  Calendar,
+  Clock,
+  AlertCircle,
+  CheckCircle2,
+  ChevronRight,
+  ShoppingCart,
+} from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { RefillEstimateDto, RefillEligibilityStatus } from '@pharmacy/shared-types';
 
@@ -37,9 +46,12 @@ export default function CustomerRefillsPage() {
   const handleReorder = async (subscriptionId: string) => {
     try {
       setReorderingId(subscriptionId);
-      const res = await apiFetch<{ success: boolean; cartId: string }>('/customer/refills/subscriptions/' + subscriptionId + '/reorder', {
-        method: 'POST',
-      });
+      const res = await apiFetch<{ success: boolean; cartId: string }>(
+        '/customer/refills/subscriptions/' + subscriptionId + '/reorder',
+        {
+          method: 'POST',
+        },
+      );
       if (res.success) {
         router.push('/customer/cart');
       }
@@ -63,7 +75,10 @@ export default function CustomerRefillsPage() {
           </p>
         </div>
         <Link href="/customer/notifications">
-          <Button variant="outline" className="flex items-center gap-2 border-[#EAE8F0] text-[#351F65]">
+          <Button
+            variant="outline"
+            className="flex items-center gap-2 border-[#EAE8F0] text-[#351F65]"
+          >
             <Bell className="h-4 w-4 text-[#6240E8]" />
             <span>Reminder Alerts</span>
           </Button>
@@ -74,7 +89,9 @@ export default function CustomerRefillsPage() {
       <div className="p-4 bg-[#F7F5FD] border border-[#6240E8]/20 rounded-xl flex items-start gap-3">
         <AlertCircle className="h-5 w-5 text-[#6240E8] shrink-0 mt-0.5" />
         <div className="text-xs text-[#55476D] leading-relaxed">
-          <strong className="text-[#351F65]">Important Notice:</strong> Refill dates are estimates based on the last quantity dispensed and pharmacist-confirmed dosage. Actual usage may vary. Please follow your prescription and consult your pharmacist if your dosage changes.
+          <strong className="text-[#351F65]">Important Notice:</strong> Refill dates are estimates
+          based on the last quantity dispensed and pharmacist-confirmed dosage. Actual usage may
+          vary. Please follow your prescription and consult your pharmacist if your dosage changes.
         </div>
       </div>
 
@@ -84,15 +101,14 @@ export default function CustomerRefillsPage() {
           Loading your medicine refill estimates...
         </div>
       ) : error ? (
-        <div className="p-4 rounded-xl bg-red-50 text-red-700 border border-red-200">
-          {error}
-        </div>
+        <div className="p-4 rounded-xl bg-red-50 text-red-700 border border-red-200">{error}</div>
       ) : estimates.length === 0 ? (
         <Card className="p-12 text-center space-y-4 border-[#EAE8F0]">
           <RefreshCw className="h-12 w-12 text-slate-300 mx-auto" />
           <h3 className="text-lg font-semibold text-[#351F65]">No Refill Estimates Yet</h3>
           <p className="text-sm text-[#78879A] max-w-md mx-auto">
-            Once you receive your delivered order with pharmacist-verified dosage instructions, automatic supply estimates and reminder options will appear here.
+            Once you receive your delivered order with pharmacist-verified dosage instructions,
+            automatic supply estimates and reminder options will appear here.
           </p>
           <Link href="/customer/orders">
             <Button variant="outline" className="border-[#6240E8] text-[#6240E8] mt-2">
@@ -107,7 +123,10 @@ export default function CustomerRefillsPage() {
             const sub = est.activeSubscription;
 
             return (
-              <Card key={est.id} className="border-[#EAE8F0] shadow-xs flex flex-col justify-between hover:border-[#6240E8]/40 transition-colors">
+              <Card
+                key={est.id}
+                className="border-[#EAE8F0] shadow-xs flex flex-col justify-between hover:border-[#6240E8]/40 transition-colors"
+              >
                 <CardHeader className="pb-3">
                   <div className="flex items-start justify-between gap-2">
                     <div>
@@ -122,7 +141,9 @@ export default function CustomerRefillsPage() {
                     </div>
                     {isEligible ? (
                       <Badge className="bg-emerald-50 text-emerald-700 border-emerald-200 text-xs">
-                        {est.daysRemaining !== null ? `${est.daysRemaining} Days Left` : 'Estimated'}
+                        {est.daysRemaining !== null
+                          ? `${est.daysRemaining} Days Left`
+                          : 'Estimated'}
                       </Badge>
                     ) : (
                       <Badge className="bg-amber-50 text-amber-700 border-amber-200 text-xs">
@@ -135,27 +156,44 @@ export default function CustomerRefillsPage() {
                   {isEligible ? (
                     <div className="grid grid-cols-2 gap-2 bg-[#F8F9FB] p-3 rounded-lg border border-[#EAE8F0]">
                       <div>
-                        <span className="text-[10px] text-[#78879A] uppercase font-bold block">Dispensed</span>
-                        <span className="font-semibold text-slate-800 text-xs">{est.dispensedQuantity} units</span>
-                      </div>
-                      <div>
-                        <span className="text-[10px] text-[#78879A] uppercase font-bold block">Daily Usage</span>
-                        <span className="font-semibold text-slate-800 text-xs">{est.dailyConsumption} / day</span>
-                      </div>
-                      <div>
-                        <span className="text-[10px] text-[#78879A] uppercase font-bold block">Est. Supply</span>
-                        <span className="font-semibold text-slate-800 text-xs">{est.estimatedSupplyDays} days</span>
-                      </div>
-                      <div>
-                        <span className="text-[10px] text-[#78879A] uppercase font-bold block">Run-out Date</span>
+                        <span className="text-[10px] text-[#78879A] uppercase font-bold block">
+                          Dispensed
+                        </span>
                         <span className="font-semibold text-slate-800 text-xs">
-                          {est.estimatedRunOutAt ? new Date(est.estimatedRunOutAt).toLocaleDateString() : 'N/A'}
+                          {est.dispensedQuantity} units
+                        </span>
+                      </div>
+                      <div>
+                        <span className="text-[10px] text-[#78879A] uppercase font-bold block">
+                          Daily Usage
+                        </span>
+                        <span className="font-semibold text-slate-800 text-xs">
+                          {est.dailyConsumption} / day
+                        </span>
+                      </div>
+                      <div>
+                        <span className="text-[10px] text-[#78879A] uppercase font-bold block">
+                          Est. Supply
+                        </span>
+                        <span className="font-semibold text-slate-800 text-xs">
+                          {est.estimatedSupplyDays} days
+                        </span>
+                      </div>
+                      <div>
+                        <span className="text-[10px] text-[#78879A] uppercase font-bold block">
+                          Run-out Date
+                        </span>
+                        <span className="font-semibold text-slate-800 text-xs">
+                          {est.estimatedRunOutAt
+                            ? new Date(est.estimatedRunOutAt).toLocaleDateString()
+                            : 'N/A'}
                         </span>
                       </div>
                     </div>
                   ) : (
                     <div className="p-3 bg-amber-50/60 border border-amber-100 rounded-lg text-amber-800 text-xs">
-                      {est.ineligibilityReason || 'Dosage instructions require pharmacist clarification.'}
+                      {est.ineligibilityReason ||
+                        'Dosage instructions require pharmacist clarification.'}
                     </div>
                   )}
 
@@ -165,7 +203,9 @@ export default function CustomerRefillsPage() {
                       <div className="flex items-center gap-2">
                         <CheckCircle2 className="h-4 w-4 text-emerald-600" />
                         <span className="text-xs font-medium text-slate-700">
-                          {sub.status === 'ACTIVE' ? `Reminding ${sub.reminderDaysBefore} days before` : 'Reminders paused'}
+                          {sub.status === 'ACTIVE'
+                            ? `Reminding ${sub.reminderDaysBefore} days before`
+                            : 'Reminders paused'}
                         </span>
                       </div>
                     ) : isEligible ? (
@@ -192,7 +232,10 @@ export default function CustomerRefillsPage() {
                       </div>
                     ) : isEligible ? (
                       <Link href={`/customer/refills/new?estimateId=${est.id}`}>
-                        <Button size="sm" className="h-8 bg-[#6240E8] hover:bg-[#5233D1] text-white">
+                        <Button
+                          size="sm"
+                          className="h-8 bg-[#6240E8] hover:bg-[#5233D1] text-white"
+                        >
                           Enable Reminders
                         </Button>
                       </Link>

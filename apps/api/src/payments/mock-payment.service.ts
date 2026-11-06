@@ -1,16 +1,8 @@
-import {
-  Injectable,
-  NotFoundException,
-  BadRequestException,
-} from '@nestjs/common';
+import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { AuditService } from '../audit/audit.service';
 import { MockPaymentDto } from './payments.dto';
-import {
-  OrderPaymentMethod,
-  OrderPaymentStatus,
-  OrderStatus,
-} from '@prisma/client';
+import { OrderPaymentMethod, OrderPaymentStatus, OrderStatus } from '@prisma/client';
 import { randomUUID } from 'crypto';
 
 @Injectable()
@@ -20,11 +12,7 @@ export class MockPaymentService {
     private readonly auditService: AuditService,
   ) {}
 
-  async processMockPayment(
-    customerUserId: string,
-    orderId: string,
-    dto: MockPaymentDto,
-  ) {
+  async processMockPayment(customerUserId: string, orderId: string, dto: MockPaymentDto) {
     const order = await this.prisma.order.findFirst({
       where: {
         id: orderId,
@@ -128,7 +116,8 @@ export class MockPaymentService {
         paymentStatus: OrderPaymentStatus.SUCCESS,
         orderStatus: order.status,
         transactionReference,
-        message: 'Mock UPI payment completed successfully. Order is pending pharmacist verification.',
+        message:
+          'Mock UPI payment completed successfully. Order is pending pharmacist verification.',
       };
     } else {
       // FAILURE

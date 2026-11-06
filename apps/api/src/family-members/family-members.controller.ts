@@ -1,12 +1,4 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Patch,
-  Delete,
-  Param,
-  Body,
-} from '@nestjs/common';
+import { Controller, Get, Post, Patch, Delete, Param, Body } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
 import { FamilyMembersService } from './family-members.service';
 import { CreateFamilyMemberDto, UpdateFamilyMemberDto } from './family-members.dto';
@@ -33,10 +25,7 @@ export class FamilyMembersController {
   @ApiResponse({ status: 201, description: 'Created family member profile' })
   @ApiResponse({ status: 400, description: 'Invalid input or date of birth' })
   @ApiResponse({ status: 409, description: 'Duplicate SELF profile' })
-  async create(
-    @CurrentUser('id') customerUserId: string,
-    @Body() dto: CreateFamilyMemberDto,
-  ) {
+  async create(@CurrentUser('id') customerUserId: string, @Body() dto: CreateFamilyMemberDto) {
     return this.familyMembersService.createFamilyMember(customerUserId, dto);
   }
 
@@ -44,10 +33,7 @@ export class FamilyMembersController {
   @ApiOperation({ summary: 'Get family member profile by ID' })
   @ApiResponse({ status: 200, description: 'Family member profile' })
   @ApiResponse({ status: 404, description: 'Family member not found' })
-  async findOne(
-    @CurrentUser('id') customerUserId: string,
-    @Param('id') id: string,
-  ) {
+  async findOne(@CurrentUser('id') customerUserId: string, @Param('id') id: string) {
     return this.familyMembersService.getFamilyMember(customerUserId, id);
   }
 
@@ -69,10 +55,7 @@ export class FamilyMembersController {
   @ApiResponse({ status: 200, description: 'Family member deleted' })
   @ApiResponse({ status: 404, description: 'Family member not found' })
   @ApiResponse({ status: 409, description: 'Profile in use by prescriptions or orders' })
-  async delete(
-    @CurrentUser('id') customerUserId: string,
-    @Param('id') id: string,
-  ) {
+  async delete(@CurrentUser('id') customerUserId: string, @Param('id') id: string) {
     return this.familyMembersService.deleteFamilyMember(customerUserId, id);
   }
 }

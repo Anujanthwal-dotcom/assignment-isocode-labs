@@ -174,9 +174,7 @@ export default function CustomerAddressesPage() {
       </div>
 
       {loading ? (
-        <div className="py-12 text-center text-xs text-slate-500">
-          Loading addresses...
-        </div>
+        <div className="py-12 text-center text-xs text-slate-500">Loading addresses...</div>
       ) : error ? (
         <Card className="p-8 border-red-200 bg-red-50 text-center">
           <AlertCircle className="h-8 w-8 text-red-500 mx-auto mb-2" />
@@ -333,7 +331,9 @@ export default function CustomerAddressesPage() {
               </div>
 
               <div className="space-y-1">
-                <label className="text-xs font-semibold text-slate-700">PIN Code (6 digits) *</label>
+                <label className="text-xs font-semibold text-slate-700">
+                  PIN Code (6 digits) *
+                </label>
                 <Input
                   value={postalCode}
                   onChange={(e) => setPostalCode(e.target.value)}
@@ -358,7 +358,9 @@ export default function CustomerAddressesPage() {
 
             <div className="grid grid-cols-2 gap-3">
               <div className="space-y-1">
-                <label className="text-xs font-semibold text-slate-700">Address Line 2 (Optional)</label>
+                <label className="text-xs font-semibold text-slate-700">
+                  Address Line 2 (Optional)
+                </label>
                 <Input
                   value={addressLine2}
                   onChange={(e) => setAddressLine2(e.target.value)}
@@ -408,7 +410,10 @@ export default function CustomerAddressesPage() {
                 onChange={(e) => setIsDefault(e.target.checked)}
                 className="rounded text-[#6240E8] focus:ring-[#6240E8]"
               />
-              <label htmlFor="isDefaultCheckbox" className="text-xs font-medium text-slate-700 cursor-pointer">
+              <label
+                htmlFor="isDefaultCheckbox"
+                className="text-xs font-medium text-slate-700 cursor-pointer"
+              >
                 Set as my default delivery address
               </label>
             </div>

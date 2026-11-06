@@ -93,9 +93,7 @@ export const PharmacistSidebar: React.FC<PharmacistSidebarProps> = ({
         <nav className="flex-1 space-y-[4px] px-3 py-2 overflow-y-auto">
           {navItems.map((item) => {
             const Icon = item.icon;
-            const isActive = item.exact
-              ? pathname === item.href
-              : pathname.startsWith(item.href);
+            const isActive = item.exact ? pathname === item.href : pathname.startsWith(item.href);
 
             return (
               <Link
@@ -118,7 +116,9 @@ export const PharmacistSidebar: React.FC<PharmacistSidebarProps> = ({
         {/* Pharmacist Footer Profile */}
         <div className="border-t border-[#EAE8F0] p-3">
           <div className="text-[12px]">
-            <p className="font-semibold text-[#351F65] truncate">{user?.profile?.fullName || 'Demo Pharmacist'}</p>
+            <p className="font-semibold text-[#351F65] truncate">
+              {user?.profile?.fullName || 'Demo Pharmacist'}
+            </p>
             <p className="text-[11px] text-[#78879A] truncate">{user?.role || 'PHARMACIST'}</p>
           </div>
         </div>

@@ -282,9 +282,7 @@ describe('OrdersService', () => {
       originalMedicine: { id: 'med-orig-1', name: 'Crocin 500 mg' },
     });
 
-    mockPrisma.orderItem.findMany.mockResolvedValue([
-      { id: 'item-1', lineTotal: 30 },
-    ]);
+    mockPrisma.orderItem.findMany.mockResolvedValue([{ id: 'item-1', lineTotal: 30 }]);
 
     mockPrisma.orderItemAlternativeProposal.update.mockResolvedValue({
       id: 'prop-1',

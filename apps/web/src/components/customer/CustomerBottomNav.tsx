@@ -43,9 +43,7 @@ export const CustomerBottomNav: React.FC = () => {
     <nav className="md:hidden fixed bottom-0 left-0 right-0 z-40 h-[64px] border-t border-[#EAE8F0] bg-white pb-[env(safe-area-inset-bottom)] shadow-[0_-2px_10px_rgba(53,31,101,0.04)]">
       <div className="grid h-full grid-cols-5 items-center">
         {items.map((item) => {
-          const isActive = item.exact
-            ? pathname === item.href
-            : pathname.startsWith(item.href);
+          const isActive = item.exact ? pathname === item.href : pathname.startsWith(item.href);
           const Icon = item.icon;
 
           return (
@@ -64,7 +62,9 @@ export const CustomerBottomNav: React.FC = () => {
                   </span>
                 )}
               </div>
-              <span className={`text-[10px] leading-none ${isActive ? 'font-semibold' : 'font-medium'}`}>
+              <span
+                className={`text-[10px] leading-none ${isActive ? 'font-semibold' : 'font-medium'}`}
+              >
                 {item.label}
               </span>
             </Link>

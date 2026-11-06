@@ -23,10 +23,10 @@ describe('InventoryQueryService RBAC', () => {
 
   it('should deny customer access with 403', async () => {
     await expect(
-      service.listInventory(
-        { id: 'cust-1', role: UserRole.CUSTOMER },
-        { page: 1, limit: 10 } as any,
-      ),
+      service.listInventory({ id: 'cust-1', role: UserRole.CUSTOMER }, {
+        page: 1,
+        limit: 10,
+      } as any),
     ).rejects.toThrow(ForbiddenException);
   });
 
@@ -36,10 +36,9 @@ describe('InventoryQueryService RBAC', () => {
     });
 
     await expect(
-      service.listInventory(
-        { id: 'pharm-1', role: UserRole.PHARMACIST },
-        { warehouseId: 'warehouse-kol-1' } as any,
-      ),
+      service.listInventory({ id: 'pharm-1', role: UserRole.PHARMACIST }, {
+        warehouseId: 'warehouse-kol-1',
+      } as any),
     ).rejects.toThrow(ForbiddenException);
   });
 
@@ -49,10 +48,9 @@ describe('InventoryQueryService RBAC', () => {
     });
 
     await expect(
-      service.listInventory(
-        { id: 'pharm-1', role: UserRole.PHARMACIST },
-        { storeId: 'store-how-1' } as any,
-      ),
+      service.listInventory({ id: 'pharm-1', role: UserRole.PHARMACIST }, {
+        storeId: 'store-how-1',
+      } as any),
     ).rejects.toThrow(ForbiddenException);
   });
 });

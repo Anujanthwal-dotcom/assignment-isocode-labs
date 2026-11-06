@@ -216,7 +216,9 @@ export class HandoverService {
     try {
       await this.refillsService.generateEstimatesForHandedOverOrder(order.id, now);
     } catch (err: any) {
-      this.logger.error(`Failed to generate refill estimates for handed-over order ${order.id}: ${err.message}`);
+      this.logger.error(
+        `Failed to generate refill estimates for handed-over order ${order.id}: ${err.message}`,
+      );
     }
 
     return result;

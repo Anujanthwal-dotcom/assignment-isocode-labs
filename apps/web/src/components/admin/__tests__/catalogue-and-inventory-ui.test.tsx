@@ -89,10 +89,14 @@ vi.mock('@/lib/api/client', () => ({
       });
     }
     if (endpoint.includes('/stores')) {
-      return Promise.resolve([{ id: 's1', code: 'KOL-001', name: 'Salt Lake Store', city: 'Kolkata' }]);
+      return Promise.resolve([
+        { id: 's1', code: 'KOL-001', name: 'Salt Lake Store', city: 'Kolkata' },
+      ]);
     }
     if (endpoint.includes('/warehouses')) {
-      return Promise.resolve([{ id: 'w1', code: 'CENTRAL-KOL', name: 'Central Warehouse', city: 'Kolkata' }]);
+      return Promise.resolve([
+        { id: 'w1', code: 'CENTRAL-KOL', name: 'Central Warehouse', city: 'Kolkata' },
+      ]);
     }
     return Promise.resolve([]);
   }),

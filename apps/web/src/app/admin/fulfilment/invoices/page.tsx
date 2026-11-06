@@ -73,18 +73,14 @@ export default function AdminInvoicesListPage() {
 
       <div className="bg-white rounded-2xl border border-[#EAE8F0] shadow-xs overflow-hidden">
         {loading ? (
-          <div className="p-12 text-center text-xs text-[#78879A]">
-            Loading invoices...
-          </div>
+          <div className="p-12 text-center text-xs text-[#78879A]">Loading invoices...</div>
         ) : error ? (
           <div className="p-8 text-center text-xs text-rose-600 bg-rose-50/50">
             <AlertTriangle className="w-6 h-6 mx-auto mb-2 text-rose-500" />
             {error}
           </div>
         ) : filtered.length === 0 ? (
-          <div className="p-12 text-center text-xs text-[#78879A]">
-            No invoices issued yet.
-          </div>
+          <div className="p-12 text-center text-xs text-[#78879A]">No invoices issued yet.</div>
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-left text-xs">

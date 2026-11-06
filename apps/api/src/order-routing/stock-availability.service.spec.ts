@@ -39,7 +39,11 @@ describe('StockAvailabilityService', () => {
   });
 
   it('checks store complete stock availability across multiple items', async () => {
-    mockPrisma.store.findUnique.mockResolvedValue({ id: 'store-1', code: 'KOL-001', name: 'Salt Lake Store' });
+    mockPrisma.store.findUnique.mockResolvedValue({
+      id: 'store-1',
+      code: 'KOL-001',
+      name: 'Salt Lake Store',
+    });
     mockPrisma.inventoryBalance.findMany.mockResolvedValue([
       { medicineId: 'med-1', quantity: 20 },
       { medicineId: 'med-2', quantity: 10 },
@@ -51,7 +55,7 @@ describe('StockAvailabilityService', () => {
 
     const result = await service.checkStoreAvailability('store-1', [
       { medicineId: 'med-1', quantityRequired: 10 }, // avail: 20 - 5 = 15 >= 10 (OK)
-      { medicineId: 'med-2', quantityRequired: 5 },  // avail: 10 - 8 = 2 < 5 (FAIL)
+      { medicineId: 'med-2', quantityRequired: 5 }, // avail: 10 - 8 = 2 < 5 (FAIL)
     ]);
 
     expect(result.hasCompleteStock).toBe(false);

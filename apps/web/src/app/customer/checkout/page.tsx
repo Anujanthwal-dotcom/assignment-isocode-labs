@@ -165,7 +165,10 @@ export default function CustomerCheckoutPage() {
         router.replace(`/customer/orders/${order.id}?placed=true`);
       }
     } catch (err: unknown) {
-      setSubmitError((err as Error).message || 'Failed to place order. Please verify cart items and prescription.');
+      setSubmitError(
+        (err as Error).message ||
+          'Failed to place order. Please verify cart items and prescription.',
+      );
       setSubmitting(false);
     }
   };
@@ -183,11 +186,7 @@ export default function CustomerCheckoutPage() {
       <Card className="max-w-[700px] mx-auto p-8 border-red-200 bg-red-50 text-center">
         <AlertCircle className="h-8 w-8 text-red-500 mx-auto mb-2" />
         <p className="text-sm text-red-700 font-medium">{error || 'Cart is empty.'}</p>
-        <Button
-          size="sm"
-          onClick={() => router.push('/customer/cart')}
-          className="mt-4 text-xs"
-        >
+        <Button size="sm" onClick={() => router.push('/customer/cart')} className="mt-4 text-xs">
           Return to Cart
         </Button>
       </Card>
@@ -198,9 +197,7 @@ export default function CustomerCheckoutPage() {
     <div className="max-w-[1000px] mx-auto space-y-6">
       {/* Header */}
       <div className="pb-2 border-b border-[#EAE8F0]">
-        <h1 className="text-2xl font-bold tracking-tight text-[#351F65]">
-          Order Checkout
-        </h1>
+        <h1 className="text-2xl font-bold tracking-tight text-[#351F65]">Order Checkout</h1>
         <p className="text-sm text-[#78879A] mt-1">
           Complete the required verification details to submit your pharmacy order.
         </p>
@@ -213,7 +210,8 @@ export default function CustomerCheckoutPage() {
           <strong className="block font-semibold text-amber-800 mb-0.5">
             Mandatory Pharmacist Verification Notice
           </strong>
-          Your order will be reviewed by a registered pharmacist at our Kolkata/Howrah hub before it can be processed. Placing an order does not mean the prescription has been approved.
+          Your order will be reviewed by a registered pharmacist at our Kolkata/Howrah hub before it
+          can be processed. Placing an order does not mean the prescription has been approved.
         </div>
       </div>
 
@@ -296,7 +294,8 @@ export default function CustomerCheckoutPage() {
               <div className="p-4 bg-slate-50 rounded-lg border border-slate-200 text-center space-y-2">
                 <FileText className="h-8 w-8 text-slate-400 mx-auto" />
                 <p className="text-xs text-slate-600">
-                  No saved prescriptions found for {selectedFamilyMemberId ? 'this family member' : 'yourself'}.
+                  No saved prescriptions found for{' '}
+                  {selectedFamilyMemberId ? 'this family member' : 'yourself'}.
                 </p>
                 <p className="text-[11px] text-slate-400">
                   Upload a prescription document below to proceed.
@@ -323,7 +322,11 @@ export default function CustomerCheckoutPage() {
                       <div className="truncate text-xs">
                         <span className="font-semibold block truncate">{rx.originalFileName}</span>
                         <span className="text-[10px] text-slate-400">
-                          {new Date(rx.uploadedAt).toLocaleDateString('en-IN', { month: 'short', day: 'numeric', year: 'numeric' })}
+                          {new Date(rx.uploadedAt).toLocaleDateString('en-IN', {
+                            month: 'short',
+                            day: 'numeric',
+                            year: 'numeric',
+                          })}
                         </span>
                       </div>
                     </button>
@@ -386,7 +389,9 @@ export default function CustomerCheckoutPage() {
             {addresses.length === 0 ? (
               <div className="p-4 bg-slate-50 rounded-lg text-center space-y-2">
                 <MapPin className="h-6 w-6 text-slate-400 mx-auto" />
-                <p className="text-xs text-slate-600">You do not have any saved delivery addresses.</p>
+                <p className="text-xs text-slate-600">
+                  You do not have any saved delivery addresses.
+                </p>
                 <Button
                   size="sm"
                   onClick={() => router.push('/customer/addresses')}
@@ -416,7 +421,9 @@ export default function CustomerCheckoutPage() {
                         </span>
                       )}
                     </div>
-                    <p className="text-xs text-slate-900 font-medium mt-1 truncate">{addr.recipientName} &bull; +91 {addr.phone}</p>
+                    <p className="text-xs text-slate-900 font-medium mt-1 truncate">
+                      {addr.recipientName} &bull; +91 {addr.phone}
+                    </p>
                     <p className="text-[11px] text-slate-500 mt-0.5 line-clamp-2">
                       {addr.addressLine1}, {addr.city} — {addr.postalCode}
                     </p>
@@ -492,16 +499,18 @@ export default function CustomerCheckoutPage() {
         {/* Right Column: Order Review & Submit (Col 4) */}
         <div className="lg:col-span-4 space-y-4">
           <Card className="border-[#EAE8F0] bg-white p-5 space-y-4 sticky top-20">
-            <CardTitle className="text-base font-bold text-[#351F65]">
-              Order Summary
-            </CardTitle>
+            <CardTitle className="text-base font-bold text-[#351F65]">Order Summary</CardTitle>
 
             <div className="max-h-[220px] overflow-y-auto space-y-2 pr-1 divide-y divide-slate-100 text-xs">
               {cart.items.map((item) => (
                 <div key={item.id} className="pt-2 flex justify-between items-start gap-2">
                   <div className="truncate">
-                    <span className="font-semibold text-slate-900 block truncate">{item.medicine.name}</span>
-                    <span className="text-slate-400 text-[11px]">Qty: {item.quantity} &bull; ₹{item.unitPrice.toFixed(2)}</span>
+                    <span className="font-semibold text-slate-900 block truncate">
+                      {item.medicine.name}
+                    </span>
+                    <span className="text-slate-400 text-[11px]">
+                      Qty: {item.quantity} &bull; ₹{item.unitPrice.toFixed(2)}
+                    </span>
                   </div>
                   <span className="font-bold text-slate-900 shrink-0">
                     ₹{item.lineTotal.toFixed(2)}

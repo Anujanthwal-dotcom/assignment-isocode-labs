@@ -2,7 +2,15 @@
 
 import * as React from 'react';
 import { apiFetch } from '@/lib/api/client';
-import { ShieldCheck, Search, Filter, AlertTriangle, FileText, CheckCircle2, Building2 } from 'lucide-react';
+import {
+  ShieldCheck,
+  Search,
+  Filter,
+  AlertTriangle,
+  FileText,
+  CheckCircle2,
+  Building2,
+} from 'lucide-react';
 
 interface StoreDTO {
   id: string;
@@ -11,7 +19,7 @@ interface StoreDTO {
 }
 
 export default function AdminH1RegisterPage() {
-    const [loading, setLoading] = React.useState(true);
+  const [loading, setLoading] = React.useState(true);
   const [error, setError] = React.useState<string | null>(null);
   const [entries, setEntries] = React.useState<any[]>([]);
   const [stores, setStores] = React.useState<StoreDTO[]>([]);
@@ -69,126 +77,119 @@ export default function AdminH1RegisterPage() {
 
   return (
     <div className="flex-1 p-6 max-w-7xl w-full mx-auto space-y-6">
-          <div className="pb-2 border-b border-[#EAE8F0] flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-            <div>
-              <h1 className="text-2xl font-bold text-[#14161A] tracking-tight flex items-center gap-2">
-                <ShieldCheck className="w-6 h-6 text-[#6240E8]" />
-                Platform Schedule H1 Drug Register
-              </h1>
-              <p className="text-sm text-[#78879A] mt-1">
-                Centralized statutory register of Schedule H1 dispensed substances across all fulfillment stores.
-              </p>
-            </div>
-          </div>
-
-          {/* Filters Bar */}
-          <div className="flex flex-col sm:flex-row gap-3">
-            <div className="relative flex-1">
-              <Search className="absolute left-3 top-2.5 h-4 w-4 text-[#78879A]" />
-              <input
-                type="text"
-                placeholder="Search by patient, prescriber, medicine or store..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-9 pr-4 py-2 border border-[#EAE8F0] rounded-xl text-xs bg-white focus:outline-none focus:ring-2 focus:ring-[#6240E8]/20 focus:border-[#6240E8]"
-              />
-            </div>
-            {stores.length > 0 && (
-              <div className="flex items-center gap-2">
-                <Building2 className="w-4 h-4 text-[#78879A]" />
-                <select
-                  value={selectedStoreId}
-                  onChange={(e) => setSelectedStoreId(e.target.value)}
-                  className="px-3 py-2 border border-[#EAE8F0] rounded-xl text-xs bg-white focus:outline-none focus:ring-2 focus:ring-[#6240E8]/20 focus:border-[#6240E8]"
-                >
-                  <option value="">All Fulfillment Stores</option>
-                  {stores.map((s) => (
-                    <option key={s.id} value={s.id}>
-                      {s.name} ({s.code})
-                    </option>
-                  ))}
-                </select>
-              </div>
-            )}
-          </div>
-
-          {/* Table Container */}
-          <div className="bg-white rounded-2xl border border-[#EAE8F0] shadow-xs overflow-hidden">
-            {loading ? (
-              <div className="p-12 text-center text-xs text-[#78879A]">
-                Loading Schedule H1 statutory records...
-              </div>
-            ) : error ? (
-              <div className="p-8 text-center text-xs text-rose-600 bg-rose-50/50">
-                <AlertTriangle className="w-6 h-6 mx-auto mb-2 text-rose-500" />
-                {error}
-              </div>
-            ) : filteredEntries.length === 0 ? (
-              <div className="p-12 text-center text-xs text-[#78879A]">
-                <FileText className="w-8 h-8 text-[#78879A]/40 mx-auto mb-2" />
-                No Schedule H1 register entries recorded yet.
-              </div>
-            ) : (
-              <div className="overflow-x-auto">
-                <table className="w-full text-left text-xs">
-                  <thead className="bg-[#F8F9FB] border-b border-[#EAE8F0] text-[#78879A] uppercase tracking-wider text-[10px]">
-                    <tr>
-                      <th className="py-3 px-4">Date & Time</th>
-                      <th className="py-3 px-4">Store</th>
-                      <th className="py-3 px-4">Patient Name</th>
-                      <th className="py-3 px-4">Prescriber / Clinic</th>
-                      <th className="py-3 px-4">Medicine Name</th>
-                      <th className="py-3 px-4">Quantity</th>
-                      <th className="py-3 px-4">Verifying Pharmacist</th>
-                      <th className="py-3 px-4">Status</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-[#EAE8F0] text-[#14161A]">
-                    {filteredEntries.map((row) => (
-                      <tr key={row.id} className="hover:bg-[#F8F9FB]/50">
-                        <td className="py-3 px-4 font-mono text-[11px] text-[#78879A]">
-                          {new Date(row.createdAt).toLocaleString('en-IN', {
-                            dateStyle: 'medium',
-                            timeStyle: 'short',
-                          })}
-                        </td>
-                        <td className="py-3 px-4">
-                          <span className="font-semibold text-[#14161A] block">{row.storeName}</span>
-                          <span className="text-[10px] text-[#78879A] font-mono">{row.storeCode}</span>
-                        </td>
-                        <td className="py-3 px-4 font-semibold text-[#14161A]">
-                          {row.patientName}
-                        </td>
-                        <td className="py-3 px-4">
-                          <div className="font-medium text-[#14161A]">{row.prescriberName}</div>
-                          {row.prescriberDetails && (
-                            <div className="text-[10px] text-[#78879A] truncate max-w-[200px]">
-                              {row.prescriberDetails}
-                            </div>
-                          )}
-                        </td>
-                        <td className="py-3 px-4 font-bold text-[#6240E8]">
-                          {row.medicineName}
-                        </td>
-                        <td className="py-3 px-4 font-bold">
-                          {row.quantity} units
-                        </td>
-                        <td className="py-3 px-4 text-[#78879A]">
-                          {row.pharmacistEmail}
-                        </td>
-                        <td className="py-3 px-4">
-                          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-emerald-50 text-emerald-700 border border-emerald-200">
-                            <CheckCircle2 className="w-3 h-3" />
-                            {row.status}
-                          </span>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            )}
-          </div>
+      <div className="pb-2 border-b border-[#EAE8F0] flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div>
+          <h1 className="text-2xl font-bold text-[#14161A] tracking-tight flex items-center gap-2">
+            <ShieldCheck className="w-6 h-6 text-[#6240E8]" />
+            Platform Schedule H1 Drug Register
+          </h1>
+          <p className="text-sm text-[#78879A] mt-1">
+            Centralized statutory register of Schedule H1 dispensed substances across all
+            fulfillment stores.
+          </p>
         </div>
+      </div>
+
+      {/* Filters Bar */}
+      <div className="flex flex-col sm:flex-row gap-3">
+        <div className="relative flex-1">
+          <Search className="absolute left-3 top-2.5 h-4 w-4 text-[#78879A]" />
+          <input
+            type="text"
+            placeholder="Search by patient, prescriber, medicine or store..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="w-full pl-9 pr-4 py-2 border border-[#EAE8F0] rounded-xl text-xs bg-white focus:outline-none focus:ring-2 focus:ring-[#6240E8]/20 focus:border-[#6240E8]"
+          />
+        </div>
+        {stores.length > 0 && (
+          <div className="flex items-center gap-2">
+            <Building2 className="w-4 h-4 text-[#78879A]" />
+            <select
+              value={selectedStoreId}
+              onChange={(e) => setSelectedStoreId(e.target.value)}
+              className="px-3 py-2 border border-[#EAE8F0] rounded-xl text-xs bg-white focus:outline-none focus:ring-2 focus:ring-[#6240E8]/20 focus:border-[#6240E8]"
+            >
+              <option value="">All Fulfillment Stores</option>
+              {stores.map((s) => (
+                <option key={s.id} value={s.id}>
+                  {s.name} ({s.code})
+                </option>
+              ))}
+            </select>
+          </div>
+        )}
+      </div>
+
+      {/* Table Container */}
+      <div className="bg-white rounded-2xl border border-[#EAE8F0] shadow-xs overflow-hidden">
+        {loading ? (
+          <div className="p-12 text-center text-xs text-[#78879A]">
+            Loading Schedule H1 statutory records...
+          </div>
+        ) : error ? (
+          <div className="p-8 text-center text-xs text-rose-600 bg-rose-50/50">
+            <AlertTriangle className="w-6 h-6 mx-auto mb-2 text-rose-500" />
+            {error}
+          </div>
+        ) : filteredEntries.length === 0 ? (
+          <div className="p-12 text-center text-xs text-[#78879A]">
+            <FileText className="w-8 h-8 text-[#78879A]/40 mx-auto mb-2" />
+            No Schedule H1 register entries recorded yet.
+          </div>
+        ) : (
+          <div className="overflow-x-auto">
+            <table className="w-full text-left text-xs">
+              <thead className="bg-[#F8F9FB] border-b border-[#EAE8F0] text-[#78879A] uppercase tracking-wider text-[10px]">
+                <tr>
+                  <th className="py-3 px-4">Date & Time</th>
+                  <th className="py-3 px-4">Store</th>
+                  <th className="py-3 px-4">Patient Name</th>
+                  <th className="py-3 px-4">Prescriber / Clinic</th>
+                  <th className="py-3 px-4">Medicine Name</th>
+                  <th className="py-3 px-4">Quantity</th>
+                  <th className="py-3 px-4">Verifying Pharmacist</th>
+                  <th className="py-3 px-4">Status</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-[#EAE8F0] text-[#14161A]">
+                {filteredEntries.map((row) => (
+                  <tr key={row.id} className="hover:bg-[#F8F9FB]/50">
+                    <td className="py-3 px-4 font-mono text-[11px] text-[#78879A]">
+                      {new Date(row.createdAt).toLocaleString('en-IN', {
+                        dateStyle: 'medium',
+                        timeStyle: 'short',
+                      })}
+                    </td>
+                    <td className="py-3 px-4">
+                      <span className="font-semibold text-[#14161A] block">{row.storeName}</span>
+                      <span className="text-[10px] text-[#78879A] font-mono">{row.storeCode}</span>
+                    </td>
+                    <td className="py-3 px-4 font-semibold text-[#14161A]">{row.patientName}</td>
+                    <td className="py-3 px-4">
+                      <div className="font-medium text-[#14161A]">{row.prescriberName}</div>
+                      {row.prescriberDetails && (
+                        <div className="text-[10px] text-[#78879A] truncate max-w-[200px]">
+                          {row.prescriberDetails}
+                        </div>
+                      )}
+                    </td>
+                    <td className="py-3 px-4 font-bold text-[#6240E8]">{row.medicineName}</td>
+                    <td className="py-3 px-4 font-bold">{row.quantity} units</td>
+                    <td className="py-3 px-4 text-[#78879A]">{row.pharmacistEmail}</td>
+                    <td className="py-3 px-4">
+                      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-emerald-50 text-emerald-700 border border-emerald-200">
+                        <CheckCircle2 className="w-3 h-3" />
+                        {row.status}
+                      </span>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </div>
+    </div>
   );
 }

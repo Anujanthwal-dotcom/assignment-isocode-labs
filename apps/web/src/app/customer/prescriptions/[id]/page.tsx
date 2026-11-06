@@ -21,10 +21,7 @@ import {
   ExternalLink,
 } from 'lucide-react';
 import Link from 'next/link';
-import {
-  PrescriptionDTO,
-  PrescriptionAIExtractionDTO,
-} from '@pharmacy/shared-types';
+import { PrescriptionDTO, PrescriptionAIExtractionDTO } from '@pharmacy/shared-types';
 
 export default function PrescriptionDetailPage() {
   const params = useParams();
@@ -86,18 +83,13 @@ export default function PrescriptionDetailPage() {
   // Polling hook when extraction is in active state (QUEUED or PROCESSING)
   React.useEffect(() => {
     if (!extraction) return;
-    const isProcessing =
-      extraction.status === 'QUEUED' || extraction.status === 'PROCESSING';
+    const isProcessing = extraction.status === 'QUEUED' || extraction.status === 'PROCESSING';
 
     if (!isProcessing) return;
 
     const interval = setInterval(async () => {
       const updated = await loadLatestExtraction();
-      if (
-        updated &&
-        updated.status !== 'QUEUED' &&
-        updated.status !== 'PROCESSING'
-      ) {
+      if (updated && updated.status !== 'QUEUED' && updated.status !== 'PROCESSING') {
         clearInterval(interval);
       }
     }, 3000);
@@ -128,13 +120,10 @@ export default function PrescriptionDetailPage() {
     try {
       setRequesting(true);
       setError(null);
-      await apiFetch(
-        `/prescriptions/${prescriptionId}/extractions/${extraction.id}/retry`,
-        {
-          method: 'POST',
-          body: JSON.stringify({}),
-        },
-      );
+      await apiFetch(`/prescriptions/${prescriptionId}/extractions/${extraction.id}/retry`, {
+        method: 'POST',
+        body: JSON.stringify({}),
+      });
       await loadLatestExtraction();
     } catch (err: unknown) {
       setError((err as Error).message || 'Failed to retry AI extraction.');
@@ -157,9 +146,13 @@ export default function PrescriptionDetailPage() {
       <div className="max-w-[1000px] mx-auto py-8">
         <div className="p-6 bg-red-50 border border-red-200 rounded-xl text-red-700">
           <h2 className="font-bold">Prescription Not Found</h2>
-          <p className="text-sm mt-1">This prescription does not exist or you do not have permission to view it.</p>
+          <p className="text-sm mt-1">
+            This prescription does not exist or you do not have permission to view it.
+          </p>
           <Link href="/customer/prescriptions" className="inline-block mt-4">
-            <Button variant="outline" size="sm">Back to Prescriptions</Button>
+            <Button variant="outline" size="sm">
+              Back to Prescriptions
+            </Button>
           </Link>
         </div>
       </div>
@@ -177,9 +170,7 @@ export default function PrescriptionDetailPage() {
           <ArrowLeft className="h-4 w-4" />
           Back to Prescriptions
         </Link>
-        <span className="text-xs text-slate-400 font-mono">
-          ID: {prescription.id}
-        </span>
+        <span className="text-xs text-slate-400 font-mono">ID: {prescription.id}</span>
       </div>
 
       {/* Prescription Document Card */}
@@ -191,7 +182,10 @@ export default function PrescriptionDetailPage() {
                 <FileText className="h-5 w-5" />
               </div>
               <div className="overflow-hidden">
-                <h2 className="font-bold text-sm text-[#351F65] truncate" title={prescription.originalFileName}>
+                <h2
+                  className="font-bold text-sm text-[#351F65] truncate"
+                  title={prescription.originalFileName}
+                >
                   {prescription.originalFileName}
                 </h2>
                 <p className="text-[11px] text-slate-400 font-mono">
@@ -230,7 +224,9 @@ export default function PrescriptionDetailPage() {
 
           {/* Secure Document Preview */}
           <div className="pt-2">
-            <label className="text-xs font-semibold text-slate-700 block mb-2">Prescription Document Preview</label>
+            <label className="text-xs font-semibold text-slate-700 block mb-2">
+              Prescription Document Preview
+            </label>
             {viewUrl ? (
               prescription.mimeType === 'application/pdf' ? (
                 <div className="border border-slate-200 rounded-lg overflow-hidden h-[340px] bg-slate-50 flex flex-col items-center justify-center p-4 text-center">
@@ -268,11 +264,11 @@ export default function PrescriptionDetailPage() {
           <div className="p-3.5 bg-purple-50/80 border border-purple-200 rounded-xl text-purple-900 text-xs flex items-start gap-3">
             <ShieldAlert className="h-5 w-5 text-purple-700 shrink-0 mt-0.5" />
             <div>
-              <p className="font-bold text-purple-950">
-                Preliminary AI Reading Notice
-              </p>
+              <p className="font-bold text-purple-950">Preliminary AI Reading Notice</p>
               <p className="text-purple-800 mt-0.5 leading-relaxed">
-                AI extraction is a preliminary reading only. A registered pharmacist must review and verify the prescription before any medicine can be dispensed. This draft does not authorize dispensing or approve your order.
+                AI extraction is a preliminary reading only. A registered pharmacist must review and
+                verify the prescription before any medicine can be dispensed. This draft does not
+                authorize dispensing or approve your order.
               </p>
             </div>
           </div>
@@ -295,7 +291,9 @@ export default function PrescriptionDetailPage() {
                   Assisted Prescription Reading
                 </h3>
                 <p className="text-xs text-slate-500 leading-relaxed">
-                  Start our AI reading assistant to automatically read doctor handwriting, dosage instructions, and suggest matching medicines from our catalogue for pharmacist verification.
+                  Start our AI reading assistant to automatically read doctor handwriting, dosage
+                  instructions, and suggest matching medicines from our catalogue for pharmacist
+                  verification.
                 </p>
               </div>
               <Button
@@ -319,29 +317,26 @@ export default function PrescriptionDetailPage() {
           )}
 
           {/* STATE 2: QUEUED / PROCESSING */}
-          {extraction &&
-            (extraction.status === 'QUEUED' ||
-              extraction.status === 'PROCESSING') && (
-              <Card className="p-8 text-center space-y-4 border-slate-200 bg-white">
-                <div className="h-14 w-14 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center mx-auto">
-                  <RefreshCw className="h-7 w-7 animate-spin" />
+          {extraction && (extraction.status === 'QUEUED' || extraction.status === 'PROCESSING') && (
+            <Card className="p-8 text-center space-y-4 border-slate-200 bg-white">
+              <div className="h-14 w-14 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center mx-auto">
+                <RefreshCw className="h-7 w-7 animate-spin" />
+              </div>
+              <div className="max-w-md mx-auto space-y-1.5">
+                <h3 className="text-base font-bold text-slate-800">Reading your prescription...</h3>
+                <p className="text-xs text-slate-500 leading-relaxed">
+                  Our AI assistant is analyzing the handwriting, medicine names, strengths, and
+                  dosage instructions. This usually takes just a few seconds.
+                </p>
+                <div className="w-48 h-1.5 bg-slate-100 rounded-full mx-auto overflow-hidden mt-3">
+                  <div className="h-full bg-blue-500 rounded-full animate-pulse w-3/4"></div>
                 </div>
-                <div className="max-w-md mx-auto space-y-1.5">
-                  <h3 className="text-base font-bold text-slate-800">
-                    Reading your prescription...
-                  </h3>
-                  <p className="text-xs text-slate-500 leading-relaxed">
-                    Our AI assistant is analyzing the handwriting, medicine names, strengths, and dosage instructions. This usually takes just a few seconds.
-                  </p>
-                  <div className="w-48 h-1.5 bg-slate-100 rounded-full mx-auto overflow-hidden mt-3">
-                    <div className="h-full bg-blue-500 rounded-full animate-pulse w-3/4"></div>
-                  </div>
-                </div>
-                <span className="text-[11px] font-mono text-slate-400 block">
-                  Status: {extraction.status} &bull; Attempt #{extraction.attemptNumber}
-                </span>
-              </Card>
-            )}
+              </div>
+              <span className="text-[11px] font-mono text-slate-400 block">
+                Status: {extraction.status} &bull; Attempt #{extraction.attemptNumber}
+              </span>
+            </Card>
+          )}
 
           {/* STATE 3: NEEDS_REUPLOAD */}
           {extraction && extraction.status === 'NEEDS_REUPLOAD' && (
@@ -353,7 +348,9 @@ export default function PrescriptionDetailPage() {
                     Prescription Document Requires Re-upload
                   </h3>
                   <p className="text-xs text-amber-900 leading-relaxed">
-                    The document could not be read clearly enough for safe extraction. This usually happens if the photo is blurry, handwriting is obscured, or lighting is too dark.
+                    The document could not be read clearly enough for safe extraction. This usually
+                    happens if the photo is blurry, handwriting is obscured, or lighting is too
+                    dark.
                   </p>
                 </div>
               </div>
@@ -372,7 +369,10 @@ export default function PrescriptionDetailPage() {
 
               <div className="flex items-center gap-2 pt-2">
                 <Link href="/customer/prescriptions">
-                  <Button size="sm" className="bg-amber-600 hover:bg-amber-700 text-white text-xs h-8">
+                  <Button
+                    size="sm"
+                    className="bg-amber-600 hover:bg-amber-700 text-white text-xs h-8"
+                  >
                     <Upload className="h-3.5 w-3.5 mr-1.5" />
                     Upload Clearer Document
                   </Button>
@@ -397,9 +397,7 @@ export default function PrescriptionDetailPage() {
               <div className="flex items-start gap-3">
                 <AlertCircle className="h-6 w-6 text-red-600 shrink-0 mt-0.5" />
                 <div className="space-y-1">
-                  <h3 className="text-sm font-bold text-red-950">
-                    Extraction Unsuccessful
-                  </h3>
+                  <h3 className="text-sm font-bold text-red-950">Extraction Unsuccessful</h3>
                   <p className="text-xs text-red-900 leading-relaxed">
                     {extraction.errorMessage ||
                       'An unexpected error occurred while reading the prescription. Please retry or contact support.'}
@@ -474,7 +472,9 @@ export default function PrescriptionDetailPage() {
               {/* Extracted Medicines & Catalogue Matches */}
               <div className="space-y-3">
                 <h3 className="text-sm font-bold text-slate-800 flex items-center justify-between">
-                  <span>Extracted Medicines ({extraction.extractionResult?.items.length || 0})</span>
+                  <span>
+                    Extracted Medicines ({extraction.extractionResult?.items.length || 0})
+                  </span>
                   <span className="text-xs font-normal text-slate-500">
                     Catalogue Matching Suggestions
                   </span>
@@ -500,11 +500,12 @@ export default function PrescriptionDetailPage() {
                             <h4 className="font-bold text-sm text-[#351F65]">
                               {item.rawMedicineName}
                             </h4>
-                            {item.normalizedMedicineName && item.normalizedMedicineName !== item.rawMedicineName && (
-                              <span className="text-xs text-slate-500">
-                                ({item.normalizedMedicineName})
-                              </span>
-                            )}
+                            {item.normalizedMedicineName &&
+                              item.normalizedMedicineName !== item.rawMedicineName && (
+                                <span className="text-xs text-slate-500">
+                                  ({item.normalizedMedicineName})
+                                </span>
+                              )}
                           </div>
                           <div className="flex flex-wrap items-center gap-2 mt-1 text-xs text-slate-600">
                             {item.strength && (
@@ -557,12 +558,14 @@ export default function PrescriptionDetailPage() {
                           <div className="flex gap-4 text-slate-600">
                             {item.frequency && (
                               <span>
-                                <span className="font-semibold text-slate-500">Frequency:</span> {item.frequency}
+                                <span className="font-semibold text-slate-500">Frequency:</span>{' '}
+                                {item.frequency}
                               </span>
                             )}
                             {item.duration && (
                               <span>
-                                <span className="font-semibold text-slate-500">Duration:</span> {item.duration}
+                                <span className="font-semibold text-slate-500">Duration:</span>{' '}
+                                {item.duration}
                               </span>
                             )}
                           </div>
@@ -573,11 +576,15 @@ export default function PrescriptionDetailPage() {
                       {match && match.candidates.length > 0 && (
                         <div className="pt-2 border-t border-slate-100 text-xs space-y-1">
                           <span className="text-slate-400 block font-medium">
-                            Match Details ({match.candidates.length} candidate{match.candidates.length > 1 ? 's' : ''}):
+                            Match Details ({match.candidates.length} candidate
+                            {match.candidates.length > 1 ? 's' : ''}):
                           </span>
                           <div className="flex flex-wrap gap-1.5">
                             {match.candidates[0].matchReasons.map((r, rIdx) => (
-                              <span key={rIdx} className="text-[10px] px-2 py-0.5 rounded bg-purple-50 text-purple-700 font-mono">
+                              <span
+                                key={rIdx}
+                                className="text-[10px] px-2 py-0.5 rounded bg-purple-50 text-purple-700 font-mono"
+                              >
                                 {r.replace(/_/g, ' ')}
                               </span>
                             ))}
@@ -593,7 +600,10 @@ export default function PrescriptionDetailPage() {
                           </span>
                           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                             {match.genericAlternatives.map((alt) => (
-                              <div key={alt.medicineId} className="p-2 rounded border border-slate-200 bg-slate-50 text-slate-700">
+                              <div
+                                key={alt.medicineId}
+                                className="p-2 rounded border border-slate-200 bg-slate-50 text-slate-700"
+                              >
                                 <span className="font-bold block text-slate-900">{alt.name}</span>
                                 <span className="text-[11px] text-slate-500">
                                   {alt.genericName} &bull; ₹{alt.mrp}

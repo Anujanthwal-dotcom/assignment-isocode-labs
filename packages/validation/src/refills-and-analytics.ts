@@ -30,8 +30,16 @@ export const pharmacistDosageVerificationSchema = z.object({
 });
 
 export const analyticsQuerySchema = z.object({
-  from: z.string().datetime({ offset: true }).or(z.string().regex(/^\d{4}-\d{2}-\d{2}/)).optional(),
-  to: z.string().datetime({ offset: true }).or(z.string().regex(/^\d{4}-\d{2}-\d{2}/)).optional(),
+  from: z
+    .string()
+    .datetime({ offset: true })
+    .or(z.string().regex(/^\d{4}-\d{2}-\d{2}/))
+    .optional(),
+  to: z
+    .string()
+    .datetime({ offset: true })
+    .or(z.string().regex(/^\d{4}-\d{2}-\d{2}/))
+    .optional(),
   storeId: z.string().uuid().optional(),
   period: z.enum(['TODAY', '7D', '30D', '90D', 'CUSTOM']).optional().default('30D'),
 });

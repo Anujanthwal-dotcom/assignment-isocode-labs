@@ -6,7 +6,17 @@ import { apiFetch } from '@/lib/api/client';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { ArrowLeft, Bell, Calendar, Clock, ShoppingCart, PauseCircle, PlayCircle, XCircle, AlertCircle } from 'lucide-react';
+import {
+  ArrowLeft,
+  Bell,
+  Calendar,
+  Clock,
+  ShoppingCart,
+  PauseCircle,
+  PlayCircle,
+  XCircle,
+  AlertCircle,
+} from 'lucide-react';
 import Link from 'next/link';
 import { RefillSubscriptionDto, RefillReminderDto } from '@pharmacy/shared-types';
 
@@ -29,7 +39,9 @@ export default function CustomerRefillSubscriptionPage() {
       setSub(found);
       if (found) {
         setLeadDays(found.reminderDaysBefore);
-        const rems = await apiFetch<RefillReminderDto[]>(`/customer/refills/subscriptions/${subscriptionId}/reminders`);
+        const rems = await apiFetch<RefillReminderDto[]>(
+          `/customer/refills/subscriptions/${subscriptionId}/reminders`,
+        );
         setReminders(rems || []);
       }
     } catch (err: any) {
@@ -48,7 +60,9 @@ export default function CustomerRefillSubscriptionPage() {
     const action = sub.status === 'ACTIVE' ? 'pause' : 'resume';
     try {
       setUpdating(true);
-      await apiFetch(`/customer/refills/subscriptions/${subscriptionId}/${action}`, { method: 'POST' });
+      await apiFetch(`/customer/refills/subscriptions/${subscriptionId}/${action}`, {
+        method: 'POST',
+      });
       await loadData();
     } catch (err: any) {
       alert(err.message || `Failed to ${action} reminders.`);
@@ -61,7 +75,9 @@ export default function CustomerRefillSubscriptionPage() {
     if (!confirm('Are you sure you want to cancel refill reminders for this medicine?')) return;
     try {
       setUpdating(true);
-      await apiFetch(`/customer/refills/subscriptions/${subscriptionId}/cancel`, { method: 'POST' });
+      await apiFetch(`/customer/refills/subscriptions/${subscriptionId}/cancel`, {
+        method: 'POST',
+      });
       router.push('/customer/refills');
     } catch (err: any) {
       alert(err.message || 'Failed to cancel reminders.');
@@ -89,9 +105,12 @@ export default function CustomerRefillSubscriptionPage() {
   const handleReorder = async () => {
     try {
       setUpdating(true);
-      const res = await apiFetch<{ success: boolean; cartId: string }>(`/customer/refills/subscriptions/${subscriptionId}/reorder`, {
-        method: 'POST',
-      });
+      const res = await apiFetch<{ success: boolean; cartId: string }>(
+        `/customer/refills/subscriptions/${subscriptionId}/reorder`,
+        {
+          method: 'POST',
+        },
+      );
       if (res.success) {
         router.push('/customer/cart');
       }
@@ -119,21 +138,29 @@ export default function CustomerRefillSubscriptionPage() {
 
   return (
     <div className="max-w-3xl mx-auto py-6 px-4 space-y-6">
-      <Link href="/customer/refills" className="inline-flex items-center text-xs font-semibold text-[#6240E8] hover:underline">
+      <Link
+        href="/customer/refills"
+        className="inline-flex items-center text-xs font-semibold text-[#6240E8] hover:underline"
+      >
         <ArrowLeft className="mr-1.5 h-3.5 w-3.5" /> Back to Medicine Refills
       </Link>
 
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-[#EAE8F0]">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight text-[#351F65]">
-            {sub.medicineName}
-          </h1>
+          <h1 className="text-2xl font-bold tracking-tight text-[#351F65]">{sub.medicineName}</h1>
           <p className="text-xs text-[#78879A] mt-1">
-            {sub.familyMemberName ? `Patient: ${sub.familyMemberName} • ` : ''}Refill Reminder Settings
+            {sub.familyMemberName ? `Patient: ${sub.familyMemberName} • ` : ''}Refill Reminder
+            Settings
           </p>
         </div>
         <div className="flex items-center gap-2">
-          <Badge className={sub.status === 'ACTIVE' ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : 'bg-amber-50 text-amber-700 border-amber-200'}>
+          <Badge
+            className={
+              sub.status === 'ACTIVE'
+                ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
+                : 'bg-amber-50 text-amber-700 border-amber-200'
+            }
+          >
             Status: {sub.status}
           </Badge>
           <Button
@@ -151,7 +178,9 @@ export default function CustomerRefillSubscriptionPage() {
       <div className="p-4 bg-[#F7F5FD] border border-[#6240E8]/20 rounded-xl flex items-start gap-3">
         <AlertCircle className="h-5 w-5 text-[#6240E8] shrink-0 mt-0.5" />
         <div className="text-xs text-[#55476D] leading-relaxed">
-          Refill reminders are informational schedules based on your last dispensed quantity. You will always confirm your cart and checkout requirements explicitly prior to order placement.
+          Refill reminders are informational schedules based on your last dispensed quantity. You
+          will always confirm your cart and checkout requirements explicitly prior to order
+          placement.
         </div>
       </div>
 
@@ -184,7 +213,12 @@ export default function CustomerRefillSubscriptionPage() {
               ))}
             </div>
             <p className="text-xs text-[#78879A] mt-2">
-              Estimated Run-Out Date: <strong>{sub.estimatedRunOutAt ? new Date(sub.estimatedRunOutAt).toLocaleDateString() : 'N/A'}</strong>
+              Estimated Run-Out Date:{' '}
+              <strong>
+                {sub.estimatedRunOutAt
+                  ? new Date(sub.estimatedRunOutAt).toLocaleDateString()
+                  : 'N/A'}
+              </strong>
               {sub.daysRemaining !== null ? ` (${sub.daysRemaining} days remaining)` : ''}
             </p>
           </div>
@@ -231,7 +265,9 @@ export default function CustomerRefillSubscriptionPage() {
         </CardHeader>
         <CardContent>
           {reminders.length === 0 ? (
-            <p className="text-xs text-[#78879A] py-4 text-center">No reminders scheduled or sent yet.</p>
+            <p className="text-xs text-[#78879A] py-4 text-center">
+              No reminders scheduled or sent yet.
+            </p>
           ) : (
             <div className="divide-y divide-[#EAE8F0] text-xs">
               {reminders.map((rem) => (
@@ -243,7 +279,8 @@ export default function CustomerRefillSubscriptionPage() {
                     </span>
                   </div>
                   <Badge variant="neutral" className="text-[10px]">
-                    {rem.status} {rem.sentAt ? `(Sent ${new Date(rem.sentAt).toLocaleTimeString()})` : ''}
+                    {rem.status}{' '}
+                    {rem.sentAt ? `(Sent ${new Date(rem.sentAt).toLocaleTimeString()})` : ''}
                   </Badge>
                 </div>
               ))}

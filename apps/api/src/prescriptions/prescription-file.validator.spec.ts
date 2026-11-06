@@ -45,7 +45,8 @@ describe('Prescription File Validator', () => {
   });
 
   it('accepts valid PDF files with <= 10 pages', () => {
-    const pdfString = '%PDF-1.4\n1 0 obj\n<< /Type /Page >>\nendobj\n2 0 obj\n<< /Type /Page >>\nendobj\n%%EOF';
+    const pdfString =
+      '%PDF-1.4\n1 0 obj\n<< /Type /Page >>\nendobj\n2 0 obj\n<< /Type /Page >>\nendobj\n%%EOF';
     const pdfBuffer = Buffer.from(pdfString);
     const mockFile: Express.Multer.File = {
       buffer: pdfBuffer,

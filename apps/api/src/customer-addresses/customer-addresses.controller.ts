@@ -1,12 +1,4 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Patch,
-  Delete,
-  Param,
-  Body,
-} from '@nestjs/common';
+import { Controller, Get, Post, Patch, Delete, Param, Body } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
 import { CustomerAddressesService } from './customer-addresses.service';
 import { CreateCustomerAddressDto, UpdateCustomerAddressDto } from './customer-addresses.dto';
@@ -32,10 +24,7 @@ export class CustomerAddressesController {
   @ApiOperation({ summary: 'Add a new delivery address' })
   @ApiResponse({ status: 201, description: 'Address created' })
   @ApiResponse({ status: 400, description: 'Invalid PIN code or phone number' })
-  async create(
-    @CurrentUser('id') customerUserId: string,
-    @Body() dto: CreateCustomerAddressDto,
-  ) {
+  async create(@CurrentUser('id') customerUserId: string, @Body() dto: CreateCustomerAddressDto) {
     return this.customerAddressesService.createAddress(customerUserId, dto);
   }
 
@@ -43,10 +32,7 @@ export class CustomerAddressesController {
   @ApiOperation({ summary: 'Get address details by ID' })
   @ApiResponse({ status: 200, description: 'Address details' })
   @ApiResponse({ status: 404, description: 'Address not found' })
-  async findOne(
-    @CurrentUser('id') customerUserId: string,
-    @Param('id') id: string,
-  ) {
+  async findOne(@CurrentUser('id') customerUserId: string, @Param('id') id: string) {
     return this.customerAddressesService.getAddress(customerUserId, id);
   }
 
@@ -66,10 +52,7 @@ export class CustomerAddressesController {
   @ApiOperation({ summary: 'Set address as default' })
   @ApiResponse({ status: 200, description: 'Default address updated' })
   @ApiResponse({ status: 404, description: 'Address not found' })
-  async setDefault(
-    @CurrentUser('id') customerUserId: string,
-    @Param('id') id: string,
-  ) {
+  async setDefault(@CurrentUser('id') customerUserId: string, @Param('id') id: string) {
     return this.customerAddressesService.setDefaultAddress(customerUserId, id);
   }
 
@@ -77,10 +60,7 @@ export class CustomerAddressesController {
   @ApiOperation({ summary: 'Delete delivery address' })
   @ApiResponse({ status: 200, description: 'Address deleted' })
   @ApiResponse({ status: 404, description: 'Address not found' })
-  async delete(
-    @CurrentUser('id') customerUserId: string,
-    @Param('id') id: string,
-  ) {
+  async delete(@CurrentUser('id') customerUserId: string, @Param('id') id: string) {
     return this.customerAddressesService.deleteAddress(customerUserId, id);
   }
 }

@@ -62,7 +62,9 @@ describe('Phase 6 Store Routing, Inventory Reservation & Order Fulfilment E2E', 
     const pharmaLogin = await request(app.getHttpServer())
       .post('/api/v1/auth/staff/login')
       .send({ email: 'pharmacist@example.com', password: 'DemoPassword123!' });
-    pharmacistCookie = pharmaLogin.headers['set-cookie'] ? pharmaLogin.headers['set-cookie'][0] : '';
+    pharmacistCookie = pharmaLogin.headers['set-cookie']
+      ? pharmaLogin.headers['set-cookie'][0]
+      : '';
     const pharmaUser = await prisma.user.findUnique({ where: { email: 'pharmacist@example.com' } });
     pharmacistUserId = pharmaUser!.id;
 
@@ -111,8 +113,8 @@ describe('Phase 6 Store Routing, Inventory Reservation & Order Fulfilment E2E', 
         city: 'Kolkata',
         state: 'West Bengal',
         postalCode: '700064',
-        latitude: 22.5850,
-        longitude: 88.4150,
+        latitude: 22.585,
+        longitude: 88.415,
       },
     });
 

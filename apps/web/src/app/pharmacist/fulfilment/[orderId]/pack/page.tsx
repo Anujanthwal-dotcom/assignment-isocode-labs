@@ -51,13 +51,10 @@ export default function PackingWorkspacePage() {
 
     setPackingBusy(true);
     try {
-      const res = await apiFetch<any>(
-        `/pharmacist/fulfilment/${orderId}/packing/complete`,
-        {
-          method: 'POST',
-          body: JSON.stringify({ checklistConfirmed: true, notes: notes || undefined }),
-        },
-      );
+      const res = await apiFetch<any>(`/pharmacist/fulfilment/${orderId}/packing/complete`, {
+        method: 'POST',
+        body: JSON.stringify({ checklistConfirmed: true, notes: notes || undefined }),
+      });
       router.push(`/pharmacist/fulfilment/${orderId}/handover`);
     } catch (err: any) {
       alert(err?.message || 'Failed to complete packing.');
@@ -84,15 +81,14 @@ export default function PackingWorkspacePage() {
             </h1>
           </div>
           <p className="text-xs text-[#78879A] mt-1">
-            Perform final physical inspection, pack medicines securely in tamper-evident packaging, and generate invoice.
+            Perform final physical inspection, pack medicines securely in tamper-evident packaging,
+            and generate invoice.
           </p>
         </div>
       </div>
 
       {loading ? (
-        <div className="p-12 text-center text-xs text-[#78879A]">
-          Loading order details...
-        </div>
+        <div className="p-12 text-center text-xs text-[#78879A]">Loading order details...</div>
       ) : error ? (
         <div className="p-8 text-center text-xs text-rose-600 bg-rose-50 rounded-2xl border border-rose-200">
           <AlertTriangle className="w-6 h-6 mx-auto mb-2 text-rose-500" />
@@ -124,7 +120,10 @@ export default function PackingWorkspacePage() {
               <span className="font-bold text-[#351F65] block">Picked Medicines to Pack:</span>
               <div className="divide-y divide-slate-100 border border-slate-100 rounded-xl overflow-hidden">
                 {orderDetail?.items?.map((item: any) => (
-                  <div key={item.orderItemId} className="p-3 flex items-center justify-between bg-[#F8F9FB]/50">
+                  <div
+                    key={item.orderItemId}
+                    className="p-3 flex items-center justify-between bg-[#F8F9FB]/50"
+                  >
                     <div>
                       <span className="font-bold text-[#14161A] block">{item.medicineName}</span>
                       <span className="text-[10px] text-[#78879A] font-mono">
@@ -133,7 +132,9 @@ export default function PackingWorkspacePage() {
                     </div>
                     <div className="text-right">
                       <span className="font-bold text-[#14161A]">Qty: {item.quantity}</span>
-                      <span className="block text-[10px] text-emerald-600 font-semibold">✓ Picked</span>
+                      <span className="block text-[10px] text-emerald-600 font-semibold">
+                        ✓ Picked
+                      </span>
                     </div>
                   </div>
                 ))}
@@ -150,15 +151,23 @@ export default function PackingWorkspacePage() {
             <ul className="space-y-2.5 text-xs text-[#351F65]">
               <li className="flex items-start gap-2">
                 <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
-                <span>All picked medicine brands, active ingredients, and strengths match approved prescription.</span>
+                <span>
+                  All picked medicine brands, active ingredients, and strengths match approved
+                  prescription.
+                </span>
               </li>
               <li className="flex items-start gap-2">
                 <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
-                <span>Expiries verified: all units have valid shelf-life (&gt; 6 months). Packaging seals intact.</span>
+                <span>
+                  Expiries verified: all units have valid shelf-life (&gt; 6 months). Packaging
+                  seals intact.
+                </span>
               </li>
               <li className="flex items-start gap-2">
                 <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
-                <span>Schedule H / H1 statutory compliance requirements satisfied and recorded.</span>
+                <span>
+                  Schedule H / H1 statutory compliance requirements satisfied and recorded.
+                </span>
               </li>
             </ul>
 
@@ -170,7 +179,10 @@ export default function PackingWorkspacePage() {
                   onChange={(e) => setChecklistConfirmed(e.target.checked)}
                   className="w-4 h-4 rounded text-[#6240E8] focus:ring-[#6240E8]"
                 />
-                <span>I confirm that all medicines have been verified, sealed, and packed according to Good Pharmacy Practice standards.</span>
+                <span>
+                  I confirm that all medicines have been verified, sealed, and packed according to
+                  Good Pharmacy Practice standards.
+                </span>
               </label>
             </div>
 
@@ -200,7 +212,9 @@ export default function PackingWorkspacePage() {
               disabled={packingBusy || !checklistConfirmed}
               className="px-5 py-2 rounded-xl text-xs font-semibold bg-[#6240E8] text-white hover:bg-[#5232d4] disabled:opacity-50 shadow-xs inline-flex items-center gap-1.5"
             >
-              <span>{packingBusy ? 'Generating Invoice...' : 'Complete Packing & Issue Invoice'}</span>
+              <span>
+                {packingBusy ? 'Generating Invoice...' : 'Complete Packing & Issue Invoice'}
+              </span>
               <ChevronRight className="w-4 h-4" />
             </button>
           </div>

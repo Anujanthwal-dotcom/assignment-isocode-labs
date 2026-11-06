@@ -76,9 +76,7 @@ describe('HandoverService', () => {
       items: [
         {
           id: 'item-1',
-          h1RegisterEntries: [
-            { id: 'h1-1', status: H1RegisterStatus.PENDING_FULFILLMENT },
-          ],
+          h1RegisterEntries: [{ id: 'h1-1', status: H1RegisterStatus.PENDING_FULFILLMENT }],
         },
       ],
     });

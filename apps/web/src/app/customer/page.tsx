@@ -58,7 +58,9 @@ export default function CustomerHomePage() {
     }
   };
 
-  const getStatusColor = (status: string): 'warning' | 'purple' | 'success' | 'danger' | 'information' => {
+  const getStatusColor = (
+    status: string,
+  ): 'warning' | 'purple' | 'success' | 'danger' | 'information' => {
     switch (status) {
       case 'PENDING_VERIFICATION':
         return 'warning';
@@ -84,7 +86,8 @@ export default function CustomerHomePage() {
             Welcome back, {user?.profile?.fullName || 'Customer'}
           </h1>
           <p className="text-sm text-[#78879A] mt-1">
-            Order genuine medicines and manage prescriptions for your family across Kolkata &amp; Howrah.
+            Order genuine medicines and manage prescriptions for your family across Kolkata &amp;
+            Howrah.
           </p>
         </div>
         <div className="flex items-center gap-2">
@@ -181,7 +184,8 @@ export default function CustomerHomePage() {
           <span className="font-semibold block text-[#6240E8] mb-0.5">
             Registered Pharmacist Review
           </span>
-          All customer orders and uploaded prescriptions undergo mandatory verification by licensed pharmacists at our Kolkata &amp; Howrah fulfillment centers prior to packing.
+          All customer orders and uploaded prescriptions undergo mandatory verification by licensed
+          pharmacists at our Kolkata &amp; Howrah fulfillment centers prior to packing.
         </div>
       </div>
 
@@ -214,7 +218,8 @@ export default function CustomerHomePage() {
               <div>
                 <h3 className="font-semibold text-slate-800 text-sm">No Previous Orders Yet</h3>
                 <p className="text-xs text-slate-500 mt-1 max-w-sm">
-                  Search medicines or browse our catalogue to place your first pharmacy order with prescription upload.
+                  Search medicines or browse our catalogue to place your first pharmacy order with
+                  prescription upload.
                 </p>
               </div>
               <Button
@@ -241,7 +246,12 @@ export default function CustomerHomePage() {
                         {order.orderNumber}
                       </span>
                       <span className="text-xs text-[#78879A]">
-                        &bull; {new Date(order.placedAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}
+                        &bull;{' '}
+                        {new Date(order.placedAt).toLocaleDateString('en-IN', {
+                          day: 'numeric',
+                          month: 'short',
+                          year: 'numeric',
+                        })}
                       </span>
                     </div>
                     <p className="text-xs text-slate-600 mt-1">

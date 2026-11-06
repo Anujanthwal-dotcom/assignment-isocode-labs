@@ -37,19 +37,19 @@ describe('CartService', () => {
       status: MedicineStatus.INACTIVE,
     });
 
-    await expect(
-      service.addItem('user-1', { medicineId: 'med-1', quantity: 1 }),
-    ).rejects.toThrow(BadRequestException);
+    await expect(service.addItem('user-1', { medicineId: 'med-1', quantity: 1 })).rejects.toThrow(
+      BadRequestException,
+    );
   });
 
   it('rejects quantity outside allowed range 1-100', async () => {
-    await expect(
-      service.addItem('user-1', { medicineId: 'med-1', quantity: 0 }),
-    ).rejects.toThrow(BadRequestException);
+    await expect(service.addItem('user-1', { medicineId: 'med-1', quantity: 0 })).rejects.toThrow(
+      BadRequestException,
+    );
 
-    await expect(
-      service.addItem('user-1', { medicineId: 'med-1', quantity: 101 }),
-    ).rejects.toThrow(BadRequestException);
+    await expect(service.addItem('user-1', { medicineId: 'med-1', quantity: 101 })).rejects.toThrow(
+      BadRequestException,
+    );
   });
 
   it('calculates subtotal and line totals using database MRP', async () => {

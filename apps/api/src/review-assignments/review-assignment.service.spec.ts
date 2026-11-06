@@ -57,9 +57,9 @@ describe('ReviewAssignmentService', () => {
       status: StoreStatus.INACTIVE,
     });
 
-    await expect(
-      service.assignOrder('order-1', { storeId: 'store-1' }, 'admin-1'),
-    ).rejects.toThrow(BadRequestException);
+    await expect(service.assignOrder('order-1', { storeId: 'store-1' }, 'admin-1')).rejects.toThrow(
+      BadRequestException,
+    );
   });
 
   it('creates initial review assignment and audits it', async () => {
@@ -81,7 +81,11 @@ describe('ReviewAssignmentService', () => {
       assignedByUser: { id: 'admin-1', email: 'admin@example.com' },
     });
 
-    const res = await service.assignOrder('order-1', { storeId: 'store-1', reason: 'Initial assignment' }, 'admin-1');
+    const res = await service.assignOrder(
+      'order-1',
+      { storeId: 'store-1', reason: 'Initial assignment' },
+      'admin-1',
+    );
 
     expect(res.id).toBe('assign-1');
     expect(mockAudit.record).toHaveBeenCalledWith(
@@ -109,7 +113,11 @@ describe('ReviewAssignmentService', () => {
       assignedByUser: { id: 'admin-1', email: 'admin@example.com' },
     });
 
-    await service.assignOrder('order-1', { storeId: 'store-new', reason: 'Reassigning store' }, 'admin-1');
+    await service.assignOrder(
+      'order-1',
+      { storeId: 'store-new', reason: 'Reassigning store' },
+      'admin-1',
+    );
 
     expect(mockPrisma.orderReviewAssignment.update).toHaveBeenCalledWith({
       where: { id: 'old-assign-1' },

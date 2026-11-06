@@ -23,7 +23,9 @@ describe('PackingService', () => {
       record: vi.fn(),
     };
     mockInvoice = {
-      generateInvoiceForOrder: vi.fn().mockResolvedValue({ id: 'inv-1', invoiceNumber: 'INV-KOL-001-20261105-0001' }),
+      generateInvoiceForOrder: vi
+        .fn()
+        .mockResolvedValue({ id: 'inv-1', invoiceNumber: 'INV-KOL-001-20261105-0001' }),
     };
     service = new PackingService(mockPrisma, mockAudit, mockInvoice);
   });
@@ -69,10 +71,19 @@ describe('PackingService', () => {
       ],
     });
 
-    const res = await service.completePacking('order-1', 'store-1', 'pharma-1', 'Double-boxed securely');
+    const res = await service.completePacking(
+      'order-1',
+      'store-1',
+      'pharma-1',
+      'Double-boxed securely',
+    );
 
     expect(res.status).toBe(OrderStatus.READY_FOR_HANDOVER);
     expect(res.invoiceNumber).toBe('INV-KOL-001-20261105-0001');
-    expect(mockInvoice.generateInvoiceForOrder).toHaveBeenCalledWith('order-1', 'store-1', 'pharma-1');
+    expect(mockInvoice.generateInvoiceForOrder).toHaveBeenCalledWith(
+      'order-1',
+      'store-1',
+      'pharma-1',
+    );
   });
 });

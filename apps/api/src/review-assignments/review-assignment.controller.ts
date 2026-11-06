@@ -1,13 +1,4 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Delete,
-  Param,
-  Body,
-  Query,
-  ParseUUIDPipe,
-} from '@nestjs/common';
+import { Controller, Get, Post, Delete, Param, Body, Query, ParseUUIDPipe } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 import { Roles } from '../auth/decorators/roles.decorator';
 import { CurrentUser } from '../auth/decorators/current-user.decorator';
@@ -24,10 +15,7 @@ export class ReviewAssignmentController {
   @Get('review-assignments/unassigned')
   @Roles(UserRole.ADMIN)
   @ApiOperation({ summary: 'List unassigned orders awaiting pharmacist review store assignment' })
-  async getUnassignedOrders(
-    @Query('page') page?: string,
-    @Query('limit') limit?: string,
-  ) {
+  async getUnassignedOrders(@Query('page') page?: string, @Query('limit') limit?: string) {
     return this.assignmentService.getUnassignedOrders({
       page: page ? parseInt(page, 10) : undefined,
       limit: limit ? parseInt(limit, 10) : undefined,
@@ -51,7 +39,9 @@ export class ReviewAssignmentController {
 
   @Post('orders/:orderId/review-assignment')
   @Roles(UserRole.ADMIN)
-  @ApiOperation({ summary: 'Assign or reassign an order to a physical store for pharmacist review' })
+  @ApiOperation({
+    summary: 'Assign or reassign an order to a physical store for pharmacist review',
+  })
   async assignOrder(
     @Param('orderId', ParseUUIDPipe) orderId: string,
     @Body() dto: AssignOrderReviewDto,

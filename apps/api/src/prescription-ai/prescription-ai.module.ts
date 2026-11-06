@@ -4,10 +4,7 @@ import { BullModule } from '@nestjs/bullmq';
 import { PrismaModule } from '../prisma/prisma.module';
 import { StorageModule } from '../storage/storage.module';
 import { AuditModule } from '../audit/audit.module';
-import {
-  PrescriptionAiService,
-  PRESCRIPTION_AI_QUEUE,
-} from './prescription-ai.service';
+import { PrescriptionAiService, PRESCRIPTION_AI_QUEUE } from './prescription-ai.service';
 import { PrescriptionAiProcessor } from './prescription-ai.processor';
 import { PrescriptionAiController } from './prescription-ai.controller';
 import { MedicineMatchingService } from './matching/medicine-matching.service';

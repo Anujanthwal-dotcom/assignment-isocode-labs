@@ -1,12 +1,4 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Patch,
-  Delete,
-  Param,
-  Body,
-} from '@nestjs/common';
+import { Controller, Get, Post, Patch, Delete, Param, Body } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
 import { CartService } from './cart.service';
 import { AddToCartDto, UpdateCartItemDto } from './cart.dto';
@@ -32,10 +24,7 @@ export class CartController {
   @ApiOperation({ summary: 'Add active medicine to cart' })
   @ApiResponse({ status: 201, description: 'Item added to cart' })
   @ApiResponse({ status: 400, description: 'Inactive medicine or invalid quantity' })
-  async addItem(
-    @CurrentUser('id') customerUserId: string,
-    @Body() dto: AddToCartDto,
-  ) {
+  async addItem(@CurrentUser('id') customerUserId: string, @Body() dto: AddToCartDto) {
     return this.cartService.addItem(customerUserId, dto);
   }
 
@@ -55,10 +44,7 @@ export class CartController {
   @ApiOperation({ summary: 'Remove item from cart' })
   @ApiResponse({ status: 200, description: 'Item removed from cart' })
   @ApiResponse({ status: 404, description: 'Cart item not found' })
-  async removeItem(
-    @CurrentUser('id') customerUserId: string,
-    @Param('id') itemId: string,
-  ) {
+  async removeItem(@CurrentUser('id') customerUserId: string, @Param('id') itemId: string) {
     return this.cartService.removeItem(customerUserId, itemId);
   }
 
