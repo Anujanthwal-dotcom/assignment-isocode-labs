@@ -41,7 +41,7 @@ export class AllExceptionsFilter implements ExceptionFilter {
 
     if (status >= 500) {
       this.logger.error(
-        `[${request.method}] ${request.url} - Status: ${status} - Error: ${message}`,
+        `[${request.method}] ${request.url} - Status: ${status} - Error: ${exception instanceof Error ? exception.message : message}`,
         exception instanceof Error ? exception.stack : undefined,
       );
     } else {
@@ -50,13 +50,18 @@ export class AllExceptionsFilter implements ExceptionFilter {
       );
     }
 
+    // Security Hardening: Never leak stack traces, database schema, or internal SQL errors to API consumers
+    const clientSafeMessage =
+      status >= 500 ? 'Internal server error. Please try again later.' : message;
+    const clientSafeDetails = status >= 500 ? null : details;
+
     response.status(status).json({
       statusCode: status,
       ...(code ? { code } : {}),
       timestamp: new Date().toISOString(),
       path: request.url,
-      message,
-      ...(details ? { details } : {}),
+      message: clientSafeMessage,
+      ...(clientSafeDetails ? { details: clientSafeDetails } : {}),
     });
   }
 }

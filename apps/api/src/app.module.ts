@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { APP_GUARD } from '@nestjs/core';
 import { BullModule } from '@nestjs/bullmq';
+import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler';
 import configuration from './config/configuration';
 import { PrismaModule } from './prisma/prisma.module';
 import { HealthModule } from './health/health.module';
@@ -50,6 +51,18 @@ import { RolesGuard } from './auth/guards/roles.guard';
         },
       }),
     }),
+    ThrottlerModule.forRootAsync({
+      inject: [ConfigService],
+      useFactory: (config: ConfigService) => ({
+        throttlers: [
+          {
+            name: 'default',
+            ttl: 60000,
+            limit: config.get<string>('nodeEnv') === 'test' ? 2000 : 120,
+          },
+        ],
+      }),
+    }),
     PrismaModule,
     AuditModule,
     UsersModule,
@@ -79,6 +92,10 @@ import { RolesGuard } from './auth/guards/roles.guard';
     AdminAnalyticsModule,
   ],
   providers: [
+    {
+      provide: APP_GUARD,
+      useClass: ThrottlerGuard,
+    },
     {
       provide: APP_GUARD,
       useClass: JwtAuthGuard,
