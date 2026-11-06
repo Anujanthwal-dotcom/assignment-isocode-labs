@@ -93,4 +93,82 @@ describe('MockPrescriptionReader', () => {
     });
     expect(recovery.documentReadable).toBe(true);
   });
+
+  it('simulates provider timeout', async () => {
+    await expect(
+      reader.extract({
+        buffer: dummyBuffer,
+        mimeType: 'image/png',
+        originalFileName: 'rx-timeout.png',
+        attemptNumber: 1,
+      }),
+    ).rejects.toThrow('timeout');
+  });
+
+  it('simulates malformed provider response', async () => {
+    await expect(
+      reader.extract({
+        buffer: dummyBuffer,
+        mimeType: 'image/png',
+        originalFileName: 'rx-malformed.png',
+        attemptNumber: 1,
+      }),
+    ).rejects.toThrow('Malformed provider response');
+  });
+
+  it('returns low confidence extraction with explicit warnings', async () => {
+    const result = await reader.extract({
+      buffer: dummyBuffer,
+      mimeType: 'image/jpeg',
+      originalFileName: 'rx-low-confidence.jpg',
+      attemptNumber: 1,
+    });
+    expect(result.documentReadable).toBe(true);
+    expect(result.overallConfidence).toBeLessThan(0.5);
+    expect(result.generalWarnings.length).toBeGreaterThan(0);
+  });
+
+  it('returns handwritten partially readable extraction', async () => {
+    const result = await reader.extract({
+      buffer: dummyBuffer,
+      mimeType: 'image/jpeg',
+      originalFileName: 'rx-handwritten.jpg',
+      attemptNumber: 1,
+    });
+    expect(result.documentReadable).toBe(true);
+    expect(result.overallConfidence).toBe(0.65);
+    expect(result.unreadableSections.length).toBeGreaterThan(0);
+  });
+
+  it('returns missing dosage instructions extraction', async () => {
+    const result = await reader.extract({
+      buffer: dummyBuffer,
+      mimeType: 'image/jpeg',
+      originalFileName: 'rx-missing-dosage.jpg',
+      attemptNumber: 1,
+    });
+    expect(result.items[0].dosageInstructions).toBeNull();
+    expect(result.items[0].warnings).toContain('Dosage instructions not specified on prescription');
+  });
+
+  it('returns missing quantity extraction', async () => {
+    const result = await reader.extract({
+      buffer: dummyBuffer,
+      mimeType: 'image/jpeg',
+      originalFileName: 'rx-missing-quantity.jpg',
+      attemptNumber: 1,
+    });
+    expect(result.items[0].quantity).toBeNull();
+    expect(result.items[0].warnings).toContain('Dispensing quantity not explicitly stated');
+  });
+
+  it('returns uncatalogued medicine extraction', async () => {
+    const result = await reader.extract({
+      buffer: dummyBuffer,
+      mimeType: 'image/jpeg',
+      originalFileName: 'rx-unmatched.jpg',
+      attemptNumber: 1,
+    });
+    expect(result.items[0].rawMedicineName).toContain('Cefuroxime Axetil');
+  });
 });
