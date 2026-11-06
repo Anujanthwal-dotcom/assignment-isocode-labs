@@ -17,6 +17,7 @@ import {
   OrderItemReviewStatus,
   AlternativeProposalStatus,
   MedicineStatus,
+  PrescriptionReviewStatus,
   Prisma,
 } from '@prisma/client';
 import { ComplianceEvaluatorService } from '../compliance/compliance-evaluator.service';
@@ -517,7 +518,11 @@ export class OrdersService {
   async removeItemFromOrder(customerUserId: string, orderId: string, orderItemId: string) {
     const order = await this.getOrder(customerUserId, orderId);
 
-    if (order.status === OrderStatus.CANCELLED || order.status === OrderStatus.DISPATCHED || order.status === OrderStatus.DELIVERED) {
+    if (
+      order.status === OrderStatus.CANCELLED ||
+      order.status === OrderStatus.DISPATCHED ||
+      order.status === OrderStatus.DELIVERED
+    ) {
       throw new BadRequestException('Cannot modify items in a cancelled or dispatched order.');
     }
 
@@ -564,9 +569,10 @@ export class OrdersService {
       );
 
       // Free delivery above 500, else 50 (standard platform rule)
-      const newDeliveryFee = newSubtotal.greaterThan(500) || newSubtotal.equals(0)
-        ? new Prisma.Decimal(0)
-        : new Prisma.Decimal(50);
+      const newDeliveryFee =
+        newSubtotal.greaterThan(500) || newSubtotal.equals(0)
+          ? new Prisma.Decimal(0)
+          : new Prisma.Decimal(50);
 
       const newTotal = newSubtotal.plus(newDeliveryFee).minus(new Prisma.Decimal(order.discount));
 
@@ -722,9 +728,10 @@ export class OrdersService {
           new Prisma.Decimal(0),
         );
 
-        const newDeliveryFee = newSubtotal.greaterThan(500) || newSubtotal.equals(0)
-          ? new Prisma.Decimal(0)
-          : new Prisma.Decimal(50);
+        const newDeliveryFee =
+          newSubtotal.greaterThan(500) || newSubtotal.equals(0)
+            ? new Prisma.Decimal(0)
+            : new Prisma.Decimal(50);
 
         const newTotal = newSubtotal.plus(newDeliveryFee).minus(new Prisma.Decimal(order.discount));
 
@@ -792,6 +799,87 @@ export class OrdersService {
     return {
       message: `Generic alternative proposal successfully ${action.toLowerCase()}ed.`,
       proposal: result,
+    };
+  }
+
+  async replaceOrderPrescription(
+    customerUserId: string,
+    orderId: string,
+    newPrescriptionId: string,
+  ) {
+    const order = await this.prisma.order.findFirst({
+      where: { id: orderId, customerUserId },
+      include: { prescription: true },
+    });
+
+    if (!order) {
+      throw new NotFoundException('Order not found.');
+    }
+
+    if (
+      order.status !== OrderStatus.AWAITING_CUSTOMER_ACTION &&
+      order.status !== OrderStatus.PENDING_VERIFICATION
+    ) {
+      throw new BadRequestException(
+        `Cannot replace prescription for order in status '${order.status}'.`,
+      );
+    }
+
+    const newRx = await this.prisma.prescription.findFirst({
+      where: { id: newPrescriptionId, customerUserId },
+    });
+
+    if (!newRx) {
+      throw new NotFoundException('Replacement prescription not found.');
+    }
+
+    const previousPrescriptionId = order.prescriptionId;
+
+    await this.prisma.$transaction(async (tx) => {
+      await tx.order.update({
+        where: { id: orderId },
+        data: {
+          prescriptionId: newPrescriptionId,
+          status: OrderStatus.UNDER_REVIEW,
+        },
+      });
+
+      await tx.prescriptionReview.updateMany({
+        where: { orderId },
+        data: {
+          status: PrescriptionReviewStatus.IN_REVIEW,
+          prescriptionId: newPrescriptionId,
+        },
+      });
+
+      await tx.orderStatusHistory.create({
+        data: {
+          orderId,
+          previousStatus: order.status,
+          newStatus: OrderStatus.UNDER_REVIEW,
+          changedByUserId: customerUserId,
+          note: `Customer uploaded replacement prescription (${newRx.originalFileName})`,
+        },
+      });
+    });
+
+    await this.auditService.record({
+      actorUserId: customerUserId,
+      action: 'PRESCRIPTION_REPLACED_ON_ORDER',
+      resourceType: 'Order',
+      resourceId: orderId,
+      metadata: {
+        orderId,
+        previousPrescriptionId,
+        newPrescriptionId,
+      },
+    });
+
+    return {
+      message: 'Prescription successfully replaced. Order returned to pharmacist review.',
+      orderId,
+      newPrescriptionId,
+      orderStatus: OrderStatus.UNDER_REVIEW,
     };
   }
 }

@@ -12,6 +12,7 @@ describe('Phase 3 Customer Ordering E2E Tests', () => {
   let app: INestApplication;
   let prisma: PrismaService;
   let customerCookie: string;
+  let customerBCookie: string;
   let pharmacistCookie: string;
   let testMedicineId: string;
 
@@ -45,6 +46,18 @@ describe('Phase 3 Customer Ordering E2E Tests', () => {
       .post('/api/v1/auth/customer/verify-otp')
       .send({ phone: testPhone, otp: otpCode });
     customerCookie = custLogin.headers['set-cookie'] ? custLogin.headers['set-cookie'][0] : '';
+
+    // Login or create Customer B (for cross-user isolation tests)
+    const testPhoneB = `97${Math.floor(10000000 + Math.random() * 90000000)}`;
+    const otpReqB = await request(app.getHttpServer())
+      .post('/api/v1/auth/customer/request-otp')
+      .send({ phone: testPhoneB });
+    const otpCodeB = otpReqB.body.developmentOtp || '123456';
+
+    const custLoginB = await request(app.getHttpServer())
+      .post('/api/v1/auth/customer/verify-otp')
+      .send({ phone: testPhoneB, otp: otpCodeB });
+    customerBCookie = custLoginB.headers['set-cookie'] ? custLoginB.headers['set-cookie'][0] : '';
 
     // Login Pharmacist
     const pharmLogin = await request(app.getHttpServer())
@@ -327,5 +340,198 @@ describe('Phase 3 Customer Ordering E2E Tests', () => {
       .delete(`/api/v1/customer/prescriptions/${createdPrescriptionId}`)
       .set('Cookie', customerCookie)
       .expect(409);
+  });
+
+  // 9. Strict Multi-Customer Isolation
+  it('12. Customer B cannot access Customer A private resources', async () => {
+    // Cannot access Customer A's family member
+    await request(app.getHttpServer())
+      .get(`/api/v1/customer/family-members/${createdFamilyMemberId}`)
+      .set('Cookie', customerBCookie)
+      .expect(404);
+
+    // Cannot access Customer A's address
+    await request(app.getHttpServer())
+      .get(`/api/v1/customer/addresses/${createdAddressId}`)
+      .set('Cookie', customerBCookie)
+      .expect(404);
+
+    // Cannot access Customer A's prescription
+    await request(app.getHttpServer())
+      .get(`/api/v1/customer/prescriptions/${createdPrescriptionId}`)
+      .set('Cookie', customerBCookie)
+      .expect(404);
+
+    // Cannot access Customer A's order
+    await request(app.getHttpServer())
+      .get(`/api/v1/customer/orders/${createdOrderId}`)
+      .set('Cookie', customerBCookie)
+      .expect(404);
+  });
+
+  // 10. Scenario B: Failed Payment & Duplicate Callback Idempotency
+  it('13. Scenario B: Failed UPI payment simulation and duplicate callback idempotency', async () => {
+    // Add item to Customer B cart
+    await request(app.getHttpServer())
+      .post('/api/v1/customer/cart/items')
+      .set('Cookie', customerBCookie)
+      .send({ medicineId: testMedicineId, quantity: 1 });
+
+    // Customer B creates address & rx
+    const rxRes = await request(app.getHttpServer())
+      .post('/api/v1/customer/prescriptions')
+      .set('Cookie', customerBCookie)
+      .attach('file', Buffer.from([0xff, 0xd8, 0xff, 0xe0, 0x00, 0x10, 0x4a, 0x46]), 'rx-b.jpg')
+      .expect(201);
+
+    const addrRes = await request(app.getHttpServer())
+      .post('/api/v1/customer/addresses')
+      .set('Cookie', customerBCookie)
+      .send({
+        label: 'Office',
+        recipientName: 'Customer B',
+        phone: '9700000000',
+        addressLine1: 'Salt Lake',
+        city: 'Kolkata',
+        state: 'West Bengal',
+        postalCode: '700064',
+      })
+      .expect(201);
+
+    // Create UPI order
+    const orderRes = await request(app.getHttpServer())
+      .post('/api/v1/customer/orders')
+      .set('Cookie', customerBCookie)
+      .send({
+        prescriptionId: rxRes.body.id,
+        addressId: addrRes.body.id,
+        paymentMethod: OrderPaymentMethod.UPI,
+      })
+      .expect(201);
+
+    const orderId = orderRes.body.id;
+
+    // Simulate Payment FAILURE
+    const failRes = await request(app.getHttpServer())
+      .post(`/api/v1/customer/orders/${orderId}/mock-payment`)
+      .set('Cookie', customerBCookie)
+      .send({ result: 'FAILURE', failureReason: 'Bank network timeout' })
+      .expect(201);
+
+    expect(failRes.body.paymentStatus).toBe('FAILED');
+
+    // Duplicate callback does not create duplicate record or change status
+    const dupRes = await request(app.getHttpServer())
+      .post(`/api/v1/customer/orders/${orderId}/mock-payment`)
+      .set('Cookie', customerBCookie)
+      .send({ result: 'SUCCESS' })
+      .expect(201);
+
+    expect(dupRes.body.paymentStatus).toBe('FAILED');
+    expect(dupRes.body.message).toContain('previously marked as failed');
+  });
+
+  // 11. Scenario C: Prescription Re-upload & Replacement Linking
+  it('14. Scenario C: Pharmacist requests re-upload and customer links replacement', async () => {
+    // 1. Customer A uploads initial blurry prescription
+    const initialRxRes = await request(app.getHttpServer())
+      .post('/api/v1/customer/prescriptions')
+      .set('Cookie', customerCookie)
+      .attach(
+        'file',
+        Buffer.from([0xff, 0xd8, 0xff, 0xe0, 0x00, 0x10, 0x4a, 0x46]),
+        'blurry-rx.jpg',
+      )
+      .expect(201);
+
+    const initialRxId = initialRxRes.body.id;
+
+    // 2. Customer A places new order with initial prescription
+    await request(app.getHttpServer())
+      .post('/api/v1/customer/cart/items')
+      .set('Cookie', customerCookie)
+      .send({ medicineId: testMedicineId, quantity: 1 });
+
+    const orderRes = await request(app.getHttpServer())
+      .post('/api/v1/customer/orders')
+      .set('Cookie', customerCookie)
+      .send({
+        prescriptionId: initialRxId,
+        addressId: createdAddressId,
+        paymentMethod: OrderPaymentMethod.COD,
+      })
+      .expect(201);
+
+    const orderId = orderRes.body.id;
+
+    // 3. Assign to store and open review
+    const store = await prisma.store.findFirst({ where: { status: 'ACTIVE' } });
+    const adminUser = await prisma.user.findFirst({ where: { role: 'ADMIN' } });
+    await prisma.orderReviewAssignment.create({
+      data: {
+        order: { connect: { id: orderId } },
+        store: { connect: { id: store!.id } },
+        assignedByUser: { connect: { id: adminUser!.id } },
+        reason: 'STORE_LOCATION_MATCH',
+      },
+    });
+
+    const pharmUser = await prisma.user.findFirst({ where: { email: 'pharmacist@example.com' } });
+    const review = await prisma.prescriptionReview.create({
+      data: {
+        order: { connect: { id: orderId } },
+        prescription: { connect: { id: initialRxId } },
+        pharmacist: { connect: { id: pharmUser!.id } },
+        store: { connect: { id: store!.id } },
+        status: 'IN_REVIEW',
+      },
+    });
+
+    // 4. Pharmacist requests clearer image
+    await request(app.getHttpServer())
+      .post(`/api/v1/pharmacist/reviews/${review.id}/request-reupload`)
+      .set('Cookie', pharmacistCookie)
+      .send({ reason: 'Prescription document is blurred. Please upload a clear photo.' })
+      .expect(201);
+
+    // Verify order is now in AWAITING_CUSTOMER_ACTION
+    const orderCheck = await request(app.getHttpServer())
+      .get(`/api/v1/customer/orders/${orderId}`)
+      .set('Cookie', customerCookie)
+      .expect(200);
+
+    expect(orderCheck.body.status).toBe('AWAITING_CUSTOMER_ACTION');
+
+    // 5. Customer uploads replacement prescription
+    const replacementRxRes = await request(app.getHttpServer())
+      .post('/api/v1/customer/prescriptions')
+      .set('Cookie', customerCookie)
+      .attach(
+        'file',
+        Buffer.from([0xff, 0xd8, 0xff, 0xe0, 0x00, 0x10, 0x4a, 0x46]),
+        'replacement-rx.jpg',
+      )
+      .expect(201);
+
+    const replacementRxId = replacementRxRes.body.id;
+
+    // 6. Customer links replacement to order
+    const replaceRes = await request(app.getHttpServer())
+      .post(`/api/v1/customer/orders/${orderId}/replace-prescription`)
+      .set('Cookie', customerCookie)
+      .send({ prescriptionId: replacementRxId })
+      .expect(201);
+
+    expect(replaceRes.body.orderStatus).toBe('UNDER_REVIEW');
+    expect(replaceRes.body.newPrescriptionId).toBe(replacementRxId);
+
+    // Verify order is now UNDER_REVIEW (NOT silently approved)
+    const afterReplace = await request(app.getHttpServer())
+      .get(`/api/v1/customer/orders/${orderId}`)
+      .set('Cookie', customerCookie)
+      .expect(200);
+
+    expect(afterReplace.body.status).toBe('UNDER_REVIEW');
+    expect(afterReplace.body.prescriptionId).toBe(replacementRxId);
   });
 });
