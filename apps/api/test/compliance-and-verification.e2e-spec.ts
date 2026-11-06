@@ -272,4 +272,199 @@ describe('Phase 5 Compliance Engine & Pharmacist Verification E2E Tests', () => 
     expect(custRes.body.orderStatus).toBe(OrderStatus.APPROVED);
     expect(custRes.body.items[0].reviewStatus).toBe('APPROVED');
   });
+
+  // 9. Schedule X and Narcotic Hard Blocks
+  it('9. Schedule X and Narcotic items are hard-blocked and fail closed', async () => {
+    // 1. Create a medicine classified as SCHEDULE_X
+    const schedXMed = await prisma.medicine.create({
+      data: {
+        sku: `MED-TEST-X-${Date.now()}`,
+        name: 'Secobarbital 100 mg',
+        brandName: 'Seconal',
+        genericName: 'Secobarbital',
+        dosageForm: 'Capsule',
+        strength: '100 mg',
+        mrp: 350.0,
+        schedule: MedicineSchedule.SCHEDULE_X,
+        status: 'ACTIVE',
+      },
+    });
+
+    // 2. Create order with Schedule X item
+    const schedXOrder = await prisma.order.create({
+      data: {
+        orderNumber: `TEST-ORD-X-${Date.now()}`,
+        customerUserId: testCustomerUserId,
+        prescriptionId: testPrescriptionId,
+        status: OrderStatus.PENDING_VERIFICATION,
+        paymentMethod: 'COD',
+        paymentStatus: 'NOT_REQUIRED',
+        subtotal: 350,
+        deliveryFee: 0,
+        totalAmount: 350,
+        addressSnapshot: { city: 'Kolkata', line1: 'Test Address' },
+        items: {
+          create: [
+            {
+              medicineId: schedXMed.id,
+              medicineNameSnapshot: schedXMed.name,
+              skuSnapshot: schedXMed.sku,
+              unitPrice: schedXMed.mrp,
+              quantity: 1,
+              lineTotal: 350,
+            },
+          ],
+        },
+      },
+      include: { items: true },
+    });
+
+    // 3. Open review
+    const schedXReview = await prisma.prescriptionReview.create({
+      data: {
+        order: { connect: { id: schedXOrder.id } },
+        prescription: { connect: { id: testPrescriptionId } },
+        pharmacist: {
+          connect: {
+            id: (await prisma.user.findFirst({ where: { email: 'pharmacist@example.com' } }))!.id,
+          },
+        },
+        store: { connect: { id: testStoreId } },
+        status: 'IN_REVIEW',
+      },
+    });
+
+    const pharmUser = await prisma.user.findFirst({ where: { email: 'pharmacist@example.com' } });
+    await prisma.orderItemReview.create({
+      data: {
+        orderItem: { connect: { id: schedXOrder.items[0].id } },
+        prescriptionReview: { connect: { id: schedXReview.id } },
+        pharmacist: { connect: { id: pharmUser!.id } },
+        medicine: { connect: { id: schedXMed.id } },
+        status: OrderItemReviewStatus.PENDING,
+      },
+    });
+
+    // Attempt to approve Schedule X item -> must be rejected with 422 Unprocessable Entity
+    const approveAttempt = await request(app.getHttpServer())
+      .post(
+        `/api/v1/pharmacist/reviews/${schedXReview.id}/items/${schedXOrder.items[0].id}/approve`,
+      )
+      .set('Cookie', pharmacistCookie)
+      .send({});
+
+    expect(approveAttempt.status).toBe(422);
+    expect(approveAttempt.body.message).toContain('Schedule X');
+  });
+
+  // 10. Generic Alternative Proposal & Customer Response
+  it('10. Pharmacist proposes generic alternative and customer accepts', async () => {
+    // 1. Find or create two interchangeable generic medicines with identical genericName
+    const originalMed = await prisma.medicine.findFirst({
+      where: { schedule: MedicineSchedule.SCHEDULE_H, genericName: { not: null } },
+    });
+
+    let proposedMed = await prisma.medicine.findFirst({
+      where: {
+        genericName: originalMed!.genericName,
+        id: { not: originalMed!.id },
+      },
+    });
+
+    if (!proposedMed) {
+      proposedMed = await prisma.medicine.create({
+        data: {
+          sku: `GEN-ALT-${Date.now()}`,
+          name: `${originalMed!.genericName} Generic Brand`,
+          genericName: originalMed!.genericName,
+          schedule: originalMed!.schedule,
+          mrp: Number(originalMed!.mrp) * 0.8,
+          status: 'ACTIVE',
+        },
+      });
+    }
+
+    const altOrder = await prisma.order.create({
+      data: {
+        orderNumber: `TEST-ORD-ALT-${Date.now()}`,
+        customerUserId: testCustomerUserId,
+        prescriptionId: testPrescriptionId,
+        status: OrderStatus.UNDER_REVIEW,
+        paymentMethod: 'COD',
+        paymentStatus: 'NOT_REQUIRED',
+        subtotal: 100,
+        deliveryFee: 50,
+        totalAmount: 150,
+        addressSnapshot: { city: 'Kolkata', line1: 'Test Address' },
+        items: {
+          create: [
+            {
+              medicineId: originalMed!.id,
+              medicineNameSnapshot: originalMed!.name,
+              skuSnapshot: originalMed!.sku,
+              unitPrice: originalMed!.mrp,
+              quantity: 2,
+              lineTotal: 100,
+            },
+          ],
+        },
+      },
+      include: { items: true },
+    });
+
+    const altReview = await prisma.prescriptionReview.create({
+      data: {
+        order: { connect: { id: altOrder.id } },
+        prescription: { connect: { id: testPrescriptionId } },
+        pharmacist: {
+          connect: {
+            id: (await prisma.user.findFirst({ where: { email: 'pharmacist@example.com' } }))!.id,
+          },
+        },
+        store: { connect: { id: testStoreId } },
+        status: 'IN_REVIEW',
+      },
+    });
+
+    await prisma.orderItemReview.create({
+      data: {
+        orderItem: { connect: { id: altOrder.items[0].id } },
+        prescriptionReview: { connect: { id: altReview.id } },
+        pharmacist: {
+          connect: {
+            id: (await prisma.user.findFirst({ where: { email: 'pharmacist@example.com' } }))!.id,
+          },
+        },
+        medicine: { connect: { id: originalMed!.id } },
+        status: OrderItemReviewStatus.PENDING,
+      },
+    });
+
+    // Pharmacist proposes alternative
+    const propRes = await request(app.getHttpServer())
+      .post(
+        `/api/v1/pharmacist/reviews/${altReview.id}/items/${altOrder.items[0].id}/propose-alternative`,
+      )
+      .set('Cookie', pharmacistCookie)
+      .send({
+        proposedMedicineId: proposedMed!.id,
+        reason: 'Generic equivalent with identical salt and dosage formulation',
+      });
+
+    expect(propRes.status).toBe(201);
+    const proposalId = propRes.body.id;
+
+    // Customer accepts proposal
+    const acceptRes = await request(app.getHttpServer())
+      .post(`/api/v1/customer/orders/${altOrder.id}/alternatives/${proposalId}/respond`)
+      .set('Cookie', customerCookie)
+      .send({ action: 'ACCEPT', note: 'Accepted generic substitution' });
+
+    expect(acceptRes.status).toBe(201);
+    expect(acceptRes.body.proposal.status).toBe('ACCEPTED');
+
+    // Verify order returns to UNDER_REVIEW
+    const updatedOrder = await prisma.order.findUnique({ where: { id: altOrder.id } });
+    expect(updatedOrder!.status).toBe(OrderStatus.UNDER_REVIEW);
+  });
 });

@@ -2,10 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { MedicineSchedule } from '@prisma/client';
 import { ComplianceRuleService } from './compliance-rule.service';
 import { PrismaService } from '../prisma/prisma.service';
-import {
-  ComplianceDecision,
-  ComplianceEvaluationResult,
-} from '@pharmacy/shared-types';
+import { ComplianceEvaluationResult } from '@pharmacy/shared-types';
 
 export interface EvaluateMedicineParams {
   medicineId: string;
@@ -32,15 +29,12 @@ export class ComplianceEvaluatorService {
     const evaluatedAt = new Date().toISOString();
 
     // 1. Fetch active or designated rule set
-    let ruleSet: ({ id: string; rules: any[] } & Record<string, any>) | null = null;
-    if (params.ruleSetId) {
-      ruleSet = await this.prisma.complianceRuleSet.findUnique({
-        where: { id: params.ruleSetId },
-        include: { rules: true },
-      });
-    } else {
-      ruleSet = await this.ruleService.getActiveRuleSet();
-    }
+    const ruleSet = params.ruleSetId
+      ? await this.prisma.complianceRuleSet.findUnique({
+          where: { id: params.ruleSetId },
+          include: { rules: true },
+        })
+      : await this.ruleService.getActiveRuleSet();
 
     // Fail closed if no active rule set is configured
     if (!ruleSet) {
@@ -49,9 +43,7 @@ export class ComplianceEvaluatorService {
         schedule: params.schedule,
         decision: 'UNKNOWN_CLASSIFICATION',
         canApprove: false,
-        reasons: [
-          'No active compliance rule set is configured. System fails closed.',
-        ],
+        reasons: ['No active compliance rule set is configured. System fails closed.'],
         ruleVersionId: 'NONE',
         evaluatedAt,
       };
@@ -76,13 +68,17 @@ export class ComplianceEvaluatorService {
     }
 
     // 2. Hard Blocks: Schedule X, Narcotic, or explicit hardBlocked flag
-    if (rule.hardBlocked || normSchedule === MedicineSchedule.SCHEDULE_X || normSchedule === MedicineSchedule.NARCOTIC) {
+    if (
+      rule.hardBlocked ||
+      normSchedule === MedicineSchedule.SCHEDULE_X ||
+      normSchedule === MedicineSchedule.NARCOTIC
+    ) {
       const blockReason =
         normSchedule === MedicineSchedule.SCHEDULE_X
           ? 'Schedule X substances are not permitted for online dispensing under the assignment policy.'
           : normSchedule === MedicineSchedule.NARCOTIC
             ? 'Narcotic drugs are hard-blocked from dispensing under the assignment policy.'
-            : (rule.description || 'Medicine category is hard-blocked by compliance policy.');
+            : rule.description || 'Medicine category is hard-blocked by compliance policy.';
 
       return {
         medicineId: params.medicineId,
@@ -102,9 +98,7 @@ export class ComplianceEvaluatorService {
         schedule: params.schedule,
         decision: 'UNKNOWN_CLASSIFICATION',
         canApprove: false,
-        reasons: [
-          'Medicine classification requires compliance review before approval.',
-        ],
+        reasons: ['Medicine classification requires compliance review before approval.'],
         ruleVersionId: ruleSet.id,
         evaluatedAt,
       };
@@ -162,9 +156,7 @@ export class ComplianceEvaluatorService {
           schedule: params.schedule,
           decision: 'REQUIRES_PRESCRIPTION',
           canApprove: false,
-          reasons: [
-            'Schedule H medicine requires a valid uploaded prescription.',
-          ],
+          reasons: ['Schedule H medicine requires a valid uploaded prescription.'],
           ruleVersionId: ruleSet.id,
           evaluatedAt,
         };
@@ -175,9 +167,7 @@ export class ComplianceEvaluatorService {
         schedule: params.schedule,
         decision: 'REQUIRES_PHARMACIST_APPROVAL',
         canApprove: true,
-        reasons: [
-          'Valid prescription provided. Explicit pharmacist approval required.',
-        ],
+        reasons: ['Valid prescription provided. Explicit pharmacist approval required.'],
         ruleVersionId: ruleSet.id,
         evaluatedAt,
       };
