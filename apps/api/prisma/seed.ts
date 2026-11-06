@@ -46,8 +46,8 @@ async function main() {
       name: 'South Kolkata Store',
       city: 'Kolkata',
       address: 'Gariahat Road, South Kolkata (Demo Address)',
-      latitude: 22.5200,
-      longitude: 88.3650,
+      latitude: 22.52,
+      longitude: 88.365,
       status: StoreStatus.ACTIVE,
     },
   ];
@@ -125,6 +125,103 @@ async function main() {
     },
   });
 
+  // Seed Debasish's Mother: Maya Ghosh
+  const existingMother = await prisma.familyMember.findFirst({
+    where: {
+      customerUserId: customerUser.id,
+      fullName: 'Maya Ghosh',
+    },
+  });
+
+  if (!existingMother) {
+    await prisma.familyMember.create({
+      data: {
+        customerUserId: customerUser.id,
+        fullName: 'Maya Ghosh',
+        relationship: 'MOTHER',
+        dateOfBirth: new Date('1958-04-12'),
+      },
+    });
+  }
+
+  // Seed Debasish's Salt Lake Delivery Address
+  const existingDebasishAddress = await prisma.customerAddress.findFirst({
+    where: {
+      customerUserId: customerUser.id,
+      label: 'Home (Salt Lake)',
+    },
+  });
+
+  if (!existingDebasishAddress) {
+    await prisma.customerAddress.create({
+      data: {
+        customerUserId: customerUser.id,
+        label: 'Home (Salt Lake)',
+        recipientName: 'Debasish Ghosh',
+        phone: '9876543210',
+        addressLine1: 'Block CD, Sector 1, Salt Lake City',
+        city: 'Kolkata',
+        state: 'West Bengal',
+        postalCode: '700064',
+        latitude: 22.585,
+        longitude: 88.41,
+        isDefault: true,
+      },
+    });
+  }
+
+  // Customer 2: Rina Sen (9876543211) for Demo Scenario 2
+  const customer2 = await prisma.user.upsert({
+    where: { phone: '9876543211' },
+    update: {
+      role: UserRole.CUSTOMER,
+      status: UserStatus.ACTIVE,
+    },
+    create: {
+      phone: '9876543211',
+      role: UserRole.CUSTOMER,
+      status: UserStatus.ACTIVE,
+    },
+  });
+
+  await prisma.customerProfile.upsert({
+    where: { userId: customer2.id },
+    update: {
+      fullName: 'Rina Sen',
+      preferredLanguage: 'en',
+    },
+    create: {
+      userId: customer2.id,
+      fullName: 'Rina Sen',
+      preferredLanguage: 'en',
+    },
+  });
+
+  const existingRinaAddress = await prisma.customerAddress.findFirst({
+    where: {
+      customerUserId: customer2.id,
+      label: 'Home (Howrah)',
+    },
+  });
+
+  if (!existingRinaAddress) {
+    await prisma.customerAddress.create({
+      data: {
+        customerUserId: customer2.id,
+        label: 'Home (Howrah)',
+        recipientName: 'Rina Sen',
+        phone: '9876543211',
+        addressLine1: '42, GT Road, Howrah Maidan',
+        city: 'Howrah',
+        state: 'West Bengal',
+        postalCode: '711101',
+        latitude: 22.588,
+        longitude: 88.326,
+        isDefault: true,
+      },
+    });
+  }
+
   // Pharmacist: Demo Pharmacist (pharmacist@example.com) -> KOL-001
   const pharmacistUser = await prisma.user.upsert({
     where: { email: 'pharmacist@example.com' },
@@ -193,7 +290,8 @@ async function main() {
     where: { version: '1.0.0' },
     update: {
       name: 'Standard Operational Pharmacy Policy',
-      description: 'Initial deterministic compliance policy version 1.0.0 for prescription verification',
+      description:
+        'Initial deterministic compliance policy version 1.0.0 for prescription verification',
       status: ComplianceRuleSetStatus.ACTIVE,
       activatedByUserId: complianceAdminUser.id,
       activationReason: 'Initial deterministic baseline compliance activation',
@@ -201,7 +299,8 @@ async function main() {
     create: {
       version: '1.0.0',
       name: 'Standard Operational Pharmacy Policy',
-      description: 'Initial deterministic compliance policy version 1.0.0 for prescription verification',
+      description:
+        'Initial deterministic compliance policy version 1.0.0 for prescription verification',
       status: ComplianceRuleSetStatus.ACTIVE,
       createdByUserId: complianceAdminUser.id,
       activatedByUserId: complianceAdminUser.id,
@@ -226,7 +325,8 @@ async function main() {
       requiresPharmacistApproval: true,
       requiresH1Register: false,
       hardBlocked: false,
-      description: 'Schedule H medicines require valid prescription and explicit pharmacist approval.',
+      description:
+        'Schedule H medicines require valid prescription and explicit pharmacist approval.',
     },
     {
       medicineSchedule: MedicineSchedule.SCHEDULE_H1,
@@ -235,7 +335,8 @@ async function main() {
       requiresPharmacistApproval: true,
       requiresH1Register: true,
       hardBlocked: false,
-      description: 'Schedule H1 medicines require valid prescription, pharmacist approval, and H1 register recording.',
+      description:
+        'Schedule H1 medicines require valid prescription, pharmacist approval, and H1 register recording.',
     },
     {
       medicineSchedule: MedicineSchedule.SCHEDULE_X,
@@ -244,7 +345,8 @@ async function main() {
       requiresPharmacistApproval: false,
       requiresH1Register: false,
       hardBlocked: true,
-      description: 'Schedule X substances are hard-blocked from dispensing under the assignment policy.',
+      description:
+        'Schedule X substances are hard-blocked from dispensing under the assignment policy.',
     },
     {
       medicineSchedule: MedicineSchedule.NARCOTIC,
@@ -262,7 +364,8 @@ async function main() {
       requiresPharmacistApproval: false,
       requiresH1Register: false,
       hardBlocked: false,
-      description: 'Unclassified medicines fail closed and cannot be approved until classified by compliance admin.',
+      description:
+        'Unclassified medicines fail closed and cannot be approved until classified by compliance admin.',
     },
   ];
 

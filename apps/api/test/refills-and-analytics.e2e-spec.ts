@@ -48,7 +48,9 @@ describe('Phase 7 Refill Automation & Admin Analytics E2E', () => {
     storeId = store!.id;
 
     // 2. Fetch or create medicine (e.g. Paracetamol / Metformin)
-    const med = await prisma.medicine.findFirst({ where: { status: 'ACTIVE' } });
+    const med = await prisma.medicine.findFirst({
+      where: { status: 'ACTIVE', name: { contains: 'Metformin' } },
+    });
     medicineId = med!.id;
 
     // 3. Customer Login (OTP with fresh randomized phone to avoid rate limit)
