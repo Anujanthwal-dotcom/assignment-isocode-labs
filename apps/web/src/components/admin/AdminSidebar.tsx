@@ -45,32 +45,32 @@ export const AdminSidebar: React.FC<AdminSidebarProps> = ({ openMobile, onCloseM
       {openMobile && (
         <div
           onClick={onCloseMobile}
-          className="fixed inset-0 z-40 bg-[#14161A]/40 backdrop-blur-[1px] lg:hidden"
+          className="fixed inset-0 z-40 bg-[#0F172A]/40 backdrop-blur-[2px] lg:hidden"
         />
       )}
 
       {/* Sidebar Navigation */}
       <aside
-        className={`fixed top-0 bottom-0 left-0 z-50 flex w-[240px] flex-col border-r border-[#EAE8F0] bg-white transition-transform duration-200 lg:translate-x-0 ${
+        className={`fixed top-0 bottom-0 left-0 z-50 flex w-[240px] flex-col border-r border-[#E2E8F0] bg-white transition-transform duration-200 lg:translate-x-0 ${
           openMobile ? 'translate-x-0' : '-translate-x-full'
         }`}
       >
         {/* Brand Header */}
-        <div className="flex h-[64px] items-center justify-between border-b border-[#EAE8F0] px-4">
+        <div className="flex h-[64px] items-center justify-between border-b border-[#E2E8F0] px-4">
           <Link href="/admin" className="flex items-center gap-2.5">
-            <div className="flex h-8 w-8 items-center justify-center rounded-[8px] bg-[#6240E8] text-white shadow-xs">
+            <div className="flex h-8 w-8 items-center justify-center rounded-[8px] bg-[#0D5C5A] text-white shadow-xs">
               <Shield className="h-4.5 w-4.5" />
             </div>
             <div className="flex flex-col">
-              <span className="text-[14px] font-semibold tracking-tight text-[#351F65]">
+              <span className="font-display text-[14px] font-bold tracking-tight text-[#0D5C5A]">
                 Pharmacy Portal
               </span>
-              <span className="text-[10px] font-medium text-[#78879A]">Admin Operations</span>
+              <span className="text-[10px] font-medium text-[#64748B]">Admin Operations</span>
             </div>
           </Link>
           <button
             onClick={onCloseMobile}
-            className="p-1.5 rounded-[6px] text-slate-400 hover:bg-[#F7F5FD] hover:text-[#351F65] lg:hidden cursor-pointer"
+            className="p-1.5 rounded-[6px] text-slate-400 hover:bg-[#F0FDFA] hover:text-[#0D5C5A] lg:hidden cursor-pointer"
             aria-label="Close navigation"
           >
             <X className="h-4 w-4" />
@@ -90,11 +90,11 @@ export const AdminSidebar: React.FC<AdminSidebarProps> = ({ openMobile, onCloseM
                 onClick={onCloseMobile}
                 className={`flex h-[40px] items-center rounded-[6px] px-3 text-[14px] font-medium transition-colors gap-2.5 ${
                   isActive
-                    ? 'bg-[#F7F5FD] text-[#6240E8] font-semibold border-l-3 border-[#6240E8]'
-                    : 'text-[#6C757D] hover:bg-[#F8F9FB] hover:text-[#351F65]'
+                    ? 'bg-[#F0FDFA] text-[#0D5C5A] font-semibold border-l-3 border-[#0D5C5A]'
+                    : 'text-[#475569] hover:bg-[#F0FDFA] hover:text-[#0D5C5A]'
                 }`}
               >
-                <Icon className={`h-4 w-4 ${isActive ? 'text-[#6240E8]' : 'text-slate-400'}`} />
+                <Icon className={`h-4 w-4 ${isActive ? 'text-[#0D5C5A]' : 'text-slate-400'}`} />
                 <span>{item.label}</span>
               </Link>
             );
@@ -102,12 +102,12 @@ export const AdminSidebar: React.FC<AdminSidebarProps> = ({ openMobile, onCloseM
         </nav>
 
         {/* Administrator Profile Card in Sidebar Footer */}
-        <div className="border-t border-[#EAE8F0] p-3">
-          <div className="rounded-[8px] bg-[#F8F9FB] p-2.5 text-[12px] border border-[#EAE8F0]">
-            <p className="font-semibold text-[#351F65] truncate">
+        <div className="border-t border-[#E2E8F0] p-3">
+          <div className="rounded-[8px] bg-[#F8FAFC] p-2.5 text-[12px] border border-[#E2E8F0]">
+            <p className="font-semibold text-[#0F172A] truncate">
               {user?.profile?.fullName || 'Administrator'}
             </p>
-            <p className="text-[11px] text-[#78879A] truncate">{user?.role || 'ADMIN'}</p>
+            <p className="text-[11px] text-[#64748B] truncate">{user?.role || 'ADMIN'}</p>
           </div>
         </div>
       </aside>

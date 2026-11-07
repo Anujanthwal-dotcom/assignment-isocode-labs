@@ -3,16 +3,17 @@ import { cva, type VariantProps } from 'class-variance-authority';
 import { cn } from '@/lib/utils';
 
 export const badgeVariants = cva(
-  'inline-flex items-center justify-center h-[24px] px-[8px] rounded-[6px] text-[12px] leading-[16px] font-medium border transition-colors select-none',
+  'inline-flex items-center justify-center h-[24px] px-[10px] rounded-full text-[12px] leading-[16px] font-semibold border transition-colors select-none tracking-tight',
   {
     variants: {
       variant: {
-        success: 'bg-[#E8F8EC] text-[#0FAC26] border-[#B0E6BC]',
-        warning: 'bg-[#FFF8EC] text-[#A66B16] border-[#F6DCB0]',
-        danger: 'bg-[#FDF2F2] text-[#DC3545] border-[#F9CACA]',
-        information: 'bg-[#EBF9FD] text-[#0088AA] border-[#B4EDFB]',
-        neutral: 'bg-[#EFF2F7] text-[#6C757D] border-[#DFE0DF]',
-        purple: 'bg-[#F7F5FD] text-[#6240E8] border-[#D6D1F7]',
+        success: 'bg-[#CCFBF1] text-[#047857] border-[#99F6E4]',
+        warning: 'bg-[#FFFBEB] text-[#D97706] border-[#FDE68A]',
+        danger: 'bg-[#FEF2F2] text-[#DC2626] border-[#FECACA]',
+        information: 'bg-[#E0F2FE] text-[#0284C7] border-[#BAE6FD]',
+        neutral: 'bg-[#F1F5F9] text-[#475569] border-[#E2E8F0]',
+        primary: 'bg-[#F0FDFA] text-[#0D5C5A] border-[#99F6E4]',
+        purple: 'bg-[#EFF4FF] text-[#0284C7] border-[#BAE6FD]', // legacy backward compat
       },
     },
     defaultVariants: {
@@ -22,7 +23,8 @@ export const badgeVariants = cva(
 );
 
 export interface BadgeProps
-  extends React.HTMLAttributes<HTMLDivElement>, VariantProps<typeof badgeVariants> {}
+  extends React.HTMLAttributes<HTMLDivElement>,
+    VariantProps<typeof badgeVariants> {}
 
 export const Badge: React.FC<BadgeProps> = ({ className, variant, ...props }) => {
   return <div className={cn(badgeVariants({ variant }), className)} {...props} />;

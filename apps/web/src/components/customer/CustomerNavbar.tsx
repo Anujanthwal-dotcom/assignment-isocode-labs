@@ -69,19 +69,19 @@ export const CustomerNavbar: React.FC = () => {
   ];
 
   return (
-    <header className="sticky top-0 z-40 w-full border-b border-[#EAE8F0] bg-white shadow-xs">
+    <header className="sticky top-0 z-40 w-full border-b border-[#E2E8F0] bg-white shadow-xs">
       <div className="mx-auto flex h-[56px] sm:h-[64px] max-w-[1200px] items-center justify-between px-4 lg:px-8">
         {/* Logo & Brand */}
         <div className="flex items-center gap-6 lg:gap-8">
           <Link href="/customer" className="flex items-center gap-2.5 group">
-            <div className="flex h-8 w-8 items-center justify-center rounded-[8px] bg-[#6240E8] text-white shadow-xs group-hover:bg-[#5233D0] transition-colors">
+            <div className="flex h-8 w-8 items-center justify-center rounded-[8px] bg-[#0D5C5A] text-white shadow-xs group-hover:bg-[#0A4846] transition-colors">
               <HeartPulse className="h-4.5 w-4.5 text-white" />
             </div>
             <div className="flex flex-col">
-              <span className="text-[16px] font-bold tracking-tight text-[#351F65] leading-tight">
+              <span className="font-display text-[16px] font-bold tracking-tight text-[#0D5C5A] leading-tight">
                 Pharmacy Care
               </span>
-              <span className="text-[10px] font-medium text-[#78879A] hidden sm:block">
+              <span className="text-[10px] font-medium text-[#64748B] hidden sm:block">
                 Kolkata &amp; Howrah
               </span>
             </div>
@@ -100,8 +100,8 @@ export const CustomerNavbar: React.FC = () => {
                   href={link.href}
                   className={`rounded-[6px] px-3 py-1.5 text-[14px] font-medium transition-colors ${
                     isActive
-                      ? 'font-semibold text-[#6240E8] bg-[#F7F5FD]'
-                      : 'text-[#6C757D] hover:text-[#351F65] hover:bg-[#F7F5FD]'
+                      ? 'font-semibold text-[#0D5C5A] bg-[#F0FDFA]'
+                      : 'text-[#475569] hover:text-[#0D5C5A] hover:bg-[#F0FDFA]'
                   }`}
                 >
                   {link.label}
@@ -116,25 +116,25 @@ export const CustomerNavbar: React.FC = () => {
           {/* Notifications */}
           <Link
             href="/customer/notifications"
-            className="relative flex h-9 w-9 items-center justify-center rounded-[8px] border border-[#EAE8F0] bg-white text-[#351F65] hover:bg-[#F7F5FD] hover:text-[#6240E8] transition-colors"
+            className="relative flex h-9 w-9 items-center justify-center rounded-[8px] border border-[#E2E8F0] bg-white text-[#0F172A] hover:bg-[#F0FDFA] hover:text-[#0D5C5A] transition-colors"
             title="Notifications"
             aria-label="View notifications"
           >
             <Bell className="h-4 w-4" />
-            <span className="absolute top-2 right-2 h-1.5 w-1.5 rounded-full bg-[#6240E8]" />
+            <span className="absolute top-2 right-2 h-1.5 w-1.5 rounded-full bg-[#14B8A6]" />
           </Link>
 
           {/* Cart */}
           <Link
             href="/customer/cart"
-            className="relative flex h-9 items-center justify-center px-3 rounded-[8px] border border-[#EAE8F0] bg-white text-xs font-semibold text-[#351F65] hover:bg-[#F7F5FD] hover:text-[#6240E8] transition-colors gap-1.5"
+            className="relative flex h-9 items-center justify-center px-3 rounded-[8px] border border-[#E2E8F0] bg-white text-xs font-semibold text-[#0F172A] hover:bg-[#F0FDFA] hover:text-[#0D5C5A] transition-colors gap-1.5"
             title="Shopping Cart"
             aria-label="View shopping cart"
           >
             <ShoppingCart className="h-4 w-4" />
             <span className="hidden sm:inline">Cart</span>
             {cartCount > 0 && (
-              <span className="flex h-4 min-w-4 items-center justify-center rounded-full bg-[#6240E8] px-1 text-[10px] font-bold text-white shadow-xs">
+              <span className="flex h-4 min-w-4 items-center justify-center rounded-full bg-[#0D5C5A] px-1 text-[10px] font-bold text-white shadow-xs">
                 {cartCount > 99 ? '99+' : cartCount}
               </span>
             )}
@@ -142,8 +142,8 @@ export const CustomerNavbar: React.FC = () => {
 
           {/* Profile Dropdown */}
           <DropdownMenu>
-            <DropdownMenuTrigger className="flex items-center gap-2 rounded-[8px] border border-[#EAE8F0] bg-[#F8F9FB] px-2.5 h-9 text-[13px] font-medium text-[#351F65] hover:bg-[#F7F5FD] transition-colors focus:outline-none focus:ring-2 focus:ring-[#6240E8] cursor-pointer">
-              <div className="flex h-6 w-6 items-center justify-center rounded-full bg-[#EAE6FD] text-[#6240E8]">
+            <DropdownMenuTrigger className="flex items-center gap-2 rounded-[8px] border border-[#E2E8F0] bg-[#F8FAFC] px-2.5 h-9 text-[13px] font-medium text-[#0F172A] hover:bg-[#F0FDFA] hover:text-[#0D5C5A] transition-colors focus:outline-none focus:ring-2 focus:ring-[#14B8A6] cursor-pointer">
+              <div className="flex h-6 w-6 items-center justify-center rounded-full bg-[#CCFBF1] text-[#047857]">
                 <User className="h-3.5 w-3.5" />
               </div>
               <span className="hidden sm:inline max-w-[120px] truncate font-semibold">

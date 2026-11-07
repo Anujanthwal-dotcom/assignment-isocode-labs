@@ -1,11 +1,11 @@
 import type { Metadata } from 'next';
-import { Lexend, Inter, Noto_Sans_Bengali, Noto_Sans_Devanagari } from 'next/font/google';
+import { Plus_Jakarta_Sans, Inter, Noto_Sans_Bengali, Noto_Sans_Devanagari } from 'next/font/google';
 import { AuthProvider } from '@/lib/auth/auth-context';
 import './globals.css';
 
-const lexend = Lexend({
+const plusJakartaSans = Plus_Jakarta_Sans({
   subsets: ['latin'],
-  variable: '--font-lexend',
+  variable: '--font-plus-jakarta',
   display: 'swap',
   weight: ['400', '500', '600', '700'],
 });
@@ -14,6 +14,7 @@ const inter = Inter({
   subsets: ['latin'],
   variable: '--font-inter',
   display: 'swap',
+  weight: ['400', '500', '600', '700'],
 });
 
 const notoSansBengali = Noto_Sans_Bengali({
@@ -31,7 +32,7 @@ const notoSansDevanagari = Noto_Sans_Devanagari({
 });
 
 export const metadata: Metadata = {
-  title: 'Pharmacy Platform | Teladoc Health UI',
+  title: 'Pharmacy Care | Clinical Clarity & Care',
   description: 'Enterprise pharmacy management, clinical coordination, and compliance platform',
 };
 
@@ -43,7 +44,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${lexend.variable} ${inter.variable} ${notoSansBengali.variable} ${notoSansDevanagari.variable} antialiased min-h-screen bg-[var(--background)] text-[var(--foreground)]`}
+        className={`${plusJakartaSans.variable} ${inter.variable} ${notoSansBengali.variable} ${notoSansDevanagari.variable} antialiased min-h-screen bg-[var(--background)] text-[var(--foreground)]`}
       >
         <AuthProvider>{children}</AuthProvider>
       </body>

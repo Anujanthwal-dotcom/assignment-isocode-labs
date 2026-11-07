@@ -19,7 +19,7 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
       <div className="w-full space-y-[6px]">
         <div className="relative flex items-center w-full">
           {leftIcon && (
-            <div className="absolute left-[12px] flex items-center pointer-events-none text-[#78879A]">
+            <div className="absolute left-[12px] flex items-center pointer-events-none text-[#64748B]">
               {leftIcon}
             </div>
           )}
@@ -28,13 +28,13 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
             disabled={disabled}
             readOnly={readOnly}
             className={cn(
-              'h-[44px] w-full rounded-[8px] bg-white px-[12px] text-[14px] leading-[20px] text-[#14161A] border placeholder:text-[#ADB5BD] transition-colors',
-              'border-[#CED4DA]',
-              'focus-visible:outline-none focus-visible:border-[#6240E8] focus-visible:ring-2 focus-visible:ring-[#6240E8]/20',
+              'h-[44px] w-full rounded-[8px] bg-white px-[12px] text-[14px] leading-[20px] text-[#0F172A] border placeholder:text-[#94A3B8] transition-all duration-150',
+              'border-[#CBD5E1] hover:border-[#94A3B8]',
+              'focus-visible:outline-none focus-visible:border-[#0D5C5A] focus-visible:ring-3 focus-visible:ring-[#14B8A6]/20',
               hasError &&
-                'border-[#DC3545] focus-visible:border-[#DC3545] focus-visible:ring-[#DC3545]/20',
-              disabled && 'opacity-50 cursor-not-allowed bg-[#EFF2F7]',
-              readOnly && 'bg-[#F8F9FB] cursor-default',
+                'border-[#DC2626] bg-[#FEF2F2]/40 focus-visible:border-[#DC2626] focus-visible:ring-[#DC2626]/20',
+              disabled && 'opacity-50 cursor-not-allowed bg-[#EFF4FF]',
+              readOnly && 'bg-[#F8FAFC] cursor-default',
               leftIcon && 'pl-[38px]',
               className,
             )}
@@ -43,10 +43,12 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
           />
         </div>
         {hasError && errorMessage && (
-          <p className="text-[12px] leading-[16px] text-[#DC3545] font-normal">{errorMessage}</p>
+          <p className="text-[12px] leading-[16px] text-[#DC2626] font-medium flex items-center gap-1">
+            {errorMessage}
+          </p>
         )}
         {!hasError && helperText && (
-          <p className="text-[12px] leading-[16px] text-[#78879A] font-normal">{helperText}</p>
+          <p className="text-[12px] leading-[16px] text-[#64748B] font-normal">{helperText}</p>
         )}
       </div>
     );
@@ -66,7 +68,7 @@ export const PasswordInput = React.forwardRef<HTMLInputElement, PasswordInputPro
       <div className="relative w-full">
         <Input
           type={showPassword ? 'text' : 'password'}
-          className={cn('pr-[40px]', className)}
+          className={cn('pr-[44px]', className)}
           ref={ref}
           {...props}
         />
@@ -74,7 +76,7 @@ export const PasswordInput = React.forwardRef<HTMLInputElement, PasswordInputPro
           type="button"
           tabIndex={-1}
           onClick={() => setShowPassword(!showPassword)}
-          className="absolute right-[12px] top-[14px] text-xs font-medium text-[#78879A] hover:text-[#351F65] transition-colors"
+          className="absolute right-[12px] top-[13px] text-xs font-semibold text-[#64748B] hover:text-[#0D5C5A] transition-colors cursor-pointer"
           aria-label={showPassword ? 'Hide password' : 'Show password'}
         >
           {showPassword ? 'Hide' : 'Show'}

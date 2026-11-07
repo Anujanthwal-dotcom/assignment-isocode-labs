@@ -2,56 +2,14 @@
 
 import * as React from 'react';
 import Link from 'next/link';
-import {
-  BRAND_TOKENS,
-  NEUTRAL_TOKENS,
-  SEMANTIC_TOKENS,
-  SPACING_SCALE,
-} from '@/design-system/tokens';
 import { Button } from '@/components/ui/button';
 import { Input, SearchInput, PasswordInput } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
-import { OtpInput } from '@/components/ui/otp-input';
-import {
-  Select,
-  SelectTrigger,
-  SelectValue,
-  SelectContent,
-  SelectItem,
-} from '@/components/ui/select';
 import { Checkbox } from '@/components/ui/checkbox';
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Switch } from '@/components/ui/switch';
 import { FileUpload } from '@/components/ui/file-upload';
-import {
-  Card,
-  CardHeader,
-  CardTitle,
-  CardDescription,
-  CardContent,
-  CardFooter,
-} from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
+import { Card } from '@/components/ui/card';
 import { StatusBadge } from '@/components/shared/StatusBadge';
 import { SemanticAlert } from '@/components/shared/SemanticAlert';
-import {
-  Dialog,
-  DialogTrigger,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogDescription,
-  DialogFooter,
-  DialogClose,
-} from '@/components/ui/dialog';
-import {
-  DropdownMenu,
-  DropdownMenuTrigger,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-} from '@/components/ui/dropdown-menu';
 import { DataTable, type Column } from '@/components/shared/DataTable';
 
 interface SampleRow {
@@ -65,7 +23,6 @@ interface SampleRow {
 
 export const DesignSystemShowcase: React.FC = () => {
   const [btnLoading, setBtnLoading] = React.useState(false);
-  const [otpVal, setOtpVal] = React.useState('5021');
   const [tableState, setTableState] = React.useState<'normal' | 'loading' | 'empty' | 'error'>(
     'normal',
   );
@@ -98,619 +55,413 @@ export const DesignSystemShowcase: React.FC = () => {
     {
       key: 'code',
       header: 'Item Code',
-      render: (r) => <span className="font-mono text-[13px] text-[#6240E8]">{r.code}</span>,
+      render: (r) => <span className="tabular-nums font-mono text-[13px] text-[#0D5C5A] font-semibold">{r.code}</span>,
     },
     {
       key: 'name',
       header: 'Medicine Description',
-      render: (r) => <span className="font-semibold text-[#351F65]">{r.name}</span>,
+      render: (r) => <span className="font-semibold text-[#0F172A] font-display">{r.name}</span>,
     },
     { key: 'category', header: 'Classification' },
-    { key: 'stock', header: 'Stock Units', render: (r) => <span>{r.stock} units</span> },
+    { key: 'stock', header: 'Stock Units', render: (r) => <span className="tabular-nums">{r.stock} units</span> },
     { key: 'status', header: 'Status', render: (r) => <StatusBadge status={r.status} /> },
   ];
 
   return (
-    <div className="min-h-screen bg-[#F8F9FB] text-[#14161A] py-12 px-4 sm:px-8 lg:px-12 max-w-6xl mx-auto space-y-16">
+    <div className="min-h-screen bg-[#F8FAFC] text-[#0F172A] py-12 px-4 sm:px-8 lg:px-12 max-w-6xl mx-auto space-y-16">
       {/* Title Header */}
-      <div className="border-b border-[#EAE8F0] pb-8 space-y-2">
-        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-[6px] bg-[#F7F5FD] border border-[#D6D1F7] text-[#6240E8] text-[12px] font-semibold tracking-wider uppercase">
-          Design Identity: Teladoc Health UI
+      <div className="border-b border-[#E2E8F0] pb-8 space-y-2">
+        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#F0FDFA] border border-[#99F6E4] text-[#0D5C5A] text-[12px] font-bold tracking-wider uppercase">
+          Design Identity: Clinical Clarity &amp; Care
         </div>
-        <h1 className="text-[36px] leading-[44px] font-semibold text-[#351F65]">
-          Teladoc Health Design System
+        <h1 className="font-display text-[36px] sm:text-[40px] leading-[44px] font-bold text-[#0F172A] tracking-tight">
+          Clinical Clarity &amp; Care Design System
         </h1>
-        <p className="text-[16px] leading-[24px] text-[#6C757D]">
-          Modern, patient-first, human-centric visual language for Customer, Pharmacist, and Admin
-          portals.
+        <p className="text-[16px] leading-[26px] text-[#475569] max-w-3xl">
+          Authoritative, empathetic, meticulously organized, and serenely calm healthcare design tokens
+          for Customer, Pharmacist, and Admin operations.
         </p>
       </div>
 
-      {/* 1. Brand Colors */}
+      {/* 1. Core Palette */}
       <section id="brand-colors" className="space-y-4">
-        <div className="border-b border-[#EAE8F0] pb-2">
-          <h2 className="text-[22px] leading-[30px] font-semibold text-[#351F65]">
-            1. Brand Colors
+        <div className="border-b border-[#E2E8F0] pb-2">
+          <h2 className="font-display text-[22px] leading-[30px] font-bold text-[#0F172A]">
+            1. Core Clinical Palette
           </h2>
-          <p className="text-[14px] text-[#78879A]">
-            Teladoc Electric Purple (#6240E8), Midnight Purple (#351F65), and Cyan (#00B5E2)
-            accents.
+          <p className="text-[14px] text-[#64748B]">
+            Primary Therapeutic Teal (#0D5C5A), Secondary Eucalyptus (#14B8A6), and Tertiary Trust Blue (#0284C7).
           </p>
         </div>
-        <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-6 gap-3">
-          {Object.entries(BRAND_TOKENS).map(([token, hex]) => (
-            <div
-              key={token}
-              className="rounded-[8px] border border-[#EAE8F0] bg-white p-3 space-y-2 shadow-xs"
-            >
-              <div
-                className="h-16 w-full rounded-[6px] border border-black/5"
-                style={{ backgroundColor: hex }}
-              />
-              <div>
-                <p className="text-[14px] font-semibold text-[#351F65]">brand-{token}</p>
-                <p className="text-[12px] font-mono text-[#78879A]">{hex}</p>
-              </div>
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
+          <div className="rounded-[12px] border border-[#E2E8F0] bg-white p-3 space-y-2 shadow-xs">
+            <div className="h-16 w-full rounded-[8px] bg-[#0D5C5A]" />
+            <div>
+              <p className="text-[13px] font-bold text-[#0F172A]">Primary Teal</p>
+              <p className="text-[12px] font-mono text-[#64748B]">#0D5C5A</p>
             </div>
-          ))}
+          </div>
+
+          <div className="rounded-[12px] border border-[#E2E8F0] bg-white p-3 space-y-2 shadow-xs">
+            <div className="h-16 w-full rounded-[8px] bg-[#0A4846]" />
+            <div>
+              <p className="text-[13px] font-bold text-[#0F172A]">Teal Hover</p>
+              <p className="text-[12px] font-mono text-[#64748B]">#0A4846</p>
+            </div>
+          </div>
+
+          <div className="rounded-[12px] border border-[#E2E8F0] bg-white p-3 space-y-2 shadow-xs">
+            <div className="h-16 w-full rounded-[8px] bg-[#14B8A6]" />
+            <div>
+              <p className="text-[13px] font-bold text-[#0F172A]">Eucalyptus</p>
+              <p className="text-[12px] font-mono text-[#64748B]">#14B8A6</p>
+            </div>
+          </div>
+
+          <div className="rounded-[12px] border border-[#E2E8F0] bg-white p-3 space-y-2 shadow-xs">
+            <div className="h-16 w-full rounded-[8px] bg-[#CCFBF1] border border-[#99F6E4]" />
+            <div>
+              <p className="text-[13px] font-bold text-[#047857]">Mint Container</p>
+              <p className="text-[12px] font-mono text-[#64748B]">#CCFBF1</p>
+            </div>
+          </div>
+
+          <div className="rounded-[12px] border border-[#E2E8F0] bg-white p-3 space-y-2 shadow-xs">
+            <div className="h-16 w-full rounded-[8px] bg-[#0284C7]" />
+            <div>
+              <p className="text-[13px] font-bold text-[#0F172A]">Trust Blue</p>
+              <p className="text-[12px] font-mono text-[#64748B]">#0284C7</p>
+            </div>
+          </div>
+
+          <div className="rounded-[12px] border border-[#E2E8F0] bg-white p-3 space-y-2 shadow-xs">
+            <div className="h-16 w-full rounded-[8px] bg-[#D97706]" />
+            <div>
+              <p className="text-[13px] font-bold text-[#0F172A]">Refill Amber</p>
+              <p className="text-[12px] font-mono text-[#64748B]">#D97706</p>
+            </div>
+          </div>
         </div>
       </section>
 
-      {/* 2. Neutral Colors */}
+      {/* 2. Layered Surface Canvas */}
       <section id="neutral-colors" className="space-y-4">
-        <div className="border-b border-[#EAE8F0] pb-2">
-          <h2 className="text-[22px] leading-[30px] font-semibold text-[#351F65]">
-            2. Neutral Colors
+        <div className="border-b border-[#E2E8F0] pb-2">
+          <h2 className="font-display text-[22px] leading-[30px] font-bold text-[#0F172A]">
+            2. Layered Surface Canvas
           </h2>
-          <p className="text-[14px] text-[#78879A]">
-            Crisp white (#FFFFFF), modern telehealth surface (#F8F9FB), and clean neutral dividers.
+          <p className="text-[14px] text-[#64748B]">
+            Pristine clinical white (#FFFFFF), resting slate canvas (#F8FAFC), and calming mint wash (#F0FDFA).
           </p>
         </div>
         <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-6 gap-3">
-          {Object.entries(NEUTRAL_TOKENS).map(([token, hex]) => (
-            <div
-              key={token}
-              className="rounded-[8px] border border-[#EAE8F0] bg-white p-3 space-y-2 shadow-xs"
-            >
-              <div
-                className="h-14 w-full rounded-[6px] border border-black/10"
-                style={{ backgroundColor: hex }}
-              />
-              <div>
-                <p className="text-[13px] font-semibold text-[#351F65]">neutral-{token}</p>
-                <p className="text-[12px] font-mono text-[#78879A]">{hex}</p>
-              </div>
+          <div className="rounded-[12px] border border-[#E2E8F0] bg-white p-3 space-y-2 shadow-xs">
+            <div className="h-14 w-full rounded-[8px] border border-[#E2E8F0] bg-white" />
+            <div>
+              <p className="text-[13px] font-bold text-[#0F172A]">Clinical White</p>
+              <p className="text-[12px] font-mono text-[#64748B]">#FFFFFF</p>
             </div>
-          ))}
+          </div>
+
+          <div className="rounded-[12px] border border-[#E2E8F0] bg-white p-3 space-y-2 shadow-xs">
+            <div className="h-14 w-full rounded-[8px] border border-[#E2E8F0] bg-[#F8FAFC]" />
+            <div>
+              <p className="text-[13px] font-bold text-[#0F172A]">Base Canvas</p>
+              <p className="text-[12px] font-mono text-[#64748B]">#F8FAFC</p>
+            </div>
+          </div>
+
+          <div className="rounded-[12px] border border-[#E2E8F0] bg-white p-3 space-y-2 shadow-xs">
+            <div className="h-14 w-full rounded-[8px] border border-[#99F6E4] bg-[#F0FDFA]" />
+            <div>
+              <p className="text-[13px] font-bold text-[#047857]">Mint Wash</p>
+              <p className="text-[12px] font-mono text-[#64748B]">#F0FDFA</p>
+            </div>
+          </div>
+
+          <div className="rounded-[12px] border border-[#E2E8F0] bg-white p-3 space-y-2 shadow-xs">
+            <div className="h-14 w-full rounded-[8px] border border-[#CBD5E1] bg-[#E2E8F0]" />
+            <div>
+              <p className="text-[13px] font-bold text-[#0F172A]">Border Slate</p>
+              <p className="text-[12px] font-mono text-[#64748B]">#E2E8F0</p>
+            </div>
+          </div>
+
+          <div className="rounded-[12px] border border-[#E2E8F0] bg-white p-3 space-y-2 shadow-xs">
+            <div className="h-14 w-full rounded-[8px] bg-[#0F172A]" />
+            <div>
+              <p className="text-[13px] font-bold text-[#0F172A]">Headings Slate</p>
+              <p className="text-[12px] font-mono text-[#64748B]">#0F172A</p>
+            </div>
+          </div>
+
+          <div className="rounded-[12px] border border-[#E2E8F0] bg-white p-3 space-y-2 shadow-xs">
+            <div className="h-14 w-full rounded-[8px] bg-[#475569]" />
+            <div>
+              <p className="text-[13px] font-bold text-[#0F172A]">Body Slate</p>
+              <p className="text-[12px] font-mono text-[#64748B]">#475569</p>
+            </div>
+          </div>
         </div>
       </section>
 
-      {/* 3. Semantic Colors */}
+      {/* 3. Semantic Accents */}
       <section id="semantic-colors" className="space-y-4">
-        <div className="border-b border-[#EAE8F0] pb-2">
-          <h2 className="text-[22px] leading-[30px] font-semibold text-[#351F65]">
-            3. Semantic Colors
+        <div className="border-b border-[#E2E8F0] pb-2">
+          <h2 className="font-display text-[22px] leading-[30px] font-bold text-[#0F172A]">
+            3. Semantic Safety Accents
           </h2>
-          <p className="text-[14px] text-[#78879A]">
-            Clinical Health Green (#0FAC26), Warm Warning (#A66B16), Danger (#DC3545), and
-            Telehealth Cyan (#0088AA).
+          <p className="text-[14px] text-[#64748B]">
+            Clinical Green (#059669), Adherence Marigold Amber (#D97706), Contraindication Red (#DC2626), and Trust Blue (#0284C7).
           </p>
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          {Object.entries(SEMANTIC_TOKENS).map(([name, val]) => (
-            <div
-              key={name}
-              className="rounded-[8px] border border-[#EAE8F0] bg-white p-4 space-y-3 shadow-xs"
-            >
-              <div
-                className="h-16 w-full rounded-[6px] border flex items-center justify-center font-semibold capitalize text-[14px]"
-                style={{
-                  backgroundColor: val.background,
-                  color: val.foreground,
-                  borderColor: val.border,
-                }}
-              >
-                {name} Status
+          <div className="rounded-[12px] border border-[#99F6E4] bg-white p-4 space-y-3 shadow-xs">
+            <div className="h-16 w-full rounded-[8px] border border-[#99F6E4] bg-[#CCFBF1] text-[#047857] flex items-center justify-center font-bold text-[14px]">
+              Verified &amp; Safe
+            </div>
+            <div className="space-y-1 text-[12px]">
+              <div className="flex justify-between">
+                <span className="text-[#64748B]">Foreground:</span>
+                <span className="font-mono text-[#047857] font-bold">#059669</span>
               </div>
-              <div className="space-y-1 text-[12px]">
-                <div className="flex justify-between">
-                  <span className="text-[#78879A]">Foreground:</span>
-                  <span className="font-mono text-[#351F65] font-semibold">{val.foreground}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-[#78879A]">Background:</span>
-                  <span className="font-mono text-[#14161A]">{val.background}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-[#78879A]">Border:</span>
-                  <span className="font-mono text-[#14161A]">{val.border}</span>
-                </div>
+              <div className="flex justify-between">
+                <span className="text-[#64748B]">Base Wash:</span>
+                <span className="font-mono text-[#0F172A]">#CCFBF1</span>
               </div>
             </div>
-          ))}
+          </div>
+
+          <div className="rounded-[12px] border border-[#FDE68A] bg-white p-4 space-y-3 shadow-xs">
+            <div className="h-16 w-full rounded-[8px] border border-[#FDE68A] bg-[#FFFBEB] text-[#D97706] flex items-center justify-center font-bold text-[14px]">
+              Refill Notice
+            </div>
+            <div className="space-y-1 text-[12px]">
+              <div className="flex justify-between">
+                <span className="text-[#64748B]">Foreground:</span>
+                <span className="font-mono text-[#D97706] font-bold">#D97706</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-[#64748B]">Base Wash:</span>
+                <span className="font-mono text-[#0F172A]">#FFFBEB</span>
+              </div>
+            </div>
+          </div>
+
+          <div className="rounded-[12px] border border-[#FECACA] bg-white p-4 space-y-3 shadow-xs">
+            <div className="h-16 w-full rounded-[8px] border border-[#FECACA] bg-[#FEF2F2] text-[#DC2626] flex items-center justify-center font-bold text-[14px]">
+              Warning / Alert
+            </div>
+            <div className="space-y-1 text-[12px]">
+              <div className="flex justify-between">
+                <span className="text-[#64748B]">Foreground:</span>
+                <span className="font-mono text-[#DC2626] font-bold">#DC2626</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-[#64748B]">Base Wash:</span>
+                <span className="font-mono text-[#0F172A]">#FEF2F2</span>
+              </div>
+            </div>
+          </div>
+
+          <div className="rounded-[12px] border border-[#BAE6FD] bg-white p-4 space-y-3 shadow-xs">
+            <div className="h-16 w-full rounded-[8px] border border-[#BAE6FD] bg-[#E0F2FE] text-[#0284C7] flex items-center justify-center font-bold text-[14px]">
+              Clinical Info
+            </div>
+            <div className="space-y-1 text-[12px]">
+              <div className="flex justify-between">
+                <span className="text-[#64748B]">Foreground:</span>
+                <span className="font-mono text-[#0284C7] font-bold">#0284C7</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-[#64748B]">Base Wash:</span>
+                <span className="font-mono text-[#0F172A]">#E0F2FE</span>
+              </div>
+            </div>
+          </div>
         </div>
       </section>
 
       {/* 4. Typography Scale */}
       <section id="typography-scale" className="space-y-4">
-        <div className="border-b border-[#EAE8F0] pb-2">
-          <h2 className="text-[22px] leading-[30px] font-semibold text-[#351F65]">
-            4. Typography Scale (Lexend + Inter)
+        <div className="border-b border-[#E2E8F0] pb-2">
+          <h2 className="font-display text-[22px] leading-[30px] font-bold text-[#0F172A]">
+            4. Typography Scale (Plus Jakarta Sans + Inter + Tabular Nums)
           </h2>
-          <p className="text-[14px] text-[#78879A]">
-            Teladoc&apos;s signature Lexend geometric sans-serif for clinical readability and
-            patient trust.
+          <p className="text-[14px] text-[#64748B]">
+            Display &amp; Headings in Plus Jakarta Sans. Clinical body and dosage figures in Inter with tabular digits.
           </p>
         </div>
-        <div className="divide-y divide-[#EAE8F0] rounded-[12px] border border-[#EAE8F0] bg-white p-6 space-y-6 shadow-xs">
+        <div className="divide-y divide-[#E2E8F0] rounded-[16px] border border-[#E2E8F0] bg-white p-6 space-y-6 shadow-xs">
           <div className="pt-2">
-            <span className="text-[12px] text-[#78879A] font-mono block">
-              display (36px / 44px / 600)
+            <span className="text-[12px] text-[#64748B] font-mono block">
+              headline-xl (Plus Jakarta Sans &bull; 40px / 52px / 700)
             </span>
-            <p className="typography-display text-[#351F65]">Teladoc Health Virtual Pharmacy</p>
+            <p className="typography-headline-xl text-[#0F172A]">Certified Clinical Pharmacy Care</p>
           </div>
           <div className="pt-6">
-            <span className="text-[12px] text-[#78879A] font-mono block">
-              page-title (28px / 36px / 600)
+            <span className="text-[12px] text-[#64748B] font-mono block">
+              headline-lg (Plus Jakarta Sans &bull; 32px / 40px / 600)
             </span>
-            <p className="typography-page-title text-[#351F65]">
-              Clinical Prescription Verification
+            <p className="typography-headline-lg text-[#0F172A]">
+              Prescription Verification &amp; Dispensing Protocol
             </p>
           </div>
           <div className="pt-6">
-            <span className="text-[12px] text-[#78879A] font-mono block">
-              section-title (22px / 30px / 600)
+            <span className="text-[12px] text-[#64748B] font-mono block">
+              headline-md (Plus Jakarta Sans &bull; 22px / 28px / 600)
             </span>
-            <p className="typography-section-title text-[#351F65]">
-              Schedule H Regulatory Compliance Guard
+            <p className="typography-headline-md text-[#0D5C5A]">
+              Schedule H1 Regulatory Sign-Off
             </p>
           </div>
           <div className="pt-6">
-            <span className="text-[12px] text-[#78879A] font-mono block">
-              card-title (18px / 26px / 600)
+            <span className="text-[12px] text-[#64748B] font-mono block">
+              body-lg (Inter &bull; 17px / 26px / 400)
             </span>
-            <p className="typography-card-title text-[#351F65]">Patient Medication Profile</p>
-          </div>
-          <div className="pt-6">
-            <span className="text-[12px] text-[#78879A] font-mono block">
-              body (16px / 24px / 400)
-            </span>
-            <p className="typography-body text-[#14161A]">
-              Regular body text for telehealth care directions, pharmacist notes, and customer
-              instructions.
+            <p className="typography-body-lg text-[#475569]">
+              Patient medication directions, drug-drug interaction warnings, and intake summaries.
             </p>
           </div>
           <div className="pt-6">
-            <span className="text-[12px] text-[#78879A] font-mono block">
-              body-medium (16px / 24px / 500)
+            <span className="text-[12px] text-[#64748B] font-mono block">
+              dosage &amp; pricing tabular numbers (tnum &bull; tabular-nums)
             </span>
-            <p className="typography-body-medium text-[#351F65]">
-              Medium weight body text for highlighted dosage instructions and doctor precautions.
+            <p className="tabular-nums font-mono text-[18px] font-bold text-[#0D5C5A]">
+              ₹1,450.00 &bull; 500mg BID &bull; Qty: 60 tabs &bull; Refills: 3 remaining
             </p>
-          </div>
-          <div className="pt-6">
-            <span className="text-[12px] text-[#78879A] font-mono block">
-              secondary (14px / 20px / 400)
-            </span>
-            <p className="typography-secondary text-[#78879A]">
-              Supporting text for helper hints, secondary labels, and column headers.
-            </p>
-          </div>
-          <div className="pt-6">
-            <span className="text-[12px] text-[#78879A] font-mono block">
-              caption (12px / 16px / 400)
-            </span>
-            <p className="typography-caption text-[#ADB5BD]">
-              Clinical metadata, timestamps, license IDs, and fine regulatory details.
-            </p>
-          </div>
-          <div className="pt-6">
-            <span className="text-[12px] text-[#78879A] font-mono block">
-              button (14px / 20px / 600)
-            </span>
-            <p className="typography-button text-[#6240E8]">Primary Action Label</p>
           </div>
         </div>
       </section>
 
-      {/* 5. Spacing Scale */}
-      <section id="spacing-scale" className="space-y-4">
-        <div className="border-b border-[#EAE8F0] pb-2">
-          <h2 className="text-[22px] leading-[30px] font-semibold text-[#351F65]">
-            5. Spacing Scale
-          </h2>
-          <p className="text-[14px] text-[#78879A]">
-            4px base scale: 1 (4px), 2 (8px), 3 (12px), 4 (16px), 5 (20px), 6 (24px), 8 (32px), 10
-            (40px), 12 (48px), 16 (64px).
-          </p>
-        </div>
-        <div className="rounded-[12px] border border-[#EAE8F0] bg-white p-6 space-y-3 shadow-xs">
-          {Object.entries(SPACING_SCALE).map(([step, px]) => (
-            <div key={step} className="flex items-center gap-4 text-[13px]">
-              <span className="w-16 font-mono text-[#78879A]">Space {step}</span>
-              <span className="w-14 font-mono font-semibold text-[#351F65]">{px}px</span>
-              <div
-                className="h-5 rounded-[4px] bg-[#6240E8]"
-                style={{ width: `${px * 4}px`, maxWidth: '100%' }}
-              />
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* 6. Border Radius Examples */}
-      <section id="border-radius-examples" className="space-y-4">
-        <div className="border-b border-[#EAE8F0] pb-2">
-          <h2 className="text-[22px] leading-[30px] font-semibold text-[#351F65]">
-            6. Border Radius Examples
-          </h2>
-          <p className="text-[14px] text-[#78879A]">
-            Controls &amp; Badges (6px), Buttons &amp; Inputs (8px), Cards &amp; Panels (12px).
-          </p>
-        </div>
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-          <div className="rounded-[6px] border border-[#EAE8F0] bg-white p-5 text-center shadow-xs">
-            <span className="text-[14px] font-semibold text-[#351F65] block">6px Radius</span>
-            <span className="text-[12px] text-[#78879A]">Controls, Badges</span>
-          </div>
-          <div className="rounded-[8px] border border-[#EAE8F0] bg-white p-5 text-center shadow-xs">
-            <span className="text-[14px] font-semibold text-[#351F65] block">8px Radius</span>
-            <span className="text-[12px] text-[#78879A]">Buttons, Inputs, Dropdowns</span>
-          </div>
-          <div className="rounded-[12px] border border-[#EAE8F0] bg-white p-5 text-center shadow-xs">
-            <span className="text-[14px] font-semibold text-[#351F65] block">12px Radius</span>
-            <span className="text-[12px] text-[#78879A]">Cards, Dialogs, Panels</span>
-          </div>
-        </div>
-      </section>
-
-      {/* 7. Button Variants and Sizes */}
+      {/* 5. Buttons */}
       <section id="button-variants-and-sizes" className="space-y-6">
-        <div className="border-b border-[#EAE8F0] pb-2">
-          <h2 className="text-[22px] leading-[30px] font-semibold text-[#351F65]">
-            7. Button Variants and Sizes
+        <div className="border-b border-[#E2E8F0] pb-2">
+          <h2 className="font-display text-[22px] leading-[30px] font-bold text-[#0F172A]">
+            5. Button Hierarchy &amp; Touch Affordances
           </h2>
-          <p className="text-[14px] text-[#78879A]">
-            Primary Electric Purple (#6240E8), Secondary Lilac (#F7F5FD), Teal (#00B5E2), Outline,
-            Ghost, and Destructive.
+          <p className="text-[14px] text-[#64748B]">
+            Primary Therapeutic Teal (#0D5C5A), Secondary White/Teal (#F0FDFA), Refill Amber (#D97706), and Outline.
           </p>
         </div>
 
-        {/* Variants */}
-        <div className="rounded-[12px] border border-[#EAE8F0] bg-white p-6 space-y-4 shadow-xs">
-          <h3 className="text-[13px] font-semibold uppercase tracking-wider text-[#78879A]">
-            Variants (Medium Size - 40px)
+        <div className="rounded-[16px] border border-[#E2E8F0] bg-white p-6 space-y-4 shadow-xs">
+          <h3 className="text-[13px] font-bold uppercase tracking-wider text-[#64748B]">
+            Variants (44px min-height / 8px radius)
           </h3>
           <div className="flex flex-wrap items-center gap-3">
-            <Button variant="primary">Primary (Electric Purple)</Button>
-            <Button variant="secondary">Secondary (Lilac)</Button>
-            <Button variant="teal">Teal Highlight</Button>
+            <Button variant="primary">Primary (Therapeutic Teal)</Button>
+            <Button variant="secondary">Secondary (Mint Wash)</Button>
+            <Button variant="refill">Refill Action (Amber)</Button>
             <Button variant="outline">Outline</Button>
             <Button variant="ghost">Ghost</Button>
             <Button variant="destructive">Destructive</Button>
           </div>
         </div>
 
-        {/* Sizes & States */}
-        <div className="rounded-[12px] border border-[#EAE8F0] bg-white p-6 space-y-4 shadow-xs">
-          <h3 className="text-[13px] font-semibold uppercase tracking-wider text-[#78879A]">
+        <div className="rounded-[16px] border border-[#E2E8F0] bg-white p-6 space-y-4 shadow-xs">
+          <h3 className="text-[13px] font-bold uppercase tracking-wider text-[#64748B]">
             Sizes &amp; Interaction States
           </h3>
           <div className="flex flex-wrap items-center gap-3">
-            <Button size="sm">Small (32px)</Button>
-            <Button size="md">Medium (40px)</Button>
+            <Button size="sm">Small (34px)</Button>
+            <Button size="md">Medium (44px)</Button>
             <Button size="lg">Large (48px)</Button>
-            <Button size="icon" variant="outline" aria-label="Add item">
-              <span className="font-bold text-[#6240E8]">+</span>
-            </Button>
             <Button
               variant="primary"
               loading={btnLoading}
               onClick={() => {
                 setBtnLoading(true);
-                setTimeout(() => setBtnLoading(false), 1500);
+                setTimeout(() => setBtnLoading(false), 1200);
               }}
             >
-              Click for Loading State
-            </Button>
-            <Button variant="primary" disabled>
-              Disabled (50% Opacity)
+              {btnLoading ? 'Verifying...' : 'Interactive Async State'}
             </Button>
           </div>
         </div>
       </section>
 
-      {/* 8. Input Variants and States */}
-      <section id="input-variants-and-states" className="space-y-6">
-        <div className="border-b border-[#EAE8F0] pb-2">
-          <h2 className="text-[22px] leading-[30px] font-semibold text-[#351F65]">
-            8. Input Variants and States
+      {/* 6. Form Controls */}
+      <section id="form-controls" className="space-y-6">
+        <div className="border-b border-[#E2E8F0] pb-2">
+          <h2 className="font-display text-[22px] leading-[30px] font-bold text-[#0F172A]">
+            6. Form Controls &amp; Input Indicators
           </h2>
-          <p className="text-[14px] text-[#78879A]">
-            Standard height 44px, radius 8px, purple focus glow, and high-contrast labels.
+          <p className="text-[14px] text-[#64748B]">
+            Clean white fields, #CBD5E1 borders, and soft #14B8A6 focus ring halos.
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 rounded-[12px] border border-[#EAE8F0] bg-white p-6 shadow-xs">
-          <div className="space-y-1">
-            <label className="text-[14px] font-medium text-[#351F65]">
-              Standard Text Input (Default)
-            </label>
-            <Input placeholder="Enter patient name..." />
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="space-y-4 rounded-[16px] border border-[#E2E8F0] bg-white p-6 shadow-xs">
+            <Input placeholder="Patient Full Name (e.g. Debasish Ghosh)" />
+            <PasswordInput placeholder="Argon2id password" />
+            <SearchInput placeholder="Search active medicine ingredients..." />
+            <Input error="Prescription required for Schedule H item" placeholder="Dosage specification" />
           </div>
 
-          <div className="space-y-1">
-            <label className="text-[14px] font-medium text-[#351F65]">Search Input</label>
-            <SearchInput placeholder="Search medicines by salt or brand..." />
-          </div>
-
-          <div className="space-y-1">
-            <label className="text-[14px] font-medium text-[#351F65]">
-              Password Input (with Toggle)
-            </label>
-            <PasswordInput defaultValue="secret-license-key" />
-          </div>
-
-          <div className="space-y-1">
-            <label className="text-[14px] font-medium text-[#351F65]">Error State</label>
-            <Input
-              defaultValue="invalid-order-id"
-              error="Valid prescription order reference required (e.g. RX-50214)"
-            />
-          </div>
-
-          <div className="space-y-1">
-            <label className="text-[14px] font-medium text-[#351F65]">Disabled State</label>
-            <Input disabled value="System locked field" />
-          </div>
-
-          <div className="space-y-1">
-            <label className="text-[14px] font-medium text-[#351F65]">Read-Only State</label>
-            <Input readOnly value="Salt Lake Store Hub #WB-KOL-014" />
-          </div>
-
-          <div className="space-y-1 md:col-span-2">
-            <label className="text-[14px] font-medium text-[#351F65]">OTP Input (4-6 digits)</label>
-            <OtpInput value={otpVal} onChange={setOtpVal} length={6} />
-          </div>
-
-          <div className="space-y-1 md:col-span-2">
-            <label className="text-[14px] font-medium text-[#351F65]">
-              Textarea (min-height 100px)
-            </label>
-            <Textarea placeholder="Enter clinical pharmacist verification remarks..." />
-          </div>
-
-          <div className="space-y-1">
-            <label className="text-[14px] font-medium text-[#351F65]">Select Component</label>
-            <Select defaultValue="salt-lake">
-              <SelectTrigger>
-                <SelectValue placeholder="Select store hub" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="salt-lake">Salt Lake Hub</SelectItem>
-                <SelectItem value="new-town">New Town Central</SelectItem>
-                <SelectItem value="ballygunge">Ballygunge Branch</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-
-          <div className="space-y-3 pt-2">
-            <label className="text-[14px] font-medium text-[#351F65] block">
-              Checkbox, Switch &amp; Radio
-            </label>
-            <div className="flex flex-wrap items-center gap-6">
-              <label className="flex items-center gap-2 cursor-pointer text-[14px] text-[#14161A]">
-                <Checkbox defaultChecked />
-                <span>Verify Doctor Sign-Off</span>
+          <div className="space-y-5 rounded-[16px] border border-[#E2E8F0] bg-white p-6 shadow-xs">
+            <div className="flex items-center gap-3">
+              <Checkbox id="demo-check" defaultChecked />
+              <label htmlFor="demo-check" className="text-sm font-semibold text-[#0F172A] cursor-pointer">
+                Schedule H1 compliance signed by registered pharmacist
               </label>
-
-              <label className="flex items-center gap-2 cursor-pointer text-[14px] text-[#14161A]">
-                <Switch defaultChecked />
-                <span>Auto-Dispatch</span>
-              </label>
-
-              <RadioGroup defaultValue="schedule-h" className="flex items-center gap-4">
-                <div className="flex items-center gap-2">
-                  <RadioGroupItem value="schedule-h" id="r1" />
-                  <label htmlFor="r1" className="text-[14px] cursor-pointer text-[#14161A]">
-                    Schedule H
-                  </label>
-                </div>
-                <div className="flex items-center gap-2">
-                  <RadioGroupItem value="schedule-x" id="r2" />
-                  <label htmlFor="r2" className="text-[14px] cursor-pointer text-[#14161A]">
-                    Schedule X
-                  </label>
-                </div>
-              </RadioGroup>
             </div>
-          </div>
 
-          <div className="space-y-1 md:col-span-2">
-            <label className="text-[14px] font-medium text-[#351F65]">File Upload Dropzone</label>
-            <FileUpload />
+            <div className="flex items-center gap-3">
+              <Switch id="demo-switch" defaultChecked />
+              <label htmlFor="demo-switch" className="text-sm font-semibold text-[#0F172A] cursor-pointer">
+                Cold-chain storage packaging required (2°C - 8°C)
+              </label>
+            </div>
+
+            <FileUpload label="Upload Scanned Prescription (Rx)" helperText="PDF, PNG, JPG up to 10MB" />
           </div>
         </div>
       </section>
 
-      {/* 9. Cards */}
-      <section id="cards" className="space-y-4">
-        <div className="border-b border-[#EAE8F0] pb-2">
-          <h2 className="text-[22px] leading-[30px] font-semibold text-[#351F65]">9. Cards</h2>
-          <p className="text-[14px] text-[#78879A]">
-            White background, 1px solid #EAE8F0 border, 12px radius, 20px padding with soft modern
-            shadow.
-          </p>
-        </div>
-        <Card className="max-w-xl">
-          <CardHeader>
-            <CardTitle>Upcoming Medication Refill</CardTitle>
-            <CardDescription>
-              Telmisartan 40 mg &bull; Prescribed by Dr. S. Mukherjee
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <p className="text-[14px] text-[#14161A]">
-              Patient refill is scheduled for dispatch in 5 days. Ensure cold-chain compliance if
-              applicable.
-            </p>
-          </CardContent>
-          <CardFooter className="justify-between border-t border-[#EAE8F0]">
-            <span className="text-[12px] text-[#78879A]">Prescription ref: RX-50214</span>
-            <Button size="sm" variant="primary">
-              Approve Refill
-            </Button>
-          </CardFooter>
-        </Card>
-      </section>
-
-      {/* 10. Status Badges */}
-      <section id="status-badges" className="space-y-4">
-        <div className="border-b border-[#EAE8F0] pb-2">
-          <h2 className="text-[22px] leading-[30px] font-semibold text-[#351F65]">
-            10. Status Badges
+      {/* 7. Alert Banners with Left Indicators */}
+      <section id="alert-banners" className="space-y-4">
+        <div className="border-b border-[#E2E8F0] pb-2">
+          <h2 className="font-display text-[22px] leading-[30px] font-bold text-[#0F172A]">
+            7. Alert Banners with 4px Dual-Tone Left Indicators
           </h2>
-          <p className="text-[14px] text-[#78879A]">
-            Height 24px, padding 8px, font 12px weight 500, radius 6px with distinct readable
-            labels.
+          <p className="text-[14px] text-[#64748B]">
+            Explicit regulatory feedback indicators with dual-tone left borders.
           </p>
         </div>
-        <div className="flex flex-wrap items-center gap-3 rounded-[12px] border border-[#EAE8F0] bg-white p-6 shadow-xs">
-          <Badge variant="purple">Clinical Care (Purple)</Badge>
-          <Badge variant="success">Verified (Success)</Badge>
-          <Badge variant="warning">Pending Review (Warning)</Badge>
-          <Badge variant="danger">Blocked (Danger)</Badge>
-          <Badge variant="information">Schedule H (Info / Cyan)</Badge>
-          <Badge variant="neutral">Draft (Neutral)</Badge>
-        </div>
-      </section>
 
-      {/* 11. Alerts */}
-      <section id="alerts" className="space-y-4">
-        <div className="border-b border-[#EAE8F0] pb-2">
-          <h2 className="text-[22px] leading-[30px] font-semibold text-[#351F65]">11. Alerts</h2>
-          <p className="text-[14px] text-[#78879A]">
-            Semantic alerts with appropriate Lucide icons, title, description, and optional action.
-          </p>
-        </div>
         <div className="space-y-3">
           <SemanticAlert
             type="success"
-            title="Prescription Sign-Off Verified"
-            description="All clinical schedule validations passed successfully. Order ready for store dispatch."
+            title="Prescription Verified Safe"
+            description="All 3 medication items cross-checked against batch records and signed off by licensed pharmacist."
           />
           <SemanticAlert
             type="warning"
-            title="Schedule H Verification Warning"
-            description="Prescription upload date is nearing 6 months validity limit. Re-confirmation advised."
+            title="Auto-Ship Refill Deadline"
+            description="5 doses remaining in current cycle. Next shipment will dispatch from Salt Lake store in 48 hours."
           />
           <SemanticAlert
             type="error"
-            title="Schedule X Compliance Block"
-            description="Dispensing restricted narcotics requires physical doctor stamp verification."
-            action={
-              <Button size="sm" variant="destructive">
-                View Audit Detail
-              </Button>
-            }
-          />
-          <SemanticAlert
-            type="information"
-            title="Store Transfer Intake"
-            description="Order routed to Salt Lake store hub for local cold-chain delivery."
+            title="Critical Schedule X Contraindication Guard"
+            description="Duplicate prescription detected across stores. Verification halted pending chief pharmacist review."
           />
         </div>
       </section>
 
-      {/* 12. Dialog Example */}
-      <section id="dialog-example" className="space-y-4">
-        <div className="border-b border-[#EAE8F0] pb-2">
-          <h2 className="text-[22px] leading-[30px] font-semibold text-[#351F65]">
-            12. Dialog Example
-          </h2>
-          <p className="text-[14px] text-[#78879A]">
-            Max width 480px, padding 24px, radius 12px, elevation shadow 0 16px 36px rgba(53, 31,
-            101, 0.16).
-          </p>
-        </div>
-        <div className="rounded-[12px] border border-[#EAE8F0] bg-white p-6 shadow-xs">
-          <Dialog>
-            <DialogTrigger asChild>
-              <Button variant="primary">Open Verification Dialog</Button>
-            </DialogTrigger>
-            <DialogContent>
-              <DialogHeader>
-                <DialogTitle>Confirm Pharmacist Sign-Off</DialogTitle>
-                <DialogDescription>
-                  You are approving prescription RX-50214 for Telmisartan 40 mg under Schedule H
-                  guidelines.
-                </DialogDescription>
-              </DialogHeader>
-              <div className="py-2 text-[14px] text-[#14161A] space-y-2">
-                <p>
-                  <strong className="text-[#351F65]">Patient:</strong> Mother (Protima Ghosh, 68y)
-                </p>
-                <p>
-                  <strong className="text-[#351F65]">Registered Hub:</strong> Salt Lake Hub
-                </p>
-              </div>
-              <DialogFooter>
-                <DialogClose asChild>
-                  <Button variant="outline">Cancel</Button>
-                </DialogClose>
-                <DialogClose asChild>
-                  <Button variant="primary">Confirm &amp; Sign</Button>
-                </DialogClose>
-              </DialogFooter>
-            </DialogContent>
-          </Dialog>
-        </div>
-      </section>
-
-      {/* 13. Dropdown Example */}
-      <section id="dropdown-example" className="space-y-4">
-        <div className="border-b border-[#EAE8F0] pb-2">
-          <h2 className="text-[22px] leading-[30px] font-semibold text-[#351F65]">
-            13. Dropdown Example
-          </h2>
-          <p className="text-[14px] text-[#78879A]">
-            Min width 180px, radius 8px, item height 36px, shadow 0 4px 18px rgba(53, 31, 101,
-            0.10).
-          </p>
-        </div>
-        <div className="rounded-[12px] border border-[#EAE8F0] bg-white p-6 shadow-xs">
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="outline">
-                Actions Menu <span className="ml-2 text-xs text-[#6240E8]">▼</span>
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent>
-              <DropdownMenuLabel>Prescription Actions</DropdownMenuLabel>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem>View High-Res Scan</DropdownMenuItem>
-              <DropdownMenuItem>Verify Doctor Stamp</DropdownMenuItem>
-              <DropdownMenuItem>Reassign Store Hub</DropdownMenuItem>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem destructive>Reject Order</DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        </div>
-      </section>
-
-      {/* 14. Data Table Example */}
+      {/* 8. Data Table Example */}
       <section id="data-table-example" className="space-y-4">
-        <div className="border-b border-[#EAE8F0] pb-2 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <div className="border-b border-[#E2E8F0] pb-2 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div>
-            <h2 className="text-[22px] leading-[30px] font-semibold text-[#351F65]">
-              14. Data Table Example
+            <h2 className="font-display text-[22px] leading-[30px] font-bold text-[#0F172A]">
+              8. Clinical Inventory Table
             </h2>
-            <p className="text-[14px] text-[#78879A]">
-              Header 44px, Body row 52px, Cell px 16px, border #EAE8F0, hover #F7F5FD.
+            <p className="text-[14px] text-[#64748B]">
+              Standard data grid with tabular numerical figures and responsive state toggles.
             </p>
           </div>
-          <div className="flex items-center gap-1.5 self-start sm:self-auto bg-white p-1 rounded-[8px] border border-[#EAE8F0] shadow-xs">
+          <div className="flex items-center gap-1.5 self-start sm:self-auto bg-white p-1 rounded-[8px] border border-[#CBD5E1] shadow-xs">
             <Button
               size="sm"
               variant={tableState === 'normal' ? 'primary' : 'ghost'}
@@ -753,62 +504,59 @@ export const DesignSystemShowcase: React.FC = () => {
         />
       </section>
 
-      {/* 15. Responsive Layout Examples */}
-      <section id="responsive-layout-examples" className="space-y-4">
-        <div className="border-b border-[#EAE8F0] pb-2">
-          <h2 className="text-[22px] leading-[30px] font-semibold text-[#351F65]">
-            15. Responsive Layout Examples
+      {/* 9. Responsive Portals Navigation */}
+      <section id="portals-navigation" className="space-y-4">
+        <div className="border-b border-[#E2E8F0] pb-2">
+          <h2 className="font-display text-[22px] leading-[30px] font-bold text-[#0F172A]">
+            9. Portals in Clinical Clarity &amp; Care
           </h2>
-          <p className="text-[14px] text-[#78879A]">
-            Portal previews showcasing the Teladoc Health visual language.
+          <p className="text-[14px] text-[#64748B]">
+            All three core portals styled with unified therapeutic teal and eucalyptus aesthetics.
           </p>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <Link href="/customer" className="group">
-            <Card className="h-full bg-white hover:border-[#6240E8] transition-colors p-5 space-y-3">
+            <Card className="h-full bg-white hover:border-[#0D5C5A] transition-colors p-5 space-y-3">
               <div className="flex items-center justify-between">
-                <span className="font-semibold text-[16px] text-[#351F65]">
+                <span className="font-display font-bold text-[16px] text-[#0F172A]">
                   Customer Care Portal
                 </span>
-                <span className="text-xs font-bold text-[#6240E8]">[Mobile]</span>
+                <span className="text-xs font-bold text-[#0D5C5A]">[Mobile / Web]</span>
               </div>
-              <p className="text-[13px] text-[#78879A]">
-                Route: <code className="text-[#6240E8]">/customer</code> &bull; Mobile-first bottom
-                nav, 1200px max container, refill card, recent orders.
+              <p className="text-[13px] text-[#64748B]">
+                Route: <code className="text-[#0D5C5A]">/customer</code> &bull; Atmospheric teal hero hub, prescription vault, auto-ship refills.
               </p>
-              <div className="flex items-center text-[12px] font-semibold text-[#6240E8] group-hover:underline">
+              <div className="flex items-center text-[12px] font-semibold text-[#0D5C5A] group-hover:underline">
                 Explore Customer Home &rarr;
               </div>
             </Card>
           </Link>
 
           <Link href="/pharmacist" className="group">
-            <Card className="h-full bg-white hover:border-[#6240E8] transition-colors p-5 space-y-3">
+            <Card className="h-full bg-white hover:border-[#0D5C5A] transition-colors p-5 space-y-3">
               <div className="flex items-center justify-between">
-                <span className="font-semibold text-[16px] text-[#351F65]">Pharmacist Portal</span>
-                <span className="text-xs font-bold text-[#6240E8]">[Tablet]</span>
+                <span className="font-display font-bold text-[16px] text-[#0F172A]">Pharmacist Portal</span>
+                <span className="text-xs font-bold text-[#047857]">[Tablet / Terminal]</span>
               </div>
-              <p className="text-[13px] text-[#78879A]">
-                Route: <code className="text-[#6240E8]">/pharmacist</code> &bull; 240px sidebar,
-                64px header, drawer on tablet/mobile, 2-column prescription review.
+              <p className="text-[13px] text-[#64748B]">
+                Route: <code className="text-[#0D5C5A]">/pharmacist</code> &bull; 240px clinical sidebar, verification queue, H1 regulatory register.
               </p>
-              <div className="flex items-center text-[12px] font-semibold text-[#6240E8] group-hover:underline">
+              <div className="flex items-center text-[12px] font-semibold text-[#0D5C5A] group-hover:underline">
                 Explore Verification Queue &rarr;
               </div>
             </Card>
           </Link>
 
           <Link href="/admin" className="group">
-            <Card className="h-full bg-white hover:border-[#6240E8] transition-colors p-5 space-y-3">
+            <Card className="h-full bg-white hover:border-[#0D5C5A] transition-colors p-5 space-y-3">
               <div className="flex items-center justify-between">
-                <span className="font-semibold text-[16px] text-[#351F65]">Admin Portal</span>
-                <span className="text-xs font-bold text-[#6240E8]">[Desktop]</span>
+                <span className="font-display font-bold text-[16px] text-[#0F172A]">Admin Portal</span>
+                <span className="text-xs font-bold text-[#0284C7]">[Desktop Command]</span>
               </div>
-              <p className="text-[13px] text-[#78879A]">
-                Route: <code className="text-[#6240E8]">/admin</code> &bull; 1440px wide panel, 4
-                KPI cards, orders-by-store chart placeholder, recent orders table.
+              <p className="text-[13px] text-[#64748B]">
+                Route: <code className="text-[#0D5C5A]">/admin</code> &bull; Multi-store distribution, KPI metrics, centralized compliance rules.
               </p>
-              <div className="flex items-center text-[12px] font-semibold text-[#6240E8] group-hover:underline">
+              <div className="flex items-center text-[12px] font-semibold text-[#0D5C5A] group-hover:underline">
                 Explore Operations Overview &rarr;
               </div>
             </Card>

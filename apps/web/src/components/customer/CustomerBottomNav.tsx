@@ -40,7 +40,7 @@ export const CustomerBottomNav: React.FC = () => {
   ];
 
   return (
-    <nav className="md:hidden fixed bottom-0 left-0 right-0 z-40 h-[60px] border-t border-[#EAE8F0] bg-white pb-[env(safe-area-inset-bottom)] shadow-[0_-2px_10px_rgba(53,31,101,0.04)]">
+    <nav className="md:hidden fixed bottom-0 left-0 right-0 z-40 h-[60px] border-t border-[#E2E8F0] bg-white pb-[env(safe-area-inset-bottom)] shadow-[0_-2px_10px_rgba(15,23,42,0.04)]">
       <div className="grid h-full grid-cols-5 items-center">
         {items.map((item) => {
           const isActive = item.exact ? pathname === item.href : pathname.startsWith(item.href);
@@ -51,13 +51,13 @@ export const CustomerBottomNav: React.FC = () => {
               key={item.href}
               href={item.href}
               className={`relative flex flex-col items-center justify-center py-1 transition-colors ${
-                isActive ? 'text-[#6240E8]' : 'text-[#78879A] hover:text-[#351F65]'
+                isActive ? 'text-[#0D5C5A]' : 'text-[#64748B] hover:text-[#0D5C5A]'
               }`}
             >
               <div className="relative">
                 <Icon className={`h-5 w-5 ${isActive ? 'stroke-[2.2]' : 'stroke-[1.8]'}`} />
                 {item.badge !== undefined && item.badge > 0 && (
-                  <span className="absolute -top-1.5 -right-2 flex h-4 min-w-4 items-center justify-center rounded-full bg-[#6240E8] px-1 text-[9px] font-bold text-white">
+                  <span className="absolute -top-1.5 -right-2 flex h-4 min-w-4 items-center justify-center rounded-full bg-[#0D5C5A] px-1 text-[9px] font-bold text-white shadow-xs">
                     {item.badge > 99 ? '99+' : item.badge}
                   </span>
                 )}
@@ -68,7 +68,7 @@ export const CustomerBottomNav: React.FC = () => {
                 {item.label}
               </span>
               {isActive && (
-                <span className="absolute bottom-0 h-0.5 w-6 rounded-full bg-[#6240E8]" />
+                <span className="absolute bottom-0 h-0.5 w-6 rounded-full bg-[#0D5C5A]" />
               )}
             </Link>
           );

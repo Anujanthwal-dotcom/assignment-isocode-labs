@@ -67,11 +67,11 @@ export const FileUpload: React.FC<FileUploadProps> = ({
         onDrop={handleDrop}
         onClick={() => !disabled && fileInputRef.current?.click()}
         className={cn(
-          'flex flex-col items-center justify-center p-[20px] rounded-[8px] border-2 border-dashed transition-colors cursor-pointer text-center bg-white',
-          'border-[#CED4DA] hover:border-[#6240E8] hover:bg-[#F7F5FD]',
-          dragActive && 'border-[#6240E8] bg-[#F7F5FD]',
-          hasError && 'border-[#DC3545] bg-[#FDF2F2]/40',
-          disabled && 'opacity-50 cursor-not-allowed bg-[#EFF2F7] hover:border-[#CED4DA]',
+          'flex flex-col items-center justify-center p-[24px] rounded-[12px] border-2 border-dashed transition-all cursor-pointer text-center bg-white',
+          'border-[#CBD5E1] hover:border-[#0D5C5A] hover:bg-[#F0FDFA]',
+          dragActive && 'border-[#0D5C5A] bg-[#F0FDFA]',
+          hasError && 'border-[#DC2626] bg-[#FEF2F2]/40',
+          disabled && 'opacity-50 cursor-not-allowed bg-[#EFF4FF] hover:border-[#CBD5E1]',
         )}
       >
         <input
@@ -86,8 +86,8 @@ export const FileUpload: React.FC<FileUploadProps> = ({
         {value ? (
           <div className="flex items-center gap-3">
             <div className="text-left">
-              <p className="text-[14px] font-medium text-[#14161A]">{value.name}</p>
-              <p className="text-[12px] text-[#78879A]">
+              <p className="text-[14px] font-semibold text-[#0F172A]">{value.name}</p>
+              <p className="text-[12px] text-[#64748B]">
                 {(value.size / (1024 * 1024)).toFixed(2)} MB
               </p>
             </div>
@@ -98,22 +98,22 @@ export const FileUpload: React.FC<FileUploadProps> = ({
                   e.stopPropagation();
                   onChange?.(null);
                 }}
-                className="ml-2 px-2 py-0.5 text-xs font-semibold rounded bg-slate-100 text-[#78879A] hover:text-[#DC3545]"
+                className="ml-2 px-2 py-0.5 text-xs font-semibold rounded bg-slate-100 text-[#64748B] hover:text-[#DC2626] transition-colors cursor-pointer"
               >
                 ✕
               </button>
             )}
           </div>
         ) : (
-          <div className="flex flex-col items-center gap-1">
-            <p className="text-[14px] font-medium text-[#351F65]">{label}</p>
-            <p className="text-[12px] text-[#78879A]">{helperText}</p>
+          <div className="flex flex-col items-center gap-1.5">
+            <p className="text-[14px] font-bold text-[#0D5C5A] font-display">{label}</p>
+            <p className="text-[12px] text-[#64748B]">{helperText}</p>
           </div>
         )}
       </div>
 
       {hasError && errorMessage && (
-        <p className="text-[12px] leading-[16px] text-[#DC3545] font-normal">{errorMessage}</p>
+        <p className="text-[12px] leading-[16px] text-[#DC2626] font-medium">{errorMessage}</p>
       )}
     </div>
   );

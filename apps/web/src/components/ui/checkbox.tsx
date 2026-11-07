@@ -13,14 +13,14 @@ export const Checkbox = React.forwardRef<
   <CheckboxPrimitive.Root
     ref={ref}
     className={cn(
-      'peer h-[20px] w-[20px] shrink-0 rounded-[6px] border border-[#CED4DA] bg-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#6240E8] focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 data-[state=checked]:bg-[#6240E8] data-[state=checked]:border-[#6240E8] data-[state=checked]:text-white',
-      error && 'border-[#DC3545]',
+      'peer h-[20px] w-[20px] shrink-0 rounded-[6px] border border-[#CBD5E1] bg-white transition-all focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-[#99F6E4] focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 data-[state=checked]:bg-[#0D5C5A] data-[state=checked]:border-[#0D5C5A] data-[state=checked]:text-white cursor-pointer',
+      error && 'border-[#DC2626]',
       className,
     )}
     {...props}
   >
-    <CheckboxPrimitive.Indicator className={cn('flex items-center justify-center text-current')}>
-      <span className="text-[11px] font-bold leading-none select-none">✓</span>
+    <CheckboxPrimitive.Indicator className={cn('flex items-center justify-center text-white')}>
+      <span className="text-[12px] font-bold leading-none select-none">✓</span>
     </CheckboxPrimitive.Indicator>
   </CheckboxPrimitive.Root>
 ));

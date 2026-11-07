@@ -3,22 +3,28 @@ import { cva, type VariantProps } from 'class-variance-authority';
 import { cn } from '@/lib/utils';
 
 const buttonVariants = cva(
-  'inline-flex items-center justify-center whitespace-nowrap rounded-[8px] text-[14px] font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#6240E8] focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50',
+  'inline-flex items-center justify-center whitespace-nowrap rounded-[8px] text-[14px] font-semibold transition-all duration-150 focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-[#2DD4BF] focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 cursor-pointer',
   {
     variants: {
       variant: {
-        primary: 'bg-[#6240E8] text-white hover:bg-[#542F9B] active:bg-[#351F65] shadow-xs',
+        primary:
+          'bg-[#0D5C5A] text-white hover:bg-[#0A4846] active:bg-[#004341] shadow-xs active:scale-[0.99]',
         secondary:
-          'bg-[#F7F5FD] text-[#6240E8] border border-[#EAE8F0] hover:bg-[#EAE8F0] active:bg-[#D6D1F7]',
+          'bg-white text-[#0D5C5A] border border-[#0D5C5A] hover:bg-[#F0FDFA] active:bg-[#CCFBF1]',
+        refill:
+          'bg-[#D97706] text-white hover:bg-[#B45309] active:bg-[#92400E] shadow-xs',
         outline:
-          'bg-white border border-[#DFE0DF] text-[#351F65] hover:bg-[#F8F9FB] active:bg-[#EFF2F7]',
-        ghost: 'bg-transparent text-[#351F65] hover:bg-[#F7F5FD] active:bg-[#EAE8F0]',
-        destructive: 'bg-[#DC3545] text-white hover:bg-[#c82333] active:bg-[#bd2130]',
-        teal: 'bg-[#00B5E2] text-white hover:bg-[#009ec5] active:bg-[#0088aa] shadow-xs',
+          'bg-white border border-[#CBD5E1] text-[#0F172A] hover:bg-[#F8FAFC] active:bg-[#EFF4FF]',
+        ghost:
+          'bg-transparent text-[#0F172A] hover:bg-[#F0FDFA] hover:text-[#0D5C5A] active:bg-[#CCFBF1]',
+        destructive:
+          'bg-[#DC2626] text-white hover:bg-[#B91C1C] active:bg-[#991B1B]',
+        teal:
+          'bg-[#14B8A6] text-white hover:bg-[#0D9488] active:bg-[#006B5F] shadow-xs',
       },
       size: {
-        sm: 'h-[32px] px-[12px] text-[13px] leading-[18px]',
-        md: 'h-[40px] px-[16px] text-[14px] leading-[20px]',
+        sm: 'h-[34px] px-[12px] text-[13px] leading-[18px]',
+        md: 'h-[44px] px-[16px] text-[14px] leading-[20px]',
         lg: 'h-[48px] px-[20px] text-[15px] leading-[22px]',
         icon: 'h-[40px] w-[40px] p-0',
       },
@@ -31,7 +37,8 @@ const buttonVariants = cva(
 );
 
 export interface ButtonProps
-  extends React.ButtonHTMLAttributes<HTMLButtonElement>, VariantProps<typeof buttonVariants> {
+  extends React.ButtonHTMLAttributes<HTMLButtonElement>,
+    VariantProps<typeof buttonVariants> {
   loading?: boolean;
 }
 

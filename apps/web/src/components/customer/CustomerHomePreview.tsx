@@ -17,33 +17,33 @@ export const CustomerHomePreview: React.FC = () => {
 
   return (
     <div className="space-y-[32px]">
-      {/* Teladoc Health Preview Disclaimer Banner */}
-      <div className="flex items-center justify-between rounded-[8px] border border-[#D6D1F7] bg-[#F7F5FD] px-4 py-2 text-[12px] text-[#6240E8]">
-        <span className="font-semibold uppercase tracking-wider">Teladoc Health Portal</span>
+      {/* Clinical Clarity & Care Preview Disclaimer Banner */}
+      <div className="flex items-center justify-between rounded-[8px] border border-[#99F6E4] bg-[#F0FDFA] px-4 py-2 text-[12px] text-[#0D5C5A]">
+        <span className="font-semibold uppercase tracking-wider font-display">Clinical Clarity &amp; Care</span>
         <span>Deterministic Preview &bull; Persona: Customer Patient Care</span>
       </div>
 
       {/* Greeting & Family Selector */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-2 border-b border-[#EAE8F0]">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-2 border-b border-[#E2E8F0]">
         <div>
-          <h1 className="text-[22px] leading-[30px] font-semibold text-[#351F65]">
+          <h1 className="font-display text-[22px] leading-[30px] font-bold text-[#0F172A]">
             Good morning, {SAMPLE_CUSTOMER.name}
           </h1>
-          <p className="text-[14px] leading-[20px] text-[#78879A] mt-1">
+          <p className="text-[14px] leading-[20px] text-[#64748B] mt-1">
             Managing pharmacy refill schedule and verified prescriptions for your family.
           </p>
         </div>
 
         {/* Profile pills */}
-        <div className="flex items-center gap-1.5 bg-white p-1 rounded-[8px] border border-[#EAE8F0] self-start sm:self-auto shadow-xs">
+        <div className="flex items-center gap-1.5 bg-white p-1 rounded-full border border-[#CBD5E1] self-start sm:self-auto shadow-xs">
           {SAMPLE_CUSTOMER.familyMembers.map((member) => (
             <button
               key={member.id}
               onClick={() => setActiveProfile(member.relation)}
-              className={`px-3 py-1.5 rounded-[6px] text-[12px] font-medium transition-colors ${
+              className={`px-3 py-1.5 rounded-full text-[12px] font-semibold transition-colors cursor-pointer ${
                 activeProfile === member.relation
-                  ? 'bg-[#6240E8] text-white shadow-xs'
-                  : 'text-[#6C757D] hover:text-[#351F65] hover:bg-[#F7F5FD]'
+                  ? 'bg-[#0D5C5A] text-white shadow-xs'
+                  : 'text-[#475569] hover:text-[#0D5C5A] hover:bg-[#F0FDFA]'
               }`}
             >
               {member.relation}
@@ -57,13 +57,13 @@ export const CustomerHomePreview: React.FC = () => {
         {/* Left Column: Refill & Primary Action */}
         <div className="lg:col-span-7 space-y-[24px]">
           {/* Upcoming Refill Card */}
-          <Card className="border-[#EAE8F0] bg-white">
+          <Card className="border-[#E2E8F0] bg-white">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3">
               <div>
-                <span className="text-[12px] font-semibold uppercase tracking-wider text-[#6240E8]">
+                <span className="text-[12px] font-bold uppercase tracking-wider text-[#D97706]">
                   Upcoming Refill Alert
                 </span>
-                <CardTitle className="text-[18px] leading-[26px] mt-1 text-[#351F65]">
+                <CardTitle className="text-[18px] leading-[26px] mt-1 text-[#0F172A]">
                   {SAMPLE_CUSTOMER.upcomingRefill.medicineName}
                 </CardTitle>
               </div>
@@ -71,26 +71,26 @@ export const CustomerHomePreview: React.FC = () => {
             </CardHeader>
 
             <CardContent className="space-y-[16px]">
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-[14px] text-[#6C757D] bg-[#F8F9FB] p-3.5 rounded-[8px] border border-[#EAE8F0]">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-[14px] text-[#475569] bg-[#F8FAFC] p-3.5 rounded-[12px] border border-[#E2E8F0]">
                 <div>
-                  <span className="block text-[12px] font-medium text-[#78879A]">Schedule</span>
-                  <span className="text-[#351F65] font-semibold">
+                  <span className="block text-[12px] font-medium text-[#64748B]">Schedule</span>
+                  <span className="text-[#0F172A] font-semibold">
                     {SAMPLE_CUSTOMER.upcomingRefill.scheduleType} (Rx Required)
                   </span>
                 </div>
                 <div>
-                  <span className="block text-[12px] font-medium text-[#78879A]">
+                  <span className="block text-[12px] font-medium text-[#64748B]">
                     Refill Due Date
                   </span>
-                  <span className="text-[#351F65] font-semibold">
+                  <span className="text-[#0F172A] font-semibold">
                     {SAMPLE_CUSTOMER.upcomingRefill.dueDate}
                   </span>
                 </div>
                 <div className="sm:col-span-2">
-                  <span className="block text-[12px] font-medium text-[#78879A]">
+                  <span className="block text-[12px] font-medium text-[#64748B]">
                     Dosage &amp; Doctor
                   </span>
-                  <span className="text-[#14161A]">
+                  <span className="text-[#0F172A]">
                     {SAMPLE_CUSTOMER.upcomingRefill.dosage} &bull;{' '}
                     {SAMPLE_CUSTOMER.upcomingRefill.prescribedBy}
                   </span>
@@ -115,14 +115,14 @@ export const CustomerHomePreview: React.FC = () => {
             </CardContent>
           </Card>
 
-          {/* Schedule H Compliance Notice (Teal Accent) */}
-          <div className="rounded-[8px] border border-[#B4EDFB] bg-[#EBF9FD] p-4 text-[14px] text-[#0088AA] flex items-start gap-3">
-            <span className="font-bold text-xs uppercase px-1.5 py-0.5 rounded bg-[#0088AA]/10 text-[#0088AA]">
+          {/* Schedule H Compliance Notice */}
+          <div className="rounded-[12px] border border-[#99F6E4] bg-[#F0FDFA] p-4 text-[14px] text-[#0D5C5A] flex items-start gap-3">
+            <span className="font-bold text-xs uppercase px-2 py-0.5 rounded-full bg-[#0D5C5A]/10 text-[#0D5C5A]">
               NOTICE
             </span>
             <div>
-              <p className="font-semibold text-[#0088AA]">Teladoc Health Compliance Note</p>
-              <p className="text-[12px] mt-0.5 text-[#0088AA]/90">
+              <p className="font-bold text-[#0D5C5A]">Clinical Compliance Note</p>
+              <p className="text-[12px] mt-0.5 text-[#0D5C5A]/90">
                 Refills for blood pressure management must be verified by a registered pharmacist at
                 your assigned hub ({SAMPLE_CUSTOMER.recentOrders[0].store} Store).
               </p>
@@ -133,32 +133,32 @@ export const CustomerHomePreview: React.FC = () => {
         {/* Right Column: Recent Orders List */}
         <div className="lg:col-span-5 space-y-[16px]">
           <div className="flex items-center justify-between">
-            <h2 className="text-[18px] leading-[26px] font-semibold text-[#351F65]">
+            <h2 className="font-display text-[18px] leading-[26px] font-bold text-[#0F172A]">
               Recent Orders
             </h2>
-            <span className="text-[12px] text-[#78879A]">Last 30 Days</span>
+            <span className="text-[12px] text-[#64748B]">Last 30 Days</span>
           </div>
 
           <div className="space-y-[12px]">
             {SAMPLE_CUSTOMER.recentOrders.map((order) => (
               <Card
                 key={order.id}
-                className="p-4 bg-white hover:border-[#6240E8] transition-colors"
+                className="p-4 bg-white hover:border-[#0D5C5A] transition-colors"
               >
                 <div className="flex items-start justify-between">
                   <div>
                     <div className="flex items-center gap-2">
-                      <span className="font-semibold text-[14px] text-[#351F65]">{order.id}</span>
-                      <span className="text-[12px] text-[#78879A]">&bull; {order.date}</span>
+                      <span className="font-bold text-[14px] text-[#0F172A] font-display">{order.id}</span>
+                      <span className="text-[12px] text-[#64748B]">&bull; {order.date}</span>
                     </div>
-                    <p className="text-[14px] text-[#14161A] mt-1 font-medium">{order.items}</p>
-                    <p className="text-[12px] text-[#78879A] mt-1">
+                    <p className="text-[14px] text-[#0F172A] mt-1 font-medium">{order.items}</p>
+                    <p className="text-[12px] text-[#64748B] mt-1">
                       Fulfilled by {order.store} Store
                     </p>
                   </div>
                   <div className="text-right flex flex-col items-end gap-1.5">
                     <StatusBadge status={order.status} label={order.statusLabel} />
-                    <span className="text-[14px] font-semibold text-[#351F65]">{order.total}</span>
+                    <span className="tabular-nums text-[14px] font-extrabold text-[#0F172A]">{order.total}</span>
                   </div>
                 </div>
               </Card>

@@ -56,7 +56,7 @@ export const StatusBadge: React.FC<StatusBadgeProps> = ({ status, label, classNa
       defaultLabel = 'Information';
       break;
     case 'purple':
-      variant = 'purple';
+      variant = 'primary';
       defaultLabel = 'Clinical Care';
       break;
     case 'neutral':

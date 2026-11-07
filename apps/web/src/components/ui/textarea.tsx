@@ -18,22 +18,22 @@ export const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
           disabled={disabled}
           readOnly={readOnly}
           className={cn(
-            'min-h-[100px] w-full rounded-[8px] bg-white p-[12px] text-[14px] leading-[20px] text-[#14161A] border placeholder:text-[#ADB5BD] transition-colors',
-            'border-[#CED4DA]',
-            'focus-visible:outline-none focus-visible:border-[#6240E8] focus-visible:ring-2 focus-visible:ring-[#6240E8]/20',
+            'min-h-[100px] w-full rounded-[8px] bg-white p-[12px] text-[14px] leading-[20px] text-[#0F172A] border placeholder:text-[#94A3B8] transition-all duration-150',
+            'border-[#CBD5E1] hover:border-[#94A3B8]',
+            'focus-visible:outline-none focus-visible:border-[#0D5C5A] focus-visible:ring-3 focus-visible:ring-[#14B8A6]/20',
             hasError &&
-              'border-[#DC3545] focus-visible:border-[#DC3545] focus-visible:ring-[#DC3545]/20',
-            disabled && 'opacity-50 cursor-not-allowed bg-[#EFF2F7]',
-            readOnly && 'bg-[#F8F9FB] cursor-default',
+              'border-[#DC2626] bg-[#FEF2F2]/40 focus-visible:border-[#DC2626] focus-visible:ring-[#DC2626]/20',
+            disabled && 'opacity-50 cursor-not-allowed bg-[#EFF4FF]',
+            readOnly && 'bg-[#F8FAFC] cursor-default',
             className,
           )}
           {...props}
         />
         {hasError && errorMessage && (
-          <p className="text-[12px] leading-[16px] text-[#DC3545] font-normal">{errorMessage}</p>
+          <p className="text-[12px] leading-[16px] text-[#DC2626] font-medium">{errorMessage}</p>
         )}
         {!hasError && helperText && (
-          <p className="text-[12px] leading-[16px] text-[#78879A] font-normal">{helperText}</p>
+          <p className="text-[12px] leading-[16px] text-[#64748B] font-normal">{helperText}</p>
         )}
       </div>
     );
