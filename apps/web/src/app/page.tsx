@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/lib/auth/auth-context';
 
@@ -10,38 +10,6 @@ export default function HomePage() {
 
   const [activeLogin, setActiveLogin] = useState<'CUSTOMER' | 'PHARMACIST' | 'ADMIN' | null>(null);
   const [loginError, setLoginError] = useState<string | null>(null);
-
-  // Compact health ping state
-  const [healthStatus, setHealthStatus] = useState<{
-    healthy: boolean;
-    latencyMs: number | null;
-    loading: boolean;
-  }>({
-    healthy: true,
-    latencyMs: null,
-    loading: true,
-  });
-
-  const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
-
-  const checkHealth = useCallback(async () => {
-    try {
-      const start = performance.now();
-      const res = await fetch(`${apiUrl}/api/v1/health`, { cache: 'no-store' });
-      const latencyMs = Math.round(performance.now() - start);
-      if (res.ok) {
-        setHealthStatus({ healthy: true, latencyMs, loading: false });
-      } else {
-        setHealthStatus({ healthy: false, latencyMs, loading: false });
-      }
-    } catch {
-      setHealthStatus({ healthy: false, latencyMs: 0, loading: false });
-    }
-  }, [apiUrl]);
-
-  useEffect(() => {
-    checkHealth();
-  }, [checkHealth]);
 
   // 1-Click Tester Login Handlers
   const handleCustomerLogin = async () => {
@@ -110,14 +78,11 @@ export default function HomePage() {
       {/* =========================================================================
           RIGHT 40% COLUMN: Clean White Auth Column & Direct Clickable Role Cards
           ========================================================================= */}
-      <section className="lg:w-[40%] bg-white text-slate-900 flex flex-col justify-between p-6 sm:p-10 lg:p-12 border-l border-slate-200 min-h-screen">
-        {/* Top Section */}
-        <div className="space-y-6">
+      <section className="lg:w-[40%] bg-white text-slate-900 flex flex-col justify-center p-6 sm:p-10 lg:p-14 border-l border-slate-200 min-h-screen">
+        <div className="w-full max-w-md mx-auto space-y-6">
           <div className="pb-5 border-b border-slate-100">
-            <div>
-              <h1 className="text-xl font-bold tracking-tight text-slate-900">Pharmacy Platform</h1>
-              <p className="text-xs text-slate-500 mt-0.5">Select a portal below to sign in</p>
-            </div>
+            <h1 className="text-xl font-bold tracking-tight text-slate-900">Pharmacy Platform</h1>
+            <p className="text-xs text-slate-500 mt-0.5">Select a portal below to sign in</p>
           </div>
 
           {/* Login Error Notification */}
@@ -170,71 +135,6 @@ export default function HomePage() {
                 {activeLogin === 'ADMIN' ? 'Signing in...' : 'Enter →'}
               </span>
             </button>
-          </div>
-        </div>
-
-        {/* Bottom Section: Compact Health Indicator & Dev Consoles */}
-        <div className="pt-8 border-t border-slate-200 space-y-3">
-          <div className="flex items-center justify-between text-xs">
-            <div className="flex items-center gap-2">
-              <span
-                className={`w-2.5 h-2.5 rounded-full ${
-                  healthStatus.healthy ? 'bg-emerald-500' : 'bg-rose-500 animate-pulse'
-                }`}
-              />
-              <span className="font-medium text-slate-700">
-                {healthStatus.loading
-                  ? 'Checking connectivity...'
-                  : healthStatus.healthy
-                    ? 'All Services Operational'
-                    : 'System Degraded'}
-              </span>
-              {healthStatus.latencyMs !== null && (
-                <span className="text-slate-400 font-mono text-[11px]">
-                  ({healthStatus.latencyMs}ms)
-                </span>
-              )}
-            </div>
-
-            <button
-              onClick={checkHealth}
-              className="text-[11px] text-slate-500 hover:text-slate-800 underline transition cursor-pointer"
-            >
-              Refresh
-            </button>
-          </div>
-
-          {/* Quick Links to Dev Infrastructure */}
-          <div className="flex items-center justify-between text-xs text-slate-500">
-            <span className="text-[11px]">Developer Consoles:</span>
-            <div className="flex items-center gap-3 text-[11px]">
-              <a
-                href="http://localhost:3001/api/docs"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="hover:text-slate-800 transition"
-              >
-                Swagger
-              </a>
-              <span className="text-slate-300">&bull;</span>
-              <a
-                href="http://localhost:8025"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="hover:text-slate-800 transition"
-              >
-                Mailpit
-              </a>
-              <span className="text-slate-300">&bull;</span>
-              <a
-                href="http://localhost:9001"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="hover:text-slate-800 transition"
-              >
-                MinIO
-              </a>
-            </div>
           </div>
         </div>
       </section>
