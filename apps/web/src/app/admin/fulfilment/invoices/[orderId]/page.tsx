@@ -4,7 +4,6 @@ import * as React from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { apiFetch } from '@/lib/api/client';
-import { FileText, Printer, ArrowLeft, Store, AlertTriangle } from 'lucide-react';
 
 export default function AdminInvoiceDetailPage() {
   const params = useParams();
@@ -44,7 +43,7 @@ export default function AdminInvoiceDetailPage() {
             href="/admin/fulfilment/invoices"
             className="p-1 rounded-lg text-[#78879A] hover:bg-[#F8F9FB] transition-colors"
           >
-            <ArrowLeft className="w-4 h-4" />
+            &larr; Back
           </Link>
           <h1 className="text-xl font-bold text-[#14161A] tracking-tight">Invoice Details</h1>
         </div>
@@ -54,7 +53,6 @@ export default function AdminInvoiceDetailPage() {
             onClick={handlePrint}
             className="px-3 py-1.5 rounded-lg text-xs font-semibold bg-[#6240E8] text-white hover:bg-[#5232d4] shadow-xs flex items-center gap-1.5"
           >
-            <Printer className="w-3.5 h-3.5" />
             <span>Print Invoice</span>
           </button>
         )}
@@ -64,7 +62,7 @@ export default function AdminInvoiceDetailPage() {
         <div className="p-12 text-center text-xs text-[#78879A]">Loading invoice...</div>
       ) : error ? (
         <div className="p-8 text-center text-xs text-rose-600 bg-rose-50 rounded-2xl border border-rose-200">
-          <AlertTriangle className="w-6 h-6 mx-auto mb-2 text-rose-500" />
+          <div className="font-bold mb-1">[!] Error</div>
           {error}
         </div>
       ) : (
@@ -72,7 +70,6 @@ export default function AdminInvoiceDetailPage() {
           <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4 border-b border-[#EAE8F0] pb-6">
             <div>
               <div className="flex items-center gap-2">
-                <Store className="w-6 h-6 text-[#6240E8]" />
                 <span className="text-lg font-bold text-[#351F65] tracking-tight">
                   {invoice.storeName}
                 </span>

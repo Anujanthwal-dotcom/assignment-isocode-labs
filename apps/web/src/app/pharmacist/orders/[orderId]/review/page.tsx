@@ -4,26 +4,6 @@ import * as React from 'react';
 import Link from 'next/link';
 import { useParams, useRouter } from 'next/navigation';
 import { apiFetch } from '@/lib/api/client';
-import {
-  ClipboardCheck,
-  ArrowLeft,
-  ZoomIn,
-  ZoomOut,
-  RotateCcw,
-  CheckCircle2,
-  XCircle,
-  AlertTriangle,
-  ShieldCheck,
-  ShieldAlert,
-  Bot,
-  Pill,
-  Clock,
-  User,
-  Phone,
-  Calendar,
-  FileText,
-  Sparkles,
-} from 'lucide-react';
 
 export default function PharmacistOrderReviewPage() {
   const params = useParams();
@@ -58,86 +38,96 @@ export default function PharmacistOrderReviewPage() {
   const [reuploadModal, setReuploadModal] = React.useState(false);
   const [reuploadReason, setReuploadReason] = React.useState('');
 
-  // Editable fields state per item
-  const [editedFields, setEditedFields] = React.useState<Record<string, any>>({});
+  // Corrections state
+  const [fieldCorrections, setFieldCorrections] = React.useState<{
+    [orderItemId: string]: {
+      reviewedDosageInstructions?: string;
+      reviewedDuration?: string;
+    };
+  }>({});
 
-  const fetchDetail = React.useCallback(async () => {
+  const fetchReviewDetails = React.useCallback(async () => {
     try {
       setLoading(true);
       setError(null);
-      const res = await apiFetch<any>(`/pharmacist/orders/${orderId}/review`);
+      const res = await apiFetch<any>(`/pharmacist/orders/${orderId}/review-details`);
       setReviewData(res);
-
-      // Pre-fill H1 modal patient name from order customer
       if (res.order?.customerUser?.fullName) {
         setH1PatientName(res.order.customerUser.fullName);
       }
     } catch (err: any) {
-      setError(err?.message || 'Failed to load prescription review detail.');
+      setError(err?.message || 'Failed to load order review details.');
     } finally {
       setLoading(false);
     }
   }, [orderId]);
 
-  React.useEffect(() => {
-    if (orderId) {
-      fetchDetail();
+  const fetchCatalogue = React.useCallback(async () => {
+    try {
+      const res = await apiFetch<any>('/customer/medicines?limit=50&activeOnly=true');
+      setCatalogueMedicines(res.data || []);
+    } catch {
+      // Non-critical background catalogue fetch
     }
-  }, [orderId, fetchDetail]);
-
-  // Load catalogue medicines for generic proposal modal
-  React.useEffect(() => {
-    apiFetch<any>('/medicines?limit=50')
-      .then((res) => setCatalogueMedicines(res.data || []))
-      .catch(() => {});
   }, []);
 
-  const handleFieldChange = (itemId: string, field: string, value: any) => {
-    setEditedFields((prev) => ({
+  React.useEffect(() => {
+    fetchReviewDetails();
+    fetchCatalogue();
+  }, [fetchReviewDetails, fetchCatalogue]);
+
+  const handleFieldChange = (orderItemId: string, field: string, value: string) => {
+    setFieldCorrections((prev) => ({
       ...prev,
-      [itemId]: {
-        ...prev[itemId],
+      [orderItemId]: {
+        ...prev[orderItemId],
         [field]: value,
       },
     }));
   };
 
-  const handleSaveFields = async (itemId: string) => {
-    const payload = editedFields[itemId];
-    if (!payload || Object.keys(payload).length === 0) return;
+  const handleSaveFields = async (orderItemId: string) => {
+    const corrections = fieldCorrections[orderItemId];
+    if (!corrections) return;
 
     try {
       setActionLoading(true);
-      await apiFetch(`/pharmacist/reviews/${reviewData.review.id}/items/${itemId}`, {
+      setError(null);
+      await apiFetch(`/pharmacist/orders/${orderId}/items/${orderItemId}/update-draft`, {
         method: 'PATCH',
-        body: JSON.stringify(payload),
+        body: JSON.stringify(corrections),
       });
-      setSuccessMessage('Medicine review corrections saved.');
+      setSuccessMessage('Dosage & duration corrections saved.');
       setTimeout(() => setSuccessMessage(null), 3000);
-      await fetchDetail();
+      await fetchReviewDetails();
     } catch (err: any) {
-      setError(err?.message || 'Failed to update item details.');
+      setError(err?.message || 'Failed to save item corrections.');
     } finally {
       setActionLoading(false);
     }
   };
 
-  const handleApproveItem = async (itemId: string, schedule: string) => {
+  const handleApproveItem = async (orderItemId: string, schedule: string) => {
     if (schedule === 'SCHEDULE_H1') {
-      setH1Modal({ itemId });
+      setH1Modal({ itemId: orderItemId });
       return;
     }
 
     try {
       setActionLoading(true);
       setError(null);
-      await apiFetch(`/pharmacist/reviews/${reviewData.review.id}/items/${itemId}/approve`, {
+      const corrections = fieldCorrections[orderItemId] || {};
+      await apiFetch(`/pharmacist/orders/${orderId}/items/${orderItemId}/decision`, {
         method: 'POST',
-        body: JSON.stringify({}),
+        body: JSON.stringify({
+          decision: 'APPROVED',
+          dosageInstructions: corrections.reviewedDosageInstructions,
+          duration: corrections.reviewedDuration,
+        }),
       });
-      setSuccessMessage('Item verified and approved.');
-      setTimeout(() => setSuccessMessage(null), 3000);
-      await fetchDetail();
+      await fetchReviewDetails();
+      setSuccessMessage('Item approved.');
+      setTimeout(() => setSuccessMessage(null), 2500);
     } catch (err: any) {
       setError(err?.message || 'Failed to approve item.');
     } finally {
@@ -148,53 +138,58 @@ export default function PharmacistOrderReviewPage() {
   const handleSubmitH1Approval = async () => {
     if (!h1Modal) return;
     if (!h1PatientName.trim() || !h1PrescriberName.trim()) {
-      setError('Patient name and prescriber doctor name are required for Schedule H1 register.');
+      setError('Patient and Prescriber name are required for Schedule H1 compliance.');
       return;
     }
 
     try {
       setActionLoading(true);
       setError(null);
-      await apiFetch(
-        `/pharmacist/reviews/${reviewData.review.id}/items/${h1Modal.itemId}/approve`,
-        {
-          method: 'POST',
-          body: JSON.stringify({
-            patientName: h1PatientName.trim(),
-            prescriberName: h1PrescriberName.trim(),
-            prescriberDetails: h1PrescriberDetails.trim() || undefined,
-          }),
-        },
-      );
+      const corrections = fieldCorrections[h1Modal.itemId] || {};
+      await apiFetch(`/pharmacist/orders/${orderId}/items/${h1Modal.itemId}/decision`, {
+        method: 'POST',
+        body: JSON.stringify({
+          decision: 'APPROVED',
+          dosageInstructions: corrections.reviewedDosageInstructions,
+          duration: corrections.reviewedDuration,
+          h1PatientName: h1PatientName.trim(),
+          h1PrescriberName: h1PrescriberName.trim(),
+          h1PrescriberDetails: h1PrescriberDetails.trim() || undefined,
+        }),
+      });
       setH1Modal(null);
-      setSuccessMessage('Schedule H1 item approved and register entry logged.');
+      await fetchReviewDetails();
+      setSuccessMessage('Schedule H1 item approved & entry recorded.');
       setTimeout(() => setSuccessMessage(null), 3000);
-      await fetchDetail();
     } catch (err: any) {
-      setError(err?.message || 'Failed to approve H1 item.');
+      setError(err?.message || 'Failed to approve Schedule H1 item.');
     } finally {
       setActionLoading(false);
     }
   };
 
   const handleRejectItem = async () => {
-    if (!rejectItemModal || !rejectItemReason.trim()) return;
+    if (!rejectItemModal) return;
+    if (!rejectItemReason.trim()) {
+      setError('Please provide a reason for rejecting this item.');
+      return;
+    }
 
     try {
       setActionLoading(true);
       setError(null);
-      await apiFetch(
-        `/pharmacist/reviews/${reviewData.review.id}/items/${rejectItemModal.itemId}/reject`,
-        {
-          method: 'POST',
-          body: JSON.stringify({ reason: rejectItemReason.trim() }),
-        },
-      );
+      await apiFetch(`/pharmacist/orders/${orderId}/items/${rejectItemModal.itemId}/decision`, {
+        method: 'POST',
+        body: JSON.stringify({
+          decision: 'REJECTED',
+          reason: rejectItemReason.trim(),
+        }),
+      });
       setRejectItemModal(null);
       setRejectItemReason('');
+      await fetchReviewDetails();
       setSuccessMessage('Item rejected.');
-      setTimeout(() => setSuccessMessage(null), 3000);
-      await fetchDetail();
+      setTimeout(() => setSuccessMessage(null), 2500);
     } catch (err: any) {
       setError(err?.message || 'Failed to reject item.');
     } finally {
@@ -203,27 +198,29 @@ export default function PharmacistOrderReviewPage() {
   };
 
   const handleProposeAlternative = async () => {
-    if (!alternativeModal || !altProposedMedicineId || !altReason.trim()) return;
+    if (!alternativeModal) return;
+    if (!altProposedMedicineId || !altReason.trim()) {
+      setError('Please select an alternative medicine and provide a pharmacist reason.');
+      return;
+    }
 
     try {
       setActionLoading(true);
       setError(null);
-      await apiFetch(
-        `/pharmacist/reviews/${reviewData.review.id}/items/${alternativeModal.itemId}/propose-alternative`,
-        {
-          method: 'POST',
-          body: JSON.stringify({
-            proposedMedicineId: altProposedMedicineId,
-            reason: altReason.trim(),
-          }),
-        },
-      );
+      await apiFetch(`/pharmacist/orders/${orderId}/alternatives`, {
+        method: 'POST',
+        body: JSON.stringify({
+          orderItemId: alternativeModal.itemId,
+          proposedMedicineId: altProposedMedicineId,
+          reason: altReason.trim(),
+        }),
+      });
       setAlternativeModal(null);
       setAltProposedMedicineId('');
       setAltReason('');
-      setSuccessMessage('Generic alternative proposal sent for customer consent.');
+      await fetchReviewDetails();
+      setSuccessMessage('Alternative proposed to customer.');
       setTimeout(() => setSuccessMessage(null), 3000);
-      await fetchDetail();
     } catch (err: any) {
       setError(err?.message || 'Failed to propose alternative.');
     } finally {
@@ -235,96 +232,97 @@ export default function PharmacistOrderReviewPage() {
     try {
       setActionLoading(true);
       setError(null);
-      await apiFetch(`/pharmacist/reviews/${reviewData.review.id}/approve`, {
+      await apiFetch(`/pharmacist/orders/${orderId}/review-decision`, {
         method: 'POST',
+        body: JSON.stringify({
+          decision: 'APPROVED',
+        }),
       });
-      setSuccessMessage('Prescription review completed successfully!');
-      setTimeout(() => {
-        router.push('/pharmacist/review-queue');
-      }, 1500);
+      router.push('/pharmacist/review-queue');
     } catch (err: any) {
-      setError(err?.message || 'Failed to approve prescription.');
-    } finally {
+      setError(err?.message || 'Failed to complete prescription approval.');
       setActionLoading(false);
     }
   };
 
   const handleRejectPrescription = async () => {
-    if (!rejectPrescriptionReason.trim()) return;
+    if (!rejectPrescriptionReason.trim()) {
+      setError('Please provide a reason for rejecting the prescription.');
+      return;
+    }
 
     try {
       setActionLoading(true);
       setError(null);
-      await apiFetch(`/pharmacist/reviews/${reviewData.review.id}/reject`, {
+      await apiFetch(`/pharmacist/orders/${orderId}/review-decision`, {
         method: 'POST',
-        body: JSON.stringify({ reason: rejectPrescriptionReason.trim() }),
+        body: JSON.stringify({
+          decision: 'REJECTED',
+          notes: rejectPrescriptionReason.trim(),
+        }),
       });
       setRejectPrescriptionModal(false);
-      setSuccessMessage('Prescription rejected.');
-      setTimeout(() => {
-        router.push('/pharmacist/review-queue');
-      }, 1500);
+      router.push('/pharmacist/review-queue');
     } catch (err: any) {
       setError(err?.message || 'Failed to reject prescription.');
-    } finally {
       setActionLoading(false);
     }
   };
 
   const handleRequestReupload = async () => {
-    if (!reuploadReason.trim()) return;
+    if (!reuploadReason.trim()) {
+      setError('Please provide a reason explaining why a new prescription photo is needed.');
+      return;
+    }
 
     try {
       setActionLoading(true);
       setError(null);
-      await apiFetch(`/pharmacist/reviews/${reviewData.review.id}/request-reupload`, {
+      await apiFetch(`/pharmacist/orders/${orderId}/review-decision`, {
         method: 'POST',
-        body: JSON.stringify({ reason: reuploadReason.trim() }),
+        body: JSON.stringify({
+          decision: 'REUPLOAD_REQUESTED',
+          notes: reuploadReason.trim(),
+        }),
       });
       setReuploadModal(false);
-      setSuccessMessage('Re-upload request sent to customer.');
-      setTimeout(() => {
-        router.push('/pharmacist/review-queue');
-      }, 1500);
+      router.push('/pharmacist/review-queue');
     } catch (err: any) {
       setError(err?.message || 'Failed to request prescription re-upload.');
-    } finally {
       setActionLoading(false);
     }
   };
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#F8F9FB] flex items-center justify-center">
-        <div className="flex flex-col items-center gap-3">
-          <div className="h-8 w-8 animate-spin rounded-full border-3 border-[#6240E8] border-t-transparent" />
-          <p className="text-xs text-[#78879A]">Loading prescription review workspace...</p>
-        </div>
+      <div className="flex-1 p-12 flex flex-col items-center justify-center space-y-3">
+        <div className="inline-block h-8 w-8 animate-spin rounded-full border-3 border-[#6240E8] border-t-transparent" />
+        <p className="text-xs text-[#78879A]">Loading clinical verification workspace...</p>
       </div>
     );
   }
 
   if (error && !reviewData) {
     return (
-      <div className="min-h-screen bg-[#F8F9FB] flex items-center justify-center p-4">
+      <div className="flex-1 p-8 flex items-center justify-center">
         <div className="bg-white border border-[#EAE8F0] p-6 rounded-xl max-w-md w-full text-center space-y-4 shadow-sm">
-          <div className="w-12 h-12 rounded-full bg-rose-50 text-rose-600 flex items-center justify-center mx-auto">
-            <AlertTriangle className="w-6 h-6" />
-          </div>
+          <span className="font-bold text-xs uppercase px-2 py-0.5 rounded bg-rose-100 text-rose-800">
+            RESTRICTED
+          </span>
           <h2 className="text-base font-semibold text-[#14161A]">Access Restricted</h2>
           <p className="text-xs text-[#6C757D]">{error}</p>
           <Link
             href="/pharmacist/review-queue"
             className="inline-flex items-center gap-2 px-4 py-2 text-xs font-semibold rounded-lg bg-[#6240E8] text-white hover:bg-[#5230D8] transition-colors"
           >
-            <ArrowLeft className="w-4 h-4" /> Return to Queue
+            &larr; Return to Queue
           </Link>
         </div>
       </div>
     );
   }
 
-  const { order, prescription, aiExtraction, items, review } = reviewData;
+  const { order, prescription, aiExtraction, items } = reviewData;
 
   const canCompletePrescriptionApproval =
     items.length > 0 &&
@@ -343,9 +341,9 @@ export default function PharmacistOrderReviewPage() {
         <div className="flex items-center gap-3">
           <Link
             href="/pharmacist/review-queue"
-            className="p-1.5 rounded-lg text-[#78879A] hover:bg-[#F8F9FB] transition-colors"
+            className="px-2 py-1 text-xs font-semibold text-[#6240E8] hover:bg-[#F8F9FB] rounded"
           >
-            <ArrowLeft className="w-4 h-4" />
+            &larr; Back
           </Link>
           <div>
             <div className="flex items-center gap-2">
@@ -385,8 +383,7 @@ export default function PharmacistOrderReviewPage() {
                 : 'bg-slate-300 cursor-not-allowed text-slate-500'
             }`}
           >
-            <CheckCircle2 className="w-3.5 h-3.5" />
-            <span>Approve Prescription</span>
+            Approve Prescription
           </button>
         </div>
       </div>
@@ -394,13 +391,17 @@ export default function PharmacistOrderReviewPage() {
       {/* Status Banners */}
       {error && (
         <div className="mx-6 mt-4 p-3 rounded-lg bg-rose-50 border border-rose-200 text-rose-700 text-xs flex items-center gap-2">
-          <AlertTriangle className="w-4 h-4 shrink-0" />
+          <span className="font-bold uppercase text-[10px] px-1 py-0.5 bg-rose-200 rounded">
+            Error
+          </span>
           <span>{error}</span>
         </div>
       )}
       {successMessage && (
         <div className="mx-6 mt-4 p-3 rounded-lg bg-emerald-50 border border-emerald-200 text-emerald-700 text-xs flex items-center gap-2">
-          <CheckCircle2 className="w-4 h-4 shrink-0" />
+          <span className="font-bold uppercase text-[10px] px-1 py-0.5 bg-emerald-200 rounded">
+            Success
+          </span>
           <span>{successMessage}</span>
         </div>
       )}
@@ -410,32 +411,31 @@ export default function PharmacistOrderReviewPage() {
         {/* Left Column: Original Prescription Viewer (5 cols) */}
         <div className="lg:col-span-5 bg-white rounded-xl border border-[#EAE8F0] shadow-2xs overflow-hidden flex flex-col sticky top-[130px] max-h-[calc(100vh-160px)]">
           <div className="p-3 bg-[#F8F9FB] border-b border-[#EAE8F0] flex items-center justify-between">
-            <span className="text-xs font-semibold text-[#351F65] flex items-center gap-1.5">
-              <FileText className="w-4 h-4 text-[#6240E8]" />
+            <span className="text-xs font-semibold text-[#351F65]">
               Original Prescription Document
             </span>
             <div className="flex items-center gap-1">
               <button
                 onClick={() => setZoomLevel((z) => Math.max(50, z - 20))}
-                className="p-1 rounded bg-white border border-[#EAE8F0] text-[#78879A] hover:bg-slate-50"
+                className="px-2 py-0.5 rounded bg-white border border-[#EAE8F0] text-xs font-bold text-[#78879A] hover:bg-slate-50"
                 title="Zoom Out"
               >
-                <ZoomOut className="w-3.5 h-3.5" />
+                -
               </button>
               <span className="text-[10px] text-[#78879A] px-1">{zoomLevel}%</span>
               <button
                 onClick={() => setZoomLevel((z) => Math.min(200, z + 20))}
-                className="p-1 rounded bg-white border border-[#EAE8F0] text-[#78879A] hover:bg-slate-50"
+                className="px-2 py-0.5 rounded bg-white border border-[#EAE8F0] text-xs font-bold text-[#78879A] hover:bg-slate-50"
                 title="Zoom In"
               >
-                <ZoomIn className="w-3.5 h-3.5" />
+                +
               </button>
               <button
                 onClick={() => setZoomLevel(100)}
-                className="p-1 rounded bg-white border border-[#EAE8F0] text-[#78879A] hover:bg-slate-50"
+                className="px-2 py-0.5 rounded bg-white border border-[#EAE8F0] text-[10px] font-semibold text-[#78879A] hover:bg-slate-50"
                 title="Reset Zoom"
               >
-                <RotateCcw className="w-3.5 h-3.5" />
+                Reset
               </button>
             </div>
           </div>
@@ -454,7 +454,6 @@ export default function PharmacistOrderReviewPage() {
                   style={{ transform: `scale(${zoomLevel / 100})`, transformOrigin: 'top center' }}
                   className="transition-transform duration-150"
                 >
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
                     src={prescription.viewUrl}
                     alt="Uploaded Prescription"
@@ -464,7 +463,6 @@ export default function PharmacistOrderReviewPage() {
               )
             ) : (
               <div className="text-center p-6 text-[#78879A] text-xs">
-                <FileText className="w-8 h-8 mx-auto mb-2 opacity-50" />
                 Prescription preview unavailable. Short-lived signed URL expired.
               </div>
             )}
@@ -481,36 +479,34 @@ export default function PharmacistOrderReviewPage() {
 
         {/* Right Column: AI Extraction & Item Verification (7 cols) */}
         <div className="lg:col-span-7 space-y-4">
-          {/* AI Warning Banner (Mandatory requirement) */}
+          {/* AI Warning Banner */}
           <div className="rounded-xl bg-[#F7F5FD] border border-[#6240E8]/30 p-4 shadow-2xs">
-            <div className="flex items-start gap-3">
-              <div className="p-1.5 rounded-lg bg-[#6240E8] text-white shrink-0 mt-0.5">
-                <Bot className="w-4 h-4" />
-              </div>
-              <div>
-                <h4 className="text-xs font-bold text-[#351F65] flex items-center gap-1.5">
-                  AI-generated draft — pharmacist verification required.
-                </h4>
-                <p className="text-[11px] text-[#78879A] mt-1 leading-relaxed">
-                  AI extraction and catalogue matches are assistive drafts. AI output never
-                  authorizes dispensing. Only your explicit verified decision as a registered
-                  pharmacist can approve medicine items.
-                </p>
-                {aiExtraction && (
-                  <div className="mt-2 flex items-center gap-3 text-[10px] text-[#6C757D]">
+            <span className="font-bold text-[10px] uppercase px-1.5 py-0.5 rounded bg-[#6240E8] text-white inline-block mb-1">
+              AI ASSISTIVE DRAFT
+            </span>
+            <div>
+              <h4 className="text-xs font-bold text-[#351F65]">
+                AI-generated draft — pharmacist verification required.
+              </h4>
+              <p className="text-[11px] text-[#78879A] mt-1 leading-relaxed">
+                AI extraction and catalogue matches are assistive drafts. AI output never authorizes
+                dispensing. Only your explicit verified decision as a registered pharmacist can
+                approve medicine items.
+              </p>
+              {aiExtraction && (
+                <div className="mt-2 flex items-center gap-3 text-[10px] text-[#6C757D]">
+                  <span>
+                    Model: <strong>{aiExtraction.model}</strong>
+                  </span>
+                  {aiExtraction.overallConfidence !== null && (
                     <span>
-                      Model: <strong>{aiExtraction.model}</strong>
+                      Confidence:{' '}
+                      <strong>{(aiExtraction.overallConfidence * 100).toFixed(0)}%</strong>{' '}
+                      (Informational only)
                     </span>
-                    {aiExtraction.overallConfidence !== null && (
-                      <span>
-                        Confidence:{' '}
-                        <strong>{(aiExtraction.overallConfidence * 100).toFixed(0)}%</strong>{' '}
-                        (Informational only)
-                      </span>
-                    )}
-                  </div>
-                )}
-              </div>
+                  )}
+                </div>
+              )}
             </div>
           </div>
 
@@ -518,7 +514,6 @@ export default function PharmacistOrderReviewPage() {
           <div className="space-y-4">
             {items.map((item: any, idx: number) => {
               const draft = item.extractedDraft;
-              const match = item.matchingResult;
               const reviewRecord = item.review;
               const evalRes = item.complianceEvaluation;
               const isBlocked = evalRes?.decision === 'BLOCKED';
@@ -544,10 +539,7 @@ export default function PharmacistOrderReviewPage() {
                     <div>
                       <div className="flex items-center gap-2">
                         <span className="text-xs font-bold text-slate-400">#{idx + 1}</span>
-                        <h3 className="text-sm font-bold text-[#14161A] flex items-center gap-2">
-                          <Pill className="w-4 h-4 text-[#6240E8]" />
-                          {item.medicineName}
-                        </h3>
+                        <h3 className="text-sm font-bold text-[#14161A]">{item.medicineName}</h3>
                       </div>
                       <span className="text-xs text-[#78879A]">
                         SKU: {item.sku} &bull; Qty: {item.quantity} &bull; Line Total: ₹
@@ -572,18 +564,14 @@ export default function PharmacistOrderReviewPage() {
                       </span>
 
                       {isApproved && (
-                        <span className="text-[11px] font-semibold text-emerald-600 flex items-center gap-1">
-                          <CheckCircle2 className="w-3.5 h-3.5" /> Approved
-                        </span>
+                        <span className="text-[11px] font-semibold text-emerald-600">Approved</span>
                       )}
                       {isRejected && (
-                        <span className="text-[11px] font-semibold text-rose-600 flex items-center gap-1">
-                          <XCircle className="w-3.5 h-3.5" /> Rejected
-                        </span>
+                        <span className="text-[11px] font-semibold text-rose-600">Rejected</span>
                       )}
                       {isAlternativePending && (
-                        <span className="text-[11px] font-semibold text-amber-600 flex items-center gap-1">
-                          <Clock className="w-3.5 h-3.5" /> Alternative Pending Customer Consent
+                        <span className="text-[11px] font-semibold text-amber-600">
+                          Alternative Pending Consent
                         </span>
                       )}
                     </div>
@@ -591,7 +579,7 @@ export default function PharmacistOrderReviewPage() {
 
                   {/* Deterministic Compliance Decision Banner */}
                   <div
-                    className={`p-3 rounded-lg text-xs flex items-start gap-2.5 ${
+                    className={`p-3 rounded-lg text-xs ${
                       isBlocked
                         ? 'bg-rose-50 border border-rose-300 text-rose-800'
                         : evalRes?.decision === 'REQUIRES_H1_REGISTER'
@@ -601,30 +589,21 @@ export default function PharmacistOrderReviewPage() {
                             : 'bg-emerald-50 border border-emerald-200 text-emerald-800'
                     }`}
                   >
-                    {isBlocked ? (
-                      <ShieldAlert className="w-4 h-4 text-rose-600 shrink-0 mt-0.5" />
-                    ) : (
-                      <ShieldCheck className="w-4 h-4 text-[#6240E8] shrink-0 mt-0.5" />
-                    )}
-                    <div>
-                      <strong className="font-semibold block">
-                        Policy Evaluation: {evalRes?.decision || 'ALLOWED_FOR_REVIEW'}
-                      </strong>
-                      <ul className="list-disc list-inside mt-0.5 text-[11px] space-y-0.5 opacity-90">
-                        {evalRes?.reasons?.map((r: string, i: number) => (
-                          <li key={i}>{r}</li>
-                        ))}
-                      </ul>
-                    </div>
+                    <strong className="font-semibold block">
+                      Policy Evaluation: {evalRes?.decision || 'ALLOWED_FOR_REVIEW'}
+                    </strong>
+                    <ul className="list-disc list-inside mt-0.5 text-[11px] space-y-0.5 opacity-90">
+                      {evalRes?.reasons?.map((r: string, i: number) => (
+                        <li key={i}>{r}</li>
+                      ))}
+                    </ul>
                   </div>
 
                   {/* AI Extracted draft info */}
                   {draft && (
                     <div className="p-3 bg-[#F8F9FB] rounded-lg border border-[#EAE8F0] space-y-2 text-xs">
                       <div className="flex items-center justify-between text-[11px] text-[#78879A]">
-                        <span className="flex items-center gap-1 font-medium text-[#351F65]">
-                          <Sparkles className="w-3.5 h-3.5 text-[#6240E8]" /> AI Draft Extraction
-                        </span>
+                        <span className="font-medium text-[#351F65]">AI Draft Extraction</span>
                         <span>
                           Confidence: <strong>{(draft.confidence * 100).toFixed(0)}%</strong>
                         </span>
@@ -746,7 +725,6 @@ export default function PharmacistOrderReviewPage() {
                             : 'bg-emerald-600 hover:bg-emerald-700'
                         }`}
                       >
-                        <CheckCircle2 className="w-3.5 h-3.5" />
                         <span>
                           {item.schedule === 'SCHEDULE_H1' ? 'Enter H1 & Approve' : 'Approve Item'}
                         </span>
@@ -764,10 +742,7 @@ export default function PharmacistOrderReviewPage() {
       {h1Modal && (
         <div className="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-[1px] flex items-center justify-center p-4">
           <div className="bg-white rounded-xl border border-[#EAE8F0] max-w-md w-full p-6 shadow-xl space-y-4">
-            <h3 className="text-base font-bold text-[#14161A] flex items-center gap-2">
-              <ShieldCheck className="w-5 h-5 text-amber-600" />
-              Schedule H1 Register Details
-            </h3>
+            <h3 className="text-base font-bold text-[#14161A]">Schedule H1 Register Details</h3>
             <p className="text-xs text-[#78879A]">
               Under regulatory requirements, Schedule H1 substances require recorded patient and
               prescriber doctor details before dispensing.
@@ -833,10 +808,7 @@ export default function PharmacistOrderReviewPage() {
       {rejectItemModal && (
         <div className="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-[1px] flex items-center justify-center p-4">
           <div className="bg-white rounded-xl border border-[#EAE8F0] max-w-md w-full p-6 shadow-xl space-y-4">
-            <h3 className="text-base font-bold text-[#14161A] flex items-center gap-2">
-              <XCircle className="w-5 h-5 text-rose-600" />
-              Reject Medicine Item
-            </h3>
+            <h3 className="text-base font-bold text-[#14161A]">Reject Medicine Item</h3>
             <p className="text-xs text-[#78879A]">
               Provide a clear reason for rejecting this item. The customer will see this explanation
               in their portal.
@@ -873,10 +845,7 @@ export default function PharmacistOrderReviewPage() {
       {alternativeModal && (
         <div className="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-[1px] flex items-center justify-center p-4">
           <div className="bg-white rounded-xl border border-[#EAE8F0] max-w-md w-full p-6 shadow-xl space-y-4">
-            <h3 className="text-base font-bold text-[#14161A] flex items-center gap-2">
-              <Pill className="w-5 h-5 text-[#6240E8]" />
-              Propose Generic Alternative
-            </h3>
+            <h3 className="text-base font-bold text-[#14161A]">Propose Generic Alternative</h3>
             <p className="text-xs text-[#78879A]">
               Propose an active-ingredient equivalent catalogue medicine. Customer must explicitly
               accept or decline.
@@ -935,10 +904,7 @@ export default function PharmacistOrderReviewPage() {
       {rejectPrescriptionModal && (
         <div className="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-[1px] flex items-center justify-center p-4">
           <div className="bg-white rounded-xl border border-[#EAE8F0] max-w-md w-full p-6 shadow-xl space-y-4">
-            <h3 className="text-base font-bold text-[#14161A] flex items-center gap-2">
-              <XCircle className="w-5 h-5 text-rose-600" />
-              Reject Entire Prescription
-            </h3>
+            <h3 className="text-base font-bold text-[#14161A]">Reject Entire Prescription</h3>
             <p className="text-xs text-[#78879A]">
               Rejecting this prescription marks the order as REJECTED. Please provide an explicit
               regulatory or clinical reason.
@@ -975,10 +941,7 @@ export default function PharmacistOrderReviewPage() {
       {reuploadModal && (
         <div className="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-[1px] flex items-center justify-center p-4">
           <div className="bg-white rounded-xl border border-[#EAE8F0] max-w-md w-full p-6 shadow-xl space-y-4">
-            <h3 className="text-base font-bold text-[#14161A] flex items-center gap-2">
-              <RotateCcw className="w-5 h-5 text-amber-600" />
-              Request Prescription Re-upload
-            </h3>
+            <h3 className="text-base font-bold text-[#14161A]">Request Prescription Re-upload</h3>
             <p className="text-xs text-[#78879A]">
               The customer will be notified in the customer app to upload a clearer replacement
               prescription.

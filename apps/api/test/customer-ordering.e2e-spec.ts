@@ -8,7 +8,7 @@ import { AllExceptionsFilter } from '../src/common/filters/all-exceptions.filter
 import { describe, beforeAll, afterAll, it, expect } from 'vitest';
 import { FamilyMemberRelationship, OrderPaymentMethod } from '@prisma/client';
 
-describe('Phase 3 Customer Ordering E2E Tests', () => {
+describe('Customer Ordering E2E Tests', () => {
   let app: INestApplication;
   let prisma: PrismaService;
   let customerCookie: string;

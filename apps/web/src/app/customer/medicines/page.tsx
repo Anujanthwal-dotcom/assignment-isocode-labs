@@ -8,15 +8,6 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { apiFetch } from '@/lib/api/client';
-import {
-  Search,
-  ShoppingBag,
-  Check,
-  Pill,
-  ChevronLeft,
-  ChevronRight,
-  AlertCircle,
-} from 'lucide-react';
 import { CustomerMedicineDTO } from '@pharmacy/shared-types';
 
 export default function CustomerMedicinesPage() {
@@ -52,10 +43,9 @@ export default function CustomerMedicinesPage() {
       setError(null);
       try {
         const queryParams = new URLSearchParams({
-          page: page.toString(),
+          page: String(page),
           limit: '12',
-          sortBy: 'name',
-          sortOrder: 'asc',
+          activeOnly: 'true',
         });
         if (debouncedSearch.trim()) {
           queryParams.set('search', debouncedSearch.trim());
@@ -63,18 +53,22 @@ export default function CustomerMedicinesPage() {
 
         const res = await apiFetch<{
           data: CustomerMedicineDTO[];
-          meta: { page: number; limit: number; total: number; totalPages: number };
+          meta: { total: number; page: number; limit: number; totalPages: number };
         }>(`/customer/medicines?${queryParams.toString()}`);
 
         if (isMounted && res) {
-          setMedicines(res.data);
-          setTotalPages(res.meta.totalPages);
-          setTotalCount(res.meta.total);
+          setMedicines(res.data || []);
+          setTotalCount(res.meta?.total || 0);
+          setTotalPages(res.meta?.totalPages || 1);
         }
       } catch (err: unknown) {
-        if (isMounted) setError((err as Error).message || 'Failed to load medicine catalogue.');
+        if (isMounted) {
+          setError((err as Error).message || 'Failed to load medicines.');
+        }
       } finally {
-        if (isMounted) setLoading(false);
+        if (isMounted) {
+          setLoading(false);
+        }
       }
     };
 
@@ -130,26 +124,24 @@ export default function CustomerMedicinesPage() {
           variant="outline"
           size="sm"
           onClick={() => router.push('/customer/cart')}
-          className="flex items-center gap-2 text-xs border-[#6240E8]/30 text-[#6240E8] hover:bg-[#F7F5FD]"
+          className="text-xs border-[#6240E8]/30 text-[#6240E8] hover:bg-[#F7F5FD]"
         >
-          <ShoppingBag className="h-4 w-4" />
-          <span>Go to Cart</span>
+          View Cart &rarr;
         </Button>
       </div>
 
       {/* Search Input */}
       <div className="relative">
-        <Search className="absolute left-4 h-4 w-4 text-[#78879A]" />
         <Input
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           placeholder="Search medicines by name, brand, generic salt, or SKU..."
-          className="h-11 pl-11 rounded-xl border-[#EAE8F0] bg-white text-sm shadow-xs focus:ring-2 focus:ring-[#6240E8]"
+          className="h-11 px-4 pr-16 rounded-xl border-[#EAE8F0] bg-white text-sm shadow-xs focus:ring-2 focus:ring-[#6240E8]"
         />
         {search && (
           <button
             onClick={() => setSearch('')}
-            className="absolute right-3 top-3 text-xs text-slate-400 hover:text-slate-600"
+            className="absolute right-3 top-3 text-xs text-slate-400 hover:text-slate-600 uppercase font-semibold"
           >
             Clear
           </button>
@@ -168,7 +160,7 @@ export default function CustomerMedicinesPage() {
         </div>
       ) : error ? (
         <Card className="p-8 border-red-200 bg-red-50 text-center">
-          <AlertCircle className="h-8 w-8 text-red-500 mx-auto mb-2" />
+          <p className="text-xs uppercase font-bold text-red-600 mb-1">Notice</p>
           <p className="text-sm text-red-700 font-medium">{error}</p>
           <Button
             size="sm"
@@ -181,7 +173,6 @@ export default function CustomerMedicinesPage() {
         </Card>
       ) : medicines.length === 0 ? (
         <Card className="p-12 border-[#EAE8F0] bg-white text-center">
-          <Pill className="h-10 w-10 text-slate-300 mx-auto mb-3" />
           <h3 className="text-base font-semibold text-slate-800">No Medicines Found</h3>
           <p className="text-xs text-slate-500 mt-1 max-w-sm mx-auto">
             We couldn&apos;t find any active medicines matching &quot;{debouncedSearch}&quot;. Try
@@ -269,17 +260,7 @@ export default function CustomerMedicinesPage() {
                       disabled={addingId === med.id}
                       className="text-xs h-8 px-3 bg-[#6240E8] text-white hover:bg-[#5233D0]"
                     >
-                      {addedId === med.id ? (
-                        <>
-                          <Check className="h-3.5 w-3.5 mr-1 text-emerald-300" />
-                          <span>Added</span>
-                        </>
-                      ) : (
-                        <>
-                          <ShoppingBag className="h-3.5 w-3.5 mr-1" />
-                          <span>Add</span>
-                        </>
-                      )}
+                      {addedId === med.id ? '✓ Added' : '+ Add'}
                     </Button>
                   </div>
                 </div>
@@ -303,8 +284,7 @@ export default function CustomerMedicinesPage() {
               onClick={() => setPage((p) => Math.max(p - 1, 1))}
               className="text-xs h-8 px-3"
             >
-              <ChevronLeft className="h-3.5 w-3.5 mr-1" />
-              Previous
+              &larr; Previous
             </Button>
             <Button
               variant="outline"
@@ -313,8 +293,7 @@ export default function CustomerMedicinesPage() {
               onClick={() => setPage((p) => Math.min(p + 1, totalPages))}
               className="text-xs h-8 px-3"
             >
-              Next
-              <ChevronRight className="h-3.5 w-3.5 ml-1" />
+              Next &rarr;
             </Button>
           </div>
         </div>

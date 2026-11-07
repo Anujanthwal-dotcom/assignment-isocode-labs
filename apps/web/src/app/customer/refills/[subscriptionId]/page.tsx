@@ -6,17 +6,6 @@ import { apiFetch } from '@/lib/api/client';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import {
-  ArrowLeft,
-  Bell,
-  Calendar,
-  Clock,
-  ShoppingCart,
-  PauseCircle,
-  PlayCircle,
-  XCircle,
-  AlertCircle,
-} from 'lucide-react';
 import Link from 'next/link';
 import { RefillSubscriptionDto, RefillReminderDto } from '@pharmacy/shared-types';
 
@@ -72,31 +61,31 @@ export default function CustomerRefillSubscriptionPage() {
   };
 
   const handleCancel = async () => {
-    if (!confirm('Are you sure you want to cancel refill reminders for this medicine?')) return;
+    if (!confirm('Are you sure you want to stop all reminders for this medicine?')) return;
     try {
       setUpdating(true);
-      await apiFetch(`/customer/refills/subscriptions/${subscriptionId}/cancel`, {
-        method: 'POST',
+      await apiFetch(`/customer/refills/subscriptions/${subscriptionId}`, {
+        method: 'DELETE',
       });
       router.push('/customer/refills');
     } catch (err: any) {
-      alert(err.message || 'Failed to cancel reminders.');
+      alert(err.message || 'Failed to cancel subscription.');
     } finally {
       setUpdating(false);
     }
   };
 
-  const handleLeadTimeChange = async (days: number) => {
+  const handleLeadTimeChange = async (newDays: number) => {
     try {
       setUpdating(true);
-      setLeadDays(days);
+      setLeadDays(newDays);
       await apiFetch(`/customer/refills/subscriptions/${subscriptionId}`, {
         method: 'PATCH',
-        body: JSON.stringify({ reminderDaysBefore: days }),
+        body: JSON.stringify({ reminderDaysBefore: newDays }),
       });
       await loadData();
     } catch (err: any) {
-      alert(err.message || 'Failed to update reminder lead time.');
+      alert(err.message || 'Failed to update reminder preferences.');
     } finally {
       setUpdating(false);
     }
@@ -107,30 +96,33 @@ export default function CustomerRefillSubscriptionPage() {
       setUpdating(true);
       const res = await apiFetch<{ success: boolean; cartId: string }>(
         `/customer/refills/subscriptions/${subscriptionId}/reorder`,
-        {
-          method: 'POST',
-        },
+        { method: 'POST' },
       );
-      if (res.success) {
+      if (res && res.cartId) {
         router.push('/customer/cart');
       }
     } catch (err: any) {
-      alert(err.message || 'Failed to initiate refill order.');
+      alert(err.message || 'Failed to initialize refill order.');
     } finally {
       setUpdating(false);
     }
   };
 
   if (loading) {
-    return <div className="py-16 text-center text-[#78879A]">Loading subscription settings...</div>;
+    return (
+      <div className="max-w-2xl mx-auto py-16 text-center text-[#78879A] text-xs">
+        Loading subscription schedule...
+      </div>
+    );
   }
 
   if (!sub) {
     return (
-      <div className="max-w-xl mx-auto py-12 text-center space-y-4">
+      <div className="max-w-2xl mx-auto py-16 text-center space-y-4">
+        <span className="font-bold uppercase text-xs text-red-600 block mb-1">Notice</span>
         <h2 className="text-xl font-bold text-[#351F65]">Subscription Not Found</h2>
         <Link href="/customer/refills">
-          <Button variant="outline">Back to Refills</Button>
+          <Button variant="outline">&larr; Back to Refills</Button>
         </Link>
       </div>
     );
@@ -142,7 +134,7 @@ export default function CustomerRefillSubscriptionPage() {
         href="/customer/refills"
         className="inline-flex items-center text-xs font-semibold text-[#6240E8] hover:underline"
       >
-        <ArrowLeft className="mr-1.5 h-3.5 w-3.5" /> Back to Medicine Refills
+        &larr; Back to Medicine Refills
       </Link>
 
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-[#EAE8F0]">
@@ -166,17 +158,18 @@ export default function CustomerRefillSubscriptionPage() {
           <Button
             onClick={handleReorder}
             disabled={updating}
-            className="bg-[#6240E8] hover:bg-[#5233D1] text-white flex items-center gap-1.5"
+            className="bg-[#6240E8] hover:bg-[#5233D1] text-white"
           >
-            <ShoppingCart className="h-4 w-4" />
-            <span>One-Tap Reorder</span>
+            One-Tap Reorder
           </Button>
         </div>
       </div>
 
       {/* Advisory Banner */}
       <div className="p-4 bg-[#F7F5FD] border border-[#6240E8]/20 rounded-xl flex items-start gap-3">
-        <AlertCircle className="h-5 w-5 text-[#6240E8] shrink-0 mt-0.5" />
+        <span className="font-bold text-[11px] uppercase px-1.5 py-0.5 rounded bg-[#6240E8]/10 text-[#6240E8]">
+          NOTICE
+        </span>
         <div className="text-xs text-[#55476D] leading-relaxed">
           Refill reminders are informational schedules based on your last dispensed quantity. You
           will always confirm your cart and checkout requirements explicitly prior to order
@@ -228,29 +221,18 @@ export default function CustomerRefillSubscriptionPage() {
               variant="outline"
               onClick={handlePauseResume}
               disabled={updating}
-              className="flex items-center gap-2 border-slate-300"
+              className="border-slate-300"
             >
-              {sub.status === 'ACTIVE' ? (
-                <>
-                  <PauseCircle className="h-4 w-4 text-amber-600" />
-                  <span>Pause Reminders</span>
-                </>
-              ) : (
-                <>
-                  <PlayCircle className="h-4 w-4 text-emerald-600" />
-                  <span>Resume Reminders</span>
-                </>
-              )}
+              {sub.status === 'ACTIVE' ? 'Pause Reminders' : 'Resume Reminders'}
             </Button>
 
             <Button
               variant="ghost"
               onClick={handleCancel}
               disabled={updating}
-              className="text-red-600 hover:bg-red-50 hover:text-red-700 flex items-center gap-1.5"
+              className="text-red-600 hover:bg-red-50 hover:text-red-700"
             >
-              <XCircle className="h-4 w-4" />
-              <span>Cancel Subscription</span>
+              Cancel Subscription
             </Button>
           </div>
         </CardContent>
@@ -272,8 +254,7 @@ export default function CustomerRefillSubscriptionPage() {
             <div className="divide-y divide-[#EAE8F0] text-xs">
               {reminders.map((rem) => (
                 <div key={rem.id} className="py-2.5 flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <Clock className="h-3.5 w-3.5 text-[#6240E8]" />
+                  <div>
                     <span className="font-medium text-slate-800">
                       Scheduled for {new Date(rem.scheduledFor).toLocaleDateString()}
                     </span>

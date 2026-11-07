@@ -5,7 +5,6 @@ import { Button } from '@/components/ui/button';
 import { OtpInput } from '@/components/ui/otp-input';
 import { SemanticAlert } from '@/components/shared/SemanticAlert';
 import { useAuth } from '@/lib/auth/auth-context';
-import { ArrowLeft, RefreshCw, KeyRound } from 'lucide-react';
 
 interface OtpVerificationFormProps {
   phone: string;
@@ -83,21 +82,17 @@ export const OtpVerificationForm: React.FC<OtpVerificationFormProps> = ({
           type="button"
           onClick={onBack}
           disabled={loading}
-          className="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-600 hover:text-slate-900 transition-colors"
+          className="inline-flex items-center gap-1 text-xs font-semibold text-slate-600 hover:text-slate-900 transition-colors"
         >
-          <ArrowLeft className="h-3.5 w-3.5" />
-          <span>Edit Number</span>
+          <span>← Edit Number</span>
         </button>
         <span className="text-xs text-slate-500 font-mono">+91 {phone}</span>
       </div>
 
       {devOtp && (
-        <div className="flex items-center gap-2 p-2.5 rounded-lg bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs">
-          <KeyRound className="h-4 w-4 shrink-0 text-emerald-600" />
-          <span>
-            Development Mode OTP:{' '}
-            <strong className="font-mono text-sm tracking-wider">{devOtp}</strong>
-          </span>
+        <div className="flex items-center justify-between p-2.5 rounded-lg bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs">
+          <span>Development Mode OTP:</span>
+          <strong className="font-mono text-sm tracking-wider">{devOtp}</strong>
         </div>
       )}
 
@@ -138,7 +133,6 @@ export const OtpVerificationForm: React.FC<OtpVerificationFormProps> = ({
             disabled={resending}
             className="inline-flex items-center gap-1.5 text-xs font-semibold text-purple-700 hover:text-purple-800 transition-colors"
           >
-            <RefreshCw className={`h-3 w-3 ${resending ? 'animate-spin' : ''}`} />
             <span>{resending ? 'Sending...' : 'Resend OTP'}</span>
           </button>
         )}

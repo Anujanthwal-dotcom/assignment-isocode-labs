@@ -5,7 +5,6 @@ import { useAuth } from '@/lib/auth/auth-context';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { StatusBadge } from '@/components/shared/StatusBadge';
-import { Stethoscope, Building2, LogOut, CheckCircle2 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 
 export default function PharmacistDashboardPage() {
@@ -29,18 +28,16 @@ export default function PharmacistDashboardPage() {
         <Button
           variant="outline"
           onClick={handleLogout}
-          className="flex items-center gap-2 border-slate-300 text-slate-700 hover:bg-slate-100"
+          className="border-slate-300 text-slate-700 hover:bg-slate-100"
         >
-          <LogOut className="h-4 w-4" />
-          <span>Sign Out</span>
+          Sign Out
         </Button>
       </div>
 
       <Card className="border-slate-200 shadow-sm">
         <CardHeader className="pb-3">
-          <CardTitle className="text-lg font-semibold text-slate-800 flex items-center gap-2">
-            <Stethoscope className="h-5 w-5 text-teal-600" />
-            <span>Pharmacist Identity &amp; Store Assignment</span>
+          <CardTitle className="text-lg font-semibold text-slate-800">
+            Pharmacist Identity &amp; Store Assignment
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
@@ -64,8 +61,7 @@ export default function PharmacistDashboardPage() {
             </div>
 
             <div className="p-3 bg-slate-50 rounded-lg border border-slate-100 sm:col-span-2">
-              <span className="text-xs text-slate-500 block uppercase font-medium flex items-center gap-1.5">
-                <Building2 className="h-3.5 w-3.5 text-teal-600" />
+              <span className="text-xs text-slate-500 block uppercase font-medium">
                 Assigned Pharmacy Store
               </span>
               <div className="mt-1 flex items-center justify-between">
@@ -82,9 +78,8 @@ export default function PharmacistDashboardPage() {
               <span className="text-xs text-slate-500 block uppercase font-medium">
                 Account Status
               </span>
-              <span className="font-medium text-emerald-700 flex items-center gap-1 mt-1">
-                <CheckCircle2 className="h-4 w-4" />
-                {user?.status || 'ACTIVE'}
+              <span className="font-medium text-emerald-700 mt-1 block">
+                ✓ {user?.status || 'ACTIVE'}
               </span>
             </div>
 
@@ -99,10 +94,11 @@ export default function PharmacistDashboardPage() {
           </div>
 
           <div className="p-3.5 bg-teal-50 rounded-lg border border-teal-200 text-xs text-teal-900 leading-relaxed">
-            <strong>Phase 1 Infrastructure Complete:</strong> Pharmacist session authenticated using
-            Argon2id encrypted credentials. Store boundary binding ensures this session belongs
-            exclusively to <strong>{user?.store?.name || 'Salt Lake Store'}</strong>. Prescription
-            verification queues and schedule sign-offs will be activated in subsequent phases.
+            <strong>Licensed Pharmacist Workspace:</strong> Session authenticated using Argon2id
+            encrypted credentials. Store boundary binding ensures this session operates exclusively
+            for <strong>{user?.store?.name || 'Salt Lake Store'}</strong>. Access incoming
+            prescription verification, Schedule H1 registers, and physical order fulfilment using
+            the navigation menu.
           </div>
         </CardContent>
       </Card>

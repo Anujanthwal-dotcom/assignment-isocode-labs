@@ -13,7 +13,6 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
-import { Clock, ArrowLeft, CheckCircle2, XCircle, AlertCircle, RefreshCw } from 'lucide-react';
 import { VerificationAnalyticsDto } from '@pharmacy/shared-types';
 
 export default function AdminAnalyticsVerificationPage() {
@@ -45,13 +44,12 @@ export default function AdminAnalyticsVerificationPage() {
         href="/admin/analytics"
         className="inline-flex items-center text-xs font-semibold text-[#6240E8] hover:underline"
       >
-        <ArrowLeft className="mr-1.5 h-3.5 w-3.5" /> Back to Analytics Overview
+        &larr; Back to Analytics Overview
       </Link>
 
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-200">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight text-slate-900 flex items-center gap-2">
-            <Clock className="h-6 w-6 text-[#6240E8]" />
+          <h1 className="text-2xl font-bold tracking-tight text-slate-900">
             Pharmacist Verification Performance
           </h1>
           <p className="text-sm text-slate-500 mt-1">

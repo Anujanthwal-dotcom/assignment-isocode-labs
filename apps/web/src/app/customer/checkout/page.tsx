@@ -8,18 +8,6 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { apiFetch } from '@/lib/api/client';
 import {
-  User,
-  Users,
-  FileText,
-  MapPin,
-  CreditCard,
-  Banknote,
-  ShieldAlert,
-  AlertCircle,
-  Plus,
-  ArrowRight,
-} from 'lucide-react';
-import {
   CartDTO,
   FamilyMemberDTO,
   CustomerAddressDTO,
@@ -184,7 +172,7 @@ export default function CustomerCheckoutPage() {
   if (error || !cart) {
     return (
       <Card className="max-w-[700px] mx-auto p-8 border-red-200 bg-red-50 text-center">
-        <AlertCircle className="h-8 w-8 text-red-500 mx-auto mb-2" />
+        <span className="text-xs uppercase font-bold text-red-600 block mb-1">Notice</span>
         <p className="text-sm text-red-700 font-medium">{error || 'Cart is empty.'}</p>
         <Button size="sm" onClick={() => router.push('/customer/cart')} className="mt-4 text-xs">
           Return to Cart
@@ -205,7 +193,9 @@ export default function CustomerCheckoutPage() {
 
       {/* Mandatory Pharmacist Review Notice */}
       <div className="rounded-xl border border-amber-300 bg-amber-50 p-4 text-xs text-amber-900 flex items-start gap-3">
-        <ShieldAlert className="h-5 w-5 text-amber-700 shrink-0 mt-0.5" />
+        <span className="font-bold text-[11px] uppercase px-1.5 py-0.5 rounded bg-amber-200 text-amber-900">
+          MANDATORY
+        </span>
         <div className="leading-relaxed">
           <strong className="block font-semibold text-amber-800 mb-0.5">
             Mandatory Pharmacist Verification Notice
@@ -217,7 +207,9 @@ export default function CustomerCheckoutPage() {
 
       {submitError && (
         <div className="p-4 rounded-xl bg-red-50 border border-red-200 text-xs text-red-700 flex items-center gap-2 font-medium">
-          <AlertCircle className="h-4 w-4 shrink-0" />
+          <span className="font-bold uppercase text-[10px] px-1 py-0.5 bg-red-200 rounded">
+            Error
+          </span>
           <span>{submitError}</span>
         </div>
       )}
@@ -247,10 +239,7 @@ export default function CustomerCheckoutPage() {
                     : 'border-slate-200 hover:border-slate-300 text-slate-700'
                 }`}
               >
-                <div className="flex items-center gap-1.5 font-semibold text-xs">
-                  <User className="h-3.5 w-3.5" />
-                  <span>Self (Owner)</span>
-                </div>
+                <div className="font-semibold text-xs">Self (Owner)</div>
               </button>
 
               {familyMembers.map((member) => (
@@ -267,10 +256,7 @@ export default function CustomerCheckoutPage() {
                       : 'border-slate-200 hover:border-slate-300 text-slate-700'
                   }`}
                 >
-                  <div className="flex items-center gap-1.5 font-semibold text-xs truncate">
-                    <Users className="h-3.5 w-3.5 shrink-0" />
-                    <span className="truncate">{member.fullName}</span>
-                  </div>
+                  <div className="font-semibold text-xs truncate">{member.fullName}</div>
                   <span className="text-[10px] text-slate-500 block capitalize mt-0.5">
                     {member.relationship.toLowerCase()}
                   </span>
@@ -292,7 +278,6 @@ export default function CustomerCheckoutPage() {
 
             {filteredPrescriptions.length === 0 ? (
               <div className="p-4 bg-slate-50 rounded-lg border border-slate-200 text-center space-y-2">
-                <FileText className="h-8 w-8 text-slate-400 mx-auto" />
                 <p className="text-xs text-slate-600">
                   No saved prescriptions found for{' '}
                   {selectedFamilyMemberId ? 'this family member' : 'yourself'}.
@@ -312,13 +297,12 @@ export default function CustomerCheckoutPage() {
                       key={rx.id}
                       type="button"
                       onClick={() => setSelectedPrescriptionId(rx.id)}
-                      className={`p-3 rounded-lg border text-left transition-all flex items-start gap-2.5 ${
+                      className={`p-3 rounded-lg border text-left transition-all ${
                         selectedPrescriptionId === rx.id
                           ? 'border-[#6240E8] bg-[#F7F5FD] text-[#6240E8] shadow-2xs'
                           : 'border-slate-200 hover:border-slate-300 text-slate-700'
                       }`}
                     >
-                      <FileText className="h-4 w-4 mt-0.5 shrink-0" />
                       <div className="truncate text-xs">
                         <span className="font-semibold block truncate">{rx.originalFileName}</span>
                         <span className="text-[10px] text-slate-400">
@@ -379,16 +363,14 @@ export default function CustomerCheckoutPage() {
               </div>
               <Link
                 href="/customer/addresses"
-                className="text-xs text-[#6240E8] font-semibold hover:underline flex items-center gap-1"
+                className="text-xs text-[#6240E8] font-semibold hover:underline"
               >
-                <Plus className="h-3 w-3" />
-                <span>Add New</span>
+                + Add New
               </Link>
             </div>
 
             {addresses.length === 0 ? (
               <div className="p-4 bg-slate-50 rounded-lg text-center space-y-2">
-                <MapPin className="h-6 w-6 text-slate-400 mx-auto" />
                 <p className="text-xs text-slate-600">
                   You do not have any saved delivery addresses.
                 </p>
@@ -446,13 +428,12 @@ export default function CustomerCheckoutPage() {
               <button
                 type="button"
                 onClick={() => setPaymentMethod('UPI')}
-                className={`p-4 rounded-xl border text-left transition-all flex items-start gap-3 ${
+                className={`p-4 rounded-xl border text-left transition-all ${
                   paymentMethod === 'UPI'
                     ? 'border-[#6240E8] bg-[#F7F5FD] text-[#351F65] shadow-2xs'
                     : 'border-slate-200 hover:border-slate-300'
                 }`}
               >
-                <CreditCard className="h-5 w-5 text-[#6240E8] shrink-0 mt-0.5" />
                 <div>
                   <span className="font-bold text-sm block">UPI (Test Simulation)</span>
                   <span className="text-xs text-slate-500 mt-0.5 block leading-normal">
@@ -464,13 +445,12 @@ export default function CustomerCheckoutPage() {
               <button
                 type="button"
                 onClick={() => setPaymentMethod('COD')}
-                className={`p-4 rounded-xl border text-left transition-all flex items-start gap-3 ${
+                className={`p-4 rounded-xl border text-left transition-all ${
                   paymentMethod === 'COD'
                     ? 'border-[#6240E8] bg-[#F7F5FD] text-[#351F65] shadow-2xs'
                     : 'border-slate-200 hover:border-slate-300'
                 }`}
               >
-                <Banknote className="h-5 w-5 text-emerald-600 shrink-0 mt-0.5" />
                 <div>
                   <span className="font-bold text-sm block">Cash on Delivery (COD)</span>
                   <span className="text-xs text-slate-500 mt-0.5 block leading-normal">
@@ -544,10 +524,9 @@ export default function CustomerCheckoutPage() {
             <Button
               onClick={handlePlaceOrder}
               disabled={submitting || !selectedAddressId || !selectedPrescriptionId}
-              className="w-full bg-[#6240E8] text-white hover:bg-[#5233D0] h-12 text-xs font-bold shadow-xs flex items-center justify-center gap-1.5"
+              className="w-full bg-[#6240E8] text-white hover:bg-[#5233D0] h-12 text-xs font-bold shadow-xs flex items-center justify-center"
             >
-              <span>{submitting ? 'Placing Order...' : 'Confirm & Place Order'}</span>
-              <ArrowRight className="h-4 w-4" />
+              {submitting ? 'Placing Order...' : 'Confirm & Place Order →'}
             </Button>
           </Card>
         </div>

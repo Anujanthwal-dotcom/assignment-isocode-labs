@@ -7,7 +7,6 @@ import {
   TableRow,
   TableCell,
 } from '@/components/ui/table';
-import { Loader2, AlertCircle, Inbox } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 
@@ -60,8 +59,7 @@ export function DataTable<T extends Record<string, unknown>>({
               <TableRow>
                 <TableCell colSpan={columns.length} className="h-[180px] text-center">
                   <div className="flex flex-col items-center justify-center gap-2 text-[#78879A]">
-                    <Loader2 className="h-6 w-6 animate-spin text-[#6240E8]" />
-                    <span className="text-[14px]">Loading clinical records...</span>
+                    <span className="text-[14px] font-medium">Loading clinical records...</span>
                   </div>
                 </TableCell>
               </TableRow>
@@ -69,7 +67,6 @@ export function DataTable<T extends Record<string, unknown>>({
               <TableRow>
                 <TableCell colSpan={columns.length} className="h-[180px] text-center">
                   <div className="flex flex-col items-center justify-center gap-2 text-[#DC3545]">
-                    <AlertCircle className="h-6 w-6" />
                     <span className="text-[14px] font-medium">{error}</span>
                     {onRetry && (
                       <Button
@@ -88,7 +85,6 @@ export function DataTable<T extends Record<string, unknown>>({
               <TableRow>
                 <TableCell colSpan={columns.length} className="h-[180px] text-center">
                   <div className="flex flex-col items-center justify-center gap-2 text-[#78879A]">
-                    <Inbox className="h-6 w-6 opacity-60" />
                     <span className="text-[14px]">{emptyMessage}</span>
                   </div>
                 </TableCell>

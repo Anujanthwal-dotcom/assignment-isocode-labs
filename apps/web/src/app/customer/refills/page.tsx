@@ -6,16 +6,6 @@ import { apiFetch } from '@/lib/api/client';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import {
-  RefreshCw,
-  Bell,
-  Calendar,
-  Clock,
-  AlertCircle,
-  CheckCircle2,
-  ChevronRight,
-  ShoppingCart,
-} from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { RefillEstimateDto, RefillEligibilityStatus } from '@pharmacy/shared-types';
 
@@ -48,15 +38,13 @@ export default function CustomerRefillsPage() {
       setReorderingId(subscriptionId);
       const res = await apiFetch<{ success: boolean; cartId: string }>(
         '/customer/refills/subscriptions/' + subscriptionId + '/reorder',
-        {
-          method: 'POST',
-        },
+        { method: 'POST' },
       );
-      if (res.success) {
+      if (res && res.cartId) {
         router.push('/customer/cart');
       }
     } catch (err: any) {
-      alert(err.message || 'Failed to initiate refill order.');
+      alert(err.message || 'Failed to initialize 1-click refill order.');
     } finally {
       setReorderingId(null);
     }
@@ -66,8 +54,7 @@ export default function CustomerRefillsPage() {
     <div className="space-y-6 max-w-5xl mx-auto py-6 px-4">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-[#EAE8F0]">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight text-[#351F65] flex items-center gap-2">
-            <RefreshCw className="h-6 w-6 text-[#6240E8]" />
+          <h1 className="text-2xl font-bold tracking-tight text-[#351F65]">
             Medicine Refills &amp; Supply Estimates
           </h1>
           <p className="text-sm text-[#78879A] mt-1">
@@ -79,15 +66,16 @@ export default function CustomerRefillsPage() {
             variant="outline"
             className="flex items-center gap-2 border-[#EAE8F0] text-[#351F65]"
           >
-            <Bell className="h-4 w-4 text-[#6240E8]" />
-            <span>Reminder Alerts</span>
+            Reminder Alerts
           </Button>
         </Link>
       </div>
 
       {/* Advisory Banner */}
       <div className="p-4 bg-[#F7F5FD] border border-[#6240E8]/20 rounded-xl flex items-start gap-3">
-        <AlertCircle className="h-5 w-5 text-[#6240E8] shrink-0 mt-0.5" />
+        <span className="font-bold text-[11px] uppercase px-1.5 py-0.5 rounded bg-[#6240E8]/10 text-[#6240E8]">
+          NOTICE
+        </span>
         <div className="text-xs text-[#55476D] leading-relaxed">
           <strong className="text-[#351F65]">Important Notice:</strong> Refill dates are estimates
           based on the last quantity dispensed and pharmacist-confirmed dosage. Actual usage may
@@ -97,14 +85,12 @@ export default function CustomerRefillsPage() {
 
       {loading ? (
         <div className="py-16 text-center text-[#78879A]">
-          <RefreshCw className="h-8 w-8 animate-spin mx-auto mb-3 text-[#6240E8]" />
           Loading your medicine refill estimates...
         </div>
       ) : error ? (
         <div className="p-4 rounded-xl bg-red-50 text-red-700 border border-red-200">{error}</div>
       ) : estimates.length === 0 ? (
         <Card className="p-12 text-center space-y-4 border-[#EAE8F0]">
-          <RefreshCw className="h-12 w-12 text-slate-300 mx-auto" />
           <h3 className="text-lg font-semibold text-[#351F65]">No Refill Estimates Yet</h3>
           <p className="text-sm text-[#78879A] max-w-md mx-auto">
             Once you receive your delivered order with pharmacist-verified dosage instructions,
@@ -112,7 +98,7 @@ export default function CustomerRefillsPage() {
           </p>
           <Link href="/customer/orders">
             <Button variant="outline" className="border-[#6240E8] text-[#6240E8] mt-2">
-              View Your Orders
+              View Your Orders &rarr;
             </Button>
           </Link>
         </Card>
@@ -201,10 +187,9 @@ export default function CustomerRefillsPage() {
                   <div className="pt-2 border-t border-[#EAE8F0] flex items-center justify-between">
                     {sub ? (
                       <div className="flex items-center gap-2">
-                        <CheckCircle2 className="h-4 w-4 text-emerald-600" />
                         <span className="text-xs font-medium text-slate-700">
                           {sub.status === 'ACTIVE'
-                            ? `Reminding ${sub.reminderDaysBefore} days before`
+                            ? `✓ Reminding ${sub.reminderDaysBefore} days before`
                             : 'Reminders paused'}
                         </span>
                       </div>
@@ -219,10 +204,9 @@ export default function CustomerRefillsPage() {
                           variant="outline"
                           onClick={() => handleReorder(sub.id)}
                           disabled={reorderingId === sub.id}
-                          className="h-8 border-[#6240E8] text-[#6240E8] hover:bg-[#F7F5FD] flex items-center gap-1.5"
+                          className="h-8 border-[#6240E8] text-[#6240E8] hover:bg-[#F7F5FD]"
                         >
-                          <ShoppingCart className="h-3.5 w-3.5" />
-                          <span>Reorder</span>
+                          Reorder
                         </Button>
                         <Link href={`/customer/refills/${sub.id}`}>
                           <Button size="sm" variant="ghost" className="h-8 text-[#6240E8] px-2">

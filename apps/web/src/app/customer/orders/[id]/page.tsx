@@ -7,23 +7,6 @@ import { Button } from '@/components/ui/button';
 import { StatusBadge } from '@/components/shared/StatusBadge';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { apiFetch } from '@/lib/api/client';
-import {
-  ChevronLeft,
-  MapPin,
-  User,
-  Clock,
-  AlertCircle,
-  CheckCircle2,
-  XCircle,
-  Eye,
-  AlertTriangle,
-  ArrowRight,
-  Trash2,
-  ShieldCheck,
-  RefreshCw,
-  UploadCloud,
-  FileText,
-} from 'lucide-react';
 import { OrderDTO, OrderStatusHistoryDTO } from '@pharmacy/shared-types';
 
 interface VerificationItem {
@@ -58,7 +41,11 @@ interface VerificationStatusData {
   prescriptionId: string;
   prescriptionStatus: string;
   reviewStatus: string | null;
+  decision: string | null;
   pharmacistNotes: string | null;
+  requiresReupload: boolean;
+  reviewedAt: string | null;
+  pharmacistName: string | null;
   subtotal: number;
   deliveryFee: number;
   discount: number;
@@ -68,8 +55,8 @@ interface VerificationStatusData {
 
 export default function CustomerOrderDetailPage() {
   const params = useParams();
-  const searchParams = useSearchParams();
   const router = useRouter();
+  const searchParams = useSearchParams();
   const orderId = params.id as string;
   const isJustPlaced = searchParams.get('placed') === 'true';
 
@@ -78,14 +65,10 @@ export default function CustomerOrderDetailPage() {
   const [verification, setVerification] = React.useState<VerificationStatusData | null>(null);
   const [loading, setLoading] = React.useState(true);
   const [error, setError] = React.useState<string | null>(null);
-
-  // Cancellation State
   const [cancelling, setCancelling] = React.useState(false);
-
-  // Action busy states
   const [actionLoading, setActionLoading] = React.useState<string | null>(null);
 
-  // Preview Dialog State
+  // Preview Modal
   const [previewOpen, setPreviewOpen] = React.useState(false);
   const [previewUrl, setPreviewUrl] = React.useState<string | null>(null);
   const [previewLoading, setPreviewLoading] = React.useState(false);
@@ -94,18 +77,20 @@ export default function CustomerOrderDetailPage() {
     try {
       setLoading(true);
       setError(null);
-      const [orderRes, histRes, verifRes] = await Promise.all([
+
+      const [orderRes, historyRes, verifRes] = await Promise.all([
         apiFetch<OrderDTO>(`/customer/orders/${orderId}`),
         apiFetch<OrderStatusHistoryDTO[]>(`/customer/orders/${orderId}/history`),
-        apiFetch<VerificationStatusData>(`/customer/orders/${orderId}/verification`).catch(
+        apiFetch<VerificationStatusData>(`/customer/orders/${orderId}/verification-status`).catch(
           () => null,
         ),
       ]);
+
       setOrder(orderRes);
-      setHistory(histRes || []);
+      setHistory(historyRes || []);
       setVerification(verifRes);
     } catch (err: unknown) {
-      setError((err as Error).message || 'Order not found or unauthorized.');
+      setError((err as Error).message || 'Failed to load order details.');
     } finally {
       setLoading(false);
     }
@@ -115,19 +100,54 @@ export default function CustomerOrderDetailPage() {
     fetchOrderDetails();
   }, [fetchOrderDetails]);
 
+  // Polling for live status updates if order is in active processing
+  React.useEffect(() => {
+    if (!order) return;
+    const activeStatuses = [
+      'PENDING_VERIFICATION',
+      'UNDER_REVIEW',
+      'ROUTING',
+      'ALLOCATED_TO_STORE',
+      'PICKING',
+      'PACKED',
+    ];
+
+    if (!activeStatuses.includes(order.status)) return;
+
+    const interval = setInterval(async () => {
+      try {
+        const [updatedOrder, verifRes] = await Promise.all([
+          apiFetch<OrderDTO>(`/customer/orders/${orderId}`),
+          apiFetch<VerificationStatusData>(`/customer/orders/${orderId}/verification-status`).catch(
+            () => null,
+          ),
+        ]);
+        if (updatedOrder) setOrder(updatedOrder);
+        if (verifRes) setVerification(verifRes);
+      } catch {
+        // Silent poll error
+      }
+    }, 5000);
+
+    return () => clearInterval(interval);
+  }, [order, orderId]);
+
   const handleCancelOrder = async () => {
-    if (!confirm('Are you sure you want to cancel this order? This action cannot be undone.')) {
+    if (
+      !confirm('Are you sure you want to cancel this order? This cannot be undone once processed.')
+    ) {
       return;
     }
 
     setCancelling(true);
     try {
-      await apiFetch(`/customer/orders/${orderId}/cancel`, {
+      const updated = await apiFetch<OrderDTO>(`/customer/orders/${orderId}/cancel`, {
         method: 'POST',
       });
-      await fetchOrderDetails();
+      setOrder(updated);
+      alert('Order cancelled successfully.');
     } catch (err: unknown) {
-      alert((err as Error).message || 'Order could not be cancelled.');
+      alert((err as Error).message || 'Unable to cancel order at this stage.');
     } finally {
       setCancelling(false);
     }
@@ -137,10 +157,10 @@ export default function CustomerOrderDetailPage() {
     setPreviewLoading(true);
     setPreviewOpen(true);
     try {
-      const res = await apiFetch<{ viewUrl: string }>(
-        `/customer/prescriptions/${prescriptionId}/file`,
+      const res = await apiFetch<{ url: string }>(
+        `/customer/prescriptions/${prescriptionId}/preview-url`,
       );
-      setPreviewUrl(res.viewUrl);
+      setPreviewUrl(res.url);
     } catch (err: unknown) {
       alert((err as Error).message || 'Failed to load prescription document.');
       setPreviewOpen(false);
@@ -149,37 +169,32 @@ export default function CustomerOrderDetailPage() {
     }
   };
 
-  const handleRemoveItem = async (orderItemId: string) => {
-    if (
-      !confirm(
-        'Are you sure you want to remove this item from your order? The total amount will be recalculated.',
-      )
-    ) {
-      return;
-    }
-    setActionLoading(`remove-${orderItemId}`);
+  const handleAlternativeResponse = async (proposalId: string, action: 'ACCEPT' | 'DECLINE') => {
+    setActionLoading(`alt-${proposalId}`);
     try {
-      await apiFetch(`/customer/orders/${orderId}/items/${orderItemId}/remove`, {
+      await apiFetch(`/customer/orders/${orderId}/alternatives/${proposalId}/respond`, {
         method: 'POST',
+        body: JSON.stringify({ action }),
       });
       await fetchOrderDetails();
-    } catch (err: any) {
-      alert(err?.message || 'Failed to remove item from order.');
+    } catch (err: unknown) {
+      alert((err as Error).message || `Failed to ${action.toLowerCase()} alternative.`);
     } finally {
       setActionLoading(null);
     }
   };
 
-  const handleAlternativeResponse = async (alternativeId: string, action: 'ACCEPT' | 'DECLINE') => {
-    setActionLoading(`alt-${alternativeId}`);
+  const handleRemoveItem = async (orderItemId: string) => {
+    if (!confirm('Remove this rejected/blocked item so the rest of your order can proceed?'))
+      return;
+    setActionLoading(`remove-${orderItemId}`);
     try {
-      await apiFetch(`/customer/orders/${orderId}/alternatives/${alternativeId}/respond`, {
-        method: 'POST',
-        body: JSON.stringify({ action }),
+      await apiFetch(`/customer/orders/${orderId}/items/${orderItemId}`, {
+        method: 'DELETE',
       });
       await fetchOrderDetails();
-    } catch (err: any) {
-      alert(err?.message || `Failed to ${action.toLowerCase()} alternative.`);
+    } catch (err: unknown) {
+      alert((err as Error).message || 'Failed to remove order item.');
     } finally {
       setActionLoading(null);
     }
@@ -193,24 +208,14 @@ export default function CustomerOrderDetailPage() {
         return 'warning';
       case 'UNDER_REVIEW':
         return 'purple';
-      case 'AWAITING_CUSTOMER_ACTION':
-        return 'warning';
-      case 'ROUTING_PENDING':
-      case 'STOCK_RESERVED':
-      case 'PICKING':
-      case 'PACKED':
-      case 'READY_FOR_HANDOVER':
-        return 'purple';
       case 'APPROVED':
-      case 'PARTIALLY_APPROVED':
-      case 'DELIVERED':
+      case 'READY_FOR_HANDOVER':
       case 'HANDED_OVER':
+      case 'DELIVERED':
         return 'success';
       case 'CANCELLED':
       case 'VERIFICATION_FAILED':
-      case 'REJECTED':
       case 'STOCK_UNAVAILABLE':
-      case 'FULFILMENT_CANCELLED':
         return 'danger';
       default:
         return 'information';
@@ -219,7 +224,7 @@ export default function CustomerOrderDetailPage() {
 
   if (loading) {
     return (
-      <div className="max-w-[850px] mx-auto py-12 text-center text-xs text-slate-500">
+      <div className="max-w-[950px] mx-auto py-12 text-center text-xs text-slate-500">
         Loading order details...
       </div>
     );
@@ -228,35 +233,30 @@ export default function CustomerOrderDetailPage() {
   if (error || !order) {
     return (
       <Card className="max-w-[700px] mx-auto p-8 border-red-200 bg-red-50 text-center">
-        <AlertCircle className="h-8 w-8 text-red-500 mx-auto mb-2" />
-        <h2 className="text-base font-semibold text-red-800">Order Not Found</h2>
-        <p className="text-xs text-red-600 mt-1">
-          {error || 'This order does not exist or belongs to another user.'}
-        </p>
+        <span className="text-xs uppercase font-bold text-red-600 block mb-1">Notice</span>
+        <p className="text-sm text-red-700 font-medium">{error || 'Order not found.'}</p>
         <Button size="sm" onClick={() => router.push('/customer/orders')} className="mt-4 text-xs">
-          Back to Orders
+          View All Orders
         </Button>
       </Card>
     );
   }
 
-  const isCancellable = order.status === 'PENDING_VERIFICATION';
-  const isReuploadRequested = verification?.reviewStatus === 'REUPLOAD_REQUESTED';
-  const isAwaitingCustomer = order.status === 'AWAITING_CUSTOMER_ACTION' || isReuploadRequested;
+  const isCancellable = order.status === 'PENDING_VERIFICATION' || order.status === 'UNDER_REVIEW';
+  const isReuploadRequested = verification?.requiresReupload;
 
   return (
-    <div className="max-w-[950px] mx-auto space-y-6">
-      {/* Back Button & Header */}
-      <div>
+    <div className="max-w-[1000px] mx-auto space-y-6">
+      {/* Top Breadcrumb & Actions */}
+      <div className="space-y-2">
         <button
           onClick={() => router.push('/customer/orders')}
-          className="inline-flex items-center text-xs font-semibold text-[#6240E8] hover:underline mb-2"
+          className="inline-flex items-center text-xs font-semibold text-[#6240E8] hover:underline"
         >
-          <ChevronLeft className="h-4 w-4 mr-1" />
-          Back to All Orders
+          &larr; Back to Orders
         </button>
 
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-4 border-b border-[#EAE8F0]">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-2 border-b border-[#EAE8F0]">
           <div>
             <div className="flex items-center gap-3">
               <h1 className="text-2xl font-bold tracking-tight text-[#351F65]">
@@ -270,10 +270,9 @@ export default function CustomerOrderDetailPage() {
             <p className="text-xs text-[#78879A] mt-1">
               Placed on{' '}
               {new Date(order.placedAt).toLocaleDateString('en-IN', {
-                weekday: 'long',
-                year: 'numeric',
-                month: 'long',
                 day: 'numeric',
+                month: 'long',
+                year: 'numeric',
                 hour: '2-digit',
                 minute: '2-digit',
               })}
@@ -281,7 +280,13 @@ export default function CustomerOrderDetailPage() {
           </div>
 
           <div className="flex items-center gap-2">
-            {(order.status === 'PACKED' ||
+            {(order.status === 'APPROVED' ||
+              order.status === 'ROUTING_PENDING' ||
+              order.status === 'STOCK_RESERVED' ||
+              (order.status as string) === 'ROUTING' ||
+              (order.status as string) === 'ALLOCATED_TO_STORE' ||
+              order.status === 'PICKING' ||
+              order.status === 'PACKED' ||
               order.status === 'READY_FOR_HANDOVER' ||
               order.status === 'HANDED_OVER') && (
               <Button
@@ -290,8 +295,7 @@ export default function CustomerOrderDetailPage() {
                 onClick={() => router.push(`/customer/orders/${orderId}/invoice`)}
                 className="text-xs h-9 px-3 border-[#6240E8]/40 text-[#6240E8] hover:bg-purple-50 inline-flex items-center gap-1.5"
               >
-                <FileText className="h-4 w-4" />
-                <span>View Invoice</span>
+                View Invoice
               </Button>
             )}
 
@@ -303,8 +307,7 @@ export default function CustomerOrderDetailPage() {
                 disabled={cancelling}
                 className="text-xs h-9 px-3 text-red-600 border-red-300 hover:bg-red-50 self-start sm:self-auto"
               >
-                <XCircle className="h-4 w-4 mr-1.5" />
-                <span>{cancelling ? 'Cancelling...' : 'Cancel Order'}</span>
+                {cancelling ? 'Cancelling...' : 'Cancel Order'}
               </Button>
             )}
           </div>
@@ -313,7 +316,9 @@ export default function CustomerOrderDetailPage() {
 
       {isJustPlaced && (
         <div className="rounded-xl border border-emerald-200 bg-emerald-50 p-4 text-xs text-emerald-800 flex items-start gap-3">
-          <CheckCircle2 className="h-5 w-5 text-emerald-600 shrink-0 mt-0.5" />
+          <span className="font-bold text-[11px] uppercase px-1.5 py-0.5 rounded bg-emerald-200 text-emerald-900">
+            CONFIRMED
+          </span>
           <div>
             <strong className="block font-semibold text-emerald-900 mb-0.5">
               Order Submitted Successfully
@@ -329,7 +334,9 @@ export default function CustomerOrderDetailPage() {
       {isReuploadRequested && (
         <div className="rounded-xl border border-amber-300 bg-amber-50 p-5 text-xs text-amber-900 shadow-xs">
           <div className="flex items-start gap-3">
-            <AlertTriangle className="h-5 w-5 text-amber-600 shrink-0 mt-0.5" />
+            <span className="font-bold text-[11px] uppercase px-1.5 py-0.5 rounded bg-amber-200 text-amber-900">
+              RE-UPLOAD
+            </span>
             <div className="space-y-2 flex-1">
               <div>
                 <strong className="block text-sm font-bold text-amber-950 mb-0.5">
@@ -354,8 +361,7 @@ export default function CustomerOrderDetailPage() {
                   onClick={() => router.push('/customer/prescriptions')}
                   className="bg-amber-600 hover:bg-amber-700 text-white text-xs h-8 px-3 inline-flex items-center gap-1.5"
                 >
-                  <UploadCloud className="w-3.5 h-3.5" />
-                  Upload Replacement Prescription
+                  Upload Replacement Prescription &rarr;
                 </Button>
               </div>
             </div>
@@ -366,7 +372,9 @@ export default function CustomerOrderDetailPage() {
       {/* Stock Unavailable Alert */}
       {order.status === 'STOCK_UNAVAILABLE' && (
         <div className="rounded-xl border border-rose-300 bg-rose-50 p-4 text-xs text-rose-900 shadow-xs flex items-start gap-3">
-          <AlertTriangle className="h-5 w-5 text-rose-600 shrink-0 mt-0.5" />
+          <span className="font-bold text-[11px] uppercase px-1.5 py-0.5 rounded bg-rose-200 text-rose-900">
+            STOCK ALERT
+          </span>
           <div className="space-y-1">
             <strong className="block text-sm font-bold text-rose-950">
               Stock Temporarily Unavailable at Fulfillment Stores
@@ -383,7 +391,9 @@ export default function CustomerOrderDetailPage() {
       {/* Verification / Fulfilment Stage Notice */}
       {!isReuploadRequested && (
         <div className="rounded-xl border border-[#D6D1F7] bg-[#F7F5FD] p-4 text-xs text-[#351F65] flex items-start gap-3">
-          <Clock className="h-5 w-5 text-[#6240E8] shrink-0 mt-0.5" />
+          <span className="font-bold text-[11px] uppercase px-1.5 py-0.5 rounded bg-[#6240E8]/10 text-[#6240E8]">
+            CLINICAL REVIEW
+          </span>
           <div className="leading-relaxed">
             <strong className="block font-semibold text-[#6240E8] mb-0.5">
               Pharmacist Verification Status:{' '}
@@ -409,12 +419,12 @@ export default function CustomerOrderDetailPage() {
               <div className="divide-y divide-slate-100">
                 {order.items.map((item) => {
                   const verifItem = verification?.items.find((v) => v.orderItemId === item.id);
+                  const isApproved = verifItem?.reviewStatus === 'APPROVED';
                   const isRejected =
                     verifItem?.reviewStatus === 'REJECTED' || item.status === 'REJECTED';
                   const isBlocked =
                     verifItem?.reviewStatus === 'BLOCKED' ||
                     (item.status as string) === 'CANCELLED';
-                  const isApproved = verifItem?.reviewStatus === 'APPROVED';
                   const proposal = verifItem?.pendingAlternative;
 
                   return (
@@ -426,20 +436,17 @@ export default function CustomerOrderDetailPage() {
                               {item.medicineNameSnapshot}
                             </span>
                             {isApproved && (
-                              <span className="inline-flex items-center gap-0.5 px-2 py-0.2 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
-                                <CheckCircle2 className="w-3 h-3" />
+                              <span className="inline-flex items-center px-2 py-0.2 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
                                 Approved
                               </span>
                             )}
                             {isRejected && (
-                              <span className="inline-flex items-center gap-0.5 px-2 py-0.2 rounded-full text-[10px] font-bold bg-rose-50 text-rose-700 border border-rose-200">
-                                <XCircle className="w-3 h-3" />
+                              <span className="inline-flex items-center px-2 py-0.2 rounded-full text-[10px] font-bold bg-rose-50 text-rose-700 border border-rose-200">
                                 Rejected
                               </span>
                             )}
                             {isBlocked && (
-                              <span className="inline-flex items-center gap-0.5 px-2 py-0.2 rounded-full text-[10px] font-bold bg-rose-50 text-rose-700 border border-rose-200">
-                                <AlertTriangle className="w-3 h-3" />
+                              <span className="inline-flex items-center px-2 py-0.2 rounded-full text-[10px] font-bold bg-rose-50 text-rose-700 border border-rose-200">
                                 Blocked by Policy
                               </span>
                             )}
@@ -463,7 +470,6 @@ export default function CustomerOrderDetailPage() {
                               disabled={actionLoading === `remove-${item.id}`}
                               className="mt-2 text-[11px] h-7 px-2.5 text-rose-600 border-rose-200 hover:bg-rose-50 inline-flex items-center gap-1"
                             >
-                              <Trash2 className="w-3 h-3" />
                               {actionLoading === `remove-${item.id}`
                                 ? 'Removing...'
                                 : 'Remove Item'}
@@ -475,7 +481,9 @@ export default function CustomerOrderDetailPage() {
                       {/* Pharmacist Rejection / Block Reason */}
                       {(isRejected || isBlocked) && verifItem?.decisionReason && (
                         <div className="p-2.5 bg-rose-50 rounded-lg border border-rose-200 text-rose-800 text-[11px] flex items-start gap-2">
-                          <AlertTriangle className="w-4 h-4 text-rose-600 shrink-0 mt-0.5" />
+                          <span className="font-bold text-[10px] uppercase px-1 py-0.5 rounded bg-rose-200">
+                            NOTE
+                          </span>
                           <div>
                             <span className="font-semibold block">Pharmacist Note:</span>
                             {verifItem.decisionReason}
@@ -487,8 +495,7 @@ export default function CustomerOrderDetailPage() {
                       {proposal && (
                         <div className="p-3 bg-purple-50/70 border border-[#D6D1F7] rounded-xl space-y-2.5 text-xs text-[#351F65]">
                           <div className="flex items-center justify-between">
-                            <span className="font-bold flex items-center gap-1 text-[#6240E8]">
-                              <ShieldCheck className="w-4 h-4" />
+                            <span className="font-bold text-[#6240E8]">
                               Generic Alternative Proposed by Pharmacist
                             </span>
                             <span className="font-mono text-[10px] text-purple-700 font-semibold uppercase">
@@ -564,8 +571,7 @@ export default function CustomerOrderDetailPage() {
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             {/* Delivery Address Snapshot */}
             <Card className="border-[#EAE8F0] bg-white p-5 space-y-2">
-              <div className="flex items-center gap-2 text-xs font-bold text-[#351F65] border-b border-slate-100 pb-2">
-                <MapPin className="h-4 w-4 text-[#6240E8]" />
+              <div className="text-xs font-bold text-[#351F65] border-b border-slate-100 pb-2">
                 <span>Delivery Address (Snapshot)</span>
               </div>
               <div className="text-xs text-slate-600 space-y-1 pt-1">
@@ -585,8 +591,7 @@ export default function CustomerOrderDetailPage() {
 
             {/* Patient & Prescription Info */}
             <Card className="border-[#EAE8F0] bg-white p-5 space-y-2">
-              <div className="flex items-center gap-2 text-xs font-bold text-[#351F65] border-b border-slate-100 pb-2">
-                <User className="h-4 w-4 text-[#6240E8]" />
+              <div className="text-xs font-bold text-[#351F65] border-b border-slate-100 pb-2">
                 <span>Patient &amp; Prescription</span>
               </div>
               <div className="text-xs text-slate-600 space-y-2 pt-1">
@@ -615,7 +620,6 @@ export default function CustomerOrderDetailPage() {
                         onClick={() => handlePreviewPrescription(order.prescriptionId)}
                         className="text-[11px] h-7 px-2 border-[#6240E8]/30 text-[#6240E8]"
                       >
-                        <Eye className="h-3 w-3 mr-1" />
                         Preview
                       </Button>
                     </div>

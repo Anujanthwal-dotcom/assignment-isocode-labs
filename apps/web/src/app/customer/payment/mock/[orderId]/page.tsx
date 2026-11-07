@@ -5,15 +5,6 @@ import { useParams, useRouter } from 'next/navigation';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { apiFetch } from '@/lib/api/client';
-import {
-  CreditCard,
-  CheckCircle2,
-  XCircle,
-  AlertTriangle,
-  ArrowRight,
-  ShieldAlert,
-  RotateCcw,
-} from 'lucide-react';
 import { OrderDTO, MockPaymentResponseDTO } from '@pharmacy/shared-types';
 
 export default function CustomerMockPaymentPage() {
@@ -77,7 +68,7 @@ export default function CustomerMockPaymentPage() {
   if (error || !order) {
     return (
       <Card className="max-w-[600px] mx-auto p-8 border-red-200 bg-red-50 text-center">
-        <AlertTriangle className="h-8 w-8 text-red-500 mx-auto mb-2" />
+        <span className="text-xs uppercase font-bold text-red-600 block mb-1">Notice</span>
         <p className="text-sm text-red-700 font-medium">{error || 'Order not found.'}</p>
         <Button size="sm" onClick={() => router.push('/customer/orders')} className="mt-4 text-xs">
           View Orders
@@ -90,7 +81,9 @@ export default function CustomerMockPaymentPage() {
     <div className="max-w-[650px] mx-auto space-y-6">
       {/* Test Mode Banner */}
       <div className="rounded-xl border border-amber-300 bg-amber-50 p-4 text-xs text-amber-900 flex items-start gap-3">
-        <ShieldAlert className="h-5 w-5 text-amber-700 shrink-0 mt-0.5" />
+        <span className="font-bold text-[11px] uppercase px-1.5 py-0.5 rounded bg-amber-200 text-amber-900">
+          TEST GATEWAY
+        </span>
         <div>
           <strong className="block font-semibold text-amber-800">
             TEST ENVIRONMENT — Mock UPI Gateway Simulation
@@ -104,9 +97,8 @@ export default function CustomerMockPaymentPage() {
       <Card className="border-[#EAE8F0] bg-white shadow-xs">
         <CardHeader className="pb-4 border-b border-slate-100">
           <div className="flex items-center justify-between">
-            <CardTitle className="text-lg font-bold text-[#351F65] flex items-center gap-2">
-              <CreditCard className="h-5 w-5 text-[#6240E8]" />
-              <span>Simulate Mock UPI Payment</span>
+            <CardTitle className="text-lg font-bold text-[#351F65]">
+              Simulate Mock UPI Payment
             </CardTitle>
             <span className="text-xs font-mono font-semibold text-purple-700 bg-purple-50 px-2 py-0.5 rounded">
               UPI Gateway
@@ -148,7 +140,9 @@ export default function CustomerMockPaymentPage() {
             >
               {result.paymentStatus === 'SUCCESS' ? (
                 <>
-                  <CheckCircle2 className="h-10 w-10 text-emerald-600 mx-auto" />
+                  <span className="font-bold text-sm uppercase px-2.5 py-1 rounded-full bg-emerald-100 text-emerald-800 inline-block">
+                    ✓ SUCCESS
+                  </span>
                   <div>
                     <h3 className="font-bold text-base text-emerald-900">
                       Payment Simulation Successful
@@ -164,13 +158,14 @@ export default function CustomerMockPaymentPage() {
                     onClick={() => router.push(`/customer/orders/${order.id}`)}
                     className="bg-emerald-600 hover:bg-emerald-700 text-white text-xs h-9 px-4 font-semibold"
                   >
-                    <span>View Verified Order</span>
-                    <ArrowRight className="h-4 w-4 ml-1.5" />
+                    View Verified Order &rarr;
                   </Button>
                 </>
               ) : (
                 <>
-                  <XCircle className="h-10 w-10 text-red-600 mx-auto" />
+                  <span className="font-bold text-sm uppercase px-2.5 py-1 rounded-full bg-red-100 text-red-800 inline-block">
+                    ✕ FAILED
+                  </span>
                   <div>
                     <h3 className="font-bold text-base text-red-900">Payment Simulation Failed</h3>
                     <p className="text-xs text-red-700 mt-1">{result.message}</p>
@@ -185,7 +180,6 @@ export default function CustomerMockPaymentPage() {
                       onClick={() => router.push('/customer/cart')}
                       className="text-xs h-9 px-3 border-red-300 text-red-800"
                     >
-                      <RotateCcw className="h-3.5 w-3.5 mr-1" />
                       Return to Cart
                     </Button>
                     <Button
@@ -208,20 +202,18 @@ export default function CustomerMockPaymentPage() {
                 <Button
                   onClick={() => handleSimulate('SUCCESS')}
                   disabled={processing}
-                  className="bg-emerald-600 hover:bg-emerald-700 text-white h-12 text-xs font-bold shadow-xs flex items-center justify-center gap-2"
+                  className="bg-emerald-600 hover:bg-emerald-700 text-white h-12 text-xs font-bold shadow-xs flex items-center justify-center"
                 >
-                  <CheckCircle2 className="h-4 w-4" />
-                  <span>Simulate SUCCESS</span>
+                  Simulate SUCCESS
                 </Button>
 
                 <Button
                   onClick={() => handleSimulate('FAILURE')}
                   disabled={processing}
                   variant="outline"
-                  className="border-red-300 text-red-700 hover:bg-red-50 h-12 text-xs font-bold shadow-xs flex items-center justify-center gap-2"
+                  className="border-red-300 text-red-700 hover:bg-red-50 h-12 text-xs font-bold shadow-xs flex items-center justify-center"
                 >
-                  <XCircle className="h-4 w-4" />
-                  <span>Simulate FAILURE</span>
+                  Simulate FAILURE
                 </Button>
               </div>
 

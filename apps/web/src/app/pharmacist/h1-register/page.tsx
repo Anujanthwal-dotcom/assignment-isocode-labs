@@ -3,15 +3,6 @@
 import * as React from 'react';
 import { apiFetch } from '@/lib/api/client';
 import { useAuth } from '@/lib/auth/auth-context';
-import {
-  ShieldCheck,
-  Search,
-  Filter,
-  Calendar,
-  AlertTriangle,
-  FileText,
-  CheckCircle2,
-} from 'lucide-react';
 
 export default function PharmacistH1RegisterPage() {
   const { user } = useAuth();
@@ -45,8 +36,7 @@ export default function PharmacistH1RegisterPage() {
   return (
     <div className="flex-1 p-6 max-w-7xl w-full mx-auto space-y-6">
       <div className="pb-2 border-b border-[#EAE8F0]">
-        <h1 className="text-2xl font-bold text-[#14161A] tracking-tight flex items-center gap-2">
-          <ShieldCheck className="w-6 h-6 text-[#6240E8]" />
+        <h1 className="text-2xl font-bold text-[#14161A] tracking-tight">
           Schedule H1 Drug Register
         </h1>
         <p className="text-sm text-[#78879A] mt-1">
@@ -61,14 +51,13 @@ export default function PharmacistH1RegisterPage() {
         </div>
       ) : error ? (
         <div className="bg-rose-50 border border-rose-200 text-rose-700 p-4 rounded-xl text-xs flex items-center gap-2">
-          <AlertTriangle className="w-4 h-4 shrink-0" />
+          <span className="font-bold uppercase text-[10px] px-1 py-0.5 bg-rose-200 rounded">
+            Error
+          </span>
           <span>{error}</span>
         </div>
       ) : entries.length === 0 ? (
         <div className="bg-white rounded-xl border border-[#EAE8F0] p-12 text-center shadow-2xs space-y-3">
-          <div className="w-12 h-12 rounded-full bg-[#F7F5FD] text-[#6240E8] flex items-center justify-center mx-auto">
-            <ShieldCheck className="w-6 h-6" />
-          </div>
           <h3 className="text-sm font-semibold text-[#14161A]">No H1 Entries Yet</h3>
           <p className="text-xs text-[#78879A] max-w-sm mx-auto">
             Schedule H1 entries will appear here automatically when pharmacists verify and approve
@@ -81,7 +70,7 @@ export default function PharmacistH1RegisterPage() {
             <table className="w-full text-left border-collapse text-xs">
               <thead>
                 <tr className="border-b border-[#EAE8F0] bg-[#F8F9FB] text-[#78879A] font-semibold">
-                  <th className="py-3 px-4">Date & Time</th>
+                  <th className="py-3 px-4">Date &amp; Time</th>
                   <th className="py-3 px-4">Patient Name</th>
                   <th className="py-3 px-4">Prescribing Doctor</th>
                   <th className="py-3 px-4">Medicine Name</th>
@@ -109,7 +98,7 @@ export default function PharmacistH1RegisterPage() {
                       {entry.pharmacistEmail || 'Registered Pharmacist'}
                     </td>
                     <td className="py-3 px-4">
-                      <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-semibold bg-amber-50 text-amber-800 border border-amber-200">
+                      <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-semibold bg-amber-50 text-amber-800 border border-amber-200">
                         {entry.status}
                       </span>
                     </td>

@@ -4,15 +4,6 @@ import * as React from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { apiFetch } from '@/lib/api/client';
-import {
-  PackageCheck,
-  CheckCircle2,
-  AlertTriangle,
-  ArrowLeft,
-  ChevronRight,
-  FileText,
-  ShieldCheck,
-} from 'lucide-react';
 
 export default function PackingWorkspacePage() {
   const params = useParams();
@@ -51,7 +42,7 @@ export default function PackingWorkspacePage() {
 
     setPackingBusy(true);
     try {
-      const res = await apiFetch<any>(`/pharmacist/fulfilment/${orderId}/packing/complete`, {
+      await apiFetch<any>(`/pharmacist/fulfilment/${orderId}/packing/complete`, {
         method: 'POST',
         body: JSON.stringify({ checklistConfirmed: true, notes: notes || undefined }),
       });
@@ -73,10 +64,9 @@ export default function PackingWorkspacePage() {
               href={`/pharmacist/fulfilment/${orderId}/pick`}
               className="p-1 rounded-lg text-[#78879A] hover:bg-[#F8F9FB] transition-colors"
             >
-              <ArrowLeft className="w-4 h-4" />
+              &larr; Back
             </Link>
-            <h1 className="text-2xl font-bold text-[#14161A] tracking-tight flex items-center gap-2">
-              <PackageCheck className="w-6 h-6 text-[#6240E8]" />
+            <h1 className="text-2xl font-bold text-[#14161A] tracking-tight">
               Packing &amp; Verification: {orderDetail?.orderNumber || ''}
             </h1>
           </div>
@@ -91,7 +81,7 @@ export default function PackingWorkspacePage() {
         <div className="p-12 text-center text-xs text-[#78879A]">Loading order details...</div>
       ) : error ? (
         <div className="p-8 text-center text-xs text-rose-600 bg-rose-50 rounded-2xl border border-rose-200">
-          <AlertTriangle className="w-6 h-6 mx-auto mb-2 text-rose-500" />
+          <div className="font-bold mb-1">[!] Error</div>
           {error}
         </div>
       ) : (
@@ -144,27 +134,26 @@ export default function PackingWorkspacePage() {
 
           {/* Verification Checklist */}
           <div className="bg-[#F7F5FD] rounded-2xl border border-[#D6D1F7] p-5 space-y-4">
-            <h3 className="text-sm font-bold text-[#351F65] flex items-center gap-2">
-              <ShieldCheck className="w-5 h-5 text-[#6240E8]" />
+            <h3 className="text-sm font-bold text-[#351F65]">
               Pharmacist Pre-Packing Verification Checklist
             </h3>
             <ul className="space-y-2.5 text-xs text-[#351F65]">
               <li className="flex items-start gap-2">
-                <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
+                <span className="text-emerald-600 font-bold shrink-0 mt-0.5">✓</span>
                 <span>
                   All picked medicine brands, active ingredients, and strengths match approved
                   prescription.
                 </span>
               </li>
               <li className="flex items-start gap-2">
-                <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
+                <span className="text-emerald-600 font-bold shrink-0 mt-0.5">✓</span>
                 <span>
                   Expiries verified: all units have valid shelf-life (&gt; 6 months). Packaging
                   seals intact.
                 </span>
               </li>
               <li className="flex items-start gap-2">
-                <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
+                <span className="text-emerald-600 font-bold shrink-0 mt-0.5">✓</span>
                 <span>
                   Schedule H / H1 statutory compliance requirements satisfied and recorded.
                 </span>
@@ -213,9 +202,8 @@ export default function PackingWorkspacePage() {
               className="px-5 py-2 rounded-xl text-xs font-semibold bg-[#6240E8] text-white hover:bg-[#5232d4] disabled:opacity-50 shadow-xs inline-flex items-center gap-1.5"
             >
               <span>
-                {packingBusy ? 'Generating Invoice...' : 'Complete Packing & Issue Invoice'}
+                {packingBusy ? 'Generating Invoice...' : 'Complete Packing & Issue Invoice'} &rarr;
               </span>
-              <ChevronRight className="w-4 h-4" />
             </button>
           </div>
         </div>

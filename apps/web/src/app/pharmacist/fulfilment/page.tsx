@@ -3,7 +3,6 @@
 import * as React from 'react';
 import Link from 'next/link';
 import { apiFetch } from '@/lib/api/client';
-import { Package, Search, ChevronRight, Clock, AlertTriangle } from 'lucide-react';
 
 interface FulfilmentOrderRow {
   orderId: string;
@@ -122,8 +121,7 @@ export default function PharmacistFulfilmentQueuePage() {
     <div className="space-y-6">
       <div className="pb-2 border-b border-[#EAE8F0] flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-[#14161A] tracking-tight flex items-center gap-2">
-            <Package className="w-6 h-6 text-[#6240E8]" />
+          <h1 className="text-2xl font-bold text-[#14161A] tracking-tight">
             Store Fulfilment Queue
           </h1>
           <p className="text-sm text-[#78879A] mt-1">
@@ -158,13 +156,12 @@ export default function PharmacistFulfilmentQueuePage() {
         </div>
 
         <div className="relative max-w-xs w-full">
-          <Search className="absolute left-3 top-2.5 h-4 w-4 text-[#78879A]" />
           <input
             type="text"
             placeholder="Search order #, customer..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-9 pr-4 py-2 border border-[#EAE8F0] rounded-xl text-xs bg-white focus:outline-none focus:ring-2 focus:ring-[#6240E8]/20 focus:border-[#6240E8]"
+            className="w-full px-3 py-2 border border-[#EAE8F0] rounded-xl text-xs bg-white focus:outline-none focus:ring-2 focus:ring-[#6240E8]/20 focus:border-[#6240E8]"
           />
         </div>
       </div>
@@ -177,12 +174,11 @@ export default function PharmacistFulfilmentQueuePage() {
           </div>
         ) : error ? (
           <div className="p-8 text-center text-xs text-rose-600 bg-rose-50/50">
-            <AlertTriangle className="w-6 h-6 mx-auto mb-2 text-rose-500" />
+            <span className="font-bold text-xs uppercase block mb-1">Notice</span>
             {error}
           </div>
         ) : filteredOrders.length === 0 ? (
           <div className="p-12 text-center text-xs text-[#78879A]">
-            <Package className="w-8 h-8 text-[#78879A]/40 mx-auto mb-2" />
             No orders found in this fulfilment stage.
           </div>
         ) : (
@@ -262,10 +258,9 @@ export default function PharmacistFulfilmentQueuePage() {
                       <td className="py-3 px-4 text-right">
                         <Link
                           href={action.href}
-                          className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-semibold bg-[#6240E8] text-white hover:bg-[#5232d4] transition-colors"
+                          className="inline-flex items-center px-3 py-1.5 rounded-lg text-xs font-semibold bg-[#6240E8] text-white hover:bg-[#5232d4] transition-colors"
                         >
-                          <span>{action.label}</span>
-                          <ChevronRight className="w-3.5 h-3.5" />
+                          {action.label} &rarr;
                         </Link>
                       </td>
                     </tr>

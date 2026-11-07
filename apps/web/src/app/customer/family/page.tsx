@@ -13,7 +13,6 @@ import {
   DialogFooter,
 } from '@/components/ui/dialog';
 import { apiFetch } from '@/lib/api/client';
-import { Users, Plus, Edit2, Trash2, Calendar, UserCheck, AlertCircle } from 'lucide-react';
 import { FamilyMemberDTO, FamilyMemberRelationship } from '@pharmacy/shared-types';
 
 const RELATIONSHIPS: { value: FamilyMemberRelationship; label: string }[] = [
@@ -84,28 +83,30 @@ export default function CustomerFamilyPage() {
     setSaving(true);
     setDialogError(null);
 
+    const payload = {
+      fullName: fullName.trim(),
+      relationship,
+      dateOfBirth: dateOfBirth ? new Date(dateOfBirth).toISOString() : null,
+    };
+
     try {
       if (editingMember) {
-        await apiFetch(`/customer/family-members/${editingMember.id}`, {
-          method: 'PATCH',
-          body: JSON.stringify({
-            fullName: fullName.trim(),
-            relationship,
-            dateOfBirth: dateOfBirth ? dateOfBirth : undefined,
-          }),
-        });
+        const updated = await apiFetch<FamilyMemberDTO>(
+          `/customer/family-members/${editingMember.id}`,
+          {
+            method: 'PATCH',
+            body: JSON.stringify(payload),
+          },
+        );
+        setMembers((prev) => prev.map((m) => (m.id === updated.id ? updated : m)));
       } else {
-        await apiFetch('/customer/family-members', {
+        const created = await apiFetch<FamilyMemberDTO>('/customer/family-members', {
           method: 'POST',
-          body: JSON.stringify({
-            fullName: fullName.trim(),
-            relationship,
-            dateOfBirth: dateOfBirth ? dateOfBirth : undefined,
-          }),
+          body: JSON.stringify(payload),
         });
+        setMembers((prev) => [...prev, created]);
       }
       setIsOpen(false);
-      await fetchMembers();
     } catch (err: unknown) {
       setDialogError((err as Error).message || 'Failed to save family member profile.');
     } finally {
@@ -114,19 +115,14 @@ export default function CustomerFamilyPage() {
   };
 
   const handleDelete = async (id: string, name: string) => {
-    if (!confirm(`Are you sure you want to remove ${name}'s family profile?`)) {
-      return;
-    }
+    if (!confirm(`Are you sure you want to remove profile "${name}"?`)) return;
     try {
       await apiFetch(`/customer/family-members/${id}`, {
         method: 'DELETE',
       });
-      await fetchMembers();
+      setMembers((prev) => prev.filter((m) => m.id !== id));
     } catch (err: unknown) {
-      alert(
-        (err as Error).message ||
-          'Cannot delete family member profile in use by orders or prescriptions.',
-      );
+      alert((err as Error).message || 'Failed to remove family member profile.');
     }
   };
 
@@ -143,10 +139,9 @@ export default function CustomerFamilyPage() {
         </div>
         <Button
           onClick={openAddDialog}
-          className="flex items-center gap-1.5 text-xs bg-[#6240E8] text-white hover:bg-[#5233D0]"
+          className="text-xs bg-[#6240E8] text-white hover:bg-[#5233D0]"
         >
-          <Plus className="h-4 w-4" />
-          <span>Add Family Member</span>
+          Add Family Member
         </Button>
       </div>
 
@@ -154,12 +149,11 @@ export default function CustomerFamilyPage() {
         <div className="py-12 text-center text-xs text-slate-500">Loading family profiles...</div>
       ) : error ? (
         <Card className="p-8 border-red-200 bg-red-50 text-center">
-          <AlertCircle className="h-8 w-8 text-red-500 mx-auto mb-2" />
+          <span className="font-bold text-xs uppercase text-red-600 block mb-1">Notice</span>
           <p className="text-sm text-red-700 font-medium">{error}</p>
         </Card>
       ) : members.length === 0 ? (
         <Card className="p-12 border-[#EAE8F0] bg-white text-center">
-          <Users className="h-10 w-10 text-slate-300 mx-auto mb-3" />
           <h3 className="text-base font-semibold text-slate-800">No Family Profiles Yet</h3>
           <p className="text-xs text-slate-500 mt-1 max-w-sm mx-auto">
             Add profiles for your parents, children, or spouse to order medicines and upload
@@ -170,7 +164,7 @@ export default function CustomerFamilyPage() {
             onClick={openAddDialog}
             className="mt-4 text-xs bg-[#6240E8] text-white"
           >
-            Add First Profile
+            + Add First Profile
           </Button>
         </Card>
       ) : (
@@ -182,26 +176,16 @@ export default function CustomerFamilyPage() {
             >
               <div className="space-y-3">
                 <div className="flex items-start justify-between">
-                  <div className="flex items-center gap-2.5">
-                    <div className="h-10 w-10 rounded-full bg-[#F7F5FD] flex items-center justify-center text-[#6240E8]">
-                      {member.relationship === 'SELF' ? (
-                        <UserCheck className="h-5 w-5" />
-                      ) : (
-                        <Users className="h-5 w-5" />
-                      )}
-                    </div>
-                    <div>
-                      <h3 className="font-bold text-base text-[#351F65]">{member.fullName}</h3>
-                      <Badge variant="purple" className="text-[11px] font-semibold mt-0.5">
-                        {member.relationship}
-                      </Badge>
-                    </div>
+                  <div>
+                    <h3 className="font-bold text-base text-[#351F65]">{member.fullName}</h3>
+                    <Badge variant="purple" className="text-[11px] font-semibold mt-0.5">
+                      {member.relationship}
+                    </Badge>
                   </div>
                 </div>
 
                 {member.dateOfBirth && (
-                  <div className="text-xs text-slate-500 flex items-center gap-1.5 pt-2 border-t border-slate-100">
-                    <Calendar className="h-3.5 w-3.5 text-slate-400" />
+                  <div className="text-xs text-slate-500 pt-2 border-t border-slate-100">
                     <span>
                       Born:{' '}
                       {new Date(member.dateOfBirth).toLocaleDateString('en-IN', {
@@ -221,7 +205,6 @@ export default function CustomerFamilyPage() {
                   onClick={() => openEditDialog(member)}
                   className="text-xs h-8 px-2.5 text-slate-600 border-slate-200"
                 >
-                  <Edit2 className="h-3.5 w-3.5 mr-1" />
                   Edit
                 </Button>
                 <Button
@@ -230,7 +213,6 @@ export default function CustomerFamilyPage() {
                   onClick={() => handleDelete(member.id, member.fullName)}
                   className="text-xs h-8 px-2.5 text-red-600 border-red-200 hover:bg-red-50"
                 >
-                  <Trash2 className="h-3.5 w-3.5 mr-1" />
                   Remove
                 </Button>
               </div>
@@ -251,7 +233,9 @@ export default function CustomerFamilyPage() {
           <form onSubmit={handleSave} className="space-y-4 pt-2">
             {dialogError && (
               <div className="p-3 text-xs rounded-lg bg-red-50 border border-red-200 text-red-700 flex items-center gap-2">
-                <AlertCircle className="h-4 w-4 shrink-0" />
+                <span className="font-bold uppercase text-[10px] px-1 py-0.5 bg-red-200 rounded">
+                  Error
+                </span>
                 <span>{dialogError}</span>
               </div>
             )}

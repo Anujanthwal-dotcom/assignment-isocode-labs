@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { Eye, EyeOff, Search } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 export interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
@@ -75,10 +74,10 @@ export const PasswordInput = React.forwardRef<HTMLInputElement, PasswordInputPro
           type="button"
           tabIndex={-1}
           onClick={() => setShowPassword(!showPassword)}
-          className="absolute right-[12px] top-[14px] text-[#78879A] hover:text-[#351F65] transition-colors"
+          className="absolute right-[12px] top-[14px] text-xs font-medium text-[#78879A] hover:text-[#351F65] transition-colors"
           aria-label={showPassword ? 'Hide password' : 'Show password'}
         >
-          {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+          {showPassword ? 'Hide' : 'Show'}
         </button>
       </div>
     );
@@ -91,14 +90,7 @@ export type SearchInputProps = Omit<InputProps, 'leftIcon'>;
 export const SearchInput = React.forwardRef<HTMLInputElement, SearchInputProps>(
   ({ className, placeholder = 'Search...', ...props }, ref) => {
     return (
-      <Input
-        type="search"
-        leftIcon={<Search className="h-4 w-4" />}
-        placeholder={placeholder}
-        className={className}
-        ref={ref}
-        {...props}
-      />
+      <Input type="search" placeholder={placeholder} className={className} ref={ref} {...props} />
     );
   },
 );

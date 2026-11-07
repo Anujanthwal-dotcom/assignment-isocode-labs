@@ -1,17 +1,7 @@
 'use client';
 
 import * as React from 'react';
-import {
-  UploadCloud,
-  FileSpreadsheet,
-  Download,
-  CheckCircle2,
-  XCircle,
-  Eye,
-  Loader2,
-  Store,
-  Building2,
-} from 'lucide-react';
+
 import { apiFetch, ApiError } from '@/lib/api/client';
 import { Button } from '@/components/ui/button';
 import {
@@ -207,7 +197,6 @@ export default function StockImportsPage() {
             onClick={handleDownloadSample}
             className="inline-flex items-center gap-2 text-[13px] border-[#CED4DA] hover:bg-[#F8F9FB]"
           >
-            <Download className="h-4 w-4 text-[#6240E8]" />
             <span>Sample CSV</span>
           </Button>
           <Button
@@ -218,7 +207,6 @@ export default function StockImportsPage() {
             }}
             className="inline-flex items-center gap-2 bg-[#6240E8] hover:bg-[#542F9B] text-white"
           >
-            <UploadCloud className="h-4 w-4" />
             <span>Upload CSV</span>
           </Button>
         </div>
@@ -230,8 +218,7 @@ export default function StockImportsPage() {
       <div className="rounded-[12px] border border-[#B4EDFB] bg-[#EBF9FD] p-4 text-[13px] text-[#0088AA] flex flex-col md:flex-row items-start md:items-center justify-between gap-3">
         <div className="space-y-1">
           <p className="font-semibold text-[#0088AA] flex items-center gap-1.5">
-            <FileSpreadsheet className="h-4 w-4" />
-            Daily Stock Snapshot Format & Rules
+            Daily Stock Snapshot Format &amp; Rules
           </p>
           <p className="text-[12px] text-[#0088AA]/90">
             Headers must be exact:{' '}
@@ -266,7 +253,7 @@ export default function StockImportsPage() {
                 <tr>
                   <td colSpan={9} className="py-12 text-center text-[#78879A]">
                     <div className="flex items-center justify-center gap-2">
-                      <Loader2 className="h-5 w-5 animate-spin text-[#6240E8]" />
+                      <div className="w-4 h-4 border-2 border-[#6240E8] border-t-transparent rounded-full animate-spin" />
                       <span>Loading import batch history...</span>
                     </div>
                   </td>
@@ -288,19 +275,13 @@ export default function StockImportsPage() {
                   <tr key={item.id} className="hover:bg-[#F8F9FB]/60 transition-colors">
                     <td className="py-3 px-4 font-mono font-medium text-[#14161A]">
                       <div className="flex items-center gap-1.5">
-                        <FileSpreadsheet className="h-4 w-4 text-[#6240E8] shrink-0" />
                         <span className="truncate max-w-[200px]" title={item.fileName}>
                           {item.fileName}
                         </span>
                       </div>
                     </td>
                     <td className="py-3 px-4">
-                      <div className="font-medium text-[#14161A] flex items-center gap-1">
-                        {item.locationType === 'STORE' ? (
-                          <Store className="h-3.5 w-3.5 text-[#6240E8]" />
-                        ) : (
-                          <Building2 className="h-3.5 w-3.5 text-[#0088AA]" />
-                        )}
+                      <div className="font-medium text-[#14161A]">
                         <span>{item.locationName}</span>
                       </div>
                     </td>
@@ -308,17 +289,17 @@ export default function StockImportsPage() {
                     <td className="py-3 px-4 text-center">
                       {item.status === 'COMPLETED' && (
                         <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[11px] font-medium bg-[#E8F8EC] text-[#0FAC26] border border-[#B0E6BC]">
-                          <CheckCircle2 className="h-3 w-3" /> Completed
+                          Completed
                         </span>
                       )}
                       {item.status === 'FAILED' && (
                         <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[11px] font-medium bg-[#FDF2F2] text-[#DC3545] border border-[#F9CACA]">
-                          <XCircle className="h-3 w-3" /> Failed
+                          Failed
                         </span>
                       )}
                       {item.status === 'PROCESSING' && (
                         <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[11px] font-medium bg-[#FFF8EC] text-[#A66B16] border border-[#F6DCB0]">
-                          <Loader2 className="h-3 w-3 animate-spin" /> Processing
+                          Processing
                         </span>
                       )}
                     </td>
@@ -346,7 +327,6 @@ export default function StockImportsPage() {
                         onClick={() => handleOpenDetails(item.id)}
                         className="h-8 text-[12px] inline-flex items-center gap-1 text-[#351F65]"
                       >
-                        <Eye className="h-3.5 w-3.5" />
                         <span>Details</span>
                       </Button>
                     </td>
@@ -449,7 +429,7 @@ export default function StockImportsPage() {
                   }}
                   className="absolute inset-0 opacity-0 cursor-pointer"
                 />
-                <UploadCloud className="h-8 w-8 text-[#6240E8] mx-auto mb-2" />
+                <div className="font-bold text-[#6240E8] text-sm mb-2">[CSV]</div>
                 {selectedFile ? (
                   <div>
                     <p className="font-semibold text-[#351F65] text-[13px]">{selectedFile.name}</p>
@@ -482,7 +462,9 @@ export default function StockImportsPage() {
                 disabled={uploading || !selectedFile}
                 className="bg-[#6240E8] hover:bg-[#542F9B] text-white"
               >
-                {uploading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                {uploading && (
+                  <span className="mr-2 inline-block w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                )}
                 Process Stock Import
               </Button>
             </DialogFooter>
@@ -502,7 +484,7 @@ export default function StockImportsPage() {
 
           {loadingDetails ? (
             <div className="py-12 text-center text-[#78879A]">
-              <Loader2 className="h-6 w-6 animate-spin mx-auto text-[#6240E8] mb-2" />
+              <div className="w-5 h-5 border-2 border-[#6240E8] border-t-transparent rounded-full animate-spin mx-auto mb-2" />
               Loading batch records...
             </div>
           ) : importDetails ? (

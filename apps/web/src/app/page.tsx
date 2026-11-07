@@ -1,125 +1,267 @@
-import Link from 'next/link';
-import { HealthStatusCard } from '@/components/HealthStatusCard';
+'use client';
+
+import React, { useState, useEffect, useCallback } from 'react';
+import { useRouter } from 'next/navigation';
+import { useAuth } from '@/lib/auth/auth-context';
 
 export default function HomePage() {
+  const router = useRouter();
+  const { requestCustomerOtp, verifyCustomerOtp, loginStaff } = useAuth();
+
+  const [activeLogin, setActiveLogin] = useState<'CUSTOMER' | 'PHARMACIST' | 'ADMIN' | null>(null);
+  const [loginError, setLoginError] = useState<string | null>(null);
+
+  // Compact health ping state
+  const [healthStatus, setHealthStatus] = useState<{
+    healthy: boolean;
+    latencyMs: number | null;
+    loading: boolean;
+  }>({
+    healthy: true,
+    latencyMs: null,
+    loading: true,
+  });
+
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
+
+  const checkHealth = useCallback(async () => {
+    try {
+      const start = performance.now();
+      const res = await fetch(`${apiUrl}/api/v1/health`, { cache: 'no-store' });
+      const latencyMs = Math.round(performance.now() - start);
+      if (res.ok) {
+        setHealthStatus({ healthy: true, latencyMs, loading: false });
+      } else {
+        setHealthStatus({ healthy: false, latencyMs, loading: false });
+      }
+    } catch {
+      setHealthStatus({ healthy: false, latencyMs: 0, loading: false });
+    }
+  }, [apiUrl]);
+
+  useEffect(() => {
+    checkHealth();
+  }, [checkHealth]);
+
+  // 1-Click Tester Login Handlers
+  const handleCustomerLogin = async () => {
+    setActiveLogin('CUSTOMER');
+    setLoginError(null);
+    try {
+      const res = await requestCustomerOtp('9876543210');
+      const otp = res.developmentOtp || '123456';
+      await verifyCustomerOtp('9876543210', otp);
+      router.push('/customer');
+    } catch (err: unknown) {
+      setLoginError(err instanceof Error ? err.message : 'Customer login failed.');
+      setActiveLogin(null);
+    }
+  };
+
+  const handlePharmacistLogin = async () => {
+    setActiveLogin('PHARMACIST');
+    setLoginError(null);
+    try {
+      await loginStaff('pharmacist@example.com', 'DemoPassword123!');
+      router.push('/pharmacist');
+    } catch (err: unknown) {
+      setLoginError(err instanceof Error ? err.message : 'Pharmacist login failed.');
+      setActiveLogin(null);
+    }
+  };
+
+  const handleAdminLogin = async () => {
+    setActiveLogin('ADMIN');
+    setLoginError(null);
+    try {
+      await loginStaff('admin@example.com', 'DemoPassword123!');
+      router.push('/admin');
+    } catch (err: unknown) {
+      setLoginError(err instanceof Error ? err.message : 'Admin login failed.');
+      setActiveLogin(null);
+    }
+  };
+
   return (
-    <main className="min-h-screen flex flex-col justify-between p-6 sm:p-12 lg:p-16 max-w-6xl mx-auto">
-      {/* Header */}
-      <header className="flex flex-col sm:flex-row items-start sm:items-center justify-between pb-8 border-b border-slate-200 gap-4">
-        <div>
-          <div className="flex items-center gap-3">
-            <span className="flex h-3 w-3 relative">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-              <span className="relative inline-flex rounded-full h-3 w-3 bg-emerald-500"></span>
-            </span>
-            <h1 className="text-2xl font-bold tracking-tight text-slate-900">Pharmacy Platform</h1>
-          </div>
-          <p className="text-sm text-slate-500 mt-1">
+    <main className="min-h-screen flex flex-col lg:flex-row bg-slate-900 text-slate-100 font-sans">
+      {/* =========================================================================
+          LEFT 60% COLUMN: Kolkata Pharmacy Visual with Vertically Centered Tag Line
+          ========================================================================= */}
+      <section className="relative lg:w-[60%] flex flex-col justify-center p-8 sm:p-12 lg:p-16 overflow-hidden min-h-[380px] lg:min-h-screen">
+        {/* Background Image */}
+        <div
+          className="absolute inset-0 bg-cover bg-center z-0 scale-100 transition-transform duration-1000 ease-out"
+          style={{ backgroundImage: "url('/images/kolkata-pharmacy.jpg')" }}
+        />
+        {/* Balanced Ambient Gradient for Center Tagline Readability */}
+        <div className="absolute inset-0 bg-gradient-to-r from-slate-950/85 via-slate-950/60 to-slate-950/30 z-0" />
+
+        {/* Main Tag Line (Vertically Centered) */}
+        <div className="relative z-10 max-w-xl space-y-3">
+          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-white tracking-tight leading-tight drop-shadow-md">
+            Clinical Precision. Instant Dispensing. Zero Non-Compliance.
+          </h2>
+          <p className="text-base sm:text-lg text-slate-300 font-normal drop-shadow-sm">
             Enterprise Pharmacy &amp; Multi-Store Management System
           </p>
         </div>
+      </section>
 
-        <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-blue-50 border border-blue-200 text-blue-700 text-xs font-medium">
-          <span className="w-2 h-2 rounded-full bg-blue-500"></span>
-          <span>Status: Development Environment (Phase 0)</span>
-        </div>
-      </header>
-
-      {/* Main Body */}
-      <section className="py-10 grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
-        {/* Left Column: Platform Overview */}
+      {/* =========================================================================
+          RIGHT 40% COLUMN: Clean White Auth Column & Direct Clickable Role Cards
+          ========================================================================= */}
+      <section className="lg:w-[40%] bg-white text-slate-900 flex flex-col justify-between p-6 sm:p-10 lg:p-12 border-l border-slate-200 min-h-screen">
+        {/* Top Section */}
         <div className="space-y-6">
-          <div className="space-y-3">
-            <h2 className="text-xl font-semibold text-slate-800">
-              Scaffolding &amp; Infrastructure
-            </h2>
-            <p className="text-sm text-slate-600 leading-relaxed">
-              This environment serves as the core foundation for a production-oriented pharmacy
-              management platform with strict regulatory compliance, multi-store inventory
-              coordination, and intelligent prescription processing.
-            </p>
-          </div>
-
-          {/* Portals & Authentication */}
-          <div className="border border-slate-200 rounded-xl p-5 bg-white space-y-3 shadow-xs">
-            <h3 className="text-xs font-semibold uppercase tracking-wider text-slate-500">
-              Portals &amp; Role-Based Access
-            </h3>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
-              <Link
-                href="/customer"
-                className="p-3 bg-slate-50 hover:bg-purple-50 hover:border-purple-200 rounded-lg border border-slate-100 transition-colors block"
-              >
-                <span className="font-semibold text-slate-800 block">Customer Portal &rarr;</span>
-                <span className="text-slate-500">Mock OTP Login &bull; Role: CUSTOMER</span>
-              </Link>
-              <Link
-                href="/pharmacist"
-                className="p-3 bg-slate-50 hover:bg-teal-50 hover:border-teal-200 rounded-lg border border-slate-100 transition-colors block"
-              >
-                <span className="font-semibold text-slate-800 block">Pharmacist Portal &rarr;</span>
-                <span className="text-slate-500">Email &amp; Password &bull; Role: PHARMACIST</span>
-              </Link>
-              <Link
-                href="/admin"
-                className="p-3 bg-slate-50 hover:bg-indigo-50 hover:border-indigo-200 rounded-lg border border-slate-100 transition-colors block"
-              >
-                <span className="font-semibold text-slate-800 block">Admin Operations &rarr;</span>
-                <span className="text-slate-500">Operations &amp; Compliance Portal</span>
-              </Link>
-              <Link
-                href="/design-system"
-                className="p-3 bg-slate-50 hover:bg-slate-100 rounded-lg border border-slate-100 transition-colors block"
-              >
-                <span className="font-semibold text-slate-800 block">Design System &rarr;</span>
-                <span className="text-slate-500">Phase 0.5 Teladoc UI Showcase</span>
-              </Link>
+          <div className="pb-5 border-b border-slate-100">
+            <div>
+              <h1 className="text-xl font-bold tracking-tight text-slate-900">Pharmacy Platform</h1>
+              <p className="text-xs text-slate-500 mt-0.5">Select a portal below to sign in</p>
             </div>
           </div>
 
-          {/* Quick Links */}
-          <div className="flex flex-wrap gap-3 text-xs">
-            <a
-              href="http://localhost:3001/api/docs"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-white font-medium transition"
+          {/* Login Error Notification */}
+          {loginError && (
+            <div className="p-3 rounded-lg bg-rose-50 border border-rose-200 text-rose-700 text-xs font-medium">
+              <span>{loginError}</span>
+            </div>
+          )}
+
+          {/* Direct Clickable Role Cards */}
+          <div className="space-y-3.5">
+            {/* 1. Customer Card */}
+            <button
+              onClick={handleCustomerLogin}
+              disabled={activeLogin !== null}
+              className="w-full text-left group p-4 rounded-xl border border-slate-200 bg-white hover:border-purple-400 hover:bg-purple-50/30 hover:shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-500/20 disabled:opacity-60 transition-all flex items-center justify-between gap-4 cursor-pointer"
             >
-              <span>Swagger API Docs</span>
-              <span>&rarr;</span>
-            </a>
-            <a
-              href="http://localhost:8025"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium transition"
+              <div className="min-w-0">
+                <div className="text-[10px] font-bold uppercase tracking-wider text-purple-700 mb-0.5">
+                  Customer
+                </div>
+                <h3 className="text-sm font-semibold text-slate-900 group-hover:text-purple-900 transition-colors">
+                  Customer Portal
+                </h3>
+                <p className="text-xs text-slate-500 truncate">
+                  Browse medicines, upload Rx &amp; track orders
+                </p>
+              </div>
+              <div className="shrink-0 text-slate-400 group-hover:text-purple-700 font-medium text-xs transition-colors">
+                {activeLogin === 'CUSTOMER' ? 'Signing in...' : 'Enter →'}
+              </div>
+            </button>
+
+            {/* 2. Pharmacist Card */}
+            <button
+              onClick={handlePharmacistLogin}
+              disabled={activeLogin !== null}
+              className="w-full text-left group p-4 rounded-xl border border-slate-200 bg-white hover:border-teal-400 hover:bg-teal-50/30 hover:shadow-sm focus:outline-none focus:ring-2 focus:ring-teal-500/20 disabled:opacity-60 transition-all flex items-center justify-between gap-4 cursor-pointer"
             >
-              <span>Mailpit Mailbox</span>
-              <span>&rarr;</span>
-            </a>
-            <a
-              href="http://localhost:9001"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium transition"
+              <div className="min-w-0">
+                <div className="text-[10px] font-bold uppercase tracking-wider text-teal-700 mb-0.5">
+                  Pharmacist
+                </div>
+                <h3 className="text-sm font-semibold text-slate-900 group-hover:text-teal-900 transition-colors">
+                  Pharmacist Workspace
+                </h3>
+                <p className="text-xs text-slate-500 truncate">
+                  Review Rx queue, AI extraction &amp; dispensing
+                </p>
+              </div>
+              <div className="shrink-0 text-slate-400 group-hover:text-teal-700 font-medium text-xs transition-colors">
+                {activeLogin === 'PHARMACIST' ? 'Signing in...' : 'Enter →'}
+              </div>
+            </button>
+
+            {/* 3. Admin Card */}
+            <button
+              onClick={handleAdminLogin}
+              disabled={activeLogin !== null}
+              className="w-full text-left group p-4 rounded-xl border border-slate-200 bg-white hover:border-indigo-400 hover:bg-indigo-50/30 hover:shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 disabled:opacity-60 transition-all flex items-center justify-between gap-4 cursor-pointer"
             >
-              <span>MinIO Console</span>
-              <span>&rarr;</span>
-            </a>
+              <div className="min-w-0">
+                <div className="text-[10px] font-bold uppercase tracking-wider text-indigo-700 mb-0.5">
+                  Administrator
+                </div>
+                <h3 className="text-sm font-semibold text-slate-900 group-hover:text-indigo-900 transition-colors">
+                  Admin &amp; Operations
+                </h3>
+                <p className="text-xs text-slate-500 truncate">
+                  Cross-store inventory, compliance &amp; analytics
+                </p>
+              </div>
+              <div className="shrink-0 text-slate-400 group-hover:text-indigo-700 font-medium text-xs transition-colors">
+                {activeLogin === 'ADMIN' ? 'Signing in...' : 'Enter →'}
+              </div>
+            </button>
           </div>
         </div>
 
-        {/* Right Column: Health Status Card */}
-        <div className="flex flex-col items-center lg:items-end w-full">
-          <HealthStatusCard />
+        {/* Bottom Section: Compact Health Indicator & Dev Consoles */}
+        <div className="pt-8 border-t border-slate-200 space-y-3">
+          <div className="flex items-center justify-between text-xs">
+            <div className="flex items-center gap-2">
+              <span
+                className={`w-2.5 h-2.5 rounded-full ${
+                  healthStatus.healthy ? 'bg-emerald-500' : 'bg-rose-500 animate-pulse'
+                }`}
+              />
+              <span className="font-medium text-slate-700">
+                {healthStatus.loading
+                  ? 'Checking connectivity...'
+                  : healthStatus.healthy
+                    ? 'All Services Operational'
+                    : 'System Degraded'}
+              </span>
+              {healthStatus.latencyMs !== null && (
+                <span className="text-slate-400 font-mono text-[11px]">
+                  ({healthStatus.latencyMs}ms)
+                </span>
+              )}
+            </div>
+
+            <button
+              onClick={checkHealth}
+              className="text-[11px] text-slate-500 hover:text-slate-800 underline transition cursor-pointer"
+            >
+              Refresh
+            </button>
+          </div>
+
+          {/* Quick Links to Dev Infrastructure */}
+          <div className="flex items-center justify-between text-xs text-slate-500">
+            <span className="text-[11px]">Developer Consoles:</span>
+            <div className="flex items-center gap-3 text-[11px]">
+              <a
+                href="http://localhost:3001/api/docs"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hover:text-slate-800 transition"
+              >
+                Swagger
+              </a>
+              <span className="text-slate-300">&bull;</span>
+              <a
+                href="http://localhost:8025"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hover:text-slate-800 transition"
+              >
+                Mailpit
+              </a>
+              <span className="text-slate-300">&bull;</span>
+              <a
+                href="http://localhost:9001"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hover:text-slate-800 transition"
+              >
+                MinIO
+              </a>
+            </div>
+          </div>
         </div>
       </section>
-
-      {/* Footer */}
-      <footer className="pt-8 border-t border-slate-200 text-center text-xs text-slate-400">
-        Pharmacy Platform &bull; Monorepo Powered by pnpm, Next.js, NestJS, Prisma &amp; Docker
-        Compose
-      </footer>
     </main>
   );
 }

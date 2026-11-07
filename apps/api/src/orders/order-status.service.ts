@@ -29,7 +29,7 @@ export class OrderStatusService {
       return;
     }
 
-    // Phase 5 Pharmacist Verification Transitions
+    // Pharmacist Verification Transitions
     if (
       (currentStatus === OrderStatus.PENDING_VERIFICATION ||
         currentStatus === OrderStatus.UNDER_REVIEW ||
@@ -43,7 +43,7 @@ export class OrderStatusService {
       return;
     }
 
-    // Phase 6 Fulfilment Lifecycle Transitions
+    // Fulfilment Lifecycle Transitions
     // APPROVED / PARTIALLY_APPROVED -> ROUTING_PENDING
     if (
       (currentStatus === OrderStatus.APPROVED ||

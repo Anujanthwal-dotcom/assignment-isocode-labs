@@ -5,7 +5,6 @@ import { useSearchParams, useRouter } from 'next/navigation';
 import { apiFetch } from '@/lib/api/client';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, Bell, CheckCircle2 } from 'lucide-react';
 import Link from 'next/link';
 
 export default function NewRefillSubscriptionPage() {
@@ -49,13 +48,12 @@ export default function NewRefillSubscriptionPage() {
         href="/customer/refills"
         className="inline-flex items-center text-xs font-semibold text-[#6240E8] hover:underline"
       >
-        <ArrowLeft className="mr-1.5 h-3.5 w-3.5" /> Back to Refills
+        &larr; Back to Refills
       </Link>
 
       <Card className="border-[#EAE8F0] shadow-xs">
         <CardHeader>
-          <CardTitle className="text-xl font-bold text-[#351F65] flex items-center gap-2">
-            <Bell className="h-5 w-5 text-[#6240E8]" />
+          <CardTitle className="text-xl font-bold text-[#351F65]">
             Opt In to Medicine Refill Reminders
           </CardTitle>
           <p className="text-xs text-[#78879A] mt-1">
@@ -95,7 +93,9 @@ export default function NewRefillSubscriptionPage() {
 
             <div className="p-3 bg-[#F8F9FB] rounded-lg border border-[#EAE8F0] text-xs text-[#55476D] space-y-2">
               <div className="flex items-center gap-2 font-medium text-[#351F65]">
-                <CheckCircle2 className="h-4 w-4 text-emerald-600 shrink-0" />
+                <span className="font-bold text-[10px] uppercase px-1 py-0.5 rounded bg-emerald-100 text-emerald-800">
+                  GUARANTEE
+                </span>
                 <span>Explicit Consent &amp; Privacy Guarantee</span>
               </div>
               <p>

@@ -13,8 +13,6 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { Badge } from '@/components/ui/badge';
-import { Store, ArrowLeft, RefreshCw, ChevronRight } from 'lucide-react';
 import { StoreOrderAnalyticsDto } from '@pharmacy/shared-types';
 
 export default function AdminAnalyticsOrdersPage() {
@@ -46,13 +44,12 @@ export default function AdminAnalyticsOrdersPage() {
         href="/admin/analytics"
         className="inline-flex items-center text-xs font-semibold text-[#6240E8] hover:underline"
       >
-        <ArrowLeft className="mr-1.5 h-3.5 w-3.5" /> Back to Analytics Overview
+        &larr; Back to Analytics Overview
       </Link>
 
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-200">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight text-slate-900 flex items-center gap-2">
-            <Store className="h-6 w-6 text-[#6240E8]" />
+          <h1 className="text-2xl font-bold tracking-tight text-slate-900">
             Orders Distribution by Store
           </h1>
           <p className="text-sm text-slate-500 mt-1">
@@ -139,7 +136,7 @@ export default function AdminAnalyticsOrdersPage() {
                       <TableCell className="text-right">
                         <Link href={`/admin/analytics/stores/${s.storeId}`}>
                           <Button size="sm" variant="ghost" className="h-8 text-[#6240E8] text-xs">
-                            Drill Down <ChevronRight className="ml-1 h-3.5 w-3.5" />
+                            Drill Down &rarr;
                           </Button>
                         </Link>
                       </TableCell>

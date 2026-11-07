@@ -103,7 +103,7 @@ vi.mock('@/lib/api/client', () => ({
   ApiError: class extends Error {},
 }));
 
-describe('Phase 2 UI Components & Pages', () => {
+describe('Catalogue and Inventory UI Components & Pages', () => {
   it('AdminSidebar renders Medicine Catalogue, Inventory, and Stock Imports links', () => {
     render(<AdminSidebar openMobile={false} onCloseMobile={vi.fn()} />);
 

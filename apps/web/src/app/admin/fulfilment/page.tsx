@@ -3,19 +3,6 @@
 import * as React from 'react';
 import Link from 'next/link';
 import { apiFetch } from '@/lib/api/client';
-import {
-  Store,
-  Compass,
-  Package,
-  Layers,
-  FileText,
-  AlertTriangle,
-  RotateCcw,
-  CheckCircle2,
-  XCircle,
-  Clock,
-  ArrowRight,
-} from 'lucide-react';
 
 export default function AdminFulfilmentOverviewPage() {
   const [loading, setLoading] = React.useState(true);
@@ -43,8 +30,7 @@ export default function AdminFulfilmentOverviewPage() {
     <div className="space-y-6">
       <div className="pb-2 border-b border-[#EAE8F0] flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-[#14161A] tracking-tight flex items-center gap-2">
-            <Store className="w-6 h-6 text-[#6240E8]" />
+          <h1 className="text-2xl font-bold text-[#14161A] tracking-tight">
             Fulfilment Operations
           </h1>
           <p className="text-sm text-[#78879A] mt-1">
@@ -60,7 +46,7 @@ export default function AdminFulfilmentOverviewPage() {
         </div>
       ) : error ? (
         <div className="p-8 text-center text-xs text-rose-600 bg-rose-50 rounded-2xl border border-rose-200">
-          <AlertTriangle className="w-6 h-6 mx-auto mb-2 text-rose-500" />
+          <div className="font-bold mb-1">[!] Error</div>
           {error}
         </div>
       ) : (
@@ -108,10 +94,7 @@ export default function AdminFulfilmentOverviewPage() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {/* Quick Actions & Navigation */}
             <div className="p-5 bg-white rounded-2xl border border-[#EAE8F0] shadow-xs space-y-3">
-              <h3 className="font-bold text-sm text-[#14161A] flex items-center gap-2">
-                <Compass className="w-4 h-4 text-[#6240E8]" />
-                Fulfilment Management
-              </h3>
+              <h3 className="font-bold text-sm text-[#14161A]">Fulfilment Management</h3>
               <p className="text-xs text-[#78879A]">
                 Monitor store-routed orders, trigger automatic nearest-store routing, or manually
                 assign store exceptions.
@@ -122,31 +105,28 @@ export default function AdminFulfilmentOverviewPage() {
                   className="w-full py-2 px-3 rounded-xl border border-[#EAE8F0] hover:border-[#6240E8] text-xs font-semibold flex items-center justify-between text-[#14161A] hover:bg-slate-50 transition-colors"
                 >
                   <span>All Fulfilment Orders</span>
-                  <ArrowRight className="w-4 h-4 text-[#78879A]" />
+                  <span className="text-[#78879A]">&rarr;</span>
                 </Link>
                 <Link
                   href="/admin/fulfilment/invoices"
                   className="w-full py-2 px-3 rounded-xl border border-[#EAE8F0] hover:border-[#6240E8] text-xs font-semibold flex items-center justify-between text-[#14161A] hover:bg-slate-50 transition-colors"
                 >
                   <span>Issued Pharmacy Invoices</span>
-                  <ArrowRight className="w-4 h-4 text-[#78879A]" />
+                  <span className="text-[#78879A]">&rarr;</span>
                 </Link>
                 <Link
                   href="/admin/inventory/reservations"
                   className="w-full py-2 px-3 rounded-xl border border-[#EAE8F0] hover:border-[#6240E8] text-xs font-semibold flex items-center justify-between text-[#14161A] hover:bg-slate-50 transition-colors"
                 >
                   <span>Active Stock Reservations</span>
-                  <ArrowRight className="w-4 h-4 text-[#78879A]" />
+                  <span className="text-[#78879A]">&rarr;</span>
                 </Link>
               </div>
             </div>
 
             {/* Stock Unavailable Watchdog */}
             <div className="p-5 bg-white rounded-2xl border border-[#EAE8F0] shadow-xs space-y-3">
-              <h3 className="font-bold text-sm text-[#14161A] flex items-center gap-2">
-                <AlertTriangle className="w-4 h-4 text-amber-600" />
-                Stock Unavailable Queue
-              </h3>
+              <h3 className="font-bold text-sm text-[#14161A]">Stock Unavailable Queue</h3>
               <div className="text-3xl font-extrabold text-amber-600">
                 {metrics?.stockUnavailable || 0}
               </div>
@@ -159,18 +139,14 @@ export default function AdminFulfilmentOverviewPage() {
                   href="/admin/fulfilment/orders?status=STOCK_UNAVAILABLE"
                   className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#6240E8] hover:underline"
                 >
-                  <span>Inspect &amp; Retry Routing</span>
-                  <ArrowRight className="w-3.5 h-3.5" />
+                  <span>Inspect &amp; Retry Routing &rarr;</span>
                 </Link>
               </div>
             </div>
 
             {/* Inventory Holds */}
             <div className="p-5 bg-white rounded-2xl border border-[#EAE8F0] shadow-xs space-y-3">
-              <h3 className="font-bold text-sm text-[#14161A] flex items-center gap-2">
-                <Layers className="w-4 h-4 text-[#6240E8]" />
-                Inventory Reservation Holds
-              </h3>
+              <h3 className="font-bold text-sm text-[#14161A]">Inventory Reservation Holds</h3>
               <div className="flex items-baseline gap-3">
                 <div>
                   <span className="text-[10px] text-[#78879A] block uppercase font-bold">
@@ -198,8 +174,7 @@ export default function AdminFulfilmentOverviewPage() {
                   href="/admin/inventory/reservations"
                   className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#6240E8] hover:underline"
                 >
-                  <span>View Reservation Ledger</span>
-                  <ArrowRight className="w-3.5 h-3.5" />
+                  <span>View Reservation Ledger &rarr;</span>
                 </Link>
               </div>
             </div>

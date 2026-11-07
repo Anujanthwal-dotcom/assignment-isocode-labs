@@ -4,16 +4,6 @@ import * as React from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { apiFetch } from '@/lib/api/client';
-import {
-  FileText,
-  Printer,
-  ArrowLeft,
-  Store,
-  CheckCircle2,
-  AlertTriangle,
-  Building2,
-  Calendar,
-} from 'lucide-react';
 
 export default function OrderInvoiceDetailPage() {
   const params = useParams();
@@ -51,9 +41,9 @@ export default function OrderInvoiceDetailPage() {
         <div className="flex items-center gap-2">
           <Link
             href="/pharmacist/fulfilment"
-            className="p-1 rounded-lg text-[#78879A] hover:bg-[#F8F9FB] transition-colors"
+            className="px-2 py-1 rounded text-xs font-semibold text-[#6240E8] hover:bg-[#F8F9FB] transition-colors"
           >
-            <ArrowLeft className="w-4 h-4" />
+            &larr; Back to Fulfilment
           </Link>
           <h1 className="text-xl font-bold text-[#14161A] tracking-tight">Order Invoice</h1>
         </div>
@@ -61,10 +51,9 @@ export default function OrderInvoiceDetailPage() {
         {invoice && (
           <button
             onClick={handlePrint}
-            className="px-3 py-1.5 rounded-lg text-xs font-semibold bg-[#6240E8] text-white hover:bg-[#5232d4] shadow-xs flex items-center gap-1.5"
+            className="px-3 py-1.5 rounded-lg text-xs font-semibold bg-[#6240E8] text-white hover:bg-[#5232d4] shadow-xs"
           >
-            <Printer className="w-3.5 h-3.5" />
-            <span>Print Invoice</span>
+            Print Invoice
           </button>
         )}
       </div>
@@ -73,7 +62,7 @@ export default function OrderInvoiceDetailPage() {
         <div className="p-12 text-center text-xs text-[#78879A]">Loading invoice record...</div>
       ) : error ? (
         <div className="p-8 text-center text-xs text-rose-600 bg-rose-50 rounded-2xl border border-rose-200">
-          <AlertTriangle className="w-6 h-6 mx-auto mb-2 text-rose-500" />
+          <span className="font-bold text-xs uppercase block mb-1">Notice</span>
           {error}
         </div>
       ) : (
@@ -82,12 +71,9 @@ export default function OrderInvoiceDetailPage() {
           {/* Top Invoice Header */}
           <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4 border-b border-[#EAE8F0] pb-6">
             <div>
-              <div className="flex items-center gap-2">
-                <Store className="w-6 h-6 text-[#6240E8]" />
-                <span className="text-lg font-bold text-[#351F65] tracking-tight">
-                  {invoice.storeName}
-                </span>
-              </div>
+              <span className="text-lg font-bold text-[#351F65] tracking-tight block">
+                {invoice.storeName}
+              </span>
               <p className="text-[#78879A] text-[11px] mt-1 max-w-xs">
                 {invoice.storeAddress}, {invoice.storeCity}
               </p>
@@ -128,13 +114,11 @@ export default function OrderInvoiceDetailPage() {
                   +91 {invoice.customerPhone}
                 </span>
               )}
-              {invoice.customerEmail && (
-                <span className="text-[11px] text-[#78879A] block">{invoice.customerEmail}</span>
-              )}
             </div>
+
             <div className="text-right">
               <span className="text-[10px] font-bold text-[#78879A] uppercase tracking-wider block mb-1">
-                Payment Details
+                Payment Status
               </span>
               <strong className="text-xs block text-[#14161A]">{invoice.paymentMethod}</strong>
               <span
@@ -142,12 +126,12 @@ export default function OrderInvoiceDetailPage() {
                   invoice.paymentStatus === 'SUCCESS' ? 'text-emerald-600' : 'text-amber-600'
                 }`}
               >
-                Status: {invoice.paymentStatus}
+                {invoice.paymentStatus}
               </span>
             </div>
           </div>
 
-          {/* Line Items Table */}
+          {/* Line items table */}
           <div>
             <table className="w-full text-left text-xs">
               <thead className="bg-[#F8F9FB] border-b border-[#EAE8F0] text-[#78879A] uppercase tracking-wider text-[10px]">
@@ -180,7 +164,7 @@ export default function OrderInvoiceDetailPage() {
             </table>
           </div>
 
-          {/* Totals */}
+          {/* Totals Summary */}
           <div className="flex justify-end pt-2">
             <div className="w-64 space-y-2 text-xs">
               <div className="flex justify-between text-[#78879A]">
@@ -193,28 +177,11 @@ export default function OrderInvoiceDetailPage() {
                   ₹{invoice.deliveryFee.toFixed(2)}
                 </span>
               </div>
-              {invoice.discount > 0 && (
-                <div className="flex justify-between text-emerald-600">
-                  <span>Discount:</span>
-                  <span>-₹{invoice.discount.toFixed(2)}</span>
-                </div>
-              )}
               <div className="flex justify-between border-t border-[#EAE8F0] pt-2 font-bold text-sm text-[#351F65]">
                 <span>Total Amount:</span>
                 <span className="text-base text-[#6240E8]">₹{invoice.total.toFixed(2)}</span>
               </div>
             </div>
-          </div>
-
-          {/* Footer Notice */}
-          <div className="border-t border-[#EAE8F0] pt-4 text-[10px] text-[#78879A] space-y-1">
-            <p>
-              This is a computer-generated tax invoice issued by a licensed registered pharmacy.
-            </p>
-            <p>
-              Medicines dispensed under registered pharmacist clinical verification in compliance
-              with statutory pharmacy acts.
-            </p>
           </div>
         </div>
       )}

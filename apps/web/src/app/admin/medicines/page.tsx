@@ -1,7 +1,7 @@
 'use client';
 
 import * as React from 'react';
-import { Plus, Search, Filter, Edit2, PowerOff, Power, Loader2 } from 'lucide-react';
+
 import { apiFetch, ApiError } from '@/lib/api/client';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -224,7 +224,6 @@ export default function MedicineCataloguePage() {
           onClick={handleOpenAdd}
           className="inline-flex items-center gap-2 bg-[#6240E8] hover:bg-[#542F9B] text-white"
         >
-          <Plus className="h-4 w-4" />
           <span>Add Medicine</span>
         </Button>
       </div>
@@ -234,7 +233,6 @@ export default function MedicineCataloguePage() {
       {/* Filter & Search Bar */}
       <div className="rounded-[12px] border border-[#EAE8F0] bg-white p-4 shadow-xs flex flex-col md:flex-row gap-3 items-stretch md:items-center justify-between">
         <div className="relative flex-1 min-w-[240px]">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#78879A]" />
           <Input
             placeholder="Search medicine name, SKU, or generic..."
             value={search}
@@ -242,13 +240,12 @@ export default function MedicineCataloguePage() {
               setSearch(e.target.value);
               setPage(1);
             }}
-            className="pl-9 bg-[#F8F9FB] border-[#EAE8F0]"
+            className="bg-[#F8F9FB] border-[#EAE8F0]"
           />
         </div>
 
         <div className="flex items-center gap-2 flex-wrap">
           <div className="flex items-center gap-1.5 text-[13px] text-[#6C757D]">
-            <Filter className="h-3.5 w-3.5" />
             <span>Status:</span>
           </div>
           <select
@@ -306,7 +303,7 @@ export default function MedicineCataloguePage() {
                 <tr>
                   <td colSpan={8} className="py-12 text-center text-[#78879A]">
                     <div className="flex items-center justify-center gap-2">
-                      <Loader2 className="h-5 w-5 animate-spin text-[#6240E8]" />
+                      <div className="w-4 h-4 border-2 border-[#6240E8] border-t-transparent rounded-full animate-spin" />
                       <span>Loading catalogue entries...</span>
                     </div>
                   </td>
@@ -363,27 +360,23 @@ export default function MedicineCataloguePage() {
                       <div className="flex items-center justify-end gap-1.5">
                         <button
                           onClick={() => handleOpenEdit(med)}
-                          className="p-1 rounded text-[#78879A] hover:text-[#6240E8] hover:bg-[#F7F5FD]"
+                          className="px-2 py-0.5 rounded text-xs font-semibold text-[#6240E8] hover:bg-[#F7F5FD]"
                           title="Edit Medicine"
                         >
-                          <Edit2 className="h-4 w-4" />
+                          Edit
                         </button>
                         <button
                           onClick={() => setDeactivatingMedicine(med)}
-                          className={`p-1 rounded ${
+                          className={`px-2 py-0.5 rounded text-xs font-semibold ${
                             med.status === 'ACTIVE'
-                              ? 'text-[#78879A] hover:text-[#DC3545] hover:bg-[#FDF2F2]'
-                              : 'text-[#78879A] hover:text-[#0FAC26] hover:bg-[#E8F8EC]'
+                              ? 'text-[#DC3545] hover:bg-[#FDF2F2]'
+                              : 'text-[#0FAC26] hover:bg-[#E8F8EC]'
                           }`}
                           title={
                             med.status === 'ACTIVE' ? 'Deactivate Medicine' : 'Activate Medicine'
                           }
                         >
-                          {med.status === 'ACTIVE' ? (
-                            <PowerOff className="h-4 w-4" />
-                          ) : (
-                            <Power className="h-4 w-4" />
-                          )}
+                          {med.status === 'ACTIVE' ? 'Deactivate' : 'Activate'}
                         </button>
                       </div>
                     </td>
@@ -582,7 +575,9 @@ export default function MedicineCataloguePage() {
                 disabled={formSubmitting}
                 className="bg-[#6240E8] hover:bg-[#542F9B] text-white"
               >
-                {formSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                {formSubmitting && (
+                  <span className="mr-2 inline-block w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                )}
                 {editingMedicine ? 'Save Changes' : 'Create Medicine'}
               </Button>
             </DialogFooter>
@@ -629,7 +624,9 @@ export default function MedicineCataloguePage() {
                   : 'bg-[#0FAC26] hover:bg-[#0d9220] text-white'
               }
             >
-              {statusSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+              {statusSubmitting && (
+                <span className="mr-2 inline-block w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+              )}
               {deactivatingMedicine?.status === 'ACTIVE'
                 ? 'Confirm Deactivation'
                 : 'Confirm Activation'}

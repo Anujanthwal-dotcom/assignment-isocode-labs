@@ -14,7 +14,7 @@ import {
   H1RegisterStatus,
 } from '@prisma/client';
 
-describe('Phase 6 Store Routing, Inventory Reservation & Order Fulfilment E2E', () => {
+describe('Store Routing, Inventory Reservation & Order Fulfilment E2E', () => {
   let app: INestApplication;
   let prisma: PrismaService;
 

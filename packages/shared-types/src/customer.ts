@@ -276,7 +276,7 @@ export interface MockPaymentResponseDTO {
 }
 
 // ==========================================
-// Phase 4: AI-Assisted Prescription Reading
+// AI-Assisted Prescription Reading
 // ==========================================
 
 export type PrescriptionAIStatus =

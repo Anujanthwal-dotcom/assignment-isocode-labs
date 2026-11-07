@@ -5,16 +5,6 @@ import Link from 'next/link';
 import { useParams, useRouter } from 'next/navigation';
 import { apiFetch } from '@/lib/api/client';
 import { useAuth } from '@/lib/auth/auth-context';
-import {
-  ShieldCheck,
-  ArrowLeft,
-  CheckCircle2,
-  Clock,
-  Archive,
-  AlertTriangle,
-  Play,
-  Lock,
-} from 'lucide-react';
 
 export default function ComplianceRuleSetDetailPage() {
   const params = useParams();
@@ -86,10 +76,9 @@ export default function ComplianceRuleSetDetailPage() {
               href="/admin/compliance/rules"
               className="p-1 rounded-lg text-[#78879A] hover:bg-[#F8F9FB] transition-colors"
             >
-              <ArrowLeft className="w-4 h-4" />
+              &larr; Back
             </Link>
             <h1 className="text-2xl font-bold text-[#14161A] tracking-tight flex items-center gap-2">
-              <ShieldCheck className="w-6 h-6 text-[#6240E8]" />
               {ruleSet?.name || 'Rule Set Detail'}
               {ruleSet && (
                 <span className="font-mono text-sm px-2.5 py-0.5 rounded-md bg-[#F7F5FD] text-[#6240E8] border border-[#EAE8F0]">
@@ -108,7 +97,6 @@ export default function ComplianceRuleSetDetailPage() {
             onClick={() => setActivateModalOpen(true)}
             className="inline-flex items-center gap-2 px-4 py-2 text-xs font-semibold rounded-lg bg-emerald-600 text-white hover:bg-emerald-700 transition-colors shadow-2xs"
           >
-            <Play className="w-4 h-4" />
             <span>Activate Version</span>
           </button>
         )}
@@ -116,21 +104,21 @@ export default function ComplianceRuleSetDetailPage() {
 
       {error && (
         <div className="p-3 rounded-lg bg-rose-50 border border-rose-200 text-rose-700 text-xs flex items-center gap-2">
-          <AlertTriangle className="w-4 h-4 shrink-0" />
+          <span className="font-bold">[!]</span>
           <span>{error}</span>
         </div>
       )}
 
       {successMessage && (
         <div className="p-3 rounded-lg bg-emerald-50 border border-emerald-200 text-emerald-700 text-xs flex items-center gap-2">
-          <CheckCircle2 className="w-4 h-4 shrink-0" />
+          <span className="font-bold">✓</span>
           <span>{successMessage}</span>
         </div>
       )}
 
       {!isDraft && (
         <div className="p-3 rounded-lg bg-slate-100 border border-slate-200 text-slate-700 text-xs flex items-center gap-2">
-          <Lock className="w-4 h-4 text-slate-500 shrink-0" />
+          <span className="font-bold">[Locked]</span>
           <span>
             This version is <strong>{ruleSet?.status}</strong>. In compliance mode, active and
             superseded rule sets cannot be modified in place. To change policies, create a new draft
@@ -233,8 +221,7 @@ export default function ComplianceRuleSetDetailPage() {
       {activateModalOpen && (
         <div className="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-[1px] flex items-center justify-center p-4">
           <div className="bg-white rounded-xl border border-[#EAE8F0] max-w-md w-full p-6 shadow-xl space-y-4">
-            <h3 className="text-base font-bold text-[#14161A] flex items-center gap-2">
-              <Play className="w-5 h-5 text-emerald-600" />
+            <h3 className="text-base font-bold text-[#14161A]">
               Activate Version {ruleSet?.version}
             </h3>
             <p className="text-xs text-[#78879A]">
@@ -271,7 +258,7 @@ export default function ComplianceRuleSetDetailPage() {
                 disabled={actionLoading || !activationReason.trim()}
                 className="px-4 py-1.5 text-xs font-semibold rounded-lg bg-emerald-600 text-white hover:bg-emerald-700 disabled:opacity-50"
               >
-                Confirm & Activate
+                Confirm &amp; Activate
               </button>
             </div>
           </div>

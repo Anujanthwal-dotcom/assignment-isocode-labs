@@ -4,16 +4,6 @@ import * as React from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { apiFetch } from '@/lib/api/client';
-import {
-  Truck,
-  UserCheck,
-  CheckCircle2,
-  AlertTriangle,
-  ArrowLeft,
-  FileText,
-  DollarSign,
-  Package,
-} from 'lucide-react';
 
 export default function HandoverWorkspacePage() {
   const params = useParams();
@@ -122,10 +112,9 @@ export default function HandoverWorkspacePage() {
               href="/pharmacist/fulfilment"
               className="p-1 rounded-lg text-[#78879A] hover:bg-[#F8F9FB] transition-colors"
             >
-              <ArrowLeft className="w-4 h-4" />
+              &larr; Back
             </Link>
-            <h1 className="text-2xl font-bold text-[#14161A] tracking-tight flex items-center gap-2">
-              <Truck className="w-6 h-6 text-[#6240E8]" />
+            <h1 className="text-2xl font-bold text-[#14161A] tracking-tight">
               Order Handover: {orderDetail?.orderNumber || ''}
             </h1>
           </div>
@@ -140,7 +129,6 @@ export default function HandoverWorkspacePage() {
             href={`/pharmacist/fulfilment/${orderId}`}
             className="px-3 py-1.5 rounded-lg text-xs font-semibold border border-purple-200 text-[#6240E8] hover:bg-purple-50 inline-flex items-center gap-1.5 self-start sm:self-auto"
           >
-            <FileText className="w-3.5 h-3.5" />
             <span>Invoice: {orderDetail.invoiceNumber}</span>
           </Link>
         )}
@@ -150,7 +138,7 @@ export default function HandoverWorkspacePage() {
         <div className="p-12 text-center text-xs text-[#78879A]">Loading handover workspace...</div>
       ) : error ? (
         <div className="p-8 text-center text-xs text-rose-600 bg-rose-50 rounded-2xl border border-rose-200">
-          <AlertTriangle className="w-6 h-6 mx-auto mb-2 text-rose-500" />
+          <div className="font-bold mb-1">[!] Error</div>
           {error}
         </div>
       ) : (
@@ -159,8 +147,7 @@ export default function HandoverWorkspacePage() {
           {isHandedOver ? (
             <div className="p-5 rounded-2xl bg-emerald-50 border border-emerald-200 text-emerald-800 space-y-2">
               <div className="flex items-center gap-2 font-bold text-sm">
-                <CheckCircle2 className="w-5 h-5 text-emerald-600" />
-                <span>Order Handed Over Successfully</span>
+                <span>✓ Order Handed Over Successfully</span>
               </div>
               <p className="text-xs text-emerald-700">
                 Physical stock has been decremented, reservations consumed, and Schedule H1
@@ -198,8 +185,7 @@ export default function HandoverWorkspacePage() {
             </div>
           ) : (
             <div className="bg-white rounded-2xl border border-[#EAE8F0] p-6 shadow-xs space-y-5">
-              <h2 className="text-sm font-bold text-[#14161A] flex items-center gap-2 border-b border-[#EAE8F0] pb-3">
-                <Truck className="w-4 h-4 text-[#6240E8]" />
+              <h2 className="text-sm font-bold text-[#14161A] border-b border-[#EAE8F0] pb-3">
                 Record Handover Event
               </h2>
 
@@ -295,7 +281,6 @@ export default function HandoverWorkspacePage() {
                     disabled={handoverBusy}
                     className="px-5 py-2 rounded-xl text-xs font-semibold bg-[#6240E8] text-white hover:bg-[#5232d4] disabled:opacity-50 shadow-xs flex items-center gap-1.5"
                   >
-                    <CheckCircle2 className="w-4 h-4" />
                     <span>
                       {handoverBusy ? 'Dispensing Stock...' : 'Confirm Handover & Dispense Stock'}
                     </span>
@@ -309,8 +294,7 @@ export default function HandoverWorkspacePage() {
           {isCod && (
             <div className="bg-white rounded-2xl border border-[#EAE8F0] p-6 shadow-xs space-y-4">
               <div className="flex items-center justify-between border-b border-[#EAE8F0] pb-3">
-                <h2 className="text-sm font-bold text-[#14161A] flex items-center gap-2">
-                  <DollarSign className="w-4 h-4 text-emerald-600" />
+                <h2 className="text-sm font-bold text-[#14161A]">
                   Cash on Delivery (COD) Payment Collection
                 </h2>
                 <span

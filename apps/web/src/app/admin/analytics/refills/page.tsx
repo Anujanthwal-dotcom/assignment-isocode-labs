@@ -12,8 +12,6 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { Badge } from '@/components/ui/badge';
-import { RefreshCw, ArrowLeft, Bell, ShoppingCart, TrendingUp, CheckCircle2 } from 'lucide-react';
 import { RefillAnalyticsDto } from '@pharmacy/shared-types';
 
 export default function AdminAnalyticsRefillsPage() {
@@ -45,13 +43,12 @@ export default function AdminAnalyticsRefillsPage() {
         href="/admin/analytics"
         className="inline-flex items-center text-xs font-semibold text-[#6240E8] hover:underline"
       >
-        <ArrowLeft className="mr-1.5 h-3.5 w-3.5" /> Back to Analytics Overview
+        &larr; Back to Analytics Overview
       </Link>
 
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-200">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight text-slate-900 flex items-center gap-2">
-            <RefreshCw className="h-6 w-6 text-[#6240E8]" />
+          <h1 className="text-2xl font-bold tracking-tight text-slate-900">
             Refill Automation &amp; Reminder Analytics
           </h1>
           <p className="text-sm text-slate-500 mt-1">

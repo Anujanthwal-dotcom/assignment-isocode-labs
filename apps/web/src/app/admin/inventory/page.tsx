@@ -1,18 +1,7 @@
 'use client';
 
 import * as React from 'react';
-import {
-  Search,
-  Filter,
-  SlidersHorizontal,
-  History,
-  AlertTriangle,
-  Package,
-  Layers,
-  Loader2,
-  Store,
-  Building2,
-} from 'lucide-react';
+
 import { apiFetch, ApiError } from '@/lib/api/client';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -234,7 +223,7 @@ export default function AdminInventoryPage() {
         <div className="rounded-[12px] border border-[#EAE8F0] bg-white p-4 shadow-xs">
           <div className="flex items-center justify-between text-[#78879A] text-[12px] font-medium">
             <span>Total Units Stocked</span>
-            <Package className="h-4 w-4 text-[#6240E8]" />
+            <span className="font-bold text-[#6240E8]">[Stock]</span>
           </div>
           <div className="mt-2 text-[26px] font-bold text-[#351F65]">
             {summary ? summary.totalStockUnits.toLocaleString('en-IN') : '—'}
@@ -245,7 +234,7 @@ export default function AdminInventoryPage() {
         <div className="rounded-[12px] border border-[#F6DCB0] bg-[#FFF8EC] p-4 shadow-xs">
           <div className="flex items-center justify-between text-[#A66B16] text-[12px] font-medium">
             <span>Low-Stock Lines</span>
-            <AlertTriangle className="h-4 w-4 text-[#A66B16]" />
+            <span className="font-bold text-[#A66B16]">[!]</span>
           </div>
           <div className="mt-2 text-[26px] font-bold text-[#A66B16]">
             {summary ? summary.lowStockCount : '—'}
@@ -256,7 +245,7 @@ export default function AdminInventoryPage() {
         <div className="rounded-[12px] border border-[#F9CACA] bg-[#FDF2F2] p-4 shadow-xs">
           <div className="flex items-center justify-between text-[#DC3545] text-[12px] font-medium">
             <span>Out of Stock</span>
-            <AlertTriangle className="h-4 w-4 text-[#DC3545]" />
+            <span className="font-bold text-[#DC3545]">[Empty]</span>
           </div>
           <div className="mt-2 text-[26px] font-bold text-[#DC3545]">
             {summary ? summary.outOfStockCount : '—'}
@@ -267,7 +256,7 @@ export default function AdminInventoryPage() {
         <div className="rounded-[12px] border border-[#EAE8F0] bg-white p-4 shadow-xs">
           <div className="flex items-center justify-between text-[#78879A] text-[12px] font-medium">
             <span>Inventory Records</span>
-            <Layers className="h-4 w-4 text-[#0088AA]" />
+            <span className="font-bold text-[#0088AA]">[Records]</span>
           </div>
           <div className="mt-2 text-[26px] font-bold text-[#351F65]">
             {summary ? summary.totalInventoryBalances : '—'}
@@ -279,7 +268,6 @@ export default function AdminInventoryPage() {
       {/* Filter and Location Selector Toolbar */}
       <div className="rounded-[12px] border border-[#EAE8F0] bg-white p-4 shadow-xs flex flex-col md:flex-row gap-3 items-stretch md:items-center justify-between">
         <div className="relative flex-1 min-w-[220px]">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#78879A]" />
           <Input
             placeholder="Search medicine name or SKU..."
             value={search}
@@ -287,14 +275,13 @@ export default function AdminInventoryPage() {
               setSearch(e.target.value);
               setPage(1);
             }}
-            className="pl-9 bg-[#F8F9FB] border-[#EAE8F0]"
+            className="bg-[#F8F9FB] border-[#EAE8F0]"
           />
         </div>
 
         <div className="flex items-center gap-2 flex-wrap">
           {/* Location Selector */}
           <div className="flex items-center gap-1.5 text-[13px] text-[#6C757D]">
-            <Store className="h-3.5 w-3.5" />
             <span>Location:</span>
           </div>
           <select
@@ -324,7 +311,6 @@ export default function AdminInventoryPage() {
 
           {/* Stock Status Filter */}
           <div className="flex items-center gap-1.5 text-[13px] text-[#6C757D] ml-2">
-            <Filter className="h-3.5 w-3.5" />
             <span>Status:</span>
           </div>
           <select
@@ -364,7 +350,7 @@ export default function AdminInventoryPage() {
                 <tr>
                   <td colSpan={8} className="py-12 text-center text-[#78879A]">
                     <div className="flex items-center justify-center gap-2">
-                      <Loader2 className="h-5 w-5 animate-spin text-[#6240E8]" />
+                      <div className="w-4 h-4 border-2 border-[#6240E8] border-t-transparent rounded-full animate-spin" />
                       <span>Loading inventory stock...</span>
                     </div>
                   </td>
@@ -382,7 +368,6 @@ export default function AdminInventoryPage() {
                 </tr>
               ) : (
                 balances.map((item) => {
-                  const isStore = item.location?.type === 'STORE' || Boolean(item.storeId);
                   return (
                     <tr key={item.id} className="hover:bg-[#F8F9FB]/60 transition-colors">
                       <td className="py-3 px-4 font-mono text-[12px] font-medium text-[#351F65]">
@@ -397,12 +382,7 @@ export default function AdminInventoryPage() {
                         )}
                       </td>
                       <td className="py-3 px-4">
-                        <div className="flex items-center gap-1.5 font-medium text-[#14161A]">
-                          {isStore ? (
-                            <Store className="h-3.5 w-3.5 text-[#6240E8]" />
-                          ) : (
-                            <Building2 className="h-3.5 w-3.5 text-[#0088AA]" />
-                          )}
+                        <div className="font-medium text-[#14161A]">
                           <span>{item.location?.name}</span>
                         </div>
                         <span className="text-[11px] text-[#78879A] block font-mono">
@@ -447,17 +427,17 @@ export default function AdminInventoryPage() {
                         <div className="flex items-center justify-end gap-1.5">
                           <button
                             onClick={() => handleOpenHistory(item)}
-                            className="p-1 rounded text-[#78879A] hover:text-[#0088AA] hover:bg-[#EBF9FD]"
+                            className="px-2 py-0.5 rounded text-xs font-semibold text-[#0088AA] hover:bg-[#EBF9FD]"
                             title="Movement History"
                           >
-                            <History className="h-4 w-4" />
+                            History
                           </button>
                           <button
                             onClick={() => handleOpenAdjust(item)}
-                            className="p-1 rounded text-[#78879A] hover:text-[#6240E8] hover:bg-[#F7F5FD]"
+                            className="px-2 py-0.5 rounded text-xs font-semibold text-[#6240E8] hover:bg-[#F7F5FD]"
                             title="Adjust Stock"
                           >
-                            <SlidersHorizontal className="h-4 w-4" />
+                            Adjust
                           </button>
                         </div>
                       </td>
@@ -605,7 +585,9 @@ export default function AdminInventoryPage() {
                   disabled={adjustSubmitting || !isValidNumber || isNegativeResult}
                   className="bg-[#6240E8] hover:bg-[#542F9B] text-white"
                 >
-                  {adjustSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                  {adjustSubmitting && (
+                    <span className="mr-2 inline-block w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                  )}
                   Confirm Adjustment
                 </Button>
               </DialogFooter>
@@ -653,7 +635,7 @@ export default function AdminInventoryPage() {
                     {loadingMovements ? (
                       <tr>
                         <td colSpan={7} className="p-8 text-center text-[#78879A]">
-                          <Loader2 className="h-4 w-4 animate-spin inline-block mr-2" />
+                          <div className="w-4 h-4 border-2 border-[#6240E8] border-t-transparent rounded-full animate-spin inline-block mr-2" />
                           Loading movements...
                         </td>
                       </tr>

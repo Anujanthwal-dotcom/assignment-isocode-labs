@@ -1,7 +1,7 @@
-# Phase 8: System Audit, Hardening & Verification Report
+# System Audit, Hardening & Verification Report
 
 **Audit Date:** 2026-11-06  
-**Audited Target:** Pharmacy Management Platform (Monorepo Phases 0–7)  
+**Audited Target:** Pharmacy Management Platform (Monorepo Services & Portals)  
 **Status:** Audit Complete & Remediations Executed
 
 ---
@@ -16,7 +16,7 @@ A comprehensive pre-implementation code and infrastructure audit was performed a
 - `@pharmacy/web` (Next.js frontend)
 - PostgreSQL (16-alpine), Redis (7-alpine), MinIO (S3 object store), Mailpit
 
-The architecture built across Phases 0–7 adheres strictly to the offline-first, compliant pharmacy model specified in the technical requirements. All core domain logic—including customer ordering, AI-assisted prescription reading, regulatory compliance rules, store routing, stock reservation, pharmacist fulfilment, and chronic refills—is implemented with relational constraints and append-only audit tracking.
+The architecture adheres strictly to the offline-first, compliant pharmacy model specified in the technical requirements. All core domain logic—including customer ordering, AI-assisted prescription reading, regulatory compliance rules, store routing, stock reservation, pharmacist fulfilment, and chronic refills—is implemented with relational constraints and append-only audit tracking.
 
 ---
 

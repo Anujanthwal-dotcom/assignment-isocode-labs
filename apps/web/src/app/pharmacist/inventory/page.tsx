@@ -1,7 +1,6 @@
 'use client';
 
 import * as React from 'react';
-import { Search, Filter, History, Store, Loader2 } from 'lucide-react';
 import { apiFetch, ApiError } from '@/lib/api/client';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -69,14 +68,15 @@ export default function PharmacistInventoryPage() {
     try {
       const params = new URLSearchParams();
       params.set('medicineId', balance.medicineId);
-      params.set('limit', '50');
+      params.set('limit', '20');
 
-      const res = await apiFetch<{ data: InventoryMovementDTO[] }>(
-        `/inventory/movements?${params.toString()}`,
-      );
+      const res = await apiFetch<{
+        data: InventoryMovementDTO[];
+      }>(`/inventory/movements?${params.toString()}`);
+
       setMovements(res.data);
-    } catch {
-      setMovements([]);
+    } catch (err) {
+      setError(err instanceof ApiError ? err.message : 'Failed to fetch stock movements.');
     } finally {
       setLoadingMovements(false);
     }
@@ -88,15 +88,15 @@ export default function PharmacistInventoryPage() {
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
           <div className="flex items-center gap-2 mb-1">
-            <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-[#F7F5FD] text-[#6240E8] border border-[#D6D1F7]">
-              <Store className="h-3 w-3" /> Salt Lake Store (KOL-001)
+            <span className="text-[11px] font-semibold tracking-wider uppercase px-2 py-0.5 rounded bg-[#EBF9FD] text-[#0088AA] border border-[#B4EDFB]">
+              Salt Lake Store (KOL-001)
             </span>
           </div>
-          <h1 className="text-[24px] font-bold tracking-tight text-[#351F65]">
+          <h1 className="text-[24px] font-bold text-[#351F65] tracking-tight">
             Store Stock Inventory
           </h1>
-          <p className="text-[14px] text-[#78879A]">
-            Current stock quantities and reorder safety thresholds for your assigned pharmacy store.
+          <p className="text-[13px] text-[#78879A]">
+            Current on-hand balances, reserved orders, and available stock for clinical dispensing.
           </p>
         </div>
       </div>
@@ -104,9 +104,8 @@ export default function PharmacistInventoryPage() {
       {error && <SemanticAlert type="error" title="Inventory Error" description={error} />}
 
       {/* Filter Toolbar */}
-      <div className="rounded-[12px] border border-[#EAE8F0] bg-white p-4 shadow-xs flex flex-col sm:flex-row gap-3 items-stretch sm:items-center justify-between">
-        <div className="relative flex-1 min-w-[220px]">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#78879A]" />
+      <div className="flex flex-col sm:flex-row items-center justify-between gap-3 bg-white p-4 rounded-[8px] border border-[#EAE8F0]">
+        <div className="relative w-full sm:w-[320px]">
           <Input
             placeholder="Search medicine name or SKU in store..."
             value={search}
@@ -114,257 +113,234 @@ export default function PharmacistInventoryPage() {
               setSearch(e.target.value);
               setPage(1);
             }}
-            className="pl-9 bg-[#F8F9FB] border-[#EAE8F0]"
+            className="pl-3 h-9 text-[13px]"
           />
         </div>
 
-        <div className="flex items-center gap-2">
-          <div className="flex items-center gap-1.5 text-[13px] text-[#6C757D]">
-            <Filter className="h-3.5 w-3.5" />
-            <span>Status:</span>
+        <div className="flex items-center gap-3 w-full sm:w-auto">
+          <div className="flex items-center gap-2 text-[13px] text-[#78879A]">
+            <span>Filter:</span>
+            <select
+              value={statusFilter}
+              onChange={(e) => {
+                setStatusFilter(e.target.value);
+                setPage(1);
+              }}
+              className="h-9 px-3 rounded-[6px] border border-[#EAE8F0] bg-white text-[13px] text-[#351F65] focus:outline-none focus:ring-1 focus:ring-[#6240E8]"
+            >
+              <option value="ALL">All Stock Statuses</option>
+              <option value="IN_STOCK">In Stock (&gt; 0)</option>
+              <option value="LOW_STOCK">Low Stock (&le; Reorder Point)</option>
+              <option value="OUT_OF_STOCK">Out of Stock (0)</option>
+            </select>
           </div>
-          <select
-            value={statusFilter}
-            onChange={(e) => {
-              setStatusFilter(e.target.value);
-              setPage(1);
-            }}
-            className="h-[38px] rounded-[6px] border border-[#CED4DA] bg-white px-2.5 text-[13px] text-[#14161A] focus:outline-none focus:border-[#6240E8]"
-          >
-            <option value="ALL">All Stock Statuses</option>
-            <option value="IN_STOCK">In Stock</option>
-            <option value="LOW_STOCK">Low Stock</option>
-            <option value="OUT_OF_STOCK">Out of Stock</option>
-          </select>
         </div>
       </div>
 
-      {/* Stock Table */}
-      <div className="rounded-[12px] border border-[#EAE8F0] bg-white shadow-xs overflow-hidden">
+      {/* Inventory Balances Table */}
+      <div className="bg-white rounded-[8px] border border-[#EAE8F0] overflow-hidden shadow-xs">
         <div className="overflow-x-auto">
-          <table className="w-full text-left border-collapse text-[13px]">
-            <thead>
-              <tr className="border-b border-[#EAE8F0] bg-[#F8F9FB] text-[#78879A] font-semibold">
-                <th className="py-3 px-4">SKU</th>
-                <th className="py-3 px-4">Medicine Name</th>
-                <th className="py-3 px-4 text-right">Available Stock</th>
-                <th className="py-3 px-4 text-right">Reorder Threshold</th>
-                <th className="py-3 px-4 text-center">Status</th>
-                <th className="py-3 px-4">Last Stock Update</th>
-                <th className="py-3 px-4 text-right">Actions</th>
+          <table className="w-full text-left text-[13px] text-[#351F65]">
+            <thead className="bg-[#F8F9FB] border-b border-[#EAE8F0] text-[11px] font-semibold text-[#78879A] uppercase tracking-wider">
+              <tr>
+                <th className="py-3 px-4">Medicine &amp; SKU</th>
+                <th className="py-3 px-4">Dosage / Pack</th>
+                <th className="py-3 px-4 text-right">Physical On-Hand</th>
+                <th className="py-3 px-4 text-right">Reserved (Active Orders)</th>
+                <th className="py-3 px-4 text-right">Available to Dispense</th>
+                <th className="py-3 px-4 text-center">Stock Status</th>
+                <th className="py-3 px-4 text-center">Action</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-[#EAE8F0]">
               {loading ? (
                 <tr>
                   <td colSpan={7} className="py-12 text-center text-[#78879A]">
-                    <div className="flex items-center justify-center gap-2">
-                      <Loader2 className="h-5 w-5 animate-spin text-[#6240E8]" />
-                      <span>Loading store stock...</span>
-                    </div>
+                    <span>Loading store inventory...</span>
                   </td>
                 </tr>
               ) : balances.length === 0 ? (
                 <tr>
                   <td colSpan={7} className="py-12 text-center text-[#78879A]">
-                    <div className="flex flex-col items-center justify-center gap-1">
-                      <p className="font-semibold text-[#351F65]">
-                        No medicines found in store stock
-                      </p>
-                      <p className="text-[12px]">Try modifying your search or status filter.</p>
-                    </div>
+                    No stock records found matching your query.
                   </td>
                 </tr>
               ) : (
-                balances.map((item) => (
-                  <tr key={item.id} className="hover:bg-[#F8F9FB]/60 transition-colors">
-                    <td className="py-3 px-4 font-mono text-[12px] font-medium text-[#351F65]">
-                      {item.medicine?.sku}
-                    </td>
-                    <td className="py-3 px-4">
-                      <div className="font-semibold text-[#14161A]">{item.medicine?.name}</div>
-                      {item.medicine?.genericName && (
-                        <div className="text-[11px] text-[#78879A]">
-                          {item.medicine?.genericName}
+                balances.map((item) => {
+                  const onHand = Number((item as any).onHandQuantity ?? item.quantity ?? 0);
+                  const reserved = Number((item as any).reservedQuantity ?? 0);
+                  const available = Number((item as any).availableQuantity ?? item.quantity ?? 0);
+                  const reorderPoint = Number(
+                    (item as any).reorderPoint ?? item.reorderLevel ?? 10,
+                  );
+
+                  let statusBadge = (
+                    <span className="px-2 py-0.5 rounded text-[11px] font-medium bg-[#EBF9FD] text-[#0088AA]">
+                      In Stock
+                    </span>
+                  );
+                  if (available <= 0) {
+                    statusBadge = (
+                      <span className="px-2 py-0.5 rounded text-[11px] font-medium bg-[#FDEDED] text-[#DC3545]">
+                        Out of Stock
+                      </span>
+                    );
+                  } else if (available <= reorderPoint) {
+                    statusBadge = (
+                      <span className="px-2 py-0.5 rounded text-[11px] font-medium bg-[#FFF8EC] text-[#A66B16]">
+                        Low Stock ({available}/{reorderPoint})
+                      </span>
+                    );
+                  }
+
+                  return (
+                    <tr key={item.id} className="hover:bg-[#F7F5FD]/40 transition-colors">
+                      <td className="py-3 px-4">
+                        <div className="font-semibold text-[#351F65]">
+                          {item.medicine?.name || 'Unnamed Medicine'}
                         </div>
-                      )}
-                    </td>
-                    <td className="py-3 px-4 text-right font-bold text-[15px] text-[#14161A]">
-                      {item.quantity.toLocaleString('en-IN')}
-                    </td>
-                    <td className="py-3 px-4 text-right text-[#6C757D]">{item.reorderLevel}</td>
-                    <td className="py-3 px-4 text-center">
-                      {item.stockStatus === 'IN_STOCK' && (
-                        <span className="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-medium bg-[#E8F8EC] text-[#0FAC26] border border-[#B0E6BC]">
-                          In Stock
-                        </span>
-                      )}
-                      {item.stockStatus === 'LOW_STOCK' && (
-                        <span className="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-medium bg-[#FFF8EC] text-[#A66B16] border border-[#F6DCB0]">
-                          Low Stock
-                        </span>
-                      )}
-                      {item.stockStatus === 'OUT_OF_STOCK' && (
-                        <span className="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-medium bg-[#FDF2F2] text-[#DC3545] border border-[#F9CACA]">
-                          Out of Stock
-                        </span>
-                      )}
-                      {item.stockStatus === 'UNKNOWN' && (
-                        <span className="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-medium bg-[#EFF2F7] text-[#6C757D] border border-[#CED4DA]">
-                          Unknown
-                        </span>
-                      )}
-                    </td>
-                    <td className="py-3 px-4 text-[#78879A] text-[12px]">
-                      {new Date(item.updatedAt).toLocaleDateString('en-IN', {
-                        day: '2-digit',
-                        month: 'short',
-                        hour: '2-digit',
-                        minute: '2-digit',
-                      })}
-                    </td>
-                    <td className="py-3 px-4 text-right">
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => handleOpenHistory(item)}
-                        className="h-8 text-[12px] inline-flex items-center gap-1.5 text-[#351F65]"
-                      >
-                        <History className="h-3.5 w-3.5" />
-                        <span>Movements</span>
-                      </Button>
-                    </td>
-                  </tr>
-                ))
+                        <div className="text-[11px] text-[#78879A] font-mono">
+                          SKU: {item.medicine?.sku}
+                        </div>
+                      </td>
+                      <td className="py-3 px-4 text-[#78879A]">
+                        {item.medicine?.dosageForm} {item.medicine?.strength} &bull;{' '}
+                        {item.medicine?.packSize}
+                      </td>
+                      <td className="py-3 px-4 text-right font-medium">{onHand}</td>
+                      <td className="py-3 px-4 text-right text-[#A66B16] font-medium">
+                        {reserved > 0 ? `${reserved}` : '0'}
+                      </td>
+                      <td className="py-3 px-4 text-right font-bold text-[#6240E8]">{available}</td>
+                      <td className="py-3 px-4 text-center">{statusBadge}</td>
+                      <td className="py-3 px-4 text-center">
+                        <Button
+                          size="sm"
+                          variant="ghost"
+                          onClick={() => handleOpenHistory(item)}
+                          className="h-8 text-xs text-[#6240E8] hover:bg-[#F7F5FD]"
+                        >
+                          Audit History
+                        </Button>
+                      </td>
+                    </tr>
+                  );
+                })
               )}
             </tbody>
           </table>
         </div>
 
         {/* Pagination Footer */}
-        <div className="flex items-center justify-between border-t border-[#EAE8F0] px-4 py-3 text-[13px] text-[#78879A]">
-          <div>
-            Showing <span className="font-semibold text-[#14161A]">{balances.length}</span> of{' '}
-            <span className="font-semibold text-[#14161A]">{total}</span> items in store
-          </div>
-          <div className="flex items-center gap-2">
-            <Button
-              variant="outline"
-              size="sm"
-              disabled={page <= 1 || loading}
-              onClick={() => setPage((p) => Math.max(1, p - 1))}
-              className="h-8 text-[12px]"
-            >
-              Previous
-            </Button>
-            <span className="px-2 font-medium text-[#351F65]">
-              Page {page} of {totalPages}
+        {!loading && totalPages > 1 && (
+          <div className="p-4 border-t border-[#EAE8F0] flex items-center justify-between text-[12px] text-[#78879A]">
+            <span>
+              Showing {balances.length} of {total} SKUs
             </span>
-            <Button
-              variant="outline"
-              size="sm"
-              disabled={page >= totalPages || loading}
-              onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
-              className="h-8 text-[12px]"
-            >
-              Next
-            </Button>
+            <div className="flex items-center gap-2">
+              <Button
+                size="sm"
+                variant="outline"
+                disabled={page <= 1}
+                onClick={() => setPage((p) => p - 1)}
+                className="h-8 px-3"
+              >
+                &larr; Prev
+              </Button>
+              <span className="text-[#351F65] font-medium">
+                Page {page} of {totalPages}
+              </span>
+              <Button
+                size="sm"
+                variant="outline"
+                disabled={page >= totalPages}
+                onClick={() => setPage((p) => p - 1)}
+                className="h-8 px-3"
+              >
+                Next &rarr;
+              </Button>
+            </div>
           </div>
-        </div>
+        )}
       </div>
 
-      {/* Movement Audit Trail Modal (Read Only) */}
+      {/* Stock Movement History Dialog */}
       <Dialog
         open={Boolean(historyBalance)}
         onOpenChange={(open) => !open && setHistoryBalance(null)}
       >
-        <DialogContent className="max-w-[620px]">
+        <DialogContent className="max-w-2xl">
           <DialogHeader>
-            <DialogTitle className="text-[#351F65] text-[18px]">
+            <DialogTitle className="text-[18px] font-bold text-[#351F65]">
               Store Stock Movement History
             </DialogTitle>
+            <p className="text-[12px] text-[#78879A]">
+              Immutable audit ledger of balance adjustments, inward receipts, allocations, and
+              dispensing for{' '}
+              <strong className="text-[#351F65]">{historyBalance?.medicine?.name}</strong>.
+            </p>
           </DialogHeader>
 
-          {historyBalance && (
-            <div className="space-y-4">
-              <div className="rounded-[8px] bg-[#F8F9FB] p-3 border border-[#EAE8F0] text-[12px]">
-                <p className="font-semibold text-[#351F65]">{historyBalance.medicine?.name}</p>
-                <p className="text-[#78879A] font-mono">SKU: {historyBalance.medicine?.sku}</p>
-              </div>
-
-              <div className="max-h-[340px] overflow-y-auto border border-[#EAE8F0] rounded-[8px]">
-                <table className="w-full text-left text-[12px] border-collapse">
-                  <thead>
-                    <tr className="bg-[#F8F9FB] border-b border-[#EAE8F0] text-[#78879A] font-semibold">
-                      <th className="p-2.5">Date</th>
-                      <th className="p-2.5">Event</th>
-                      <th className="p-2.5 text-right">Before</th>
-                      <th className="p-2.5 text-right">Change</th>
-                      <th className="p-2.5 text-right">After</th>
-                      <th className="p-2.5">Reason</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-[#EAE8F0]">
-                    {loadingMovements ? (
-                      <tr>
-                        <td colSpan={6} className="p-8 text-center text-[#78879A]">
-                          <Loader2 className="h-4 w-4 animate-spin inline-block mr-2" />
-                          Loading movements...
+          <div className="max-h-[360px] overflow-y-auto">
+            <table className="w-full text-left text-[12px]">
+              <thead className="bg-[#F8F9FB] border-b border-[#EAE8F0] text-[10px] uppercase text-[#78879A] font-semibold sticky top-0">
+                <tr>
+                  <th className="py-2.5 px-3">Timestamp</th>
+                  <th className="py-2.5 px-3">Type</th>
+                  <th className="py-2.5 px-3 text-right">Delta Quantity</th>
+                  <th className="py-2.5 px-3">Reference / Order ID</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-[#EAE8F0]">
+                {loadingMovements ? (
+                  <tr>
+                    <td colSpan={4} className="py-8 text-center text-[#78879A]">
+                      Loading audit ledger...
+                    </td>
+                  </tr>
+                ) : movements.length === 0 ? (
+                  <tr>
+                    <td colSpan={4} className="py-8 text-center text-[#78879A]">
+                      No movement transactions found for this SKU.
+                    </td>
+                  </tr>
+                ) : (
+                  movements.map((mov) => {
+                    const delta = Number((mov as any).deltaQuantity ?? mov.quantityChange ?? 0);
+                    const isPositive = delta > 0;
+                    return (
+                      <tr key={mov.id} className="hover:bg-[#F7F5FD]/50">
+                        <td className="py-2 px-3 text-[#78879A]">
+                          {new Date(mov.createdAt).toLocaleString()}
+                        </td>
+                        <td className="py-2 px-3 font-semibold text-[#351F65]">
+                          {mov.movementType}
+                        </td>
+                        <td
+                          className={`py-2 px-3 text-right font-mono font-bold ${
+                            isPositive ? 'text-[#0FAC26]' : 'text-[#DC3545]'
+                          }`}
+                        >
+                          {isPositive ? `+${delta}` : delta}
+                        </td>
+                        <td className="py-2 px-3 font-mono text-[11px] text-[#78879A]">
+                          {(mov as any).referenceOrderId || mov.referenceId
+                            ? `Order ${(mov as any).referenceOrderId || mov.referenceId}`
+                            : 'Store Inward / Audit'}
                         </td>
                       </tr>
-                    ) : movements.length === 0 ? (
-                      <tr>
-                        <td colSpan={6} className="p-8 text-center text-[#78879A]">
-                          No movements found for this item.
-                        </td>
-                      </tr>
-                    ) : (
-                      movements.map((m) => (
-                        <tr key={m.id} className="hover:bg-[#F8F9FB]/50">
-                          <td className="p-2.5 text-[#78879A] whitespace-nowrap">
-                            {new Date(m.createdAt).toLocaleDateString('en-IN', {
-                              day: '2-digit',
-                              month: 'short',
-                              hour: '2-digit',
-                              minute: '2-digit',
-                            })}
-                          </td>
-                          <td className="p-2.5 font-medium text-[#351F65]">{m.movementType}</td>
-                          <td className="p-2.5 text-right text-[#6C757D]">{m.quantityBefore}</td>
-                          <td
-                            className={`p-2.5 text-right font-bold ${
-                              m.quantityChange > 0
-                                ? 'text-[#0FAC26]'
-                                : m.quantityChange < 0
-                                  ? 'text-[#DC3545]'
-                                  : 'text-[#78879A]'
-                            }`}
-                          >
-                            {m.quantityChange > 0 ? `+${m.quantityChange}` : m.quantityChange}
-                          </td>
-                          <td className="p-2.5 text-right font-bold text-[#14161A]">
-                            {m.quantityAfter}
-                          </td>
-                          <td
-                            className="p-2.5 text-[#6C757D] max-w-[180px] truncate"
-                            title={m.reason || ''}
-                          >
-                            {m.reason || '—'}
-                          </td>
-                        </tr>
-                      ))
-                    )}
-                  </tbody>
-                </table>
-              </div>
+                    );
+                  })
+                )}
+              </tbody>
+            </table>
+          </div>
 
-              <DialogFooter>
-                <Button variant="outline" onClick={() => setHistoryBalance(null)}>
-                  Close
-                </Button>
-              </DialogFooter>
-            </div>
-          )}
+          <DialogFooter className="pt-2">
+            <Button variant="outline" onClick={() => setHistoryBalance(null)}>
+              Close Audit
+            </Button>
+          </DialogFooter>
         </DialogContent>
       </Dialog>
     </div>

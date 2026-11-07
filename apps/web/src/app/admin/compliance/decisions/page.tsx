@@ -2,15 +2,6 @@
 
 import * as React from 'react';
 import { apiFetch } from '@/lib/api/client';
-import {
-  Scale,
-  Search,
-  AlertTriangle,
-  FileText,
-  CheckCircle2,
-  XCircle,
-  ShieldAlert,
-} from 'lucide-react';
 
 export default function AdminComplianceDecisionsPage() {
   const [loading, setLoading] = React.useState(true);
@@ -52,8 +43,7 @@ export default function AdminComplianceDecisionsPage() {
       case 'ALLOWED_FOR_REVIEW':
         return (
           <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-emerald-50 text-emerald-700 border border-emerald-200">
-            <CheckCircle2 className="w-3 h-3" />
-            Allowed for Review
+            ✓ Allowed for Review
           </span>
         );
       case 'REQUIRES_PRESCRIPTION':
@@ -72,16 +62,14 @@ export default function AdminComplianceDecisionsPage() {
       case 'BLOCKED':
         return (
           <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-rose-50 text-rose-700 border border-rose-200">
-            <XCircle className="w-3 h-3" />
-            Hard Blocked
+            ✕ Hard Blocked
           </span>
         );
       case 'UNKNOWN_CLASSIFICATION':
       default:
         return (
           <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-slate-100 text-slate-700 border border-slate-300">
-            <ShieldAlert className="w-3 h-3" />
-            Fail Closed
+            ! Fail Closed
           </span>
         );
     }
@@ -91,8 +79,7 @@ export default function AdminComplianceDecisionsPage() {
     <div className="flex-1 p-6 max-w-7xl w-full mx-auto space-y-6">
       <div className="pb-2 border-b border-[#EAE8F0] flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-[#14161A] tracking-tight flex items-center gap-2">
-            <Scale className="w-6 h-6 text-[#6240E8]" />
+          <h1 className="text-2xl font-bold text-[#14161A] tracking-tight">
             Compliance Decision Audit Log
           </h1>
           <p className="text-sm text-[#78879A] mt-1">
@@ -104,13 +91,12 @@ export default function AdminComplianceDecisionsPage() {
 
       {/* Search Bar */}
       <div className="relative max-w-md">
-        <Search className="absolute left-3 top-2.5 h-4 w-4 text-[#78879A]" />
         <input
           type="text"
           placeholder="Search by order #, medicine, schedule or decision..."
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
-          className="w-full pl-9 pr-4 py-2 border border-[#EAE8F0] rounded-xl text-xs bg-white focus:outline-none focus:ring-2 focus:ring-[#6240E8]/20 focus:border-[#6240E8]"
+          className="w-full px-3 py-2 border border-[#EAE8F0] rounded-xl text-xs bg-white focus:outline-none focus:ring-2 focus:ring-[#6240E8]/20 focus:border-[#6240E8]"
         />
       </div>
 
@@ -122,12 +108,11 @@ export default function AdminComplianceDecisionsPage() {
           </div>
         ) : error ? (
           <div className="p-8 text-center text-xs text-rose-600 bg-rose-50/50">
-            <AlertTriangle className="w-6 h-6 mx-auto mb-2 text-rose-500" />
+            <div className="font-bold mb-1">[!] Error</div>
             {error}
           </div>
         ) : filteredDecisions.length === 0 ? (
           <div className="p-12 text-center text-xs text-[#78879A]">
-            <FileText className="w-8 h-8 text-[#78879A]/40 mx-auto mb-2" />
             No compliance decisions logged yet. Decisions are snapshot deterministically during
             pharmacist item verification.
           </div>

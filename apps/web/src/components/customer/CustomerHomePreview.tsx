@@ -5,7 +5,6 @@ import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { StatusBadge } from '@/components/shared/StatusBadge';
 import { SAMPLE_CUSTOMER } from '@/lib/sample-data';
-import { RefreshCw, AlertCircle, FileText, Calendar, Building2 } from 'lucide-react';
 
 export const CustomerHomePreview: React.FC = () => {
   const [activeProfile, setActiveProfile] = React.useState<string>(SAMPLE_CUSTOMER.activeProfile);
@@ -83,8 +82,7 @@ export const CustomerHomePreview: React.FC = () => {
                   <span className="block text-[12px] font-medium text-[#78879A]">
                     Refill Due Date
                   </span>
-                  <span className="text-[#351F65] font-semibold flex items-center gap-1.5">
-                    <Calendar className="h-4 w-4 text-[#6240E8]" />
+                  <span className="text-[#351F65] font-semibold">
                     {SAMPLE_CUSTOMER.upcomingRefill.dueDate}
                   </span>
                 </div>
@@ -108,11 +106,9 @@ export const CustomerHomePreview: React.FC = () => {
                   onClick={handleReorder}
                   className="w-full sm:w-auto"
                 >
-                  <RefreshCw className="mr-2 h-4 w-4" />
                   Quick Reorder Refill
                 </Button>
                 <Button size="lg" variant="outline" className="w-full sm:w-auto">
-                  <FileText className="mr-2 h-4 w-4 text-[#6240E8]" />
                   View Original Prescription
                 </Button>
               </div>
@@ -121,7 +117,9 @@ export const CustomerHomePreview: React.FC = () => {
 
           {/* Schedule H Compliance Notice (Teal Accent) */}
           <div className="rounded-[8px] border border-[#B4EDFB] bg-[#EBF9FD] p-4 text-[14px] text-[#0088AA] flex items-start gap-3">
-            <AlertCircle className="h-5 w-5 shrink-0 mt-0.5 text-[#0088AA]" />
+            <span className="font-bold text-xs uppercase px-1.5 py-0.5 rounded bg-[#0088AA]/10 text-[#0088AA]">
+              NOTICE
+            </span>
             <div>
               <p className="font-semibold text-[#0088AA]">Teladoc Health Compliance Note</p>
               <p className="text-[12px] mt-0.5 text-[#0088AA]/90">
@@ -154,8 +152,7 @@ export const CustomerHomePreview: React.FC = () => {
                       <span className="text-[12px] text-[#78879A]">&bull; {order.date}</span>
                     </div>
                     <p className="text-[14px] text-[#14161A] mt-1 font-medium">{order.items}</p>
-                    <p className="text-[12px] text-[#78879A] flex items-center gap-1 mt-1">
-                      <Building2 className="h-3.5 w-3.5 text-[#6240E8]" />
+                    <p className="text-[12px] text-[#78879A] mt-1">
                       Fulfilled by {order.store} Store
                     </p>
                   </div>

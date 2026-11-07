@@ -3,16 +3,11 @@
 import * as React from 'react';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
 import { StaffLoginForm } from '@/components/auth/StaffLoginForm';
-import { Building2 } from 'lucide-react';
-
 export default function AdminLoginPage() {
   return (
     <div className="w-full max-w-md">
       <Card className="shadow-lg border-slate-200">
         <CardHeader className="text-center pb-4">
-          <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-indigo-100 text-indigo-700">
-            <Building2 className="h-6 w-6" />
-          </div>
           <CardTitle className="text-2xl font-bold tracking-tight text-slate-900">
             Operations &amp; Compliance Portal
           </CardTitle>

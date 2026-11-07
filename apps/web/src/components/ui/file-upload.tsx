@@ -1,7 +1,6 @@
 'use client';
 
 import * as React from 'react';
-import { UploadCloud, FileText, X } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 export interface FileUploadProps {
@@ -86,7 +85,6 @@ export const FileUpload: React.FC<FileUploadProps> = ({
 
         {value ? (
           <div className="flex items-center gap-3">
-            <FileText className="h-6 w-6 text-[#6240E8]" />
             <div className="text-left">
               <p className="text-[14px] font-medium text-[#14161A]">{value.name}</p>
               <p className="text-[12px] text-[#78879A]">
@@ -100,15 +98,14 @@ export const FileUpload: React.FC<FileUploadProps> = ({
                   e.stopPropagation();
                   onChange?.(null);
                 }}
-                className="ml-2 p-1 text-[#78879A] hover:text-[#DC3545]"
+                className="ml-2 px-2 py-0.5 text-xs font-semibold rounded bg-slate-100 text-[#78879A] hover:text-[#DC3545]"
               >
-                <X className="h-4 w-4" />
+                ✕
               </button>
             )}
           </div>
         ) : (
-          <div className="flex flex-col items-center gap-1.5">
-            <UploadCloud className="h-8 w-8 text-[#6240E8]" />
+          <div className="flex flex-col items-center gap-1">
             <p className="text-[14px] font-medium text-[#351F65]">{label}</p>
             <p className="text-[12px] text-[#78879A]">{helperText}</p>
           </div>

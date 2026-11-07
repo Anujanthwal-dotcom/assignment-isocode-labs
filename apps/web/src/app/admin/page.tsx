@@ -5,7 +5,6 @@ import { useAuth } from '@/lib/auth/auth-context';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { StatusBadge } from '@/components/shared/StatusBadge';
-import { ShieldAlert, LogOut, CheckCircle2 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 
 export default function AdminDashboardPage() {
@@ -35,16 +34,14 @@ export default function AdminDashboardPage() {
           onClick={handleLogout}
           className="flex items-center gap-2 border-slate-300 text-slate-700 hover:bg-slate-100"
         >
-          <LogOut className="h-4 w-4" />
           <span>Sign Out</span>
         </Button>
       </div>
 
       <Card className="border-slate-200 shadow-sm">
         <CardHeader className="pb-3">
-          <CardTitle className="text-lg font-semibold text-slate-800 flex items-center gap-2">
-            <ShieldAlert className="h-5 w-5 text-indigo-600" />
-            <span>Administrator Identity &amp; Authorization Level</span>
+          <CardTitle className="text-lg font-semibold text-slate-800">
+            Administrator Identity &amp; Authorization Level
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
@@ -73,7 +70,7 @@ export default function AdminDashboardPage() {
                 Account Status
               </span>
               <span className="font-medium text-emerald-700 flex items-center gap-1 mt-1">
-                <CheckCircle2 className="h-4 w-4" />
+                <span>✓</span>
                 {user?.status || 'ACTIVE'}
               </span>
             </div>
@@ -91,10 +88,10 @@ export default function AdminDashboardPage() {
           </div>
 
           <div className="p-3.5 bg-indigo-50 rounded-lg border border-indigo-200 text-xs text-indigo-900 leading-relaxed">
-            <strong>Phase 1 Infrastructure Complete:</strong> Administrator session verified with
-            backend-enforced RBAC guards and append-only audit logging. Cross-store inventory
-            coordination, regulatory dispatch controls, and store performance metrics will be
-            introduced in subsequent phases.
+            <strong>Administrative &amp; Compliance Console:</strong> Administrator session verified
+            with backend-enforced RBAC guards and append-only audit logging. Use the sidebar to
+            manage cross-store inventory, CSV bulk imports, regulatory compliance rule sets, and
+            store performance metrics.
           </div>
         </CardContent>
       </Card>

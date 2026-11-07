@@ -1,6 +1,6 @@
 # System Architecture & Technical Design
 
-This document details the architecture, design principles, and service topology for the Pharmacy Platform established in **Phase 0: Project Scaffolding and Infrastructure**.
+This document details the architecture, design principles, and service topology for the Pharmacy Platform established in the system scaffolding.
 
 ---
 
@@ -116,7 +116,7 @@ The workspace packages are isolated from backend business logic and designed for
 ### `@pharmacy/shared-types` (`packages/shared-types`)
 
 - Defines cross-boundary data shapes, API response contracts, and enums.
-- Future phases will add:
+- Includes:
   - User and portal role definitions (`CUSTOMER`, `PHARMACIST`, `ADMIN`, `COMPLIANCE_ADMIN`).
   - Medicine schedule categories (`OTC`, `SCHEDULE_H`, `SCHEDULE_H1`, `SCHEDULE_X`, `NARCOTIC`).
   - Order status transitions and prescription draft representations.
@@ -124,7 +124,7 @@ The workspace packages are isolated from backend business logic and designed for
 ### `@pharmacy/validation` (`packages/validation`)
 
 - Hosts universal validation rules, regexes, and shared schemas.
-- Future phases will house validation constraints for prescription file sizes, phone formats, and order payload rules.
+- Houses validation constraints for prescription file sizes, phone formats, and order payload rules.
 
 ### `@pharmacy/config` (`packages/config`)
 
@@ -144,9 +144,9 @@ The workspace packages are isolated from backend business logic and designed for
 
 ---
 
-## 7. Phase 4: AI-Assisted Prescription Reading Pipeline
+## 7. AI-Assisted Prescription Reading Pipeline
 
-Phase 4 introduces an asynchronous AI pipeline to extract medicine, strength, dosage instructions, and quantities from uploaded prescription documents and match them against the catalogue.
+This pipeline provides an asynchronous AI pipeline to extract medicine, strength, dosage instructions, and quantities from uploaded prescription documents and match them against the catalogue.
 
 ```mermaid
 flowchart LR

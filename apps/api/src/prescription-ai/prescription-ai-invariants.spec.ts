@@ -9,7 +9,7 @@ import {
   PrescriptionAIStatus,
 } from '@prisma/client';
 
-describe('Phase 4 Safety Invariants: Order and Prescription Non-Mutability', () => {
+describe('Safety Invariants: Order and Prescription Non-Mutability', () => {
   let processor: PrescriptionAiProcessor;
   let mockPrisma: any;
   let mockStorage: any;

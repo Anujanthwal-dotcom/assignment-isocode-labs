@@ -6,7 +6,6 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { apiFetch } from '@/lib/api/client';
-import { ShoppingBag, Check, ChevronLeft, AlertCircle, ShieldAlert, Info } from 'lucide-react';
 import { CustomerMedicineDTO } from '@pharmacy/shared-types';
 
 export default function CustomerMedicineDetailPage() {
@@ -63,7 +62,9 @@ export default function CustomerMedicineDetailPage() {
     if (schedule === 'OTC') {
       return (
         <div className="rounded-lg border border-emerald-200 bg-emerald-50 p-3 text-xs text-emerald-800 flex items-start gap-2">
-          <Info className="h-4 w-4 text-emerald-600 mt-0.5 shrink-0" />
+          <span className="font-bold text-[11px] uppercase px-1.5 py-0.5 rounded bg-emerald-200 text-emerald-900">
+            OTC
+          </span>
           <div>
             <strong className="block">Over-The-Counter (OTC)</strong>
             This item is classified as OTC in the medicine catalogue. Note that all customer orders
@@ -74,7 +75,9 @@ export default function CustomerMedicineDetailPage() {
     }
     return (
       <div className="rounded-lg border border-amber-200 bg-amber-50 p-3 text-xs text-amber-800 flex items-start gap-2">
-        <ShieldAlert className="h-4 w-4 text-amber-600 mt-0.5 shrink-0" />
+        <span className="font-bold text-[11px] uppercase px-1.5 py-0.5 rounded bg-amber-200 text-amber-900">
+          RX REQ
+        </span>
         <div>
           <strong className="block">Prescription Required ({schedule.replace(/_/g, ' ')})</strong>
           Under Indian Drugs and Cosmetics Rules, this medicine requires a valid prescription
@@ -97,7 +100,7 @@ export default function CustomerMedicineDetailPage() {
     return (
       <div className="max-w-[750px] mx-auto py-8">
         <Card className="p-8 text-center border-red-200 bg-red-50">
-          <AlertCircle className="h-8 w-8 text-red-500 mx-auto mb-2" />
+          <span className="text-xs uppercase font-bold text-red-600 block mb-1">Notice</span>
           <h2 className="text-base font-semibold text-red-800">Medicine Unavailable</h2>
           <p className="text-xs text-red-600 mt-1">
             {error || 'This medicine is inactive or was not found.'}
@@ -122,8 +125,7 @@ export default function CustomerMedicineDetailPage() {
           onClick={() => router.back()}
           className="inline-flex items-center text-xs font-semibold text-[#6240E8] hover:underline"
         >
-          <ChevronLeft className="h-4 w-4 mr-1" />
-          Back to Catalogue
+          &larr; Back to Catalogue
         </button>
       </div>
 
@@ -193,17 +195,7 @@ export default function CustomerMedicineDetailPage() {
                 disabled={adding}
                 className="h-10 px-5 bg-[#6240E8] text-white hover:bg-[#5233D0] shadow-xs text-sm font-semibold"
               >
-                {added ? (
-                  <>
-                    <Check className="h-4 w-4 mr-1.5 text-emerald-300" />
-                    <span>Added to Cart</span>
-                  </>
-                ) : (
-                  <>
-                    <ShoppingBag className="h-4 w-4 mr-1.5" />
-                    <span>Add to Cart</span>
-                  </>
-                )}
+                {added ? '✓ Added to Cart' : '+ Add to Cart'}
               </Button>
             </div>
           </div>

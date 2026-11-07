@@ -7,7 +7,7 @@ import { PrismaService } from '../src/prisma/prisma.service';
 import { AllExceptionsFilter } from '../src/common/filters/all-exceptions.filter';
 import { describe, beforeAll, afterAll, it, expect } from 'vitest';
 
-describe('Phase 2 Catalogue & Inventory E2E Tests', () => {
+describe('Catalogue & Inventory E2E Tests', () => {
   let app: INestApplication;
   let prisma: PrismaService;
   let adminCookie: string;

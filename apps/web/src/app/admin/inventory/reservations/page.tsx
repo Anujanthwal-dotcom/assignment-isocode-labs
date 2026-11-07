@@ -3,7 +3,6 @@
 import * as React from 'react';
 import Link from 'next/link';
 import { apiFetch } from '@/lib/api/client';
-import { Layers, Search, AlertTriangle, ArrowLeft, RefreshCw, XCircle } from 'lucide-react';
 
 export default function AdminReservationsPage() {
   const [loading, setLoading] = React.useState(true);
@@ -68,10 +67,9 @@ export default function AdminReservationsPage() {
               href="/admin/fulfilment"
               className="p-1 rounded-lg text-[#78879A] hover:bg-[#F8F9FB] transition-colors"
             >
-              <ArrowLeft className="w-4 h-4" />
+              &larr; Back
             </Link>
-            <h1 className="text-2xl font-bold text-[#14161A] tracking-tight flex items-center gap-2">
-              <Layers className="w-6 h-6 text-[#6240E8]" />
+            <h1 className="text-2xl font-bold text-[#14161A] tracking-tight">
               Stock Reservation Ledger
             </h1>
           </div>
@@ -106,13 +104,12 @@ export default function AdminReservationsPage() {
         </div>
 
         <div className="relative max-w-xs w-full">
-          <Search className="absolute left-3 top-2.5 h-4 w-4 text-[#78879A]" />
           <input
             type="text"
             placeholder="Search order #, medicine, store..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-9 pr-4 py-2 border border-[#EAE8F0] rounded-xl text-xs bg-white focus:outline-none focus:ring-2 focus:ring-[#6240E8]/20 focus:border-[#6240E8]"
+            className="w-full px-3 py-2 border border-[#EAE8F0] rounded-xl text-xs bg-white focus:outline-none focus:ring-2 focus:ring-[#6240E8]/20 focus:border-[#6240E8]"
           />
         </div>
       </div>
@@ -125,7 +122,7 @@ export default function AdminReservationsPage() {
           </div>
         ) : error ? (
           <div className="p-8 text-center text-xs text-rose-600 bg-rose-50/50">
-            <AlertTriangle className="w-6 h-6 mx-auto mb-2 text-rose-500" />
+            <div className="font-bold mb-1">[!] Error</div>
             {error}
           </div>
         ) : filtered.length === 0 ? (

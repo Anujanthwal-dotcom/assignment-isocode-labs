@@ -2,7 +2,6 @@
 
 import * as React from 'react';
 import * as RadioGroupPrimitive from '@radix-ui/react-radio-group';
-import { Circle } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 export const RadioGroup = React.forwardRef<
@@ -27,7 +26,7 @@ export const RadioGroupItem = React.forwardRef<
       {...props}
     >
       <RadioGroupPrimitive.Indicator className="flex items-center justify-center">
-        <Circle className="h-2.5 w-2.5 fill-[#6240E8] text-[#6240E8]" />
+        <span className="h-2 w-2 rounded-full bg-[#6240E8]" />
       </RadioGroupPrimitive.Indicator>
     </RadioGroupPrimitive.Item>
   );

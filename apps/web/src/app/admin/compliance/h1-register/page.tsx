@@ -2,15 +2,6 @@
 
 import * as React from 'react';
 import { apiFetch } from '@/lib/api/client';
-import {
-  ShieldCheck,
-  Search,
-  Filter,
-  AlertTriangle,
-  FileText,
-  CheckCircle2,
-  Building2,
-} from 'lucide-react';
 
 interface StoreDTO {
   id: string;
@@ -79,8 +70,7 @@ export default function AdminH1RegisterPage() {
     <div className="flex-1 p-6 max-w-7xl w-full mx-auto space-y-6">
       <div className="pb-2 border-b border-[#EAE8F0] flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-[#14161A] tracking-tight flex items-center gap-2">
-            <ShieldCheck className="w-6 h-6 text-[#6240E8]" />
+          <h1 className="text-2xl font-bold text-[#14161A] tracking-tight">
             Platform Schedule H1 Drug Register
           </h1>
           <p className="text-sm text-[#78879A] mt-1">
@@ -93,18 +83,17 @@ export default function AdminH1RegisterPage() {
       {/* Filters Bar */}
       <div className="flex flex-col sm:flex-row gap-3">
         <div className="relative flex-1">
-          <Search className="absolute left-3 top-2.5 h-4 w-4 text-[#78879A]" />
           <input
             type="text"
             placeholder="Search by patient, prescriber, medicine or store..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-9 pr-4 py-2 border border-[#EAE8F0] rounded-xl text-xs bg-white focus:outline-none focus:ring-2 focus:ring-[#6240E8]/20 focus:border-[#6240E8]"
+            className="w-full px-3 py-2 border border-[#EAE8F0] rounded-xl text-xs bg-white focus:outline-none focus:ring-2 focus:ring-[#6240E8]/20 focus:border-[#6240E8]"
           />
         </div>
         {stores.length > 0 && (
           <div className="flex items-center gap-2">
-            <Building2 className="w-4 h-4 text-[#78879A]" />
+            <span className="text-xs text-[#78879A] font-semibold">Store:</span>
             <select
               value={selectedStoreId}
               onChange={(e) => setSelectedStoreId(e.target.value)}
@@ -129,12 +118,11 @@ export default function AdminH1RegisterPage() {
           </div>
         ) : error ? (
           <div className="p-8 text-center text-xs text-rose-600 bg-rose-50/50">
-            <AlertTriangle className="w-6 h-6 mx-auto mb-2 text-rose-500" />
+            <div className="font-bold mb-1">[!] Error</div>
             {error}
           </div>
         ) : filteredEntries.length === 0 ? (
           <div className="p-12 text-center text-xs text-[#78879A]">
-            <FileText className="w-8 h-8 text-[#78879A]/40 mx-auto mb-2" />
             No Schedule H1 register entries recorded yet.
           </div>
         ) : (
@@ -142,7 +130,7 @@ export default function AdminH1RegisterPage() {
             <table className="w-full text-left text-xs">
               <thead className="bg-[#F8F9FB] border-b border-[#EAE8F0] text-[#78879A] uppercase tracking-wider text-[10px]">
                 <tr>
-                  <th className="py-3 px-4">Date & Time</th>
+                  <th className="py-3 px-4">Date &amp; Time</th>
                   <th className="py-3 px-4">Store</th>
                   <th className="py-3 px-4">Patient Name</th>
                   <th className="py-3 px-4">Prescriber / Clinic</th>
@@ -179,8 +167,7 @@ export default function AdminH1RegisterPage() {
                     <td className="py-3 px-4 text-[#78879A]">{row.pharmacistEmail}</td>
                     <td className="py-3 px-4">
                       <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-emerald-50 text-emerald-700 border border-emerald-200">
-                        <CheckCircle2 className="w-3 h-3" />
-                        {row.status}
+                        ✓ {row.status}
                       </span>
                     </td>
                   </tr>

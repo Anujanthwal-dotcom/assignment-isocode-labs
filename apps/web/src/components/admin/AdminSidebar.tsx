@@ -3,19 +3,6 @@
 import * as React from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import {
-  LayoutDashboard,
-  Pill,
-  Layers,
-  UploadCloud,
-  ShoppingCart,
-  Store,
-  Users,
-  ShieldCheck,
-  Shield,
-  BarChart3,
-  X,
-} from 'lucide-react';
 import { useAuth } from '@/lib/auth/auth-context';
 
 interface AdminSidebarProps {
@@ -24,15 +11,15 @@ interface AdminSidebarProps {
 }
 
 const navItems = [
-  { label: 'Overview', href: '/admin', icon: LayoutDashboard, exact: true },
-  { label: 'Central Analytics', href: '/admin/analytics', icon: BarChart3 },
-  { label: 'Fulfilment Operations', href: '/admin/fulfilment', icon: Store },
-  { label: 'Review Assignments', href: '/admin/review-assignments', icon: ShoppingCart },
-  { label: 'Medicine Catalogue', href: '/admin/medicines', icon: Pill },
-  { label: 'Inventory', href: '/admin/inventory', icon: Layers, exact: true },
-  { label: 'Stock Imports', href: '/admin/inventory/imports', icon: UploadCloud },
-  { label: 'Compliance Policy', href: '/admin/compliance', icon: ShieldCheck },
-  { label: 'H1 Register', href: '/admin/compliance/h1-register', icon: Shield },
+  { label: 'Overview', href: '/admin', exact: true },
+  { label: 'Central Analytics', href: '/admin/analytics' },
+  { label: 'Fulfilment Operations', href: '/admin/fulfilment' },
+  { label: 'Review Assignments', href: '/admin/review-assignments' },
+  { label: 'Medicine Catalogue', href: '/admin/medicines' },
+  { label: 'Inventory', href: '/admin/inventory', exact: true },
+  { label: 'Stock Imports', href: '/admin/inventory/imports' },
+  { label: 'Compliance Policy', href: '/admin/compliance' },
+  { label: 'H1 Register', href: '/admin/compliance/h1-register' },
 ];
 
 export const AdminSidebar: React.FC<AdminSidebarProps> = ({ openMobile, onCloseMobile }) => {
@@ -58,8 +45,8 @@ export const AdminSidebar: React.FC<AdminSidebarProps> = ({ openMobile, onCloseM
         {/* Brand Header */}
         <div className="flex h-[64px] items-center justify-between border-b border-[#EAE8F0] px-4">
           <Link href="/admin" className="flex items-center gap-2.5">
-            <div className="flex h-8 w-8 items-center justify-center rounded-[8px] bg-[#6240E8] text-white shadow-xs">
-              <Shield className="h-4 w-4" />
+            <div className="flex h-8 w-8 items-center justify-center rounded-[8px] bg-[#6240E8] text-white shadow-xs font-bold text-xs">
+              TH
             </div>
             <div className="flex flex-col">
               <span className="text-[14px] font-semibold tracking-tight text-[#351F65]">
@@ -70,17 +57,16 @@ export const AdminSidebar: React.FC<AdminSidebarProps> = ({ openMobile, onCloseM
           </Link>
           <button
             onClick={onCloseMobile}
-            className="p-1 rounded-[6px] text-[#78879A] hover:bg-[#F7F5FD] lg:hidden"
+            className="p-1 rounded-[6px] text-[#78879A] hover:bg-[#F7F5FD] lg:hidden text-xs font-bold"
             aria-label="Close navigation"
           >
-            <X className="h-5 w-5" />
+            [✕]
           </button>
         </div>
 
         {/* Navigation Items */}
         <nav className="flex-1 space-y-[4px] px-3 py-4 overflow-y-auto">
           {navItems.map((item) => {
-            const Icon = item.icon;
             const isActive = item.exact ? pathname === item.href : pathname.startsWith(item.href);
 
             return (
@@ -88,13 +74,12 @@ export const AdminSidebar: React.FC<AdminSidebarProps> = ({ openMobile, onCloseM
                 key={item.label}
                 href={item.href}
                 onClick={onCloseMobile}
-                className={`flex h-[40px] items-center gap-3 rounded-[6px] px-3 text-[14px] font-medium transition-colors ${
+                className={`flex h-[40px] items-center rounded-[6px] px-3 text-[14px] font-medium transition-colors ${
                   isActive
                     ? 'bg-[#F7F5FD] text-[#6240E8] font-semibold border-l-3 border-[#6240E8]'
                     : 'text-[#6C757D] hover:bg-[#F8F9FB] hover:text-[#351F65]'
                 }`}
               >
-                <Icon className={`h-4 w-4 ${isActive ? 'text-[#6240E8]' : 'text-[#78879A]'}`} />
                 <span>{item.label}</span>
               </Link>
             );

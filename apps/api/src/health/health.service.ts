@@ -33,19 +33,14 @@ export class HealthService implements OnModuleDestroy {
     return this.redisClient;
   }
 
-  async checkHealth(): Promise<{ isHealthy: boolean; response: HealthCheckResponse }> {
-    // 1. Check PostgreSQL via Prisma
-    const dbHealthy = await this.prisma.ping();
-
-    // 2. Check Redis
-    let redisHealthy = false;
+  private async pingRedis(): Promise<boolean> {
     try {
       const redis = this.getRedisClient();
       if (redis.status !== 'ready') {
         await redis.connect();
       }
       const pong = await redis.ping();
-      redisHealthy = pong === 'PONG';
+      return pong === 'PONG';
     } catch (error) {
       this.logger.error('Redis health check failed', error);
       // Reset client so it reconnects on next check
@@ -57,7 +52,13 @@ export class HealthService implements OnModuleDestroy {
         }
         this.redisClient = null;
       }
+      return false;
     }
+  }
+
+  async checkHealth(): Promise<{ isHealthy: boolean; response: HealthCheckResponse }> {
+    // Check PostgreSQL and Redis concurrently
+    const [dbHealthy, redisHealthy] = await Promise.all([this.prisma.ping(), this.pingRedis()]);
 
     const isHealthy = dbHealthy && redisHealthy;
 

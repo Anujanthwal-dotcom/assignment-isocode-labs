@@ -6,7 +6,6 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { apiFetch } from '@/lib/api/client';
-import { FileText, Upload, Eye, Trash2, AlertCircle, Clock, User, Sparkles } from 'lucide-react';
 import Link from 'next/link';
 import { PrescriptionDTO, FamilyMemberDTO } from '@pharmacy/shared-types';
 
@@ -65,8 +64,8 @@ export default function CustomerPrescriptionsPage() {
         setSelectedFile(null);
         return;
       }
-      setUploadError(null);
       setSelectedFile(file);
+      setUploadError(null);
     }
   };
 
@@ -89,15 +88,16 @@ export default function CustomerPrescriptionsPage() {
 
     try {
       setUploadProgress(70);
-      await apiFetch('/customer/prescriptions', {
+      const newRx = await apiFetch<PrescriptionDTO>('/customer/prescriptions', {
         method: 'POST',
         body: formData,
       });
+
       setUploadProgress(100);
       setIsUploadOpen(false);
       setSelectedFile(null);
       setFamilyMemberId('');
-      await loadData();
+      setPrescriptions((prev) => [newRx, ...prev]);
     } catch (err: unknown) {
       setUploadError((err as Error).message || 'Failed to upload prescription.');
     } finally {
@@ -106,18 +106,16 @@ export default function CustomerPrescriptionsPage() {
     }
   };
 
-  const handlePreview = async (rxId: string, fileName: string, mime: string) => {
-    setPreviewLoading(true);
-    setPreviewOpen(true);
+  const handlePreview = async (id: string, fileName: string, mime: string) => {
     setPreviewFileName(fileName);
     setPreviewMime(mime);
-    setPreviewUrl(null);
-
+    setPreviewLoading(true);
+    setPreviewOpen(true);
     try {
-      const res = await apiFetch<{ viewUrl: string }>(`/customer/prescriptions/${rxId}/file`);
-      setPreviewUrl(res.viewUrl);
+      const res = await apiFetch<{ url: string }>(`/customer/prescriptions/${id}/preview-url`);
+      setPreviewUrl(res.url);
     } catch (err: unknown) {
-      alert((err as Error).message || 'Failed to generate secure preview URL.');
+      alert((err as Error).message || 'Failed to generate preview URL.');
       setPreviewOpen(false);
     } finally {
       setPreviewLoading(false);
@@ -130,9 +128,9 @@ export default function CustomerPrescriptionsPage() {
       await apiFetch(`/customer/prescriptions/${id}`, {
         method: 'DELETE',
       });
-      await loadData();
+      setPrescriptions((prev) => prev.filter((p) => p.id !== id));
     } catch (err: unknown) {
-      alert((err as Error).message || 'Prescriptions linked to placed orders cannot be deleted.');
+      alert((err as Error).message || 'Failed to delete prescription.');
     }
   };
 
@@ -152,16 +150,17 @@ export default function CustomerPrescriptionsPage() {
             setUploadError(null);
             setIsUploadOpen(true);
           }}
-          className="flex items-center gap-1.5 text-xs bg-[#6240E8] text-white hover:bg-[#5233D0]"
+          className="text-xs bg-[#6240E8] text-white hover:bg-[#5233D0]"
         >
-          <Upload className="h-4 w-4" />
-          <span>Upload Prescription</span>
+          Upload Prescription
         </Button>
       </div>
 
       {/* Compliance Notice */}
       <div className="rounded-xl border border-[#D6D1F7] bg-[#F7F5FD] p-4 flex items-start gap-3">
-        <Clock className="h-5 w-5 text-[#6240E8] shrink-0 mt-0.5" />
+        <span className="font-bold text-[11px] uppercase px-1.5 py-0.5 rounded bg-[#6240E8]/10 text-[#6240E8]">
+          INFO
+        </span>
         <div className="text-xs text-[#351F65] leading-relaxed">
           <span className="font-semibold block text-[#6240E8] mb-0.5">
             Prescription Verification Process
@@ -178,12 +177,11 @@ export default function CustomerPrescriptionsPage() {
         <div className="py-12 text-center text-xs text-slate-500">Loading prescriptions...</div>
       ) : error ? (
         <Card className="p-8 border-red-200 bg-red-50 text-center">
-          <AlertCircle className="h-8 w-8 text-red-500 mx-auto mb-2" />
+          <span className="text-xs uppercase font-bold text-red-600 block mb-1">Notice</span>
           <p className="text-sm text-red-700 font-medium">{error}</p>
         </Card>
       ) : prescriptions.length === 0 ? (
         <Card className="p-12 border-[#EAE8F0] bg-white text-center">
-          <FileText className="h-10 w-10 text-slate-300 mx-auto mb-3" />
           <h3 className="text-base font-semibold text-slate-800">No Prescriptions Uploaded</h3>
           <p className="text-xs text-slate-500 mt-1 max-w-sm mx-auto">
             Upload your doctor&apos;s prescription (JPEG, PNG, or PDF up to 10 MB) to conveniently
@@ -206,22 +204,17 @@ export default function CustomerPrescriptionsPage() {
             >
               <div className="space-y-3">
                 <div className="flex items-start justify-between gap-2">
-                  <div className="flex items-center gap-2.5">
-                    <div className="h-10 w-10 rounded-lg bg-[#F7F5FD] flex items-center justify-center text-[#6240E8] shrink-0">
-                      <FileText className="h-5 w-5" />
-                    </div>
-                    <div>
-                      <h3
-                        className="font-bold text-sm text-[#351F65] truncate max-w-[200px]"
-                        title={rx.originalFileName}
-                      >
-                        {rx.originalFileName}
-                      </h3>
-                      <span className="text-[11px] text-slate-400 block font-mono">
-                        {(rx.fileSizeBytes / 1024).toFixed(0)} KB &bull;{' '}
-                        {rx.mimeType.split('/')[1]?.toUpperCase()}
-                      </span>
-                    </div>
+                  <div>
+                    <h3
+                      className="font-bold text-sm text-[#351F65] truncate max-w-[200px]"
+                      title={rx.originalFileName}
+                    >
+                      {rx.originalFileName}
+                    </h3>
+                    <span className="text-[11px] text-slate-400 block font-mono">
+                      {(rx.fileSizeBytes / 1024).toFixed(0)} KB &bull;{' '}
+                      {rx.mimeType.split('/')[1]?.toUpperCase()}
+                    </span>
                   </div>
 
                   <Badge variant="warning" className="text-[10px] font-semibold">
@@ -232,8 +225,7 @@ export default function CustomerPrescriptionsPage() {
                 <div className="text-xs text-slate-600 space-y-1.5 pt-2 border-t border-slate-100">
                   <div className="flex justify-between items-center">
                     <span className="text-slate-400">Patient:</span>
-                    <span className="font-semibold text-slate-800 flex items-center gap-1">
-                      <User className="h-3 w-3 text-[#6240E8]" />
+                    <span className="font-semibold text-slate-800">
                       {rx.familyMember
                         ? `${rx.familyMember.fullName} (${rx.familyMember.relationship})`
                         : 'Self (Account Owner)'}
@@ -261,7 +253,6 @@ export default function CustomerPrescriptionsPage() {
                     size="sm"
                     className="text-xs h-8 px-2.5 text-purple-700 bg-purple-50/70 border-purple-200 hover:bg-purple-100"
                   >
-                    <Sparkles className="h-3.5 w-3.5 mr-1 text-purple-600" />
                     AI Draft
                   </Button>
                 </Link>
@@ -272,7 +263,6 @@ export default function CustomerPrescriptionsPage() {
                     onClick={() => handlePreview(rx.id, rx.originalFileName, rx.mimeType)}
                     className="text-xs h-8 px-2.5 text-[#6240E8] border-[#6240E8]/30 hover:bg-[#F7F5FD]"
                   >
-                    <Eye className="h-3.5 w-3.5 mr-1" />
                     Preview
                   </Button>
                   <Button
@@ -281,7 +271,6 @@ export default function CustomerPrescriptionsPage() {
                     onClick={() => handleDelete(rx.id)}
                     className="text-xs h-8 px-2.5 text-red-600 border-red-200 hover:bg-red-50"
                   >
-                    <Trash2 className="h-3.5 w-3.5 mr-1" />
                     Delete
                   </Button>
                 </div>
@@ -303,7 +292,9 @@ export default function CustomerPrescriptionsPage() {
           <form onSubmit={handleUploadSubmit} className="space-y-4 pt-2">
             {uploadError && (
               <div className="p-3 text-xs rounded-lg bg-red-50 border border-red-200 text-red-700 flex items-center gap-2">
-                <AlertCircle className="h-4 w-4 shrink-0" />
+                <span className="font-bold uppercase text-[10px] px-1 py-0.5 bg-red-200 rounded">
+                  Error
+                </span>
                 <span>{uploadError}</span>
               </div>
             )}
@@ -342,7 +333,6 @@ export default function CustomerPrescriptionsPage() {
                   htmlFor="prescriptionFileInput"
                   className="cursor-pointer flex flex-col items-center justify-center space-y-2"
                 >
-                  <Upload className="h-8 w-8 text-[#6240E8]" />
                   <span className="text-xs font-semibold text-[#6240E8]">
                     {selectedFile ? selectedFile.name : 'Click to select prescription file'}
                   </span>

@@ -67,7 +67,7 @@ export function formatOrderNumber(dateKey: string, seq: number): string {
 export { normalizePhone, isValidIndianMobile };
 
 // ==========================================
-// Phase 4: AI Extraction Zod Schemas
+// AI Extraction Zod Schemas
 // ==========================================
 
 export const ExtractedPrescriptionItemZodSchema = z.object({

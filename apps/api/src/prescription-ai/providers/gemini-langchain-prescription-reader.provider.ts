@@ -70,7 +70,7 @@ export class GeminiLangChainPrescriptionReader implements PrescriptionReader, On
       );
     }
 
-    // Document validation: enforce Phase 3 limits
+    // Document validation: enforce prescription upload limits
     if (input.mimeType === 'application/pdf') {
       try {
         const pdfDoc = await PDFDocument.load(input.buffer);

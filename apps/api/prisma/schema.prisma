@@ -1,4 +1,4 @@
-// Prisma schema for Pharmacy Platform (Phase 1)
+// Prisma schema for Pharmacy Platform
 
 generator client {
   provider = "prisma-client-js"
@@ -183,7 +183,7 @@ model AuditLog {
 }
 
 // ==========================================
-// Phase 2: Medicine Catalogue & Inventory
+// Medicine Catalogue & Inventory
 // ==========================================
 
 enum MedicineStatus {
@@ -382,7 +382,7 @@ model InventoryImportRow {
 }
 
 // ==========================================
-// Phase 3: Customer Ordering & Prescriptions
+// Customer Ordering & Prescriptions
 // ==========================================
 
 enum FamilyMemberRelationship {
@@ -667,7 +667,7 @@ model OrderCounter {
 }
 
 // ==========================================
-// Phase 4: AI-Assisted Prescription Extractions
+// AI-Assisted Prescription Extractions
 // ==========================================
 
 model PrescriptionAIExtraction {
@@ -696,7 +696,7 @@ model PrescriptionAIExtraction {
 }
 
 // ==========================================
-// Phase 5: Compliance Engine & Pharmacist Verification
+// Compliance Engine & Pharmacist Verification
 // ==========================================
 
 enum ComplianceRuleSetStatus {
@@ -924,7 +924,7 @@ model H1RegisterEntry {
 }
 
 // ========================================================
-// Phase 6: Store Routing, Inventory Reservation & Fulfilment
+// Store Routing, Inventory Reservation & Fulfilment
 // ========================================================
 
 enum StockReservationStatus {
@@ -1116,7 +1116,7 @@ model OrderCodCollection {
 }
 
 // ---------------------------------------------------------------------------
-// Phase 7: Refill Automation, Customer Subscriptions & Notifications
+// Refill Automation, Customer Subscriptions & Notifications
 // ---------------------------------------------------------------------------
 
 enum RefillEligibilityStatus {

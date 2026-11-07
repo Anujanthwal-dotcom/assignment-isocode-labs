@@ -14,7 +14,7 @@ import {
   AlternativeProposalStatus,
 } from '@prisma/client';
 
-describe('Phase 5 Compliance Engine & Pharmacist Verification E2E Tests', () => {
+describe('Compliance Engine & Pharmacist Verification E2E Tests', () => {
   let app: INestApplication;
   let prisma: PrismaService;
 

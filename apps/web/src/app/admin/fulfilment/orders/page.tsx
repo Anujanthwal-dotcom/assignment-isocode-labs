@@ -3,19 +3,6 @@
 import * as React from 'react';
 import Link from 'next/link';
 import { apiFetch } from '@/lib/api/client';
-import {
-  Store,
-  Search,
-  Compass,
-  AlertTriangle,
-  RotateCcw,
-  CheckCircle2,
-  XCircle,
-  Clock,
-  ChevronRight,
-  ArrowLeft,
-  Building2,
-} from 'lucide-react';
 
 export default function AdminFulfilmentOrdersPage() {
   const [loading, setLoading] = React.useState(true);
@@ -127,12 +114,9 @@ export default function AdminFulfilmentOrdersPage() {
               href="/admin/fulfilment"
               className="p-1 rounded-lg text-[#78879A] hover:bg-[#F8F9FB] transition-colors"
             >
-              <ArrowLeft className="w-4 h-4" />
+              &larr; Back
             </Link>
-            <h1 className="text-2xl font-bold text-[#14161A] tracking-tight flex items-center gap-2">
-              <Store className="w-6 h-6 text-[#6240E8]" />
-              Fulfilment Orders
-            </h1>
+            <h1 className="text-2xl font-bold text-[#14161A] tracking-tight">Fulfilment Orders</h1>
           </div>
           <p className="text-sm text-[#78879A] mt-1">
             Platform-wide visibility into routing decisions, active reservations, picking, and
@@ -169,13 +153,12 @@ export default function AdminFulfilmentOrdersPage() {
         </div>
 
         <div className="relative max-w-xs w-full">
-          <Search className="absolute left-3 top-2.5 h-4 w-4 text-[#78879A]" />
           <input
             type="text"
             placeholder="Search order #, customer, store..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-9 pr-4 py-2 border border-[#EAE8F0] rounded-xl text-xs bg-white focus:outline-none focus:ring-2 focus:ring-[#6240E8]/20 focus:border-[#6240E8]"
+            className="w-full px-3 py-2 border border-[#EAE8F0] rounded-xl text-xs bg-white focus:outline-none focus:ring-2 focus:ring-[#6240E8]/20 focus:border-[#6240E8]"
           />
         </div>
       </div>
@@ -186,7 +169,7 @@ export default function AdminFulfilmentOrdersPage() {
           <div className="p-12 text-center text-xs text-[#78879A]">Loading orders...</div>
         ) : error ? (
           <div className="p-8 text-center text-xs text-rose-600 bg-rose-50/50">
-            <AlertTriangle className="w-6 h-6 mx-auto mb-2 text-rose-500" />
+            <div className="font-bold mb-1">[!] Error</div>
             {error}
           </div>
         ) : filteredOrders.length === 0 ? (
@@ -276,7 +259,6 @@ export default function AdminFulfilmentOrdersPage() {
                               disabled={actionLoading === `route-${row.orderId}`}
                               className="px-2.5 py-1 rounded-lg text-xs font-semibold bg-[#6240E8] text-white hover:bg-[#5232d4] disabled:opacity-50 inline-flex items-center gap-1 shadow-xs"
                             >
-                              <Compass className="w-3.5 h-3.5" />
                               <span>
                                 {row.status === 'STOCK_UNAVAILABLE' ? 'Retry Route' : 'Auto Route'}
                               </span>
@@ -294,10 +276,10 @@ export default function AdminFulfilmentOrdersPage() {
                         )}
                         <Link
                           href={`/admin/fulfilment/invoices/${row.orderId}`}
-                          className="p-1 rounded text-[#78879A] hover:text-[#6240E8]"
+                          className="px-2 py-1 rounded text-xs font-semibold text-[#6240E8] hover:bg-purple-50"
                           title="View Invoice"
                         >
-                          <ChevronRight className="w-4 h-4" />
+                          Invoice &rarr;
                         </Link>
                       </div>
                     </td>
@@ -313,8 +295,7 @@ export default function AdminFulfilmentOrdersPage() {
       {manualModalOrder && (
         <div className="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-[1px] flex items-center justify-center p-4">
           <div className="bg-white rounded-xl border border-[#EAE8F0] max-w-md w-full p-6 shadow-xl space-y-4 text-xs">
-            <h3 className="text-base font-bold text-[#14161A] flex items-center gap-2">
-              <Building2 className="w-5 h-5 text-[#6240E8]" />
+            <h3 className="text-base font-bold text-[#14161A]">
               Manually Assign Store: {manualModalOrder.orderNumber}
             </h3>
             <p className="text-[#78879A]">

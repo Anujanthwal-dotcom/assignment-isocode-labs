@@ -4,18 +4,6 @@ import * as React from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import {
-  Pill,
-  User,
-  ShoppingBag,
-  LogOut,
-  MapPin,
-  Users,
-  FileText,
-  Package,
-  Bell,
-  RefreshCw,
-} from 'lucide-react';
-import {
   DropdownMenu,
   DropdownMenuTrigger,
   DropdownMenuContent,
@@ -72,18 +60,13 @@ export const CustomerNavbar: React.FC = () => {
       <div className="mx-auto flex h-[56px] sm:h-[64px] max-w-[1200px] items-center justify-between px-4 lg:px-8">
         {/* Logo & Brand */}
         <div className="flex items-center gap-6 lg:gap-8">
-          <Link href="/customer" className="flex items-center gap-2.5 group">
-            <div className="flex h-9 w-9 items-center justify-center rounded-[8px] bg-[#6240E8] text-white shadow-xs">
-              <Pill className="h-5 w-5" />
-            </div>
-            <div className="flex flex-col">
-              <span className="text-[16px] font-semibold tracking-tight text-[#351F65]">
-                Pharmacy Care
-              </span>
-              <span className="text-[11px] font-medium text-[#78879A] hidden sm:block">
-                Kolkata &amp; Howrah Network
-              </span>
-            </div>
+          <Link href="/customer" className="flex flex-col group">
+            <span className="text-[17px] font-bold tracking-tight text-[#351F65]">
+              Pharmacy Care
+            </span>
+            <span className="text-[10px] font-medium text-[#78879A] hidden sm:block">
+              Kolkata &amp; Howrah
+            </span>
           </Link>
 
           {/* Desktop Navigation Links */}
@@ -111,25 +94,23 @@ export const CustomerNavbar: React.FC = () => {
         </div>
 
         {/* Right Actions: Notifications, Cart & Profile */}
-        <div className="flex items-center gap-3">
-          {/* Notifications Icon */}
+        <div className="flex items-center gap-2 sm:gap-3">
+          {/* Notifications */}
           <Link
             href="/customer/notifications"
-            className="relative flex h-9 w-9 items-center justify-center rounded-[8px] border border-[#EAE8F0] bg-white text-[#351F65] hover:bg-[#F7F5FD] hover:text-[#6240E8] transition-colors"
-            title="Notifications"
+            className="flex h-9 items-center justify-center px-3 rounded-[8px] border border-[#EAE8F0] bg-white text-xs font-medium text-[#351F65] hover:bg-[#F7F5FD] hover:text-[#6240E8] transition-colors"
           >
-            <Bell className="h-4 w-4" />
+            Alerts
           </Link>
 
-          {/* Cart Icon */}
+          {/* Cart */}
           <Link
             href="/customer/cart"
-            className="relative flex h-9 w-9 items-center justify-center rounded-[8px] border border-[#EAE8F0] bg-white text-[#351F65] hover:bg-[#F7F5FD] hover:text-[#6240E8] transition-colors"
-            title="View Cart"
+            className="flex h-9 items-center justify-center px-3 rounded-[8px] border border-[#EAE8F0] bg-white text-xs font-semibold text-[#351F65] hover:bg-[#F7F5FD] hover:text-[#6240E8] transition-colors gap-1.5"
           >
-            <ShoppingBag className="h-4 w-4" />
+            <span>Cart</span>
             {cartCount > 0 && (
-              <span className="absolute -top-1.5 -right-1.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-[#6240E8] px-1 text-[10px] font-bold text-white shadow-xs">
+              <span className="flex h-4 min-w-4 items-center justify-center rounded-full bg-[#6240E8] px-1 text-[10px] font-bold text-white shadow-xs">
                 {cartCount > 99 ? '99+' : cartCount}
               </span>
             )}
@@ -137,13 +118,9 @@ export const CustomerNavbar: React.FC = () => {
 
           {/* Profile Dropdown */}
           <DropdownMenu>
-            <DropdownMenuTrigger className="flex items-center gap-2 rounded-[8px] border border-[#EAE8F0] bg-[#F8F9FB] px-3 py-1.5 text-[13px] font-medium text-[#351F65] hover:bg-[#F7F5FD] transition-colors focus:outline-none focus:ring-2 focus:ring-[#6240E8]">
-              <div className="flex h-5 w-5 items-center justify-center rounded-full bg-[#6240E8]/10 text-[#6240E8]">
-                <User className="h-3 w-3" />
-              </div>
-              <span className="max-w-[120px] truncate hidden sm:inline">
-                {user?.profile?.fullName || 'My Account'}
-              </span>
+            <DropdownMenuTrigger className="flex items-center gap-1.5 rounded-[8px] border border-[#EAE8F0] bg-[#F8F9FB] px-3 h-9 text-[13px] font-medium text-[#351F65] hover:bg-[#F7F5FD] transition-colors focus:outline-none focus:ring-2 focus:ring-[#6240E8]">
+              <span className="max-w-[120px] truncate">{user?.profile?.fullName || 'Account'}</span>
+              <span className="text-[10px] text-slate-400">▼</span>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-[220px]">
               <DropdownMenuLabel>
@@ -158,23 +135,18 @@ export const CustomerNavbar: React.FC = () => {
               </DropdownMenuLabel>
               <DropdownMenuSeparator />
               <DropdownMenuItem onClick={() => router.push('/customer/family')}>
-                <Users className="mr-2 h-4 w-4 text-[#6240E8]" />
                 <span>Family Profiles</span>
               </DropdownMenuItem>
               <DropdownMenuItem onClick={() => router.push('/customer/addresses')}>
-                <MapPin className="mr-2 h-4 w-4 text-[#6240E8]" />
                 <span>Delivery Addresses</span>
               </DropdownMenuItem>
               <DropdownMenuItem onClick={() => router.push('/customer/prescriptions')}>
-                <FileText className="mr-2 h-4 w-4 text-[#6240E8]" />
                 <span>My Prescriptions</span>
               </DropdownMenuItem>
               <DropdownMenuItem onClick={() => router.push('/customer/orders')}>
-                <Package className="mr-2 h-4 w-4 text-[#6240E8]" />
                 <span>Order History</span>
               </DropdownMenuItem>
               <DropdownMenuItem onClick={() => router.push('/customer/refills')}>
-                <RefreshCw className="mr-2 h-4 w-4 text-[#6240E8]" />
                 <span>Medicine Refills</span>
               </DropdownMenuItem>
               <DropdownMenuSeparator />
@@ -182,7 +154,6 @@ export const CustomerNavbar: React.FC = () => {
                 onClick={handleLogout}
                 className="text-red-600 focus:text-red-600 focus:bg-red-50"
               >
-                <LogOut className="mr-2 h-4 w-4 text-red-600" />
                 <span>Sign Out</span>
               </DropdownMenuItem>
             </DropdownMenuContent>

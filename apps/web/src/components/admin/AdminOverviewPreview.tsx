@@ -5,7 +5,6 @@ import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { StatusBadge } from '@/components/shared/StatusBadge';
 import { DataTable, type Column } from '@/components/shared/DataTable';
 import { SAMPLE_ADMIN } from '@/lib/sample-data';
-import { Store, BarChart3, Activity } from 'lucide-react';
 
 interface OrderRow {
   id: string;
@@ -28,12 +27,7 @@ export const AdminOverviewPreview: React.FC = () => {
     {
       key: 'store',
       header: 'Store Hub',
-      render: (row) => (
-        <span className="flex items-center gap-1.5 text-[#14161A]">
-          <Store className="h-3.5 w-3.5 text-[#6240E8]" />
-          {row.store}
-        </span>
-      ),
+      render: (row) => <span className="text-[#14161A] font-medium">{row.store}</span>,
     },
     {
       key: 'customer',
@@ -110,7 +104,7 @@ export const AdminOverviewPreview: React.FC = () => {
                   Today&apos;s prescription distribution across top 4 hubs
                 </p>
               </div>
-              <BarChart3 className="h-5 w-5 text-[#6240E8]" />
+              <span className="text-xs font-semibold text-[#6240E8]">[Hub Metrics]</span>
             </div>
           </CardHeader>
 
@@ -147,7 +141,7 @@ export const AdminOverviewPreview: React.FC = () => {
                   Pharmacist SLA &amp; intake throughput
                 </p>
               </div>
-              <Activity className="h-5 w-5 text-[#00B5E2]" />
+              <span className="text-xs font-semibold text-[#00B5E2]">[SLA Status]</span>
             </div>
           </CardHeader>
 

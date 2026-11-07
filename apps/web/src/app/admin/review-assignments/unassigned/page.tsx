@@ -3,15 +3,6 @@
 import * as React from 'react';
 import Link from 'next/link';
 import { apiFetch } from '@/lib/api/client';
-import {
-  ClipboardCheck,
-  ArrowLeft,
-  Store,
-  Clock,
-  AlertTriangle,
-  CheckCircle2,
-  Send,
-} from 'lucide-react';
 
 export default function AdminUnassignedOrdersPage() {
   const [loading, setLoading] = React.useState(true);
@@ -90,10 +81,9 @@ export default function AdminUnassignedOrdersPage() {
               href="/admin/review-assignments"
               className="p-1 rounded-lg text-[#78879A] hover:bg-[#F8F9FB] transition-colors"
             >
-              <ArrowLeft className="w-4 h-4" />
+              &larr; Back
             </Link>
-            <h1 className="text-2xl font-bold text-[#14161A] tracking-tight flex items-center gap-2">
-              <ClipboardCheck className="w-6 h-6 text-[#6240E8]" />
+            <h1 className="text-2xl font-bold text-[#14161A] tracking-tight">
               Unassigned Verification Orders
             </h1>
           </div>
@@ -106,14 +96,14 @@ export default function AdminUnassignedOrdersPage() {
 
       {error && (
         <div className="p-3 rounded-lg bg-rose-50 border border-rose-200 text-rose-700 text-xs flex items-center gap-2">
-          <AlertTriangle className="w-4 h-4 shrink-0" />
+          <span className="font-bold">[!]</span>
           <span>{error}</span>
         </div>
       )}
 
       {successMessage && (
         <div className="p-3 rounded-lg bg-emerald-50 border border-emerald-200 text-emerald-700 text-xs flex items-center gap-2">
-          <CheckCircle2 className="w-4 h-4 shrink-0" />
+          <span className="font-bold">✓</span>
           <span>{successMessage}</span>
         </div>
       )}
@@ -125,8 +115,8 @@ export default function AdminUnassignedOrdersPage() {
         </div>
       ) : orders.length === 0 ? (
         <div className="bg-white rounded-xl border border-[#EAE8F0] p-12 text-center shadow-2xs space-y-3">
-          <div className="w-12 h-12 rounded-full bg-emerald-50 text-emerald-600 flex items-center justify-center mx-auto">
-            <CheckCircle2 className="w-6 h-6" />
+          <div className="w-12 h-12 rounded-full bg-emerald-50 text-emerald-600 font-bold text-base flex items-center justify-center mx-auto">
+            ✓
           </div>
           <h3 className="text-sm font-semibold text-[#14161A]">All Orders Assigned!</h3>
           <p className="text-xs text-[#78879A] max-w-sm mx-auto">
@@ -169,7 +159,6 @@ export default function AdminUnassignedOrdersPage() {
                         onClick={() => setSelectedOrder(item)}
                         className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-[#6240E8] text-white hover:bg-[#5230D8] transition-colors shadow-2xs"
                       >
-                        <Store className="w-3.5 h-3.5" />
                         <span>Assign Store</span>
                       </button>
                     </td>
@@ -185,8 +174,7 @@ export default function AdminUnassignedOrdersPage() {
       {selectedOrder && (
         <div className="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-[1px] flex items-center justify-center p-4">
           <div className="bg-white rounded-xl border border-[#EAE8F0] max-w-md w-full p-6 shadow-xl space-y-4">
-            <h3 className="text-base font-bold text-[#14161A] flex items-center gap-2">
-              <Store className="w-5 h-5 text-[#6240E8]" />
+            <h3 className="text-base font-bold text-[#14161A]">
               Assign Order {selectedOrder.orderNumber}
             </h3>
             <p className="text-xs text-[#78879A]">
@@ -240,7 +228,6 @@ export default function AdminUnassignedOrdersPage() {
                 disabled={actionLoading || !selectedStoreId}
                 className="inline-flex items-center gap-1.5 px-4 py-1.5 text-xs font-semibold rounded-lg bg-[#6240E8] text-white hover:bg-[#5230D8] disabled:opacity-50"
               >
-                <Send className="w-3.5 h-3.5" />
                 <span>Confirm Assignment</span>
               </button>
             </div>

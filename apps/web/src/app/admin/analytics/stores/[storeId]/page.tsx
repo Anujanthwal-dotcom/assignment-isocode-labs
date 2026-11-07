@@ -1,13 +1,12 @@
 'use client';
 
 import * as React from 'react';
-import { useParams, useRouter } from 'next/navigation';
+import { useParams } from 'next/navigation';
 import Link from 'next/link';
 import { apiFetch } from '@/lib/api/client';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Store, ArrowLeft, RefreshCw, Package, CheckCircle2, Clock, Truck } from 'lucide-react';
 
 export default function AdminAnalyticsStoreDetailPage() {
   const params = useParams();
@@ -42,7 +41,7 @@ export default function AdminAnalyticsStoreDetailPage() {
       <div className="max-w-xl mx-auto py-12 text-center space-y-4">
         <h2 className="text-xl font-bold text-slate-800">Store Not Found</h2>
         <Link href="/admin/analytics/orders">
-          <Button variant="outline">Back to Stores</Button>
+          <Button variant="outline">&larr; Back to Stores</Button>
         </Link>
       </div>
     );
@@ -56,7 +55,7 @@ export default function AdminAnalyticsStoreDetailPage() {
         href="/admin/analytics/orders"
         className="inline-flex items-center text-xs font-semibold text-[#6240E8] hover:underline"
       >
-        <ArrowLeft className="mr-1.5 h-3.5 w-3.5" /> Back to Stores Overview
+        &larr; Back to Stores Overview
       </Link>
 
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-200">

@@ -3,15 +3,6 @@
 import * as React from 'react';
 import Link from 'next/link';
 import { apiFetch } from '@/lib/api/client';
-import {
-  ClipboardCheck,
-  Plus,
-  ArrowRight,
-  Store,
-  Clock,
-  AlertTriangle,
-  RotateCcw,
-} from 'lucide-react';
 
 export default function AdminReviewAssignmentsPage() {
   const [loading, setLoading] = React.useState(true);
@@ -39,8 +30,7 @@ export default function AdminReviewAssignmentsPage() {
     <div className="flex-1 p-6 max-w-7xl w-full mx-auto space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2 border-b border-[#EAE8F0]">
         <div>
-          <h1 className="text-2xl font-bold text-[#14161A] tracking-tight flex items-center gap-2">
-            <ClipboardCheck className="w-6 h-6 text-[#6240E8]" />
+          <h1 className="text-2xl font-bold text-[#14161A] tracking-tight">
             Store Review Assignments
           </h1>
           <p className="text-sm text-[#78879A] mt-1">
@@ -53,8 +43,7 @@ export default function AdminReviewAssignmentsPage() {
           href="/admin/review-assignments/unassigned"
           className="inline-flex items-center gap-2 px-4 py-2 text-xs font-semibold rounded-lg bg-[#6240E8] text-white hover:bg-[#5230D8] transition-colors shadow-2xs"
         >
-          <span>Assign Pending Orders</span>
-          <ArrowRight className="w-4 h-4" />
+          <span>Assign Pending Orders &rarr;</span>
         </Link>
       </div>
 
@@ -65,13 +54,13 @@ export default function AdminReviewAssignmentsPage() {
         </div>
       ) : error ? (
         <div className="bg-rose-50 border border-rose-200 text-rose-700 p-4 rounded-xl text-xs flex items-center gap-2">
-          <AlertTriangle className="w-4 h-4 shrink-0" />
+          <span className="font-bold">[!]</span>
           <span>{error}</span>
         </div>
       ) : assignments.length === 0 ? (
         <div className="bg-white rounded-xl border border-[#EAE8F0] p-12 text-center shadow-2xs space-y-3">
-          <div className="w-12 h-12 rounded-full bg-[#F7F5FD] text-[#6240E8] flex items-center justify-center mx-auto">
-            <Store className="w-6 h-6" />
+          <div className="w-12 h-12 rounded-full bg-[#F7F5FD] text-[#6240E8] font-bold text-sm flex items-center justify-center mx-auto">
+            RO
           </div>
           <h3 className="text-sm font-semibold text-[#14161A]">No Active Assignments</h3>
           <p className="text-xs text-[#78879A] max-w-sm mx-auto">
@@ -105,8 +94,7 @@ export default function AdminReviewAssignmentsPage() {
                     <td className="py-3 px-4 font-semibold text-[#351F65]">{item.orderNumber}</td>
                     <td className="py-3 px-4 text-[#14161A]">{item.customerName}</td>
                     <td className="py-3 px-4">
-                      <span className="inline-flex items-center gap-1 font-semibold text-[#6240E8]">
-                        <Store className="w-3.5 h-3.5" />
+                      <span className="font-semibold text-[#6240E8]">
                         {item.storeName} ({item.storeCode})
                       </span>
                     </td>

@@ -53,7 +53,6 @@ import {
   DropdownMenuSeparator,
 } from '@/components/ui/dropdown-menu';
 import { DataTable, type Column } from '@/components/shared/DataTable';
-import { ChevronDown, ExternalLink, Plus, Smartphone, Tablet, Monitor } from 'lucide-react';
 
 interface SampleRow {
   code: string;
@@ -402,7 +401,7 @@ export const DesignSystemShowcase: React.FC = () => {
             <Button size="md">Medium (40px)</Button>
             <Button size="lg">Large (48px)</Button>
             <Button size="icon" variant="outline" aria-label="Add item">
-              <Plus className="h-4 w-4 text-[#6240E8]" />
+              <span className="font-bold text-[#6240E8]">+</span>
             </Button>
             <Button
               variant="primary"
@@ -684,7 +683,7 @@ export const DesignSystemShowcase: React.FC = () => {
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="outline">
-                Actions Menu <ChevronDown className="ml-2 h-4 w-4 text-[#6240E8]" />
+                Actions Menu <span className="ml-2 text-xs text-[#6240E8]">▼</span>
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent>
@@ -771,14 +770,14 @@ export const DesignSystemShowcase: React.FC = () => {
                 <span className="font-semibold text-[16px] text-[#351F65]">
                   Customer Care Portal
                 </span>
-                <Smartphone className="h-5 w-5 text-[#6240E8]" />
+                <span className="text-xs font-bold text-[#6240E8]">[Mobile]</span>
               </div>
               <p className="text-[13px] text-[#78879A]">
                 Route: <code className="text-[#6240E8]">/customer</code> &bull; Mobile-first bottom
                 nav, 1200px max container, refill card, recent orders.
               </p>
               <div className="flex items-center text-[12px] font-semibold text-[#6240E8] group-hover:underline">
-                Explore Customer Home <ExternalLink className="ml-1 h-3.5 w-3.5" />
+                Explore Customer Home &rarr;
               </div>
             </Card>
           </Link>
@@ -787,14 +786,14 @@ export const DesignSystemShowcase: React.FC = () => {
             <Card className="h-full bg-white hover:border-[#6240E8] transition-colors p-5 space-y-3">
               <div className="flex items-center justify-between">
                 <span className="font-semibold text-[16px] text-[#351F65]">Pharmacist Portal</span>
-                <Tablet className="h-5 w-5 text-[#6240E8]" />
+                <span className="text-xs font-bold text-[#6240E8]">[Tablet]</span>
               </div>
               <p className="text-[13px] text-[#78879A]">
                 Route: <code className="text-[#6240E8]">/pharmacist</code> &bull; 240px sidebar,
                 64px header, drawer on tablet/mobile, 2-column prescription review.
               </p>
               <div className="flex items-center text-[12px] font-semibold text-[#6240E8] group-hover:underline">
-                Explore Verification Queue <ExternalLink className="ml-1 h-3.5 w-3.5" />
+                Explore Verification Queue &rarr;
               </div>
             </Card>
           </Link>
@@ -803,14 +802,14 @@ export const DesignSystemShowcase: React.FC = () => {
             <Card className="h-full bg-white hover:border-[#6240E8] transition-colors p-5 space-y-3">
               <div className="flex items-center justify-between">
                 <span className="font-semibold text-[16px] text-[#351F65]">Admin Portal</span>
-                <Monitor className="h-5 w-5 text-[#6240E8]" />
+                <span className="text-xs font-bold text-[#6240E8]">[Desktop]</span>
               </div>
               <p className="text-[13px] text-[#78879A]">
                 Route: <code className="text-[#6240E8]">/admin</code> &bull; 1440px wide panel, 4
                 KPI cards, orders-by-store chart placeholder, recent orders table.
               </p>
               <div className="flex items-center text-[12px] font-semibold text-[#6240E8] group-hover:underline">
-                Explore Operations Overview <ExternalLink className="ml-1 h-3.5 w-3.5" />
+                Explore Operations Overview &rarr;
               </div>
             </Card>
           </Link>

@@ -9,7 +9,7 @@ import { StockReservationService } from '../src/order-routing/stock-reservation.
 import { describe, beforeAll, afterAll, it, expect } from 'vitest';
 import { OrderStatus, OrderPaymentMethod, MedicineSchedule, HandoverType } from '@prisma/client';
 
-describe('Phase 8 Data Integrity and Concurrency E2E Tests', () => {
+describe('Data Integrity and Concurrency E2E Tests', () => {
   let app: INestApplication;
   let prisma: PrismaService;
   let reservationService: StockReservationService;

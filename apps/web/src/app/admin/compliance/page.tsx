@@ -4,16 +4,6 @@ import * as React from 'react';
 import Link from 'next/link';
 import { apiFetch } from '@/lib/api/client';
 import { useAuth } from '@/lib/auth/auth-context';
-import {
-  ShieldCheck,
-  ShieldAlert,
-  ArrowRight,
-  Layers,
-  History,
-  FileText,
-  AlertTriangle,
-  Lock,
-} from 'lucide-react';
 
 export default function ComplianceOverviewPage() {
   const { user } = useAuth();
@@ -44,8 +34,7 @@ export default function ComplianceOverviewPage() {
     <div className="flex-1 p-6 max-w-7xl w-full mx-auto space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2 border-b border-[#EAE8F0]">
         <div>
-          <h1 className="text-2xl font-bold text-[#14161A] tracking-tight flex items-center gap-2">
-            <ShieldCheck className="w-6 h-6 text-[#6240E8]" />
+          <h1 className="text-2xl font-bold text-[#14161A] tracking-tight">
             Compliance Policy Administration
           </h1>
           <p className="text-sm text-[#78879A] mt-1">
@@ -63,7 +52,7 @@ export default function ComplianceOverviewPage() {
 
       {!isComplianceAdmin && (
         <div className="p-3 rounded-lg bg-amber-50 border border-amber-200 text-amber-800 text-xs flex items-center gap-2">
-          <Lock className="w-4 h-4 shrink-0 text-amber-600" />
+          <span className="font-bold">[Read-Only]</span>
           <span>
             You are logged in as <strong>ADMIN</strong>. You have read-only access to compliance
             summaries. Modifying policy rules and version activation is restricted to{' '}
@@ -74,7 +63,7 @@ export default function ComplianceOverviewPage() {
 
       {error && (
         <div className="p-3 rounded-lg bg-rose-50 border border-rose-200 text-rose-700 text-xs flex items-center gap-2">
-          <AlertTriangle className="w-4 h-4 shrink-0" />
+          <span className="font-bold">[!]</span>
           <span>{error}</span>
         </div>
       )}
@@ -126,10 +115,10 @@ export default function ComplianceOverviewPage() {
               className="bg-white rounded-xl border border-[#EAE8F0] p-5 shadow-2xs hover:border-[#6240E8] transition-all group"
             >
               <div className="flex items-center justify-between mb-3">
-                <div className="p-2 rounded-lg bg-[#F7F5FD] text-[#6240E8]">
-                  <Layers className="w-5 h-5" />
-                </div>
-                <ArrowRight className="w-4 h-4 text-[#78879A] group-hover:text-[#6240E8] group-hover:translate-x-1 transition-transform" />
+                <span className="text-xs font-bold text-[#6240E8]">[Policy]</span>
+                <span className="text-[#78879A] group-hover:text-[#6240E8] group-hover:translate-x-1 transition-transform">
+                  &rarr;
+                </span>
               </div>
               <h3 className="text-sm font-bold text-[#14161A]">Policy Rule Sets</h3>
               <p className="text-xs text-[#78879A] mt-1">
@@ -142,10 +131,10 @@ export default function ComplianceOverviewPage() {
               className="bg-white rounded-xl border border-[#EAE8F0] p-5 shadow-2xs hover:border-[#6240E8] transition-all group"
             >
               <div className="flex items-center justify-between mb-3">
-                <div className="p-2 rounded-lg bg-[#F7F5FD] text-[#6240E8]">
-                  <History className="w-5 h-5" />
-                </div>
-                <ArrowRight className="w-4 h-4 text-[#78879A] group-hover:text-[#6240E8] group-hover:translate-x-1 transition-transform" />
+                <span className="text-xs font-bold text-[#6240E8]">[Audit]</span>
+                <span className="text-[#78879A] group-hover:text-[#6240E8] group-hover:translate-x-1 transition-transform">
+                  &rarr;
+                </span>
               </div>
               <h3 className="text-sm font-bold text-[#14161A]">Compliance Decisions Audit</h3>
               <p className="text-xs text-[#78879A] mt-1">
@@ -158,10 +147,10 @@ export default function ComplianceOverviewPage() {
               className="bg-white rounded-xl border border-[#EAE8F0] p-5 shadow-2xs hover:border-[#6240E8] transition-all group"
             >
               <div className="flex items-center justify-between mb-3">
-                <div className="p-2 rounded-lg bg-[#F7F5FD] text-[#6240E8]">
-                  <FileText className="w-5 h-5" />
-                </div>
-                <ArrowRight className="w-4 h-4 text-[#78879A] group-hover:text-[#6240E8] group-hover:translate-x-1 transition-transform" />
+                <span className="text-xs font-bold text-[#6240E8]">[H1 Log]</span>
+                <span className="text-[#78879A] group-hover:text-[#6240E8] group-hover:translate-x-1 transition-transform">
+                  &rarr;
+                </span>
               </div>
               <h3 className="text-sm font-bold text-[#14161A]">Schedule H1 Register</h3>
               <p className="text-xs text-[#78879A] mt-1">
@@ -173,10 +162,7 @@ export default function ComplianceOverviewPage() {
           {/* Recent Blocked Items Report */}
           {overview.recentBlockedItems?.length > 0 && (
             <div className="bg-white rounded-xl border border-[#EAE8F0] p-5 shadow-2xs space-y-3">
-              <h3 className="text-sm font-bold text-[#14161A] flex items-center gap-2">
-                <ShieldAlert className="w-4 h-4 text-rose-600" />
-                Recent Hard-Blocked Items
-              </h3>
+              <h3 className="text-sm font-bold text-[#14161A]">Recent Hard-Blocked Items</h3>
               <div className="divide-y divide-[#EAE8F0] text-xs">
                 {overview.recentBlockedItems.map((item: any) => (
                   <div key={item.id} className="py-2.5 flex items-center justify-between gap-4">

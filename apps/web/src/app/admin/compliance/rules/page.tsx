@@ -4,17 +4,6 @@ import * as React from 'react';
 import Link from 'next/link';
 import { apiFetch } from '@/lib/api/client';
 import { useAuth } from '@/lib/auth/auth-context';
-import {
-  ShieldCheck,
-  Plus,
-  ArrowRight,
-  ArrowLeft,
-  CheckCircle2,
-  Clock,
-  Archive,
-  AlertTriangle,
-  Lock,
-} from 'lucide-react';
 
 export default function ComplianceRuleSetsPage() {
   const { user } = useAuth();
@@ -80,19 +69,19 @@ export default function ComplianceRuleSetsPage() {
       case 'ACTIVE':
         return (
           <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
-            <CheckCircle2 className="w-3 h-3" /> ACTIVE
+            ✓ ACTIVE
           </span>
         );
       case 'DRAFT':
         return (
           <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-amber-50 text-amber-700 border border-amber-200">
-            <Clock className="w-3 h-3" /> DRAFT
+            • DRAFT
           </span>
         );
       case 'SUPERSEDED':
         return (
           <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-slate-100 text-slate-600 border border-slate-200">
-            <Archive className="w-3 h-3" /> SUPERSEDED
+            SUPERSEDED
           </span>
         );
       default:
@@ -109,10 +98,9 @@ export default function ComplianceRuleSetsPage() {
               href="/admin/compliance"
               className="p-1 rounded-lg text-[#78879A] hover:bg-[#F8F9FB] transition-colors"
             >
-              <ArrowLeft className="w-4 h-4" />
+              &larr; Back
             </Link>
-            <h1 className="text-2xl font-bold text-[#14161A] tracking-tight flex items-center gap-2">
-              <ShieldCheck className="w-6 h-6 text-[#6240E8]" />
+            <h1 className="text-2xl font-bold text-[#14161A] tracking-tight">
               Versioned Compliance Rule Sets
             </h1>
           </div>
@@ -127,19 +115,18 @@ export default function ComplianceRuleSetsPage() {
             onClick={() => setCreateModalOpen(true)}
             className="inline-flex items-center gap-1.5 px-4 py-2 text-xs font-semibold rounded-lg bg-[#6240E8] text-white hover:bg-[#5230D8] transition-colors shadow-2xs"
           >
-            <Plus className="w-4 h-4" />
-            <span>Create New Version</span>
+            <span>+ Create New Version</span>
           </button>
         ) : (
           <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium bg-slate-100 text-[#78879A]">
-            <Lock className="w-3.5 h-3.5" /> Read-Only (Admin)
+            [Read-Only Admin]
           </span>
         )}
       </div>
 
       {error && (
         <div className="p-3 rounded-lg bg-rose-50 border border-rose-200 text-rose-700 text-xs flex items-center gap-2">
-          <AlertTriangle className="w-4 h-4 shrink-0" />
+          <span className="font-bold">[!]</span>
           <span>{error}</span>
         </div>
       )}
@@ -187,8 +174,7 @@ export default function ComplianceRuleSetsPage() {
                         href={`/admin/compliance/rules/${rs.id}`}
                         className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-semibold bg-[#F7F5FD] text-[#6240E8] hover:bg-[#6240E8] hover:text-white transition-colors"
                       >
-                        <span>View Rules</span>
-                        <ArrowRight className="w-3.5 h-3.5" />
+                        <span>View Rules &rarr;</span>
                       </Link>
                     </td>
                   </tr>
@@ -203,10 +189,7 @@ export default function ComplianceRuleSetsPage() {
       {createModalOpen && (
         <div className="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-[1px] flex items-center justify-center p-4">
           <div className="bg-white rounded-xl border border-[#EAE8F0] max-w-md w-full p-6 shadow-xl space-y-4">
-            <h3 className="text-base font-bold text-[#14161A] flex items-center gap-2">
-              <Plus className="w-5 h-5 text-[#6240E8]" />
-              Create Compliance Policy Draft
-            </h3>
+            <h3 className="text-base font-bold text-[#14161A]">Create Compliance Policy Draft</h3>
             <p className="text-xs text-[#78879A]">
               New versions are created in DRAFT state. You can customize schedule rules before
               activating.

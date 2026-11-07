@@ -7,7 +7,6 @@ import { Card, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { apiFetch } from '@/lib/api/client';
-import { ShoppingBag, Trash2, ChevronLeft, ArrowRight, AlertTriangle } from 'lucide-react';
 import { CartDTO } from '@pharmacy/shared-types';
 
 export default function CustomerCartPage() {
@@ -105,7 +104,6 @@ export default function CustomerCartPage() {
         </Card>
       ) : !cart || cart.items.length === 0 ? (
         <Card className="p-12 border-[#EAE8F0] bg-white text-center">
-          <ShoppingBag className="h-12 w-12 text-slate-300 mx-auto mb-3" />
           <h3 className="text-base font-semibold text-slate-800">Your Cart is Empty</h3>
           <p className="text-xs text-slate-500 mt-1 max-w-sm mx-auto">
             You don&apos;t have any medicines in your cart yet. Browse our catalogue to select
@@ -125,7 +123,9 @@ export default function CustomerCartPage() {
           <div className="lg:col-span-8 space-y-3">
             {cart.hasInactiveItems && (
               <div className="rounded-xl border border-red-300 bg-red-50 p-4 flex items-start gap-3">
-                <AlertTriangle className="h-5 w-5 text-red-600 shrink-0 mt-0.5" />
+                <span className="font-bold text-[11px] uppercase px-1.5 py-0.5 rounded bg-red-200 text-red-900">
+                  ALERT
+                </span>
                 <div className="text-xs text-red-800 leading-relaxed">
                   <strong className="block font-semibold">Inactive Medicines in Cart</strong>
                   One or more items in your cart are no longer active in our pharmacy catalogue. You
@@ -201,10 +201,10 @@ export default function CustomerCartPage() {
                       <button
                         onClick={() => handleRemoveItem(item.id)}
                         disabled={updatingId === item.id}
-                        className="text-slate-400 hover:text-red-600 p-1 rounded transition-colors"
+                        className="text-xs text-slate-400 hover:text-red-600 font-semibold px-2 py-1 rounded transition-colors"
                         title="Remove item"
                       >
-                        <Trash2 className="h-4 w-4" />
+                        Remove
                       </button>
                     </div>
                   </div>
@@ -219,8 +219,7 @@ export default function CustomerCartPage() {
                 onClick={() => router.push('/customer/medicines')}
                 className="text-xs text-slate-600 border-slate-300"
               >
-                <ChevronLeft className="h-3.5 w-3.5 mr-1" />
-                Continue Shopping
+                &larr; Continue Shopping
               </Button>
             </div>
           </div>
@@ -266,7 +265,7 @@ export default function CustomerCartPage() {
                 className="w-full bg-[#6240E8] text-white hover:bg-[#5233D0] h-11 text-xs font-semibold shadow-xs flex items-center justify-center gap-1.5"
               >
                 <span>Proceed to Checkout</span>
-                <ArrowRight className="h-4 w-4" />
+                <span>&rarr;</span>
               </Button>
             </Card>
           </div>

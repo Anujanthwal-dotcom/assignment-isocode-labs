@@ -13,7 +13,6 @@ import {
   DialogFooter,
 } from '@/components/ui/dialog';
 import { apiFetch } from '@/lib/api/client';
-import { MapPin, Plus, Edit2, Trash2, Phone, AlertCircle } from 'lucide-react';
 import { CustomerAddressDTO } from '@pharmacy/shared-types';
 
 export default function CustomerAddressesPage() {
@@ -88,7 +87,17 @@ export default function CustomerAddressesPage() {
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!recipientName.trim() || !phone.trim() || !addressLine1.trim() || !postalCode.trim()) {
-      setDialogError('Please fill in all required fields.');
+      setDialogError('Please fill in all mandatory fields.');
+      return;
+    }
+
+    if (!/^\d{6}$/.test(postalCode.trim())) {
+      setDialogError('Postal code must be a valid 6-digit Indian PIN code.');
+      return;
+    }
+
+    if (!/^\d{10}$/.test(phone.trim())) {
+      setDialogError('Phone must be a valid 10-digit mobile number.');
       return;
     }
 
@@ -96,7 +105,7 @@ export default function CustomerAddressesPage() {
     setDialogError(null);
 
     const payload = {
-      label: label.trim(),
+      label: label.trim() || 'Home',
       recipientName: recipientName.trim(),
       phone: phone.trim(),
       addressLine1: addressLine1.trim(),
@@ -110,18 +119,34 @@ export default function CustomerAddressesPage() {
 
     try {
       if (editingAddress) {
-        await apiFetch(`/customer/addresses/${editingAddress.id}`, {
-          method: 'PATCH',
-          body: JSON.stringify(payload),
-        });
+        const updated = await apiFetch<CustomerAddressDTO>(
+          `/customer/addresses/${editingAddress.id}`,
+          {
+            method: 'PATCH',
+            body: JSON.stringify(payload),
+          },
+        );
+        setAddresses((prev) =>
+          prev.map((a) => {
+            if (updated.isDefault && a.id !== updated.id) {
+              return { ...a, isDefault: false };
+            }
+            return a.id === updated.id ? updated : a;
+          }),
+        );
       } else {
-        await apiFetch('/customer/addresses', {
+        const created = await apiFetch<CustomerAddressDTO>('/customer/addresses', {
           method: 'POST',
           body: JSON.stringify(payload),
         });
+        setAddresses((prev) => {
+          if (created.isDefault) {
+            return [...prev.map((a) => ({ ...a, isDefault: false })), created];
+          }
+          return [...prev, created];
+        });
       }
       setIsOpen(false);
-      await fetchAddresses();
     } catch (err: unknown) {
       setDialogError((err as Error).message || 'Failed to save address.');
     } finally {
@@ -132,9 +157,14 @@ export default function CustomerAddressesPage() {
   const handleSetDefault = async (id: string) => {
     try {
       await apiFetch(`/customer/addresses/${id}/default`, {
-        method: 'PATCH',
+        method: 'POST',
       });
-      await fetchAddresses();
+      setAddresses((prev) =>
+        prev.map((a) => ({
+          ...a,
+          isDefault: a.id === id,
+        })),
+      );
     } catch (err: unknown) {
       alert((err as Error).message || 'Failed to set default address.');
     }
@@ -146,7 +176,7 @@ export default function CustomerAddressesPage() {
       await apiFetch(`/customer/addresses/${id}`, {
         method: 'DELETE',
       });
-      await fetchAddresses();
+      setAddresses((prev) => prev.filter((a) => a.id !== id));
     } catch (err: unknown) {
       alert((err as Error).message || 'Failed to delete address.');
     }
@@ -166,10 +196,9 @@ export default function CustomerAddressesPage() {
         </div>
         <Button
           onClick={openAddDialog}
-          className="flex items-center gap-1.5 text-xs bg-[#6240E8] text-white hover:bg-[#5233D0]"
+          className="text-xs bg-[#6240E8] text-white hover:bg-[#5233D0]"
         >
-          <Plus className="h-4 w-4" />
-          <span>Add New Address</span>
+          + Add New Address
         </Button>
       </div>
 
@@ -177,12 +206,11 @@ export default function CustomerAddressesPage() {
         <div className="py-12 text-center text-xs text-slate-500">Loading addresses...</div>
       ) : error ? (
         <Card className="p-8 border-red-200 bg-red-50 text-center">
-          <AlertCircle className="h-8 w-8 text-red-500 mx-auto mb-2" />
+          <span className="font-bold text-xs uppercase text-red-600 block mb-1">Notice</span>
           <p className="text-sm text-red-700 font-medium">{error}</p>
         </Card>
       ) : addresses.length === 0 ? (
         <Card className="p-12 border-[#EAE8F0] bg-white text-center">
-          <MapPin className="h-10 w-10 text-slate-300 mx-auto mb-3" />
           <h3 className="text-base font-semibold text-slate-800">No Saved Addresses</h3>
           <p className="text-xs text-slate-500 mt-1 max-w-sm mx-auto">
             Save your delivery address for fast and seamless checkout across Kolkata and Howrah.
@@ -192,7 +220,7 @@ export default function CustomerAddressesPage() {
             onClick={openAddDialog}
             className="mt-4 text-xs bg-[#6240E8] text-white"
           >
-            Add Address
+            + Add Address
           </Button>
         </Card>
       ) : (
@@ -223,10 +251,7 @@ export default function CustomerAddressesPage() {
 
                 <div className="text-xs text-slate-600 space-y-1">
                   <p className="font-semibold text-slate-900">{addr.recipientName}</p>
-                  <p className="flex items-center gap-1.5 text-slate-500">
-                    <Phone className="h-3.5 w-3.5 text-slate-400" />
-                    <span>+91 {addr.phone}</span>
-                  </p>
+                  <p className="text-slate-500">+91 {addr.phone}</p>
                   <p className="pt-1 text-slate-700 leading-relaxed">
                     {addr.addressLine1}
                     {addr.addressLine2 && `, ${addr.addressLine2}`}
@@ -258,7 +283,6 @@ export default function CustomerAddressesPage() {
                     onClick={() => openEditDialog(addr)}
                     className="text-xs h-8 px-2.5 text-slate-600 border-slate-200"
                   >
-                    <Edit2 className="h-3.5 w-3.5 mr-1" />
                     Edit
                   </Button>
                   <Button
@@ -267,7 +291,6 @@ export default function CustomerAddressesPage() {
                     onClick={() => handleDelete(addr.id)}
                     className="text-xs h-8 px-2.5 text-red-600 border-red-200 hover:bg-red-50"
                   >
-                    <Trash2 className="h-3.5 w-3.5 mr-1" />
                     Delete
                   </Button>
                 </div>
@@ -289,19 +312,21 @@ export default function CustomerAddressesPage() {
           <form onSubmit={handleSave} className="space-y-4 pt-2">
             {dialogError && (
               <div className="p-3 text-xs rounded-lg bg-red-50 border border-red-200 text-red-700 flex items-center gap-2">
-                <AlertCircle className="h-4 w-4 shrink-0" />
+                <span className="font-bold uppercase text-[10px] px-1 py-0.5 bg-red-200 rounded">
+                  Error
+                </span>
                 <span>{dialogError}</span>
               </div>
             )}
 
             <div className="grid grid-cols-2 gap-3">
               <div className="space-y-1">
-                <label className="text-xs font-semibold text-slate-700">Label *</label>
+                <label className="text-xs font-semibold text-slate-700">Label (e.g. Home) *</label>
                 <Input
                   value={label}
                   onChange={(e) => setLabel(e.target.value)}
-                  placeholder="Home, Work, Parents"
-                  className="h-9 text-sm"
+                  placeholder="Home, Office, Parents"
+                  className="h-10 text-xs"
                   required
                 />
               </div>
@@ -311,8 +336,8 @@ export default function CustomerAddressesPage() {
                 <Input
                   value={recipientName}
                   onChange={(e) => setRecipientName(e.target.value)}
-                  placeholder="Debasish Ghosh"
-                  className="h-9 text-sm"
+                  placeholder="Recipient full name"
+                  className="h-10 text-xs"
                   required
                 />
               </div>
@@ -325,7 +350,8 @@ export default function CustomerAddressesPage() {
                   value={phone}
                   onChange={(e) => setPhone(e.target.value)}
                   placeholder="9876543210"
-                  className="h-9 text-sm"
+                  maxLength={10}
+                  className="h-10 text-xs"
                   required
                 />
               </div>
@@ -339,54 +365,54 @@ export default function CustomerAddressesPage() {
                   onChange={(e) => setPostalCode(e.target.value)}
                   placeholder="700091"
                   maxLength={6}
-                  className="h-9 text-sm"
+                  className="h-10 text-xs"
                   required
                 />
               </div>
             </div>
 
             <div className="space-y-1">
-              <label className="text-xs font-semibold text-slate-700">Address Line 1 *</label>
+              <label className="text-xs font-semibold text-slate-700">
+                Flat / House / Street *
+              </label>
               <Input
                 value={addressLine1}
                 onChange={(e) => setAddressLine1(e.target.value)}
-                placeholder="House / Flat No., Building Name, Street"
-                className="h-9 text-sm"
+                placeholder="Flat 4B, Tower 2, Sector V"
+                className="h-10 text-xs"
                 required
               />
             </div>
 
-            <div className="grid grid-cols-2 gap-3">
-              <div className="space-y-1">
-                <label className="text-xs font-semibold text-slate-700">
-                  Address Line 2 (Optional)
-                </label>
-                <Input
-                  value={addressLine2}
-                  onChange={(e) => setAddressLine2(e.target.value)}
-                  placeholder="Area / Locality"
-                  className="h-9 text-sm"
-                />
-              </div>
+            <div className="space-y-1">
+              <label className="text-xs font-semibold text-slate-700">
+                Area / Colony (Optional)
+              </label>
+              <Input
+                value={addressLine2}
+                onChange={(e) => setAddressLine2(e.target.value)}
+                placeholder="Salt Lake City"
+                className="h-10 text-xs"
+              />
+            </div>
 
+            <div className="grid grid-cols-3 gap-2">
               <div className="space-y-1">
-                <label className="text-xs font-semibold text-slate-700">Landmark (Optional)</label>
+                <label className="text-xs font-semibold text-slate-700">Landmark</label>
                 <Input
                   value={landmark}
                   onChange={(e) => setLandmark(e.target.value)}
-                  placeholder="Near City Centre"
-                  className="h-9 text-sm"
+                  placeholder="Near Metro Gate"
+                  className="h-10 text-xs"
                 />
               </div>
-            </div>
 
-            <div className="grid grid-cols-2 gap-3">
               <div className="space-y-1">
                 <label className="text-xs font-semibold text-slate-700">City *</label>
                 <Input
                   value={city}
                   onChange={(e) => setCity(e.target.value)}
-                  className="h-9 text-sm"
+                  className="h-10 text-xs"
                   required
                 />
               </div>
@@ -396,29 +422,29 @@ export default function CustomerAddressesPage() {
                 <Input
                   value={state}
                   onChange={(e) => setState(e.target.value)}
-                  className="h-9 text-sm"
+                  className="h-10 text-xs"
                   required
                 />
               </div>
             </div>
 
-            <div className="flex items-center gap-2 pt-2">
+            <div className="flex items-center gap-2 pt-1">
               <input
                 type="checkbox"
-                id="isDefaultCheckbox"
+                id="isDefaultAddr"
                 checked={isDefault}
                 onChange={(e) => setIsDefault(e.target.checked)}
-                className="rounded text-[#6240E8] focus:ring-[#6240E8]"
+                className="h-4 w-4 rounded border-slate-300 text-[#6240E8] focus:ring-[#6240E8]"
               />
               <label
-                htmlFor="isDefaultCheckbox"
-                className="text-xs font-medium text-slate-700 cursor-pointer"
+                htmlFor="isDefaultAddr"
+                className="text-xs text-slate-700 font-medium select-none cursor-pointer"
               >
-                Set as my default delivery address
+                Set as default delivery address
               </label>
             </div>
 
-            <DialogFooter className="pt-4">
+            <DialogFooter className="pt-3">
               <Button
                 type="button"
                 variant="outline"

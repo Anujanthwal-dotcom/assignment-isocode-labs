@@ -12,7 +12,7 @@ import { getQueueToken } from '@nestjs/bullmq';
 import { Queue } from 'bullmq';
 import { PRESCRIPTION_AI_QUEUE } from '../src/prescription-ai/prescription-ai.service';
 
-describe('Phase 4 AI-Assisted Prescription Reading E2E Tests', () => {
+describe('AI-Assisted Prescription Reading E2E Tests', () => {
   let app: INestApplication;
   let prisma: PrismaService;
   let processor: PrescriptionAiProcessor;

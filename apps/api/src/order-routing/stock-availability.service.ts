@@ -57,7 +57,7 @@ export class StockAvailabilityService {
 
   /**
    * Evaluates whether a store has sufficient available stock for all required items.
-   * An order CANNOT be split across multiple stores in Phase 6.
+   * An order CANNOT be split across multiple stores.
    */
   async checkStoreAvailability(
     storeId: string,

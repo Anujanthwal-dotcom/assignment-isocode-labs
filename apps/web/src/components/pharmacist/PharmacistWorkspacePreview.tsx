@@ -6,7 +6,6 @@ import { Button } from '@/components/ui/button';
 import { StatusBadge } from '@/components/shared/StatusBadge';
 import { SemanticAlert } from '@/components/shared/SemanticAlert';
 import { SAMPLE_PHARMACIST } from '@/lib/sample-data';
-import { FileText, AlertTriangle, User, Layers } from 'lucide-react';
 
 export const PharmacistWorkspacePreview: React.FC = () => {
   const rx = SAMPLE_PHARMACIST.pendingPrescription;
@@ -74,9 +73,6 @@ export const PharmacistWorkspacePreview: React.FC = () => {
       <Card className="p-4 bg-white border-[#EAE8F0]">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-[8px] bg-[#F7F5FD] text-[#6240E8] border border-[#EAE8F0]">
-              <FileText className="h-5 w-5" />
-            </div>
             <div>
               <div className="flex items-center gap-2">
                 <span className="text-[18px] font-semibold text-[#351F65]">
@@ -84,9 +80,8 @@ export const PharmacistWorkspacePreview: React.FC = () => {
                 </span>
                 <StatusBadge status="warning" label="Awaiting Sign-Off" />
               </div>
-              <p className="text-[12px] text-[#78879A] flex items-center gap-2 mt-0.5">
-                <User className="h-3.5 w-3.5 text-[#6240E8]" /> Patient: {rx.forPatient} &bull;
-                Uploaded by {rx.customerName} ({rx.uploadedAt})
+              <p className="text-[12px] text-[#78879A] mt-0.5">
+                Patient: {rx.forPatient} &bull; Uploaded by {rx.customerName} ({rx.uploadedAt})
               </p>
             </div>
           </div>
@@ -115,14 +110,14 @@ export const PharmacistWorkspacePreview: React.FC = () => {
 
           {/* Document Canvas Placeholder */}
           <div className="mt-4 flex-1 rounded-[8px] border-2 border-dashed border-[#CED4DA] bg-[#F8F9FB] p-6 flex flex-col items-center justify-center text-center">
-            <div className="h-16 w-16 rounded-full bg-white border border-[#EAE8F0] flex items-center justify-center text-[#6240E8] shadow-xs">
-              <FileText className="h-8 w-8" />
-            </div>
+            <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-purple-100 text-[#6240E8]">
+              DOCUMENT ARCHIVE
+            </span>
             <p className="text-[14px] font-semibold text-[#351F65] mt-3">
               Hospital Clinical Rx Slip
             </p>
             <p className="text-[12px] text-[#78879A] max-w-sm mt-1">
-              {rx.hospital} &bull; {rx.doctorName}
+              {rx.doctorName} &bull; {rx.hospital}
             </p>
             <div className="mt-4 inline-flex items-center gap-1.5 rounded-[6px] bg-white border border-[#EAE8F0] px-3 py-1 text-[11px] text-[#351F65]">
               <span>Diagnosis: {rx.diagnosis}</span>
@@ -160,16 +155,14 @@ export const PharmacistWorkspacePreview: React.FC = () => {
                   </div>
 
                   <div className="flex items-center justify-between text-[12px] pt-1 border-t border-[#EAE8F0]/70">
-                    <span className="text-[#6C757D] flex items-center gap-1">
-                      <Layers className="h-3.5 w-3.5 text-[#6240E8]" />
+                    <span className="text-[#6C757D]">
                       Store Stock: {med.availableStock} units available
                     </span>
                     <span className="font-semibold text-[#0FAC26]">In Stock (Salt Lake)</span>
                   </div>
 
                   {'warning' in med && med.warning && (
-                    <div className="rounded-[6px] bg-[#FFF8EC] border border-[#F6DCB0] p-2 text-[12px] text-[#A66B16] flex items-center gap-2">
-                      <AlertTriangle className="h-4 w-4 shrink-0" />
+                    <div className="rounded-[6px] bg-[#FFF8EC] border border-[#F6DCB0] p-2 text-[12px] text-[#A66B16]">
                       <span>{med.warning}</span>
                     </div>
                   )}

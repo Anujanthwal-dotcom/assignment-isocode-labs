@@ -4,7 +4,6 @@ import * as React from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { apiFetch } from '@/lib/api/client';
-import { FileText, Printer, ArrowLeft, Store, AlertTriangle, CheckCircle2 } from 'lucide-react';
 
 export default function CustomerOrderInvoicePage() {
   const params = useParams();
@@ -43,9 +42,9 @@ export default function CustomerOrderInvoicePage() {
         <div className="flex items-center gap-2">
           <Link
             href={`/customer/orders/${orderId}`}
-            className="p-1 rounded-lg text-[#78879A] hover:bg-[#F8F9FB] transition-colors"
+            className="px-2 py-1 rounded text-xs font-semibold text-[#6240E8] hover:bg-[#F8F9FB] transition-colors"
           >
-            <ArrowLeft className="w-4 h-4" />
+            &larr; Back to Order
           </Link>
           <h1 className="text-xl font-bold text-[#14161A] tracking-tight">Order Invoice</h1>
         </div>
@@ -53,10 +52,9 @@ export default function CustomerOrderInvoicePage() {
         {invoice && (
           <button
             onClick={handlePrint}
-            className="px-3 py-1.5 rounded-lg text-xs font-semibold bg-[#6240E8] text-white hover:bg-[#5232d4] shadow-xs flex items-center gap-1.5"
+            className="px-3 py-1.5 rounded-lg text-xs font-semibold bg-[#6240E8] text-white hover:bg-[#5232d4] shadow-xs"
           >
-            <Printer className="w-3.5 h-3.5" />
-            <span>Print Invoice</span>
+            Print Invoice
           </button>
         )}
       </div>
@@ -65,16 +63,15 @@ export default function CustomerOrderInvoicePage() {
         <div className="p-12 text-center text-xs text-[#78879A]">Loading invoice...</div>
       ) : error ? (
         <div className="p-8 text-center text-xs text-rose-600 bg-rose-50 rounded-2xl border border-rose-200">
-          <AlertTriangle className="w-6 h-6 mx-auto mb-2 text-rose-500" />
+          <span className="font-bold text-[11px] uppercase block mb-1">Notice</span>
           {error}
         </div>
       ) : (
         <div className="bg-white rounded-2xl border border-[#EAE8F0] p-8 shadow-xs space-y-6 text-xs text-[#14161A] print:border-none print:shadow-none print:p-0">
           <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4 border-b border-[#EAE8F0] pb-6">
             <div>
-              <div className="flex items-center gap-2">
-                <Store className="w-6 h-6 text-[#6240E8]" />
-                <span className="text-lg font-bold text-[#351F65] tracking-tight">
+              <div>
+                <span className="text-lg font-bold text-[#351F65] tracking-tight block">
                   {invoice.storeName}
                 </span>
               </div>

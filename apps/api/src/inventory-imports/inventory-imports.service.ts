@@ -271,7 +271,7 @@ export class InventoryImportsService {
               },
             });
 
-            // Phase 6 Invariant: Reconcile active stock reservations against imported physical on-hand stock
+            // Stock Reservation Invariant: Reconcile active stock reservations against imported physical on-hand stock
             if (storeId) {
               const activeReservedAgg = await tx.stockReservation.aggregate({
                 where: {

@@ -4,18 +4,6 @@ import * as React from 'react';
 import Link from 'next/link';
 import { apiFetch } from '@/lib/api/client';
 import { useAuth } from '@/lib/auth/auth-context';
-import {
-  ClipboardCheck,
-  Search,
-  Filter,
-  ArrowRight,
-  Clock,
-  CheckCircle2,
-  XCircle,
-  AlertTriangle,
-  RotateCcw,
-  Store,
-} from 'lucide-react';
 
 interface QueueItem {
   orderId: string;
@@ -75,32 +63,32 @@ export default function PharmacistReviewQueuePage() {
     switch (status) {
       case 'APPROVED':
         return (
-          <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
-            <CheckCircle2 className="w-3 h-3" /> Approved
+          <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
+            Approved
           </span>
         );
       case 'IN_REVIEW':
         return (
-          <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold bg-amber-50 text-amber-700 border border-amber-200">
-            <Clock className="w-3 h-3" /> In Review
+          <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-amber-50 text-amber-700 border border-amber-200">
+            In Review
           </span>
         );
       case 'REUPLOAD_REQUESTED':
         return (
-          <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold bg-blue-50 text-blue-700 border border-blue-200">
-            <RotateCcw className="w-3 h-3" /> Re-upload Req.
+          <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-blue-50 text-blue-700 border border-blue-200">
+            Re-upload Req.
           </span>
         );
       case 'REJECTED':
         return (
-          <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold bg-rose-50 text-rose-700 border border-rose-200">
-            <XCircle className="w-3 h-3" /> Rejected
+          <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-rose-50 text-rose-700 border border-rose-200">
+            Rejected
           </span>
         );
       default:
         return (
-          <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold bg-slate-100 text-slate-700 border border-slate-200">
-            <Clock className="w-3 h-3" /> Pending Review
+          <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-slate-100 text-slate-700 border border-slate-200">
+            Pending Review
           </span>
         );
     }
@@ -111,8 +99,7 @@ export default function PharmacistReviewQueuePage() {
       {/* Header section with Store Scoping Context */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2 border-b border-[#EAE8F0]">
         <div>
-          <h1 className="text-2xl font-bold text-[#14161A] tracking-tight flex items-center gap-2">
-            <ClipboardCheck className="w-6 h-6 text-[#6240E8]" />
+          <h1 className="text-2xl font-bold text-[#14161A] tracking-tight">
             Prescription Verification Queue
           </h1>
           <p className="text-sm text-[#78879A] mt-1">
@@ -123,7 +110,6 @@ export default function PharmacistReviewQueuePage() {
 
         {storeInfo && (
           <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-[#F7F5FD] border border-[#EAE8F0] text-xs font-medium text-[#351F65]">
-            <Store className="w-4 h-4 text-[#6240E8]" />
             <span>
               Store: <strong className="font-semibold">{storeInfo.name}</strong> ({storeInfo.code})
             </span>
@@ -159,13 +145,12 @@ export default function PharmacistReviewQueuePage() {
 
         {/* Search Input */}
         <div className="relative min-w-[260px]">
-          <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-[#78879A]" />
           <input
             type="text"
             placeholder="Search order number or customer..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full pl-9 pr-3 py-2 text-xs rounded-lg border border-[#EAE8F0] bg-[#F8F9FB] focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#6240E8]/30"
+            className="w-full px-3 py-2 text-xs rounded-lg border border-[#EAE8F0] bg-[#F8F9FB] focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#6240E8]/30"
           />
         </div>
       </div>
@@ -178,14 +163,13 @@ export default function PharmacistReviewQueuePage() {
         </div>
       ) : error ? (
         <div className="bg-rose-50 border border-rose-200 text-rose-700 p-4 rounded-xl text-xs flex items-center gap-2">
-          <AlertTriangle className="w-4 h-4 shrink-0" />
+          <span className="font-bold uppercase text-[10px] px-1 py-0.5 bg-rose-200 rounded">
+            Error
+          </span>
           <span>{error}</span>
         </div>
       ) : queue.length === 0 ? (
         <div className="bg-white rounded-xl border border-[#EAE8F0] p-12 text-center shadow-2xs space-y-3">
-          <div className="w-12 h-12 rounded-full bg-[#F7F5FD] text-[#6240E8] flex items-center justify-center mx-auto">
-            <CheckCircle2 className="w-6 h-6" />
-          </div>
           <h3 className="text-sm font-semibold text-[#14161A]">All caught up!</h3>
           <p className="text-xs text-[#78879A] max-w-sm mx-auto">
             There are no pending prescriptions currently assigned to your store queue.
@@ -221,10 +205,9 @@ export default function PharmacistReviewQueuePage() {
                     <td className="py-3 px-4 text-right">
                       <Link
                         href={`/pharmacist/orders/${item.orderId}/review`}
-                        className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-semibold bg-[#6240E8] text-white hover:bg-[#5230D8] transition-colors shadow-2xs"
+                        className="inline-flex items-center px-3 py-1.5 rounded-lg text-xs font-semibold bg-[#6240E8] text-white hover:bg-[#5230D8] transition-colors shadow-2xs"
                       >
-                        <span>Verify Rx</span>
-                        <ArrowRight className="w-3.5 h-3.5" />
+                        Verify Rx &rarr;
                       </Link>
                     </td>
                   </tr>

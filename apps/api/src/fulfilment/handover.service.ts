@@ -212,7 +212,7 @@ export class HandoverService {
       },
     });
 
-    // Phase 7 Invariant: Refill calculation triggers strictly upon actual physical dispensing
+    // Refill Invariant: Refill calculation triggers strictly upon actual physical dispensing
     try {
       await this.refillsService.generateEstimatesForHandedOverOrder(order.id, now);
     } catch (err: any) {

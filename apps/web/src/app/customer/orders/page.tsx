@@ -7,7 +7,6 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { StatusBadge } from '@/components/shared/StatusBadge';
 import { apiFetch } from '@/lib/api/client';
-import { Package, Search, ChevronLeft, ChevronRight, Calendar, AlertCircle } from 'lucide-react';
 import { OrderDTO, OrderStatus } from '@pharmacy/shared-types';
 
 export default function CustomerOrdersPage() {
@@ -112,12 +111,11 @@ export default function CustomerOrdersPage() {
       {/* Filters Bar */}
       <div className="flex flex-col sm:flex-row gap-3">
         <div className="relative flex-1">
-          <Search className="absolute left-3.5 h-4 w-4 text-[#78879A] top-3" />
           <Input
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Search by order number (e.g. PH-202611...)"
-            className="h-10 pl-10 text-xs rounded-lg border-slate-300"
+            className="h-10 px-3 text-xs rounded-lg border-slate-300"
           />
         </div>
 
@@ -142,12 +140,11 @@ export default function CustomerOrdersPage() {
         <div className="py-12 text-center text-xs text-slate-500">Loading your orders...</div>
       ) : error ? (
         <Card className="p-8 border-red-200 bg-red-50 text-center">
-          <AlertCircle className="h-8 w-8 text-red-500 mx-auto mb-2" />
+          <span className="text-xs uppercase font-bold text-red-600 block mb-1">Notice</span>
           <p className="text-sm text-red-700 font-medium">{error}</p>
         </Card>
       ) : orders.length === 0 ? (
         <Card className="p-12 border-[#EAE8F0] bg-white text-center">
-          <Package className="h-10 w-10 text-slate-300 mx-auto mb-3" />
           <h3 className="text-base font-semibold text-slate-800">No Orders Found</h3>
           <p className="text-xs text-slate-500 mt-1 max-w-sm mx-auto">
             {debouncedSearch || statusFilter
@@ -178,15 +175,12 @@ export default function CustomerOrdersPage() {
             >
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
                 <div className="flex items-center gap-3">
-                  <div className="h-10 w-10 rounded-lg bg-[#F7F5FD] flex items-center justify-center text-[#6240E8] shrink-0">
-                    <Package className="h-5 w-5" />
-                  </div>
                   <div>
                     <span className="font-bold text-sm text-[#351F65] block">
                       {order.orderNumber}
                     </span>
-                    <span className="text-xs text-[#78879A] flex items-center gap-1 mt-0.5">
-                      <Calendar className="h-3 w-3" />
+                    <span className="text-xs text-[#78879A] mt-0.5 block">
+                      Placed:{' '}
                       {new Date(order.placedAt).toLocaleDateString('en-IN', {
                         day: 'numeric',
                         month: 'short',
@@ -247,8 +241,7 @@ export default function CustomerOrdersPage() {
               onClick={() => setPage((p) => Math.max(p - 1, 1))}
               className="text-xs h-8 px-3"
             >
-              <ChevronLeft className="h-3.5 w-3.5 mr-1" />
-              Previous
+              &larr; Previous
             </Button>
             <Button
               variant="outline"
@@ -257,8 +250,7 @@ export default function CustomerOrdersPage() {
               onClick={() => setPage((p) => Math.min(p + 1, totalPages))}
               className="text-xs h-8 px-3"
             >
-              Next
-              <ChevronRight className="h-3.5 w-3.5 ml-1" />
+              Next &rarr;
             </Button>
           </div>
         </div>

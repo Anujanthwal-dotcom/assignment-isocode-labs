@@ -1,5 +1,5 @@
 /**
- * Deterministic preview data for Pharmacy Platform Phase 0.5.
+ * Deterministic preview data for Pharmacy Platform.
  * Strictly local, static, and illustrative.
  */
 

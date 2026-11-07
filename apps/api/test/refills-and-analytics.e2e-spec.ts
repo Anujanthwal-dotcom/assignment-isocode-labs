@@ -14,7 +14,7 @@ import {
   HandoverType,
 } from '@prisma/client';
 
-describe('Phase 7 Refill Automation & Admin Analytics E2E', () => {
+describe('Refill Automation & Admin Analytics E2E', () => {
   let app: INestApplication;
   let prisma: PrismaService;
 

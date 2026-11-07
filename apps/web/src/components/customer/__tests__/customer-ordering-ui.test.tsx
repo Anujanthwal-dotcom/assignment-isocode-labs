@@ -203,7 +203,7 @@ vi.mock('@/lib/api/client', () => ({
   }),
 }));
 
-describe('Phase 3 Customer Ordering UI Tests', () => {
+describe('Customer Ordering UI Tests', () => {
   it('1. Renders customer catalogue with medicines and MRP', async () => {
     render(<CustomerMedicinesPage />);
 

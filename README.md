@@ -6,7 +6,7 @@ A production-grade, multi-portal pharmacy management platform built as a high-in
 
 ## 1. Project Overview & Release Readiness
 
-The platform has reached **Phase 8 (Testing, Hardening & Demonstration)** and is release-ready. It integrates:
+The platform has completed comprehensive testing, hardening, and demonstration and is release-ready. It integrates:
 
 - **Customer Portal (`/customer`)**: Medicine catalogue search, prescription upload with private signed URLs, family profiles, checkout with mock UPI/COD, order tracking, and automated refill reminders.
 - **Pharmacist Portal (`/pharmacist`)**: Verification queue, private prescription review with AI extraction draft comparison, structured dosage confirmation, Schedule H/H1 regulatory sign-offs, generic substitution proposals, and store fulfilment (pick, pack, handover).
@@ -49,7 +49,7 @@ pharmacy-platform/
 │
 ├── docs/
 │   ├── architecture.md          # Architectural blueprints and domain models
-│   ├── phase-8-audit.md         # Pre-implementation audit and remediation log
+│   ├── system-audit.md          # Pre-implementation audit and remediation log
 │   ├── testing.md               # Test matrix, execution commands, and fixtures
 │   ├── security-review.md       # RBAC matrix, IDOR protection, privacy policies
 │   ├── performance-report.md    # Database latency measurements & indexing analysis
@@ -143,7 +143,7 @@ _For a full step-by-step walkthrough of Demos 1–5, see [docs/demo-guide.md](fi
 
 ## 8. Documentation Index
 
-- [Phase 8 Pre-Implementation Audit](file:///home/anuj/Desktop/assignment-isocode/docs/phase-8-audit.md)
+- [System Audit & Verification Report](docs/system-audit.md)
 - [Testing Strategy & Test Suite Documentation](file:///home/anuj/Desktop/assignment-isocode/docs/testing.md)
 - [Security & Authorization Hardening Review](file:///home/anuj/Desktop/assignment-isocode/docs/security-review.md)
 - [Performance & Scalability Report](file:///home/anuj/Desktop/assignment-isocode/docs/performance-report.md)
