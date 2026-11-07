@@ -9,6 +9,7 @@
     "dev:api": "pnpm --filter @pharmacy/api start:dev",
     "build": "pnpm -r --filter \"./packages/**\" run build && pnpm --filter @pharmacy/api build && pnpm --filter @pharmacy/web build",
     "lint": "pnpm --filter @pharmacy/api lint && pnpm --filter @pharmacy/web lint",
+    "lint:fix": "pnpm --filter @pharmacy/api lint:fix && pnpm --filter @pharmacy/web lint:fix",
     "typecheck": "pnpm -r typecheck",
     "test": "pnpm --filter @pharmacy/api test:unit && pnpm --filter @pharmacy/web test:unit && pnpm --filter @pharmacy/api test:integration",
     "test:unit": "pnpm --filter @pharmacy/api test:unit && pnpm --filter @pharmacy/web test:unit",
