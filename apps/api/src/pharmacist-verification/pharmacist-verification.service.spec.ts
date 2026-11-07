@@ -16,7 +16,6 @@ import {
   ForbiddenException,
   BadRequestException,
   UnprocessableEntityException,
-  NotFoundException,
 } from '@nestjs/common';
 
 describe('PharmacistVerificationService', () => {

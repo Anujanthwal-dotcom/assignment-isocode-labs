@@ -2,6 +2,7 @@
 
 import * as React from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { useParams, useRouter } from 'next/navigation';
 import { apiFetch } from '@/lib/api/client';
 
@@ -454,9 +455,12 @@ export default function PharmacistOrderReviewPage() {
                   style={{ transform: `scale(${zoomLevel / 100})`, transformOrigin: 'top center' }}
                   className="transition-transform duration-150"
                 >
-                  <img
+                  <Image
                     src={prescription.viewUrl}
                     alt="Uploaded Prescription"
+                    width={800}
+                    height={1000}
+                    unoptimized
                     className="max-w-full rounded shadow-md object-contain"
                   />
                 </div>

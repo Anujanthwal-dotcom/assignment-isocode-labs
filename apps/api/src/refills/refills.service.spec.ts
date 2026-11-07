@@ -1,7 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { RefillsService } from './refills.service';
 import { RefillCalculationService } from './refill-calculation.service';
-import { RefillSchedulerService } from './refill-scheduler.service';
 import { BadRequestException, NotFoundException } from '@nestjs/common';
 import { RefillEligibilityStatus, RefillSubscriptionStatus } from '@prisma/client';
 

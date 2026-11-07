@@ -22,7 +22,7 @@ export default function PrescriptionDetailPage() {
   const [error, setError] = React.useState<string | null>(null);
 
   // Load prescription metadata and preview URL
-  const loadPrescription = async () => {
+  const loadPrescription = React.useCallback(async () => {
     try {
       const rx = await apiFetch<PrescriptionDTO>(`/customer/prescriptions/${prescriptionId}`);
       setPrescription(rx);
@@ -38,10 +38,10 @@ export default function PrescriptionDetailPage() {
     } catch (err: unknown) {
       setError((err as Error).message || 'Failed to load prescription.');
     }
-  };
+  }, [prescriptionId]);
 
   // Load latest AI extraction
-  const loadLatestExtraction = async () => {
+  const loadLatestExtraction = React.useCallback(async () => {
     try {
       const res = await apiFetch<PrescriptionAIExtractionDTO>(
         `/prescriptions/${prescriptionId}/extractions/latest`,
@@ -55,7 +55,7 @@ export default function PrescriptionDetailPage() {
         // Ignore background polling error
       }
     }
-  };
+  }, [prescriptionId]);
 
   React.useEffect(() => {
     const init = async () => {
@@ -64,7 +64,7 @@ export default function PrescriptionDetailPage() {
       setLoading(false);
     };
     init();
-  }, [prescriptionId]);
+  }, [loadPrescription, loadLatestExtraction]);
 
   // Polling for extraction completion if in QUEUED or PROCESSING
   React.useEffect(() => {
@@ -76,7 +76,7 @@ export default function PrescriptionDetailPage() {
     }, 2500);
 
     return () => clearInterval(interval);
-  }, [extraction?.status]);
+  }, [extraction, loadLatestExtraction]);
 
   // Trigger manual extraction
   const handleStartExtraction = async () => {

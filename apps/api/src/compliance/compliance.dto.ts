@@ -8,11 +8,10 @@ import {
   Matches,
   MinLength,
   MaxLength,
-  IsUUID,
 } from 'class-validator';
 import { Type } from 'class-transformer';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { MedicineSchedule, ComplianceRuleSetStatus, CompliancePolicyAction } from '@prisma/client';
+import { MedicineSchedule, CompliancePolicyAction } from '@prisma/client';
 
 export class ComplianceRuleItemDto {
   @ApiProperty({ enum: MedicineSchedule })

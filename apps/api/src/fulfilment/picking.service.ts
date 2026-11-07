@@ -9,7 +9,7 @@ import {
 import { PrismaService } from '../prisma/prisma.service';
 import { AuditService } from '../audit/audit.service';
 import { OrderStatusService } from '../orders/order-status.service';
-import { OrderStatus, PickingItemStatus, StockReservationStatus, Prisma } from '@prisma/client';
+import { OrderStatus, PickingItemStatus, StockReservationStatus } from '@prisma/client';
 
 @Injectable()
 export class PickingService {

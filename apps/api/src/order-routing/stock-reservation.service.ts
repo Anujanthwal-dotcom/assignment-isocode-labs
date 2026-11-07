@@ -2,7 +2,6 @@ import {
   Injectable,
   Logger,
   BadRequestException,
-  UnprocessableEntityException,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { PrismaService } from '../prisma/prisma.service';

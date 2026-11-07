@@ -1,13 +1,12 @@
 'use client';
 
 import * as React from 'react';
-import { useParams, useRouter } from 'next/navigation';
+import { useParams } from 'next/navigation';
 import Link from 'next/link';
 import { apiFetch } from '@/lib/api/client';
 
 export default function HandoverWorkspacePage() {
   const params = useParams();
-  const router = useRouter();
   const orderId = params.orderId as string;
 
   const [loading, setLoading] = React.useState(true);
@@ -100,7 +99,6 @@ export default function HandoverWorkspacePage() {
 
   const isHandedOver = orderDetail?.status === 'HANDED_OVER';
   const isCod = orderDetail?.paymentMethod === 'COD';
-  const isCodPending = isCod && orderDetail?.paymentStatus !== 'SUCCESS';
 
   return (
     <div className="space-y-6 max-w-4xl mx-auto">

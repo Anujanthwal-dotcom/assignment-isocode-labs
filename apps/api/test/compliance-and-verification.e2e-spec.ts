@@ -6,12 +6,10 @@ import { AppModule } from '../src/app.module';
 import { PrismaService } from '../src/prisma/prisma.service';
 import cookieParser from 'cookie-parser';
 import {
-  UserRole,
   OrderStatus,
   PrescriptionStatus,
   MedicineSchedule,
   OrderItemReviewStatus,
-  AlternativeProposalStatus,
 } from '@prisma/client';
 
 describe('Compliance Engine & Pharmacist Verification E2E Tests', () => {
@@ -26,7 +24,6 @@ describe('Compliance Engine & Pharmacist Verification E2E Tests', () => {
   let testOrderId: string;
   let testPrescriptionId: string;
   let testStoreId: string;
-  let testOtherStoreId: string;
   let testOrderItemId: string;
   let testCustomerUserId: string;
 
@@ -83,9 +80,7 @@ describe('Compliance Engine & Pharmacist Verification E2E Tests', () => {
 
     // Get Stores
     const kolStore = await prisma.store.findUnique({ where: { code: 'KOL-001' } });
-    const howStore = await prisma.store.findUnique({ where: { code: 'HOW-001' } });
     testStoreId = kolStore!.id;
-    testOtherStoreId = howStore!.id;
 
     // Create a prescription and order for testing
     const rx = await prisma.prescription.create({

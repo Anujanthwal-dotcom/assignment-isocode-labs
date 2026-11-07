@@ -1,13 +1,12 @@
 'use client';
 
 import * as React from 'react';
-import { useParams, useRouter } from 'next/navigation';
+import { useParams } from 'next/navigation';
 import Link from 'next/link';
 import { apiFetch } from '@/lib/api/client';
 
 export default function CustomerOrderInvoicePage() {
   const params = useParams();
-  const router = useRouter();
   const orderId = params.id as string;
 
   const [loading, setLoading] = React.useState(true);

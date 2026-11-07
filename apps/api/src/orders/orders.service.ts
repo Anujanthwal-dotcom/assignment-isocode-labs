@@ -426,7 +426,7 @@ export class OrdersService {
    * Retrieves prescription verification and review status for the customer order.
    */
   async getVerificationStatus(customerUserId: string, orderId: string) {
-    const order = await this.getOrder(customerUserId, orderId);
+    await this.getOrder(customerUserId, orderId);
 
     const fullOrder = await this.prisma.order.findUnique({
       where: { id: orderId },

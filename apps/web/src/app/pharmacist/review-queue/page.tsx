@@ -3,7 +3,6 @@
 import * as React from 'react';
 import Link from 'next/link';
 import { apiFetch } from '@/lib/api/client';
-import { useAuth } from '@/lib/auth/auth-context';
 
 interface QueueItem {
   orderId: string;
@@ -21,7 +20,6 @@ interface QueueItem {
 }
 
 export default function PharmacistReviewQueuePage() {
-  const { user } = useAuth();
   const [loading, setLoading] = React.useState(true);
   const [error, setError] = React.useState<string | null>(null);
   const [queue, setQueue] = React.useState<QueueItem[]>([]);

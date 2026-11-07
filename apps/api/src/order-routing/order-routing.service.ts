@@ -17,7 +17,6 @@ import {
   OrderRoutingMethod,
   OrderRoutingStatus,
   OrderItemReviewStatus,
-  StockReservationStatus,
   StoreStatus,
   Prisma,
 } from '@prisma/client';

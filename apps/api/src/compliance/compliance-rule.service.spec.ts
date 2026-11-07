@@ -2,8 +2,8 @@ import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { ComplianceRuleService } from './compliance-rule.service';
 import { PrismaService } from '../prisma/prisma.service';
 import { AuditService } from '../audit/audit.service';
-import { ComplianceRuleSetStatus, MedicineSchedule, CompliancePolicyAction } from '@prisma/client';
-import { ConflictException, BadRequestException, NotFoundException } from '@nestjs/common';
+import { ComplianceRuleSetStatus, MedicineSchedule } from '@prisma/client';
+import { ConflictException, BadRequestException } from '@nestjs/common';
 
 describe('ComplianceRuleService', () => {
   let service: ComplianceRuleService;

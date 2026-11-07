@@ -6,7 +6,6 @@ import { describe, it, expect, beforeAll, afterAll } from 'vitest';
 import { AppModule } from '../src/app.module';
 import { PrismaService } from '../src/prisma/prisma.service';
 import {
-  UserRole,
   OrderStatus,
   OrderPaymentMethod,
   OrderPaymentStatus,
@@ -24,7 +23,6 @@ describe('Refill Automation & Admin Analytics E2E', () => {
 
   let customerUserId: string;
   let pharmacistUserId: string;
-  let adminUserId: string;
   let storeId: string;
   let medicineId: string;
   let orderId: string;
@@ -90,8 +88,6 @@ describe('Refill Automation & Admin Analytics E2E', () => {
 
     const adminCookies = adminLoginRes.headers['set-cookie'] as unknown as string[];
     adminCookie = Array.isArray(adminCookies) ? adminCookies[0].split(';')[0] : '';
-    const adminUser = await prisma.user.findUnique({ where: { email: 'admin@example.com' } });
-    adminUserId = adminUser!.id;
 
     // 6. Seed Address, Prescription and Handed-Over Order with Pharmacist-Verified Dosage
     let address = await prisma.customerAddress.findFirst({

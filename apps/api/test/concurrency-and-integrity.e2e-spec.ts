@@ -14,7 +14,6 @@ describe('Data Integrity and Concurrency E2E Tests', () => {
   let prisma: PrismaService;
   let reservationService: StockReservationService;
   let customerACookie: string;
-  let customerBCookie: string;
   let pharmacistCookie: string;
   let userAId: string;
   let userBId: string;
@@ -64,10 +63,9 @@ describe('Data Integrity and Concurrency E2E Tests', () => {
           .post('/api/v1/auth/customer/request-otp')
           .send({ phone: phoneB })
       ).body.developmentOtp || '123456';
-    const loginB = await request(app.getHttpServer())
+    await request(app.getHttpServer())
       .post('/api/v1/auth/customer/verify-otp')
       .send({ phone: phoneB, otp: otpB });
-    customerBCookie = loginB.headers['set-cookie'][0];
     const userB = await prisma.user.findFirst({ where: { phone: phoneB } });
     userBId = userB!.id;
 
@@ -240,7 +238,7 @@ describe('Data Integrity and Concurrency E2E Tests', () => {
       },
     });
 
-    const addr = await prisma.customerAddress.create({
+    await prisma.customerAddress.create({
       data: {
         customerUserId: userAId,
         label: 'Home',

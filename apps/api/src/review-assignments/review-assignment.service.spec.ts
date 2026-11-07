@@ -2,7 +2,7 @@ import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { ReviewAssignmentService } from './review-assignment.service';
 import { PrismaService } from '../prisma/prisma.service';
 import { AuditService } from '../audit/audit.service';
-import { StoreStatus, OrderStatus } from '@prisma/client';
+import { StoreStatus } from '@prisma/client';
 import { NotFoundException, BadRequestException } from '@nestjs/common';
 
 describe('ReviewAssignmentService', () => {

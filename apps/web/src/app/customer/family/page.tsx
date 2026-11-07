@@ -25,6 +25,8 @@ const RELATIONSHIPS: { value: FamilyMemberRelationship; label: string }[] = [
   { value: 'OTHER', label: 'Other Family Member' },
 ];
 
+const MAX_DOB = new Date().toISOString().slice(0, 10);
+
 export default function CustomerFamilyPage() {
   const [members, setMembers] = React.useState<FamilyMemberDTO[]>([]);
   const [loading, setLoading] = React.useState(true);
@@ -273,7 +275,7 @@ export default function CustomerFamilyPage() {
               <Input
                 type="date"
                 value={dateOfBirth}
-                max={new Date().toISOString().slice(0, 10)}
+                max={MAX_DOB}
                 onChange={(e) => setDateOfBirth(e.target.value)}
                 className="h-10 text-sm"
               />

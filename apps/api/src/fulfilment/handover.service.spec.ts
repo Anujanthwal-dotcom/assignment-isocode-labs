@@ -86,7 +86,7 @@ describe('HandoverService', () => {
       quantity: 10, // 10 physical on hand
     });
 
-    const handoverResult = await service.recordHandover({
+    await service.recordHandover({
       orderId: 'order-1',
       storeId: 'store-1',
       pharmacistUserId: 'pharma-1',

@@ -29,7 +29,6 @@ describe('Store Routing, Inventory Reservation & Order Fulfilment E2E', () => {
   let paracetamolMedId: string;
   let testOrderId: string;
   let testOrderItemId: string;
-  let prescriptionId: string;
 
   beforeAll(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
@@ -129,7 +128,6 @@ describe('Store Routing, Inventory Reservation & Order Fulfilment E2E', () => {
         status: 'APPROVED',
       },
     });
-    prescriptionId = rx.id;
 
     // Create Customer Order in APPROVED state with an APPROVED item review and H1 register entry
     const orderNumber = `E2E-ORD-${Date.now()}`;

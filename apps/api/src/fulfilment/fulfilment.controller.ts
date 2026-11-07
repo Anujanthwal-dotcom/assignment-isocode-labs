@@ -186,7 +186,7 @@ export class FulfilmentController {
   @Roles(UserRole.PHARMACIST)
   @ApiOperation({ summary: 'Get store invoice for order' })
   async getInvoice(@Param('orderId') orderId: string, @CurrentUser('id') userId: string) {
-    const storeId = await this.getPharmacistStoreId(userId);
+    await this.getPharmacistStoreId(userId);
     return this.invoiceService.getInvoiceByOrderId(orderId);
   }
 
