@@ -128,27 +128,19 @@ export default function HomePage() {
           )}
 
           {/* Direct Clickable Role Cards */}
-          <div className="space-y-3.5">
+          <div className="space-y-3">
             {/* 1. Customer Card */}
             <button
               onClick={handleCustomerLogin}
               disabled={activeLogin !== null}
               className="w-full text-left group p-4 rounded-xl border border-slate-200 bg-white hover:border-purple-400 hover:bg-purple-50/30 hover:shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-500/20 disabled:opacity-60 transition-all flex items-center justify-between gap-4 cursor-pointer"
             >
-              <div className="min-w-0">
-                <div className="text-[10px] font-bold uppercase tracking-wider text-purple-700 mb-0.5">
-                  Customer
-                </div>
-                <h3 className="text-sm font-semibold text-slate-900 group-hover:text-purple-900 transition-colors">
-                  Customer Portal
-                </h3>
-                <p className="text-xs text-slate-500 truncate">
-                  Browse medicines, upload Rx &amp; track orders
-                </p>
-              </div>
-              <div className="shrink-0 text-slate-400 group-hover:text-purple-700 font-medium text-xs transition-colors">
+              <span className="text-base font-semibold text-slate-900 group-hover:text-purple-700 transition-colors">
+                Customer
+              </span>
+              <span className="shrink-0 text-slate-400 group-hover:text-purple-700 font-medium text-xs transition-colors">
                 {activeLogin === 'CUSTOMER' ? 'Signing in...' : 'Enter →'}
-              </div>
+              </span>
             </button>
 
             {/* 2. Pharmacist Card */}
@@ -157,20 +149,12 @@ export default function HomePage() {
               disabled={activeLogin !== null}
               className="w-full text-left group p-4 rounded-xl border border-slate-200 bg-white hover:border-teal-400 hover:bg-teal-50/30 hover:shadow-sm focus:outline-none focus:ring-2 focus:ring-teal-500/20 disabled:opacity-60 transition-all flex items-center justify-between gap-4 cursor-pointer"
             >
-              <div className="min-w-0">
-                <div className="text-[10px] font-bold uppercase tracking-wider text-teal-700 mb-0.5">
-                  Pharmacist
-                </div>
-                <h3 className="text-sm font-semibold text-slate-900 group-hover:text-teal-900 transition-colors">
-                  Pharmacist Workspace
-                </h3>
-                <p className="text-xs text-slate-500 truncate">
-                  Review Rx queue, AI extraction &amp; dispensing
-                </p>
-              </div>
-              <div className="shrink-0 text-slate-400 group-hover:text-teal-700 font-medium text-xs transition-colors">
+              <span className="text-base font-semibold text-slate-900 group-hover:text-teal-700 transition-colors">
+                Pharmacist
+              </span>
+              <span className="shrink-0 text-slate-400 group-hover:text-teal-700 font-medium text-xs transition-colors">
                 {activeLogin === 'PHARMACIST' ? 'Signing in...' : 'Enter →'}
-              </div>
+              </span>
             </button>
 
             {/* 3. Admin Card */}
@@ -179,20 +163,12 @@ export default function HomePage() {
               disabled={activeLogin !== null}
               className="w-full text-left group p-4 rounded-xl border border-slate-200 bg-white hover:border-indigo-400 hover:bg-indigo-50/30 hover:shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 disabled:opacity-60 transition-all flex items-center justify-between gap-4 cursor-pointer"
             >
-              <div className="min-w-0">
-                <div className="text-[10px] font-bold uppercase tracking-wider text-indigo-700 mb-0.5">
-                  Administrator
-                </div>
-                <h3 className="text-sm font-semibold text-slate-900 group-hover:text-indigo-900 transition-colors">
-                  Admin &amp; Operations
-                </h3>
-                <p className="text-xs text-slate-500 truncate">
-                  Cross-store inventory, compliance &amp; analytics
-                </p>
-              </div>
-              <div className="shrink-0 text-slate-400 group-hover:text-indigo-700 font-medium text-xs transition-colors">
+              <span className="text-base font-semibold text-slate-900 group-hover:text-indigo-700 transition-colors">
+                Admin
+              </span>
+              <span className="shrink-0 text-slate-400 group-hover:text-indigo-700 font-medium text-xs transition-colors">
                 {activeLogin === 'ADMIN' ? 'Signing in...' : 'Enter →'}
-              </div>
+              </span>
             </button>
           </div>
         </div>

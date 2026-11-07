@@ -36,7 +36,7 @@ export class HealthService implements OnModuleDestroy {
   private async pingRedis(): Promise<boolean> {
     try {
       const redis = this.getRedisClient();
-      if (redis.status !== 'ready') {
+      if (redis.status === 'wait' || redis.status === 'end') {
         await redis.connect();
       }
       const pong = await redis.ping();
