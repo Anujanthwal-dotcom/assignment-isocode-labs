@@ -3,6 +3,16 @@
 import * as React from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import {
+  HeartPulse,
+  X,
+  LayoutDashboard,
+  ClipboardCheck,
+  Package,
+  BookOpenCheck,
+  Boxes,
+  Store,
+} from 'lucide-react';
 import { useAuth } from '@/lib/auth/auth-context';
 
 interface PharmacistSidebarProps {
@@ -11,11 +21,11 @@ interface PharmacistSidebarProps {
 }
 
 const navItems = [
-  { label: 'Overview', href: '/pharmacist', exact: true },
-  { label: 'Verification Queue', href: '/pharmacist/review-queue' },
-  { label: 'Store Fulfilment', href: '/pharmacist/fulfilment' },
-  { label: 'H1 Register', href: '/pharmacist/h1-register' },
-  { label: 'Store Inventory', href: '/pharmacist/inventory' },
+  { label: 'Overview', href: '/pharmacist', icon: LayoutDashboard, exact: true },
+  { label: 'Verification Queue', href: '/pharmacist/review-queue', icon: ClipboardCheck },
+  { label: 'Store Fulfilment', href: '/pharmacist/fulfilment', icon: Package },
+  { label: 'H1 Register', href: '/pharmacist/h1-register', icon: BookOpenCheck },
+  { label: 'Store Inventory', href: '/pharmacist/inventory', icon: Boxes },
 ];
 
 export const PharmacistSidebar: React.FC<PharmacistSidebarProps> = ({
@@ -43,29 +53,35 @@ export const PharmacistSidebar: React.FC<PharmacistSidebarProps> = ({
       >
         {/* Branding & Store indicator */}
         <div className="flex h-[64px] items-center justify-between border-b border-[#EAE8F0] px-4">
-          <Link href="/pharmacist" className="flex flex-col">
-            <span className="text-[14px] font-bold tracking-tight text-[#351F65]">
-              Teladoc Health
-            </span>
-            <span className="text-[11px] font-medium text-[#78879A]">Clinical Verification</span>
+          <Link href="/pharmacist" className="flex items-center gap-2.5">
+            <div className="flex h-8 w-8 items-center justify-center rounded-[8px] bg-[#0088AA] text-white shadow-xs">
+              <HeartPulse className="h-4.5 w-4.5" />
+            </div>
+            <div className="flex flex-col">
+              <span className="text-[14px] font-bold tracking-tight text-[#351F65]">
+                Pharmacy Portal
+              </span>
+              <span className="text-[10px] font-medium text-[#78879A]">Clinical Verification</span>
+            </div>
           </Link>
           <button
             onClick={onCloseMobile}
-            className="p-1 rounded-[6px] text-xs font-bold text-[#78879A] hover:bg-[#F7F5FD] lg:hidden"
+            className="p-1.5 rounded-[6px] text-slate-400 hover:bg-[#F7F5FD] hover:text-[#351F65] lg:hidden cursor-pointer"
             aria-label="Close sidebar"
           >
-            ✕
+            <X className="h-4 w-4" />
           </button>
         </div>
 
         {/* Store Context Badge */}
         <div className="p-3">
-          <div className="rounded-[8px] border border-[#EAE8F0] bg-[#F7F5FD] p-2.5 text-[12px] text-[#351F65]">
-            <span className="font-semibold block truncate">
-              {user?.store?.name || 'Salt Lake Store'}
-            </span>
-            <span className="text-[11px] text-[#78879A] block truncate">
-              {user?.store?.code || 'KOL-001'} (Assigned Store)
+          <div className="rounded-[8px] border border-[#B4EDFB] bg-[#EBF9FD] p-2.5 text-[12px] text-[#0088AA]">
+            <div className="flex items-center gap-1.5 font-semibold">
+              <Store className="h-3.5 w-3.5 shrink-0" />
+              <span className="truncate">{user?.store?.name || 'Salt Lake Store'}</span>
+            </div>
+            <span className="text-[11px] text-[#0088AA]/80 block truncate mt-0.5">
+              {user?.store?.code || 'KOL-001'} (Assigned Fulfilment Store)
             </span>
           </div>
         </div>
@@ -74,18 +90,20 @@ export const PharmacistSidebar: React.FC<PharmacistSidebarProps> = ({
         <nav className="flex-1 space-y-[4px] px-3 py-2 overflow-y-auto">
           {navItems.map((item) => {
             const isActive = item.exact ? pathname === item.href : pathname.startsWith(item.href);
+            const Icon = item.icon;
 
             return (
               <Link
                 key={item.label}
                 href={item.href}
                 onClick={onCloseMobile}
-                className={`flex h-[40px] items-center rounded-[6px] px-3 text-[14px] font-medium transition-colors ${
+                className={`flex h-[40px] items-center rounded-[6px] px-3 text-[14px] font-medium transition-colors gap-2.5 ${
                   isActive
                     ? 'bg-[#F7F5FD] text-[#6240E8] font-semibold border-l-3 border-[#6240E8]'
                     : 'text-[#6C757D] hover:bg-[#F8F9FB] hover:text-[#351F65]'
                 }`}
               >
+                <Icon className={`h-4 w-4 ${isActive ? 'text-[#6240E8]' : 'text-slate-400'}`} />
                 <span>{item.label}</span>
               </Link>
             );
@@ -96,9 +114,9 @@ export const PharmacistSidebar: React.FC<PharmacistSidebarProps> = ({
         <div className="border-t border-[#EAE8F0] p-3">
           <div className="text-[12px]">
             <p className="font-semibold text-[#351F65] truncate">
-              {user?.profile?.fullName || 'Demo Pharmacist'}
+              {user?.profile?.fullName || 'Licensed Pharmacist'}
             </p>
-            <p className="text-[11px] text-[#78879A] truncate">{user?.role || 'PHARMACIST'}</p>
+            <p className="text-[11px] text-[#78879A] truncate">Store Pharmacist On Duty</p>
           </div>
         </div>
       </aside>

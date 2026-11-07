@@ -1,6 +1,17 @@
 'use client';
 
 import * as React from 'react';
+import { useRouter } from 'next/navigation';
+import {
+  Menu,
+  Search,
+  Bell,
+  User,
+  ChevronDown,
+  Settings,
+  ShieldAlert,
+  LogOut,
+} from 'lucide-react';
 import {
   DropdownMenu,
   DropdownMenuTrigger,
@@ -9,7 +20,7 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
 } from '@/components/ui/dropdown-menu';
-import { SAMPLE_ADMIN } from '@/lib/sample-data';
+import { useAuth } from '@/lib/auth/auth-context';
 
 interface AdminHeaderProps {
   onToggleSidebar: () => void;
@@ -20,16 +31,27 @@ export const AdminHeader: React.FC<AdminHeaderProps> = ({
   onToggleSidebar,
   pageContext = 'Operations Overview',
 }) => {
+  const { user, logout } = useAuth();
+  const router = useRouter();
+
+  const handleLogout = async () => {
+    await logout();
+    router.replace('/admin/login');
+  };
+
+  const adminName = user?.profile?.fullName || 'Administrator';
+  const roleName = user?.role === 'COMPLIANCE_ADMIN' ? 'Compliance Officer' : 'System Administrator';
+
   return (
     <header className="sticky top-0 z-30 flex h-[64px] w-full items-center justify-between border-b border-[#EAE8F0] bg-white px-4 lg:px-8">
       {/* Left: Mobile Toggle & Page Context */}
       <div className="flex items-center gap-3">
         <button
           onClick={onToggleSidebar}
-          className="rounded-[6px] p-2 text-[#78879A] hover:bg-[#F7F5FD] hover:text-[#351F65] lg:hidden font-bold"
+          className="rounded-[6px] p-2 text-[#78879A] border border-[#EAE8F0] hover:bg-[#F7F5FD] hover:text-[#351F65] lg:hidden cursor-pointer"
           aria-label="Toggle navigation drawer"
         >
-          [Menu]
+          <Menu className="h-4 w-4" />
         </button>
         <span className="text-[16px] sm:text-[18px] font-semibold text-[#351F65]">
           {pageContext}
@@ -39,11 +61,12 @@ export const AdminHeader: React.FC<AdminHeaderProps> = ({
       {/* Center: Global Search Placeholder (Desktop) */}
       <div className="hidden md:flex items-center flex-1 max-w-md mx-6">
         <div className="relative w-full">
+          <Search className="absolute left-3.5 top-3 h-4 w-4 text-[#ADB5BD] pointer-events-none" />
           <input
             type="text"
             readOnly
             placeholder="Search stores, orders, staff, compliance logs..."
-            className="h-[40px] w-full rounded-[8px] border border-[#CED4DA] bg-[#F8F9FB] px-3.5 text-[13px] text-[#14161A] placeholder:text-[#ADB5BD] focus:outline-none focus:border-[#6240E8] cursor-pointer"
+            className="h-[40px] w-full rounded-[8px] border border-[#CED4DA] bg-[#F8F9FB] pl-10 pr-3.5 text-[13px] text-[#14161A] placeholder:text-[#ADB5BD] focus:outline-none focus:border-[#6240E8] cursor-pointer"
           />
         </div>
       </div>
@@ -53,32 +76,44 @@ export const AdminHeader: React.FC<AdminHeaderProps> = ({
         {/* Notification Icon */}
         <button
           type="button"
-          className="relative flex h-9 px-2.5 items-center justify-center rounded-[8px] border border-[#EAE8F0] bg-white text-[#78879A] hover:bg-[#F7F5FD] hover:text-[#351F65] transition-colors text-xs font-semibold"
+          className="relative flex h-9 w-9 items-center justify-center rounded-[8px] border border-[#EAE8F0] bg-white text-[#351F65] hover:bg-[#F7F5FD] hover:text-[#6240E8] transition-colors cursor-pointer"
           aria-label="View notifications"
         >
-          <span>Alerts</span>
-          <span className="ml-1.5 h-2 w-2 rounded-full bg-[#6240E8]" />
+          <Bell className="h-4 w-4" />
+          <span className="absolute top-2 right-2 h-1.5 w-1.5 rounded-full bg-[#6240E8]" />
         </button>
 
         {/* Administrator Profile Dropdown */}
         <DropdownMenu>
-          <DropdownMenuTrigger className="flex items-center gap-2 rounded-[8px] border border-[#EAE8F0] bg-white px-2.5 py-1.5 text-[13px] font-medium text-[#351F65] hover:bg-[#F8F9FB] focus:outline-none focus:ring-2 focus:ring-[#6240E8]">
-            <div className="flex h-7 w-7 items-center justify-center rounded-full bg-[#F7F5FD] text-[#6240E8] font-bold text-xs">
-              AD
+          <DropdownMenuTrigger className="flex items-center gap-2 rounded-[8px] border border-[#EAE8F0] bg-white px-2.5 py-1.5 text-[13px] font-medium text-[#351F65] hover:bg-[#F8F9FB] focus:outline-none focus:ring-2 focus:ring-[#6240E8] cursor-pointer">
+            <div className="flex h-6 w-6 items-center justify-center rounded-full bg-[#F7F5FD] text-[#6240E8]">
+              <User className="h-3.5 w-3.5" />
             </div>
-            <span className="hidden sm:inline font-semibold">{SAMPLE_ADMIN.name}</span>
-            <span className="text-[10px] text-[#78879A]">▼</span>
+            <span className="hidden sm:inline font-semibold">{adminName}</span>
+            <ChevronDown className="h-3.5 w-3.5 text-[#78879A]" />
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="w-[200px]">
+          <DropdownMenuContent align="end" className="w-[210px]">
             <DropdownMenuLabel>
-              <p className="font-semibold text-[#351F65]">{SAMPLE_ADMIN.name}</p>
-              <p className="text-[11px] text-[#78879A]">{SAMPLE_ADMIN.role}</p>
+              <p className="font-semibold text-[#351F65]">{adminName}</p>
+              <p className="text-[11px] text-[#78879A]">{roleName}</p>
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>Platform Settings</DropdownMenuItem>
-            <DropdownMenuItem>Regulatory Audit Logs</DropdownMenuItem>
+            <DropdownMenuItem className="cursor-pointer">
+              <Settings className="h-4 w-4 mr-2 text-slate-500" />
+              <span>Platform Settings</span>
+            </DropdownMenuItem>
+            <DropdownMenuItem className="cursor-pointer">
+              <ShieldAlert className="h-4 w-4 mr-2 text-slate-500" />
+              <span>Regulatory Audit Logs</span>
+            </DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem destructive>Sign Out</DropdownMenuItem>
+            <DropdownMenuItem
+              onClick={handleLogout}
+              className="text-rose-600 focus:text-rose-600 focus:bg-rose-50 cursor-pointer"
+            >
+              <LogOut className="h-4 w-4 mr-2 text-rose-600" />
+              <span>Sign Out</span>
+            </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
