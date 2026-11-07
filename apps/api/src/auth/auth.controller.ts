@@ -14,7 +14,7 @@ import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagg
 import { Request, Response } from 'express';
 import { ConfigService } from '@nestjs/config';
 import { AuthService } from './auth.service';
-import { RequestOtpDto, VerifyOtpDto, StaffLoginDto } from './auth.dto';
+import { RequestOtpDto, VerifyOtpDto, StaffLoginDto, CustomerLoginDto } from './auth.dto';
 import { Public } from './decorators/public.decorator';
 import { CurrentUser } from './decorators/current-user.decorator';
 import { Roles } from './decorators/roles.decorator';
@@ -90,6 +90,28 @@ export class AuthController {
     const { user, accessToken, refreshToken } = await this.authService.verifyCustomerOtp(
       dto.phone,
       dto.otp,
+      ipAddress,
+    );
+
+    this.setAuthCookies(res, accessToken, refreshToken);
+    return user;
+  }
+
+  @Public()
+  @Post('customer/login')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'Authenticate customer using email and password' })
+  @ApiResponse({ status: 200, description: 'Authenticated successfully' })
+  @ApiResponse({ status: 401, description: 'Invalid credentials' })
+  @ApiResponse({ status: 403, description: 'Account inactive or suspended' })
+  async customerLogin(
+    @Body() dto: CustomerLoginDto,
+    @Res({ passthrough: true }) res: Response,
+    @Ip() ipAddress: string,
+  ) {
+    const { user, accessToken, refreshToken } = await this.authService.customerLogin(
+      dto.email,
+      dto.password,
       ipAddress,
     );
 

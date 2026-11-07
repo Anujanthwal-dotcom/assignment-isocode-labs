@@ -6,7 +6,7 @@ import { useAuth } from '@/lib/auth/auth-context';
 
 export default function HomePage() {
   const router = useRouter();
-  const { requestCustomerOtp, verifyCustomerOtp, loginStaff } = useAuth();
+  const { loginCustomer, loginStaff } = useAuth();
 
   const [activeLogin, setActiveLogin] = useState<'CUSTOMER' | 'PHARMACIST' | 'ADMIN' | null>(null);
   const [loginError, setLoginError] = useState<string | null>(null);
@@ -16,9 +16,7 @@ export default function HomePage() {
     setActiveLogin('CUSTOMER');
     setLoginError(null);
     try {
-      const res = await requestCustomerOtp('9876543210');
-      const otp = res.developmentOtp || '123456';
-      await verifyCustomerOtp('9876543210', otp);
+      await loginCustomer('customer@example.com', 'DemoPassword123!');
       router.push('/customer');
     } catch (err: unknown) {
       setLoginError(err instanceof Error ? err.message : 'Customer login failed.');

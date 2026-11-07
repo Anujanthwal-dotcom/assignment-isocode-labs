@@ -129,4 +129,87 @@ describe('AuthService Unit Tests', () => {
       );
     });
   });
+
+  describe('customerLogin', () => {
+    it('should successfully authenticate customer with valid email and password', async () => {
+      const plainPassword = 'DemoPassword123!';
+      const hash = await argon2.hash(plainPassword, { type: argon2.argon2id });
+
+      mockUsersService.findByEmail.mockResolvedValue({
+        id: 'user-cust-1',
+        email: 'customer@example.com',
+        phone: '9876543210',
+        role: UserRole.CUSTOMER,
+        status: UserStatus.ACTIVE,
+        passwordHash: hash,
+        customerProfile: { fullName: 'Debasish Ghosh' },
+      });
+
+      const result = await authService.customerLogin('customer@example.com', plainPassword);
+
+      expect(result.user).toBeDefined();
+      expect(result.user.id).toBe('user-cust-1');
+      expect(result.user.role).toBe(UserRole.CUSTOMER);
+      expect(result.user.profile.fullName).toBe('Debasish Ghosh');
+      expect(result.accessToken).toBe('jwt_token');
+      expect(result.refreshToken).toBe('refresh_token_123');
+      expect(mockAuditService.record).toHaveBeenCalledWith(
+        expect.objectContaining({ action: 'LOGIN_SUCCESS' }),
+      );
+    });
+
+    it('should reject customer login with invalid password', async () => {
+      const plainPassword = 'DemoPassword123!';
+      const hash = await argon2.hash(plainPassword, { type: argon2.argon2id });
+
+      mockUsersService.findByEmail.mockResolvedValue({
+        id: 'user-cust-1',
+        email: 'customer@example.com',
+        role: UserRole.CUSTOMER,
+        status: UserStatus.ACTIVE,
+        passwordHash: hash,
+      });
+
+      await expect(
+        authService.customerLogin('customer@example.com', 'WrongPassword!'),
+      ).rejects.toThrow(UnauthorizedException);
+      expect(mockAuditService.record).toHaveBeenCalledWith(
+        expect.objectContaining({ action: 'LOGIN_FAILED' }),
+      );
+    });
+
+    it('should reject non-customer account from using customer login endpoint', async () => {
+      const plainPassword = 'DemoPassword123!';
+      const hash = await argon2.hash(plainPassword, { type: argon2.argon2id });
+
+      mockUsersService.findByEmail.mockResolvedValue({
+        id: 'user-pharma-1',
+        email: 'pharmacist@example.com',
+        role: UserRole.PHARMACIST,
+        status: UserStatus.ACTIVE,
+        passwordHash: hash,
+      });
+
+      await expect(
+        authService.customerLogin('pharmacist@example.com', plainPassword),
+      ).rejects.toThrow(UnauthorizedException);
+    });
+
+    it('should reject customer login if user is SUSPENDED', async () => {
+      const plainPassword = 'DemoPassword123!';
+      const hash = await argon2.hash(plainPassword, { type: argon2.argon2id });
+
+      mockUsersService.findByEmail.mockResolvedValue({
+        id: 'user-cust-1',
+        email: 'customer@example.com',
+        role: UserRole.CUSTOMER,
+        status: UserStatus.SUSPENDED,
+        passwordHash: hash,
+      });
+
+      await expect(
+        authService.customerLogin('customer@example.com', plainPassword),
+      ).rejects.toThrow(ForbiddenException);
+    });
+  });
 });

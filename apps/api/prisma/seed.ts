@@ -98,17 +98,21 @@ async function main() {
   });
 
   // 4. Seed Users
-  // Customer: Debasish Ghosh (9876543210)
+  // Customer: Debasish Ghosh (9876543210, customer@example.com)
   const customerUser = await prisma.user.upsert({
     where: { phone: '9876543210' },
     update: {
+      email: 'customer@example.com',
       role: UserRole.CUSTOMER,
       status: UserStatus.ACTIVE,
+      passwordHash: passwordHash,
     },
     create: {
       phone: '9876543210',
+      email: 'customer@example.com',
       role: UserRole.CUSTOMER,
       status: UserStatus.ACTIVE,
+      passwordHash: passwordHash,
     },
   });
 
@@ -170,17 +174,21 @@ async function main() {
     });
   }
 
-  // Customer 2: Rina Sen (9876543211) for Demo Scenario 2
+  // Customer 2: Rina Sen (9876543211, customer2@example.com) for Demo Scenario 2
   const customer2 = await prisma.user.upsert({
     where: { phone: '9876543211' },
     update: {
+      email: 'customer2@example.com',
       role: UserRole.CUSTOMER,
       status: UserStatus.ACTIVE,
+      passwordHash: passwordHash,
     },
     create: {
       phone: '9876543211',
+      email: 'customer2@example.com',
       role: UserRole.CUSTOMER,
       status: UserStatus.ACTIVE,
+      passwordHash: passwordHash,
     },
   });
 
@@ -655,7 +663,7 @@ async function main() {
     console.log('Medicines: 6 demo medicines catalogue seeded.');
     console.log('Inventory: Balances & Opening stock movements verified.');
     console.log('Demo Accounts:');
-    console.log('  - CUSTOMER:         Phone: 9876543210, Mock OTP: 123456');
+    console.log('  - CUSTOMER:         Email: customer@example.com, Pass: DemoPassword123! (Phone: 9876543210, Mock OTP: 123456)');
     console.log('  - PHARMACIST:       Email: pharmacist@example.com, Pass: DemoPassword123!');
     console.log('  - ADMIN:            Email: admin@example.com, Pass: DemoPassword123!');
     console.log('  - COMPLIANCE_ADMIN: Email: compliance@example.com, Pass: DemoPassword123!');

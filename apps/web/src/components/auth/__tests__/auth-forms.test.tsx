@@ -4,16 +4,19 @@ import * as React from 'react';
 import { PhoneLoginForm } from '../PhoneLoginForm';
 import { OtpVerificationForm } from '../OtpVerificationForm';
 import { StaffLoginForm } from '../StaffLoginForm';
+import { CustomerEmailLoginForm } from '../CustomerEmailLoginForm';
 
 // Mock Auth Context
 const mockRequestCustomerOtp = vi.fn();
 const mockVerifyCustomerOtp = vi.fn();
+const mockLoginCustomer = vi.fn();
 const mockLoginStaff = vi.fn();
 
 vi.mock('@/lib/auth/auth-context', () => ({
   useAuth: () => ({
     requestCustomerOtp: mockRequestCustomerOtp,
     verifyCustomerOtp: mockVerifyCustomerOtp,
+    loginCustomer: mockLoginCustomer,
     loginStaff: mockLoginStaff,
     user: null,
     loading: false,
@@ -145,6 +148,71 @@ describe('Frontend Auth Forms', () => {
       fireEvent.click(submitButton);
 
       expect(screen.getByText(/valid email address/i)).toBeDefined();
+    });
+  });
+
+  describe('CustomerEmailLoginForm', () => {
+    it('should validate email format and toggle password visibility', () => {
+      const { container } = render(<CustomerEmailLoginForm />);
+
+      const emailInput = container.querySelector('#customer-email') as HTMLInputElement;
+      const passwordInput = container.querySelector('#customer-password') as HTMLInputElement;
+      const toggleButton = screen.getByLabelText(/show password/i);
+
+      expect(passwordInput.getAttribute('type')).toBe('password');
+      fireEvent.click(toggleButton);
+      expect(passwordInput.getAttribute('type')).toBe('text');
+
+      fireEvent.change(emailInput, { target: { value: 'not-an-email' } });
+      fireEvent.change(passwordInput, { target: { value: 'password123' } });
+
+      const submitButton = screen.getByRole('button', { name: /sign in/i });
+      fireEvent.click(submitButton);
+
+      expect(screen.getByText(/valid email address/i)).toBeDefined();
+    });
+
+    it('should auto-fill demo credentials and authenticate successfully', async () => {
+      const onSuccess = vi.fn();
+      mockLoginCustomer.mockResolvedValueOnce({
+        id: 'cust-1',
+        role: 'CUSTOMER',
+      });
+
+      const { container } = render(<CustomerEmailLoginForm onSuccess={onSuccess} />);
+
+      const autoFillBtn = screen.getByRole('button', { name: /auto-fill demo customer/i });
+      fireEvent.click(autoFillBtn);
+
+      const emailInput = container.querySelector('#customer-email') as HTMLInputElement;
+      const passwordInput = container.querySelector('#customer-password') as HTMLInputElement;
+
+      expect(emailInput.value).toBe('customer@example.com');
+      expect(passwordInput.value).toBe('DemoPassword123!');
+
+      const submitButton = screen.getByRole('button', { name: /sign in/i });
+      fireEvent.click(submitButton);
+
+      await waitFor(() => {
+        expect(mockLoginCustomer).toHaveBeenCalledWith('customer@example.com', 'DemoPassword123!');
+        expect(onSuccess).toHaveBeenCalled();
+      });
+    });
+
+    it('should display error message on login failure', async () => {
+      mockLoginCustomer.mockRejectedValueOnce(new Error('Invalid email or password.'));
+
+      render(<CustomerEmailLoginForm />);
+
+      const autoFillBtn = screen.getByRole('button', { name: /auto-fill demo customer/i });
+      fireEvent.click(autoFillBtn);
+
+      const submitButton = screen.getByRole('button', { name: /sign in/i });
+      fireEvent.click(submitButton);
+
+      await waitFor(() => {
+        expect(screen.getByText(/invalid email or password/i)).toBeDefined();
+      });
     });
   });
 });

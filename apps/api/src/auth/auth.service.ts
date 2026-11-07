@@ -180,6 +180,79 @@ export class AuthService {
   }
 
   /**
+   * Authenticate customer using email and password.
+   */
+  async customerLogin(
+    email: string,
+    pass: string,
+    ipAddress?: string,
+  ): Promise<{ user: FormattedUserResponse; accessToken: string; refreshToken: string }> {
+    const normalizedEmail = normalizeEmail(email);
+    const user = await this.usersService.findByEmail(normalizedEmail);
+
+    // Reject if account not found, or is NOT customer, or has no password hash
+    if (!user || user.role !== UserRole.CUSTOMER || !user.passwordHash) {
+      await this.auditService.record({
+        action: 'LOGIN_FAILED',
+        resourceType: 'User',
+        metadata: { email: normalizedEmail, reason: 'INVALID_CREDENTIALS' },
+        ipAddress,
+      });
+      throw new UnauthorizedException('Invalid email or password.');
+    }
+
+    // Verify password with Argon2id
+    const isPasswordValid = await argon2.verify(user.passwordHash, pass);
+    if (!isPasswordValid) {
+      await this.auditService.record({
+        actorUserId: user.id,
+        action: 'LOGIN_FAILED',
+        resourceType: 'User',
+        resourceId: user.id,
+        metadata: { email: normalizedEmail, reason: 'INVALID_PASSWORD' },
+        ipAddress,
+      });
+      throw new UnauthorizedException('Invalid email or password.');
+    }
+
+    // Check account status
+    if (user.status !== UserStatus.ACTIVE) {
+      await this.auditService.record({
+        actorUserId: user.id,
+        action: 'LOGIN_FAILED',
+        resourceType: 'User',
+        resourceId: user.id,
+        metadata: { email: normalizedEmail, reason: 'ACCOUNT_NOT_ACTIVE', status: user.status },
+        ipAddress,
+      });
+      throw new ForbiddenException('Your account is not active. Please contact support.');
+    }
+
+    // Create session & tokens
+    const { session, refreshToken } = await this.sessionService.createSession(user.id);
+    const accessToken = await this.tokenService.signAccessToken({
+      sub: user.id,
+      role: user.role,
+      sessionId: session.id,
+    });
+
+    await this.auditService.record({
+      actorUserId: user.id,
+      action: 'LOGIN_SUCCESS',
+      resourceType: 'AuthSession',
+      resourceId: session.id,
+      metadata: { method: 'PASSWORD', role: user.role },
+      ipAddress,
+    });
+
+    return {
+      user: this.formatUser(user),
+      accessToken,
+      refreshToken,
+    };
+  }
+
+  /**
    * Rotate refresh token and issue new access token.
    */
   async refreshTokens(

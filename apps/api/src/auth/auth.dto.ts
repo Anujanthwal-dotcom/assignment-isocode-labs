@@ -54,3 +54,21 @@ export class StaffLoginDto {
   @IsString()
   password!: string;
 }
+
+export class CustomerLoginDto {
+  @ApiProperty({
+    description: 'Customer email address',
+    example: 'customer@example.com',
+  })
+  @IsNotEmpty({ message: 'Email is required' })
+  @IsEmail({}, { message: 'Please provide a valid email address' })
+  email!: string;
+
+  @ApiProperty({
+    description: 'Customer password',
+    example: 'DemoPassword123!',
+  })
+  @IsNotEmpty({ message: 'Password is required' })
+  @IsString()
+  password!: string;
+}

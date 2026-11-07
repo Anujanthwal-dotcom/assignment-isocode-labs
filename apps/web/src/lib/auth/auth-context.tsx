@@ -9,6 +9,7 @@ interface AuthContextType {
   loading: boolean;
   requestCustomerOtp: (phone: string) => Promise<RequestOtpResponse>;
   verifyCustomerOtp: (phone: string, otp: string) => Promise<CurrentUser>;
+  loginCustomer: (email: string, pass: string) => Promise<CurrentUser>;
   loginStaff: (email: string, pass: string) => Promise<CurrentUser>;
   logout: () => Promise<void>;
   refreshUser: () => Promise<CurrentUser | null>;
@@ -53,6 +54,15 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     return data;
   };
 
+  const loginCustomer = async (email: string, password: string): Promise<CurrentUser> => {
+    const data = await apiFetch<CurrentUser>('/auth/customer/login', {
+      method: 'POST',
+      body: JSON.stringify({ email, password }),
+    });
+    setUser(data);
+    return data;
+  };
+
   const loginStaff = async (email: string, password: string): Promise<CurrentUser> => {
     const data = await apiFetch<CurrentUser>('/auth/staff/login', {
       method: 'POST',
@@ -79,6 +89,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         loading,
         requestCustomerOtp,
         verifyCustomerOtp,
+        loginCustomer,
         loginStaff,
         logout,
         refreshUser,
