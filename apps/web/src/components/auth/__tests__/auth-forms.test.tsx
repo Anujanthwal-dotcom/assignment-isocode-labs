@@ -172,7 +172,7 @@ describe('Frontend Auth Forms', () => {
       expect(screen.getByText(/valid email address/i)).toBeDefined();
     });
 
-    it('should auto-fill demo credentials and authenticate successfully', async () => {
+    it('should submit credentials and authenticate successfully', async () => {
       const onSuccess = vi.fn();
       mockLoginCustomer.mockResolvedValueOnce({
         id: 'cust-1',
@@ -181,20 +181,17 @@ describe('Frontend Auth Forms', () => {
 
       const { container } = render(<CustomerEmailLoginForm onSuccess={onSuccess} />);
 
-      const autoFillBtn = screen.getByRole('button', { name: /auto-fill demo customer/i });
-      fireEvent.click(autoFillBtn);
-
       const emailInput = container.querySelector('#customer-email') as HTMLInputElement;
       const passwordInput = container.querySelector('#customer-password') as HTMLInputElement;
 
-      expect(emailInput.value).toBe('customer@example.com');
-      expect(passwordInput.value).toBe('DemoPassword123!');
+      fireEvent.change(emailInput, { target: { value: 'user@example.com' } });
+      fireEvent.change(passwordInput, { target: { value: 'SecretPassword123!' } });
 
       const submitButton = screen.getByRole('button', { name: /sign in/i });
       fireEvent.click(submitButton);
 
       await waitFor(() => {
-        expect(mockLoginCustomer).toHaveBeenCalledWith('customer@example.com', 'DemoPassword123!');
+        expect(mockLoginCustomer).toHaveBeenCalledWith('user@example.com', 'SecretPassword123!');
         expect(onSuccess).toHaveBeenCalled();
       });
     });
@@ -202,10 +199,13 @@ describe('Frontend Auth Forms', () => {
     it('should display error message on login failure', async () => {
       mockLoginCustomer.mockRejectedValueOnce(new Error('Invalid email or password.'));
 
-      render(<CustomerEmailLoginForm />);
+      const { container } = render(<CustomerEmailLoginForm />);
 
-      const autoFillBtn = screen.getByRole('button', { name: /auto-fill demo customer/i });
-      fireEvent.click(autoFillBtn);
+      const emailInput = container.querySelector('#customer-email') as HTMLInputElement;
+      const passwordInput = container.querySelector('#customer-password') as HTMLInputElement;
+
+      fireEvent.change(emailInput, { target: { value: 'user@example.com' } });
+      fireEvent.change(passwordInput, { target: { value: 'WrongPassword!' } });
 
       const submitButton = screen.getByRole('button', { name: /sign in/i });
       fireEvent.click(submitButton);

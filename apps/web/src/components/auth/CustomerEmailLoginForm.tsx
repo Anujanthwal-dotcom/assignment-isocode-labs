@@ -22,12 +22,6 @@ export const CustomerEmailLoginForm: React.FC<CustomerEmailLoginFormProps> = ({ 
   const [error, setError] = React.useState<string | null>(null);
   const [loading, setLoading] = React.useState(false);
 
-  const fillDemoCredentials = () => {
-    setEmail('customer@example.com');
-    setPassword('DemoPassword123!');
-    setError(null);
-  };
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
@@ -71,7 +65,7 @@ export const CustomerEmailLoginForm: React.FC<CustomerEmailLoginFormProps> = ({ 
           <Input
             id="customer-email"
             type="email"
-            placeholder="customer@example.com"
+            placeholder="name@example.com"
             value={email}
             onChange={(e) => {
               setEmail(e.target.value);
@@ -122,17 +116,6 @@ export const CustomerEmailLoginForm: React.FC<CustomerEmailLoginFormProps> = ({ 
       >
         {loading ? 'Signing In...' : 'Sign In'}
       </Button>
-
-      {/* Demo Credentials Helper */}
-      <div className="pt-2 text-center">
-        <button
-          type="button"
-          onClick={fillDemoCredentials}
-          className="text-xs text-emerald-600 hover:text-emerald-700 underline font-medium"
-        >
-          Auto-fill Demo Customer (customer@example.com)
-        </button>
-      </div>
     </form>
   );
 };

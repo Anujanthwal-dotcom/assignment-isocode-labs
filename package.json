@@ -20,7 +20,8 @@
     "format:check": "prettier --check \"**/*.{ts,tsx,js,jsx,json,md,yml,yaml}\"",
     "infra:up": "docker compose --env-file .env -f infrastructure/docker/docker-compose.yml up -d",
     "infra:down": "docker compose --env-file .env -f infrastructure/docker/docker-compose.yml down",
-    "infra:logs": "docker compose --env-file .env -f infrastructure/docker/docker-compose.yml logs -f"
+    "infra:logs": "docker compose --env-file .env -f infrastructure/docker/docker-compose.yml logs -f",
+    "db:seed": "pnpm --filter @pharmacy/api prisma db seed"
   },
   "devDependencies": {
     "concurrently": "^9.2.5",

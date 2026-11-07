@@ -14,9 +14,7 @@ export default function AdminPortalLayout({ children }: { children: React.ReactN
   return (
     <AdminGuard>
       {isLoginPage ? (
-        <main className="min-h-screen bg-slate-50 flex items-center justify-center p-4">
-          {children}
-        </main>
+        <>{children}</>
       ) : (
         <div className="min-h-screen bg-[#F7F9F7] text-[#24332E]">
           <AdminSidebar

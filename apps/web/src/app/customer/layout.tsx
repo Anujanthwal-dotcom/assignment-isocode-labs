@@ -13,9 +13,7 @@ export default function CustomerPortalLayout({ children }: { children: React.Rea
   return (
     <CustomerGuard>
       {isLoginPage ? (
-        <main className="min-h-screen bg-slate-50 flex items-center justify-center p-4">
-          {children}
-        </main>
+        <>{children}</>
       ) : (
         <div className="min-h-screen bg-[#F7F9F7] text-[#24332E] flex flex-col">
           <CustomerNavbar />
