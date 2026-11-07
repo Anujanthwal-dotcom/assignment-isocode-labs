@@ -10,8 +10,8 @@ This guide walks through the 5 core end-to-end scenarios to demonstrate the comp
 
 | Role                 | Identifier                      | Credential         | Notes                               |
 | -------------------- | ------------------------------- | ------------------ | ----------------------------------- |
-| **Customer 1**       | Phone: `9876543210`             | OTP: `123456`      | Debasish Ghosh (Salt Lake, Kolkata) |
-| **Customer 2**       | Phone: `9876543211`             | OTP: `123456`      | Rina Sen (Howrah Maidan)            |
+| **Customer 1**       | Email: `customer@example.com`   | `DemoPassword123!` | Debasish Ghosh (Salt Lake, Kolkata) |
+| **Customer 2**       | Email: `customer2@example.com`  | `DemoPassword123!` | Rina Sen (Howrah Maidan)            |
 | **Pharmacist**       | Email: `pharmacist@example.com` | `DemoPassword123!` | Licensed Pharmacist (Store KOL-001) |
 | **Admin**            | Email: `admin@example.com`      | `DemoPassword123!` | Platform Operations Administrator   |
 | **Compliance Admin** | Email: `compliance@example.com` | `DemoPassword123!` | Regulatory Compliance Officer       |
@@ -30,7 +30,7 @@ This guide walks through the 5 core end-to-end scenarios to demonstrate the comp
 
 1. **Customer Login**:
    - Navigate to `http://localhost:3000/customer/login`.
-   - Enter phone `9876543210`, submit, and enter OTP `123456`.
+   - Enter email `customer@example.com` and password `DemoPassword123!`.
 2. **Browse & Add to Cart**:
    - Navigate to `http://localhost:3000/customer/medicines`.
    - Search for `Metformin 500 mg` (Schedule H item).

@@ -19,13 +19,13 @@ The platform has completed comprehensive testing, hardening, and demonstration a
 ## 2. Technology Stack
 
 - **Monorepo Manager**: [pnpm Workspaces](https://pnpm.io/workspaces) (v12+)
-- **Frontend**: [Next.js 15](https://nextjs.org/) (App Router), [React 19](https://react.dev/), [Tailwind CSS v4](https://tailwindcss.com/), Lucide Icons
-- **Backend**: [NestJS 11](https://nestjs.com/), REST API, [Swagger/OpenAPI](https://swagger.io/)
+- **Frontend**: [Next.js 16](https://nextjs.org/) (Turbopack, App Router), [React 19](https://react.dev/), [Tailwind CSS v4](https://tailwindcss.com/), Lucide Icons
+- **Backend**: [NestJS 12](https://nestjs.com/), REST API, [Swagger/OpenAPI](https://swagger.io/)
 - **ORM & Database**: [Prisma ORM 6](https://www.prisma.io/), [PostgreSQL 16](https://www.postgresql.org/)
 - **Cache & Async Queues**: [Redis 7](https://redis.io/) (`ioredis`), [BullMQ](https://bullmq.io/)
 - **Storage**: [MinIO](https://min.io/) (S3-compatible private object storage with signed URLs)
 - **Email Testing**: [Mailpit](https://github.com/axllent/mailpit)
-- **Testing & Tooling**: [Vitest 5](https://vitest.dev/), Supertest, React Testing Library, ESLint, Prettier
+- **Testing & Tooling**: [Vitest 5](https://vitest.dev/), Supertest, React Testing Library, [Oxlint](https://oxc.rs/docs/guide/usage/linter.html), Prettier
 
 ---
 
@@ -35,8 +35,8 @@ The platform has completed comprehensive testing, hardening, and demonstration a
 pharmacy-platform/
 │
 ├── apps/
-│   ├── web/                     # Next.js 15 frontend application (port 3000)
-│   └── api/                     # NestJS 11 backend API service (port 3001)
+│   ├── web/                     # Next.js 16 frontend application (port 3000)
+│   └── api/                     # NestJS 12 backend API service (port 3001)
 │
 ├── packages/
 │   ├── shared-types/            # Shared TypeScript domain contracts & DTOs
@@ -84,7 +84,7 @@ pnpm infra:up
 
 # 4. Run Prisma database migrations and seed baseline data
 pnpm --filter @pharmacy/api prisma:migrate:dev
-pnpm --filter @pharmacy/api prisma:seed
+pnpm db:seed
 
 # 5. Start development servers
 pnpm dev
@@ -96,13 +96,15 @@ pnpm dev
 
 ### Demo Accounts
 
-| Role           | Portal URL          | Login Identifier                | Credential         | Details                       |
-| -------------- | ------------------- | ------------------------------- | ------------------ | ----------------------------- |
-| **Customer**   | `/customer/login`   | Phone: `9876543210`             | OTP: `123456`      | Debasish Ghosh (Salt Lake)    |
-| **Customer 2** | `/customer/login`   | Phone: `9876543211`             | OTP: `123456`      | Rina Sen (Howrah Maidan)      |
-| **Pharmacist** | `/pharmacist/login` | Email: `pharmacist@example.com` | `DemoPassword123!` | Store `KOL-001` Pharmacist    |
-| **Admin**      | `/admin/login`      | Email: `admin@example.com`      | `DemoPassword123!` | Operations Admin              |
-| **Compliance** | `/admin/login`      | Email: `compliance@example.com` | `DemoPassword123!` | Regulatory Compliance Officer |
+All portals feature uniform, deterministic demo credentials:
+
+| Role | Portal URL | Login Email | Password | Details |
+|---|---|---|---|---|
+| **Customer** | `/customer/login` | `customer@example.com` | `DemoPassword123!` | Debasish Ghosh (Salt Lake) |
+| **Customer 2** | `/customer/login` | `customer2@example.com` | `DemoPassword123!` | Rina Sen (Howrah Maidan) |
+| **Pharmacist** | `/pharmacist/login` | `pharmacist@example.com` | `DemoPassword123!` | Store `KOL-001` Pharmacist |
+| **Admin** | `/admin/login` | `admin@example.com` | `DemoPassword123!` | Operations Admin |
+| **Compliance** | `/admin/login` | `compliance@example.com` | `DemoPassword123!` | Regulatory Compliance Officer |
 
 ### Demo Stores
 
@@ -110,7 +112,7 @@ pnpm dev
 - **`HOW-001`**: Howrah Maidan Store, Howrah (Lat: `22.5958`, Lng: `88.3248`)
 - **`SOU-001`**: Jadavpur Store, Kolkata South (Lat: `22.4988`, Lng: `88.3712`)
 
-_For a full step-by-step walkthrough of Demos 1–5, see [docs/demo-guide.md](file:///home/anuj/Desktop/assignment-isocode/docs/demo-guide.md)._
+_For a full step-by-step walkthrough of Demos 1–5, see [docs/demo-guide.md](docs/demo-guide.md)._
 
 ---
 
@@ -119,14 +121,15 @@ _For a full step-by-step walkthrough of Demos 1–5, see [docs/demo-guide.md](fi
 | Command                 | Description                                                          |
 | ----------------------- | -------------------------------------------------------------------- |
 | `pnpm test`             | Runs the full test suite across packages, frontend, and backend      |
-| `pnpm test:unit`        | Runs all 37 unit test files (185 tests)                              |
+| `pnpm test:unit`        | Runs all unit test files (192 tests)                                 |
 | `pnpm test:integration` | Runs all 8 end-to-end integration test suites (85 tests)             |
 | `pnpm test:e2e`         | Alias for integration/E2E test suite                                 |
 | `pnpm test:coverage`    | Generates V8 code coverage report                                    |
-| `pnpm lint`             | Runs ESLint checks across backend and frontend                       |
+| `pnpm lint`             | Runs Oxlint checks across backend and frontend (~70ms)               |
 | `pnpm typecheck`        | Validates TypeScript types across packages and apps (`tsc --noEmit`) |
 | `pnpm build`            | Compiles and builds production bundles for Next.js and NestJS        |
 | `pnpm format:check`     | Verifies code style compliance using Prettier                        |
+| `pnpm db:seed`          | Seeds demo stores, catalogue, and accounts into PostgreSQL           |
 
 ---
 
