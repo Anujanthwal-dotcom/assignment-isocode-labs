@@ -68,7 +68,7 @@ export default function AdminH1RegisterPage() {
 
   return (
     <div className="flex-1 p-6 max-w-7xl w-full mx-auto space-y-6">
-      <div className="pb-2 border-b border-[#EAE8F0] flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+      <div className="pb-2 border-b border-[#EBECEF] flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold text-[#14161A] tracking-tight">
             Platform Schedule H1 Drug Register
@@ -88,7 +88,7 @@ export default function AdminH1RegisterPage() {
             placeholder="Search by patient, prescriber, medicine or store..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full px-3 py-2 border border-[#EAE8F0] rounded-xl text-xs bg-white focus:outline-none focus:ring-2 focus:ring-[#6240E8]/20 focus:border-[#6240E8]"
+            className="w-full px-3 py-2 border border-[#EBECEF] rounded-xl text-xs bg-white focus:outline-none focus:ring-2 focus:ring-[#0D5C5A]/20 focus:border-[#0D5C5A]"
           />
         </div>
         {stores.length > 0 && (
@@ -97,7 +97,7 @@ export default function AdminH1RegisterPage() {
             <select
               value={selectedStoreId}
               onChange={(e) => setSelectedStoreId(e.target.value)}
-              className="px-3 py-2 border border-[#EAE8F0] rounded-xl text-xs bg-white focus:outline-none focus:ring-2 focus:ring-[#6240E8]/20 focus:border-[#6240E8]"
+              className="px-3 py-2 border border-[#EBECEF] rounded-xl text-xs bg-white focus:outline-none focus:ring-2 focus:ring-[#0D5C5A]/20 focus:border-[#0D5C5A]"
             >
               <option value="">All Fulfillment Stores</option>
               {stores.map((s) => (
@@ -111,7 +111,7 @@ export default function AdminH1RegisterPage() {
       </div>
 
       {/* Table Container */}
-      <div className="bg-white rounded-2xl border border-[#EAE8F0] shadow-xs overflow-hidden">
+      <div className="bg-white rounded-2xl border border-[#EBECEF] shadow-xs overflow-hidden">
         {loading ? (
           <div className="p-12 text-center text-xs text-[#78879A]">
             Loading Schedule H1 statutory records...
@@ -128,7 +128,7 @@ export default function AdminH1RegisterPage() {
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-left text-xs">
-              <thead className="bg-[#F8F9FB] border-b border-[#EAE8F0] text-[#78879A] uppercase tracking-wider text-[10px]">
+              <thead className="bg-[#F8F9FB] border-b border-[#EBECEF] text-[#78879A] uppercase tracking-wider text-[10px]">
                 <tr>
                   <th className="py-3 px-4">Date &amp; Time</th>
                   <th className="py-3 px-4">Store</th>
@@ -140,7 +140,7 @@ export default function AdminH1RegisterPage() {
                   <th className="py-3 px-4">Status</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-[#EAE8F0] text-[#14161A]">
+              <tbody className="divide-y divide-[#EBECEF] text-[#14161A]">
                 {filteredEntries.map((row) => (
                   <tr key={row.id} className="hover:bg-[#F8F9FB]/50">
                     <td className="py-3 px-4 font-mono text-[11px] text-[#78879A]">
@@ -162,7 +162,7 @@ export default function AdminH1RegisterPage() {
                         </div>
                       )}
                     </td>
-                    <td className="py-3 px-4 font-bold text-[#6240E8]">{row.medicineName}</td>
+                    <td className="py-3 px-4 font-bold text-[#0D5C5A]">{row.medicineName}</td>
                     <td className="py-3 px-4 font-bold">{row.quantity} units</td>
                     <td className="py-3 px-4 text-[#78879A]">{row.pharmacistEmail}</td>
                     <td className="py-3 px-4">

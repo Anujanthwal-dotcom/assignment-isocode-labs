@@ -137,9 +137,9 @@ export default function CustomerPrescriptionsPage() {
   return (
     <div className="max-w-[950px] mx-auto space-y-6">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-2 border-b border-[#EAE8F0]">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-2 border-b border-[#EBECEF]">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight text-[#351F65]">Prescriptions</h1>
+          <h1 className="text-2xl font-bold tracking-tight text-[#0F172A]">Prescriptions</h1>
           <p className="text-sm text-[#78879A] mt-1">
             Securely uploaded medical prescriptions stored privately for you and your family.
           </p>
@@ -150,19 +150,19 @@ export default function CustomerPrescriptionsPage() {
             setUploadError(null);
             setIsUploadOpen(true);
           }}
-          className="text-xs bg-[#6240E8] text-white hover:bg-[#5233D0]"
+          className="text-xs bg-[#0D5C5A] text-white hover:bg-[#0A4846]"
         >
           Upload Prescription
         </Button>
       </div>
 
       {/* Compliance Notice */}
-      <div className="rounded-xl border border-[#D6D1F7] bg-[#F7F5FD] p-4 flex items-start gap-3">
-        <span className="font-bold text-[11px] uppercase px-1.5 py-0.5 rounded bg-[#6240E8]/10 text-[#6240E8]">
+      <div className="rounded-xl border border-[#EBECEF] bg-[#F0FDFA] p-4 flex items-start gap-3">
+        <span className="font-bold text-[11px] uppercase px-1.5 py-0.5 rounded bg-[#0D5C5A]/10 text-[#0D5C5A]">
           INFO
         </span>
-        <div className="text-xs text-[#351F65] leading-relaxed">
-          <span className="font-semibold block text-[#6240E8] mb-0.5">
+        <div className="text-xs text-[#0F172A] leading-relaxed">
+          <span className="font-semibold block text-[#0D5C5A] mb-0.5">
             Prescription Verification Process
           </span>
           Uploaded prescriptions remain in status{' '}
@@ -181,7 +181,7 @@ export default function CustomerPrescriptionsPage() {
           <p className="text-sm text-red-700 font-medium">{error}</p>
         </Card>
       ) : prescriptions.length === 0 ? (
-        <Card className="p-12 border-[#EAE8F0] bg-white text-center">
+        <Card className="p-12 border-[#EBECEF] bg-white text-center">
           <h3 className="text-base font-semibold text-slate-800">No Prescriptions Uploaded</h3>
           <p className="text-xs text-slate-500 mt-1 max-w-sm mx-auto">
             Upload your doctor&apos;s prescription (JPEG, PNG, or PDF up to 10 MB) to conveniently
@@ -190,7 +190,7 @@ export default function CustomerPrescriptionsPage() {
           <Button
             size="sm"
             onClick={() => setIsUploadOpen(true)}
-            className="mt-4 text-xs bg-[#6240E8] text-white"
+            className="mt-4 text-xs bg-[#0D5C5A] text-white"
           >
             Upload Prescription
           </Button>
@@ -200,13 +200,13 @@ export default function CustomerPrescriptionsPage() {
           {prescriptions.map((rx) => (
             <Card
               key={rx.id}
-              className="border-[#EAE8F0] bg-white hover:border-[#6240E8]/40 transition-all p-5 flex flex-col justify-between"
+              className="border-[#EBECEF] bg-white hover:border-[#0D5C5A]/40 transition-all p-5 flex flex-col justify-between"
             >
               <div className="space-y-3">
                 <div className="flex items-start justify-between gap-2">
                   <div>
                     <h3
-                      className="font-bold text-sm text-[#351F65] truncate max-w-[200px]"
+                      className="font-bold text-sm text-[#0F172A] truncate max-w-[200px]"
                       title={rx.originalFileName}
                     >
                       {rx.originalFileName}
@@ -251,7 +251,7 @@ export default function CustomerPrescriptionsPage() {
                   <Button
                     variant="outline"
                     size="sm"
-                    className="text-xs h-8 px-2.5 text-purple-700 bg-purple-50/70 border-purple-200 hover:bg-purple-100"
+                    className="text-xs h-8 px-2.5 text-[#0D5C5A] bg-[#F0FDFA] border-[#EBECEF] hover:bg-[#CCFBF1]"
                   >
                     AI Draft
                   </Button>
@@ -261,7 +261,7 @@ export default function CustomerPrescriptionsPage() {
                     variant="outline"
                     size="sm"
                     onClick={() => handlePreview(rx.id, rx.originalFileName, rx.mimeType)}
-                    className="text-xs h-8 px-2.5 text-[#6240E8] border-[#6240E8]/30 hover:bg-[#F7F5FD]"
+                    className="text-xs h-8 px-2.5 text-[#0D5C5A] border-[#0D5C5A]/30 hover:bg-[#F0FDFA]"
                   >
                     Preview
                   </Button>
@@ -284,7 +284,7 @@ export default function CustomerPrescriptionsPage() {
       <Dialog open={isUploadOpen} onOpenChange={setIsUploadOpen}>
         <DialogContent className="sm:max-w-[480px]">
           <DialogHeader>
-            <DialogTitle className="text-lg font-bold text-[#351F65]">
+            <DialogTitle className="text-lg font-bold text-[#0F172A]">
               Upload Doctor&apos;s Prescription
             </DialogTitle>
           </DialogHeader>
@@ -306,7 +306,7 @@ export default function CustomerPrescriptionsPage() {
               <select
                 value={familyMemberId}
                 onChange={(e) => setFamilyMemberId(e.target.value)}
-                className="w-full h-10 px-3 rounded-lg border border-slate-300 bg-white text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#6240E8]"
+                className="w-full h-10 px-3 rounded-lg border border-slate-300 bg-white text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#0D5C5A]"
               >
                 <option value="">Self (Account Owner)</option>
                 {familyMembers.map((m) => (
@@ -321,7 +321,7 @@ export default function CustomerPrescriptionsPage() {
               <label className="text-xs font-semibold text-slate-700">
                 Prescription File (JPEG, PNG, PDF up to 10 MB) *
               </label>
-              <div className="border-2 border-dashed border-slate-300 rounded-xl p-6 text-center hover:border-[#6240E8] transition-colors bg-slate-50/50">
+              <div className="border-2 border-dashed border-slate-300 rounded-xl p-6 text-center hover:border-[#0D5C5A] transition-colors bg-slate-50/50">
                 <input
                   type="file"
                   id="prescriptionFileInput"
@@ -333,7 +333,7 @@ export default function CustomerPrescriptionsPage() {
                   htmlFor="prescriptionFileInput"
                   className="cursor-pointer flex flex-col items-center justify-center space-y-2"
                 >
-                  <span className="text-xs font-semibold text-[#6240E8]">
+                  <span className="text-xs font-semibold text-[#0D5C5A]">
                     {selectedFile ? selectedFile.name : 'Click to select prescription file'}
                   </span>
                   <span className="text-[11px] text-slate-400">
@@ -353,7 +353,7 @@ export default function CustomerPrescriptionsPage() {
                 </div>
                 <div className="w-full bg-slate-100 rounded-full h-1.5 overflow-hidden">
                   <div
-                    className="bg-[#6240E8] h-1.5 transition-all duration-300"
+                    className="bg-[#0D5C5A] h-1.5 transition-all duration-300"
                     style={{ width: `${uploadProgress}%` }}
                   />
                 </div>
@@ -364,7 +364,7 @@ export default function CustomerPrescriptionsPage() {
               <Button
                 type="submit"
                 disabled={uploading || !selectedFile}
-                className="w-full bg-[#6240E8] text-white hover:bg-[#5233D0] text-xs h-10 font-semibold"
+                className="w-full bg-[#0D5C5A] text-white hover:bg-[#0A4846] text-xs h-10 font-semibold"
               >
                 {uploading ? 'Securing & Uploading...' : 'Upload Prescription'}
               </Button>
@@ -377,7 +377,7 @@ export default function CustomerPrescriptionsPage() {
       <Dialog open={previewOpen} onOpenChange={setPreviewOpen}>
         <DialogContent className="sm:max-w-[700px] max-h-[85vh] flex flex-col">
           <DialogHeader>
-            <DialogTitle className="text-base font-bold text-[#351F65] truncate">
+            <DialogTitle className="text-base font-bold text-[#0F172A] truncate">
               Preview: {previewFileName}
             </DialogTitle>
           </DialogHeader>

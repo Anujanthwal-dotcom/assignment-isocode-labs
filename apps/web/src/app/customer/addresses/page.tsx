@@ -185,9 +185,9 @@ export default function CustomerAddressesPage() {
   return (
     <div className="max-w-[850px] mx-auto space-y-6">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-2 border-b border-[#EAE8F0]">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-2 border-b border-[#EBECEF]">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight text-[#351F65]">
+          <h1 className="text-2xl font-bold tracking-tight text-[#0F172A]">
             Saved Delivery Addresses
           </h1>
           <p className="text-sm text-[#78879A] mt-1">
@@ -196,7 +196,7 @@ export default function CustomerAddressesPage() {
         </div>
         <Button
           onClick={openAddDialog}
-          className="text-xs bg-[#6240E8] text-white hover:bg-[#5233D0]"
+          className="text-xs bg-[#0D5C5A] text-white hover:bg-[#0A4846]"
         >
           + Add New Address
         </Button>
@@ -210,7 +210,7 @@ export default function CustomerAddressesPage() {
           <p className="text-sm text-red-700 font-medium">{error}</p>
         </Card>
       ) : addresses.length === 0 ? (
-        <Card className="p-12 border-[#EAE8F0] bg-white text-center">
+        <Card className="p-12 border-[#EBECEF] bg-white text-center">
           <h3 className="text-base font-semibold text-slate-800">No Saved Addresses</h3>
           <p className="text-xs text-slate-500 mt-1 max-w-sm mx-auto">
             Save your delivery address for fast and seamless checkout across Kolkata and Howrah.
@@ -218,7 +218,7 @@ export default function CustomerAddressesPage() {
           <Button
             size="sm"
             onClick={openAddDialog}
-            className="mt-4 text-xs bg-[#6240E8] text-white"
+            className="mt-4 text-xs bg-[#0D5C5A] text-white"
           >
             + Add Address
           </Button>
@@ -230,16 +230,16 @@ export default function CustomerAddressesPage() {
               key={addr.id}
               className={`border transition-all p-5 flex flex-col justify-between ${
                 addr.isDefault
-                  ? 'border-[#6240E8] bg-[#FDFCFE] shadow-2xs'
-                  : 'border-[#EAE8F0] bg-white hover:border-slate-300'
+                  ? 'border-[#0D5C5A] bg-[#F8F9FA] shadow-2xs'
+                  : 'border-[#EBECEF] bg-white hover:border-slate-300'
               }`}
             >
               <div className="space-y-3">
                 <div className="flex items-start justify-between">
                   <div className="flex items-center gap-2">
-                    <span className="font-bold text-base text-[#351F65]">{addr.label}</span>
+                    <span className="font-bold text-base text-[#0F172A]">{addr.label}</span>
                     {addr.isDefault && (
-                      <Badge className="bg-[#6240E8] text-white text-[10px] font-semibold">
+                      <Badge className="bg-[#0D5C5A] text-white text-[10px] font-semibold">
                         Default
                       </Badge>
                     )}
@@ -270,7 +270,7 @@ export default function CustomerAddressesPage() {
                       variant="ghost"
                       size="sm"
                       onClick={() => handleSetDefault(addr.id)}
-                      className="text-xs h-8 px-2 text-[#6240E8] hover:bg-[#F7F5FD]"
+                      className="text-xs h-8 px-2 text-[#0D5C5A] hover:bg-[#F0FDFA]"
                     >
                       Set as Default
                     </Button>
@@ -304,7 +304,7 @@ export default function CustomerAddressesPage() {
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
         <DialogContent className="sm:max-w-[500px]">
           <DialogHeader>
-            <DialogTitle className="text-lg font-bold text-[#351F65]">
+            <DialogTitle className="text-lg font-bold text-[#0F172A]">
               {editingAddress ? 'Edit Delivery Address' : 'Add New Delivery Address'}
             </DialogTitle>
           </DialogHeader>
@@ -434,7 +434,7 @@ export default function CustomerAddressesPage() {
                 id="isDefaultAddr"
                 checked={isDefault}
                 onChange={(e) => setIsDefault(e.target.checked)}
-                className="h-4 w-4 rounded border-slate-300 text-[#6240E8] focus:ring-[#6240E8]"
+                className="h-4 w-4 rounded border-slate-300 text-[#0D5C5A] focus:ring-[#0D5C5A]"
               />
               <label
                 htmlFor="isDefaultAddr"
@@ -458,7 +458,7 @@ export default function CustomerAddressesPage() {
                 type="submit"
                 size="sm"
                 disabled={saving}
-                className="text-xs bg-[#6240E8] text-white hover:bg-[#5233D0]"
+                className="text-xs bg-[#0D5C5A] text-white hover:bg-[#0A4846]"
               >
                 {saving ? 'Saving...' : editingAddress ? 'Save Changes' : 'Save Address'}
               </Button>

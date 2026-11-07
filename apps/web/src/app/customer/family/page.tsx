@@ -131,9 +131,9 @@ export default function CustomerFamilyPage() {
   return (
     <div className="max-w-[850px] mx-auto space-y-6">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-2 border-b border-[#EAE8F0]">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-2 border-b border-[#EBECEF]">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight text-[#351F65]">Family Profiles</h1>
+          <h1 className="text-2xl font-bold tracking-tight text-[#0F172A]">Family Profiles</h1>
           <p className="text-sm text-[#78879A] mt-1">
             Maintain profiles for relatives and dependents to easily associate prescriptions and
             orders.
@@ -141,7 +141,7 @@ export default function CustomerFamilyPage() {
         </div>
         <Button
           onClick={openAddDialog}
-          className="text-xs bg-[#6240E8] text-white hover:bg-[#5233D0]"
+          className="text-xs bg-[#0D5C5A] text-white hover:bg-[#0A4846]"
         >
           Add Family Member
         </Button>
@@ -155,7 +155,7 @@ export default function CustomerFamilyPage() {
           <p className="text-sm text-red-700 font-medium">{error}</p>
         </Card>
       ) : members.length === 0 ? (
-        <Card className="p-12 border-[#EAE8F0] bg-white text-center">
+        <Card className="p-12 border-[#EBECEF] bg-white text-center">
           <h3 className="text-base font-semibold text-slate-800">No Family Profiles Yet</h3>
           <p className="text-xs text-slate-500 mt-1 max-w-sm mx-auto">
             Add profiles for your parents, children, or spouse to order medicines and upload
@@ -164,7 +164,7 @@ export default function CustomerFamilyPage() {
           <Button
             size="sm"
             onClick={openAddDialog}
-            className="mt-4 text-xs bg-[#6240E8] text-white"
+            className="mt-4 text-xs bg-[#0D5C5A] text-white"
           >
             + Add First Profile
           </Button>
@@ -174,13 +174,13 @@ export default function CustomerFamilyPage() {
           {members.map((member) => (
             <Card
               key={member.id}
-              className="border-[#EAE8F0] bg-white hover:border-[#6240E8]/40 transition-all p-5 flex flex-col justify-between"
+              className="border-[#EBECEF] bg-white hover:border-[#0D5C5A]/40 transition-all p-5 flex flex-col justify-between"
             >
               <div className="space-y-3">
                 <div className="flex items-start justify-between">
                   <div>
-                    <h3 className="font-bold text-base text-[#351F65]">{member.fullName}</h3>
-                    <Badge variant="purple" className="text-[11px] font-semibold mt-0.5">
+                    <h3 className="font-bold text-base text-[#0F172A]">{member.fullName}</h3>
+                    <Badge variant="primary" className="text-[11px] font-semibold mt-0.5">
                       {member.relationship}
                     </Badge>
                   </div>
@@ -227,7 +227,7 @@ export default function CustomerFamilyPage() {
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
         <DialogContent className="sm:max-w-[450px]">
           <DialogHeader>
-            <DialogTitle className="text-lg font-bold text-[#351F65]">
+            <DialogTitle className="text-lg font-bold text-[#0F172A]">
               {editingMember ? 'Edit Family Member Profile' : 'Add Family Member Profile'}
             </DialogTitle>
           </DialogHeader>
@@ -258,7 +258,7 @@ export default function CustomerFamilyPage() {
               <select
                 value={relationship}
                 onChange={(e) => setRelationship(e.target.value as FamilyMemberRelationship)}
-                className="w-full h-10 px-3 rounded-lg border border-slate-300 bg-white text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#6240E8]"
+                className="w-full h-10 px-3 rounded-lg border border-slate-300 bg-white text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#0D5C5A]"
               >
                 {RELATIONSHIPS.map((rel) => (
                   <option key={rel.value} value={rel.value}>
@@ -298,7 +298,7 @@ export default function CustomerFamilyPage() {
                 type="submit"
                 size="sm"
                 disabled={saving}
-                className="text-xs bg-[#6240E8] text-white hover:bg-[#5233D0]"
+                className="text-xs bg-[#0D5C5A] text-white hover:bg-[#0A4846]"
               >
                 {saving ? 'Saving...' : editingMember ? 'Save Changes' : 'Create Profile'}
               </Button>

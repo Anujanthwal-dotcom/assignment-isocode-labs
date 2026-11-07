@@ -39,7 +39,7 @@ export function DataTable<T extends Record<string, unknown>>({
   return (
     <div
       className={cn(
-        'w-full overflow-hidden rounded-[12px] border border-[#EAE8F0] bg-white shadow-[0_4px_20px_rgba(53,31,101,0.03)]',
+        'w-full overflow-hidden rounded-[12px] border border-[#EBECEF] bg-white shadow-[0_4px_20px_rgba(53,31,101,0.03)]',
         className,
       )}
     >
@@ -73,7 +73,7 @@ export function DataTable<T extends Record<string, unknown>>({
                         variant="outline"
                         size="sm"
                         onClick={onRetry}
-                        className="mt-2 text-[#351F65]"
+                        className="mt-2 text-[#0F172A]"
                       >
                         Try again
                       </Button>

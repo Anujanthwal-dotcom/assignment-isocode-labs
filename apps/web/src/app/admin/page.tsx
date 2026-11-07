@@ -61,7 +61,7 @@ export default function AdminDashboardPage() {
                 Assigned Role
               </span>
               <div className="mt-1">
-                <StatusBadge status="purple" label={user?.role || 'ADMIN'} />
+                <StatusBadge status="information" label={user?.role || 'ADMIN'} />
               </div>
             </div>
 
@@ -79,7 +79,7 @@ export default function AdminDashboardPage() {
               <span className="text-xs text-slate-500 block uppercase font-medium">
                 Access Scope
               </span>
-              <span className="font-semibold text-indigo-900 text-sm mt-1 block">
+              <span className="font-semibold text-[#0F172A] text-sm mt-1 block">
                 {isComplianceAdmin
                   ? 'Regulatory Compliance & Audit'
                   : 'Full Chain Operations (46 Stores)'}
@@ -87,7 +87,7 @@ export default function AdminDashboardPage() {
             </div>
           </div>
 
-          <div className="p-3.5 bg-indigo-50 rounded-lg border border-indigo-200 text-xs text-indigo-900 leading-relaxed">
+          <div className="p-3.5 bg-[#EFF4FF] rounded-lg border border-[#BAE6FD] text-xs text-[#0F172A] leading-relaxed">
             <strong>Administrative &amp; Compliance Console:</strong> Administrator session verified
             with backend-enforced RBAC guards and append-only audit logging. Use the sidebar to
             manage cross-store inventory, CSV bulk imports, regulatory compliance rule sets, and

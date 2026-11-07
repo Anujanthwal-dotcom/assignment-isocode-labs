@@ -103,7 +103,7 @@ export default function HandoverWorkspacePage() {
   return (
     <div className="space-y-6 max-w-4xl mx-auto">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-3 border-b border-[#EAE8F0]">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-3 border-b border-[#EBECEF]">
         <div>
           <div className="flex items-center gap-2">
             <Link
@@ -125,7 +125,7 @@ export default function HandoverWorkspacePage() {
         {orderDetail?.hasInvoice && (
           <Link
             href={`/pharmacist/fulfilment/${orderId}`}
-            className="px-3 py-1.5 rounded-lg text-xs font-semibold border border-purple-200 text-[#6240E8] hover:bg-purple-50 inline-flex items-center gap-1.5 self-start sm:self-auto"
+            className="px-3 py-1.5 rounded-lg text-xs font-semibold border border-[#EBECEF] text-[#0D5C5A] hover:bg-[#F0FDFA] inline-flex items-center gap-1.5 self-start sm:self-auto"
           >
             <span>Invoice: {orderDetail.invoiceNumber}</span>
           </Link>
@@ -182,8 +182,8 @@ export default function HandoverWorkspacePage() {
               )}
             </div>
           ) : (
-            <div className="bg-white rounded-2xl border border-[#EAE8F0] p-6 shadow-xs space-y-5">
-              <h2 className="text-sm font-bold text-[#14161A] border-b border-[#EAE8F0] pb-3">
+            <div className="bg-white rounded-2xl border border-[#EBECEF] p-6 shadow-xs space-y-5">
+              <h2 className="text-sm font-bold text-[#14161A] border-b border-[#EBECEF] pb-3">
                 Record Handover Event
               </h2>
 
@@ -196,7 +196,7 @@ export default function HandoverWorkspacePage() {
                     <select
                       value={handoverType}
                       onChange={(e) => setHandoverType(e.target.value as any)}
-                      className="w-full p-2 border border-[#EAE8F0] rounded-xl text-xs bg-white focus:outline-none focus:ring-2 focus:ring-[#6240E8]/20 focus:border-[#6240E8]"
+                      className="w-full p-2 border border-[#EBECEF] rounded-xl text-xs bg-white focus:outline-none focus:ring-2 focus:ring-[#0D5C5A]/20 focus:border-[#0D5C5A]"
                     >
                       <option value="DELIVERY_PARTNER">Delivery Partner (Courier Driver)</option>
                       <option value="CUSTOMER_PICKUP">Customer Pickup (Counter Collection)</option>
@@ -213,7 +213,7 @@ export default function HandoverWorkspacePage() {
                       value={recipientName}
                       onChange={(e) => setRecipientName(e.target.value)}
                       placeholder="e.g. Raju Kumar (Shadowfax)"
-                      className="w-full p-2 border border-[#EAE8F0] rounded-xl text-xs bg-white focus:outline-none focus:ring-2 focus:ring-[#6240E8]/20 focus:border-[#6240E8]"
+                      className="w-full p-2 border border-[#EBECEF] rounded-xl text-xs bg-white focus:outline-none focus:ring-2 focus:ring-[#0D5C5A]/20 focus:border-[#0D5C5A]"
                     />
                   </div>
 
@@ -226,7 +226,7 @@ export default function HandoverWorkspacePage() {
                       value={recipientPhone}
                       onChange={(e) => setRecipientPhone(e.target.value)}
                       placeholder="9876543210"
-                      className="w-full p-2 border border-[#EAE8F0] rounded-xl text-xs bg-white focus:outline-none focus:ring-2 focus:ring-[#6240E8]/20 focus:border-[#6240E8]"
+                      className="w-full p-2 border border-[#EBECEF] rounded-xl text-xs bg-white focus:outline-none focus:ring-2 focus:ring-[#0D5C5A]/20 focus:border-[#0D5C5A]"
                     />
                   </div>
 
@@ -241,7 +241,7 @@ export default function HandoverWorkspacePage() {
                           value={deliveryPartnerName}
                           onChange={(e) => setDeliveryPartnerName(e.target.value)}
                           placeholder="e.g. Shadowfax, Dunzo, Bluedart"
-                          className="w-full p-2 border border-[#EAE8F0] rounded-xl text-xs bg-white focus:outline-none focus:ring-2 focus:ring-[#6240E8]/20 focus:border-[#6240E8]"
+                          className="w-full p-2 border border-[#EBECEF] rounded-xl text-xs bg-white focus:outline-none focus:ring-2 focus:ring-[#0D5C5A]/20 focus:border-[#0D5C5A]"
                         />
                       </div>
                       <div>
@@ -253,7 +253,7 @@ export default function HandoverWorkspacePage() {
                           value={referenceNumber}
                           onChange={(e) => setReferenceNumber(e.target.value)}
                           placeholder="AWB-883749"
-                          className="w-full p-2 border border-[#EAE8F0] rounded-xl text-xs bg-white focus:outline-none focus:ring-2 focus:ring-[#6240E8]/20 focus:border-[#6240E8]"
+                          className="w-full p-2 border border-[#EBECEF] rounded-xl text-xs bg-white focus:outline-none focus:ring-2 focus:ring-[#0D5C5A]/20 focus:border-[#0D5C5A]"
                         />
                       </div>
                     </>
@@ -269,7 +269,7 @@ export default function HandoverWorkspacePage() {
                     value={notes}
                     onChange={(e) => setNotes(e.target.value)}
                     placeholder="e.g. Handed over with cold chain gel pack..."
-                    className="w-full p-2 border border-[#EAE8F0] rounded-xl text-xs bg-white focus:outline-none focus:ring-2 focus:ring-[#6240E8]/20 focus:border-[#6240E8]"
+                    className="w-full p-2 border border-[#EBECEF] rounded-xl text-xs bg-white focus:outline-none focus:ring-2 focus:ring-[#0D5C5A]/20 focus:border-[#0D5C5A]"
                   />
                 </div>
 
@@ -277,7 +277,7 @@ export default function HandoverWorkspacePage() {
                   <button
                     type="submit"
                     disabled={handoverBusy}
-                    className="px-5 py-2 rounded-xl text-xs font-semibold bg-[#6240E8] text-white hover:bg-[#5232d4] disabled:opacity-50 shadow-xs flex items-center gap-1.5"
+                    className="px-5 py-2 rounded-xl text-xs font-semibold bg-[#0D5C5A] text-white hover:bg-[#0A4846] disabled:opacity-50 shadow-xs flex items-center gap-1.5"
                   >
                     <span>
                       {handoverBusy ? 'Dispensing Stock...' : 'Confirm Handover & Dispense Stock'}
@@ -290,8 +290,8 @@ export default function HandoverWorkspacePage() {
 
           {/* COD Payment Collection (For COD Orders) */}
           {isCod && (
-            <div className="bg-white rounded-2xl border border-[#EAE8F0] p-6 shadow-xs space-y-4">
-              <div className="flex items-center justify-between border-b border-[#EAE8F0] pb-3">
+            <div className="bg-white rounded-2xl border border-[#EBECEF] p-6 shadow-xs space-y-4">
+              <div className="flex items-center justify-between border-b border-[#EBECEF] pb-3">
                 <h2 className="text-sm font-bold text-[#14161A]">
                   Cash on Delivery (COD) Payment Collection
                 </h2>
@@ -330,7 +330,7 @@ export default function HandoverWorkspacePage() {
                         required
                         value={codAmount}
                         onChange={(e) => setCodAmount(parseFloat(e.target.value))}
-                        className="w-full p-2 border border-[#EAE8F0] rounded-xl text-xs bg-white focus:outline-none focus:ring-2 focus:ring-[#6240E8]/20 focus:border-[#6240E8] font-bold text-[#14161A]"
+                        className="w-full p-2 border border-[#EBECEF] rounded-xl text-xs bg-white focus:outline-none focus:ring-2 focus:ring-[#0D5C5A]/20 focus:border-[#0D5C5A] font-bold text-[#14161A]"
                       />
                     </div>
                     <div>
@@ -342,7 +342,7 @@ export default function HandoverWorkspacePage() {
                         value={codRef}
                         onChange={(e) => setCodRef(e.target.value)}
                         placeholder="e.g. CASH-REC-001"
-                        className="w-full p-2 border border-[#EAE8F0] rounded-xl text-xs bg-white focus:outline-none focus:ring-2 focus:ring-[#6240E8]/20 focus:border-[#6240E8]"
+                        className="w-full p-2 border border-[#EBECEF] rounded-xl text-xs bg-white focus:outline-none focus:ring-2 focus:ring-[#0D5C5A]/20 focus:border-[#0D5C5A]"
                       />
                     </div>
                   </div>

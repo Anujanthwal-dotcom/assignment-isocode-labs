@@ -147,10 +147,10 @@ export default function PrescriptionDetailPage() {
   return (
     <div className="max-w-[1050px] mx-auto space-y-6 pb-12">
       {/* Top Navigation */}
-      <div className="flex items-center justify-between pb-3 border-b border-[#EAE8F0]">
+      <div className="flex items-center justify-between pb-3 border-b border-[#EBECEF]">
         <Link
           href="/customer/prescriptions"
-          className="inline-flex items-center text-sm font-semibold text-[#6240E8] hover:underline"
+          className="inline-flex items-center text-sm font-semibold text-[#0D5C5A] hover:underline"
         >
           &larr; Back to Prescriptions
         </Link>
@@ -163,7 +163,7 @@ export default function PrescriptionDetailPage() {
           <div className="flex items-start justify-between">
             <div className="overflow-hidden">
               <h2
-                className="font-bold text-sm text-[#351F65] truncate"
+                className="font-bold text-sm text-[#0F172A] truncate"
                 title={prescription.originalFileName}
               >
                 {prescription.originalFileName}
@@ -213,7 +213,7 @@ export default function PrescriptionDetailPage() {
                     href={viewUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="mt-3 inline-flex items-center text-xs text-[#6240E8] font-semibold hover:underline"
+                    className="mt-3 inline-flex items-center text-xs text-[#0D5C5A] font-semibold hover:underline"
                   >
                     Open PDF in New Window &rarr;
                   </a>
@@ -238,13 +238,13 @@ export default function PrescriptionDetailPage() {
         {/* AI Assisted Reading Panel */}
         <div className="lg:col-span-2 space-y-4">
           {/* Prominent Legal Disclaimer Banner */}
-          <div className="p-3.5 bg-purple-50/80 border border-purple-200 rounded-xl text-purple-900 text-xs flex items-start gap-3">
-            <span className="font-bold text-[11px] uppercase px-1.5 py-0.5 rounded bg-purple-200 text-purple-950">
+          <div className="p-3.5 bg-[#F0FDFA] border border-[#EBECEF] rounded-xl text-[#0F172A] text-xs flex items-start gap-3">
+            <span className="font-bold text-[11px] uppercase px-1.5 py-0.5 rounded bg-[#99F6E4] text-[#0F172A]">
               LEGAL NOTICE
             </span>
             <div>
-              <p className="font-bold text-purple-950">Preliminary AI Reading Notice</p>
-              <p className="text-purple-800 mt-0.5 leading-relaxed">
+              <p className="font-bold text-[#0F172A]">Preliminary AI Reading Notice</p>
+              <p className="text-[#0D5C5A] mt-0.5 leading-relaxed">
                 AI extraction is a preliminary reading only. A registered pharmacist must review and
                 verify the prescription before any medicine can be dispensed. This draft does not
                 authorize dispensing or approve your order.
@@ -277,7 +277,7 @@ export default function PrescriptionDetailPage() {
               <Button
                 onClick={handleStartExtraction}
                 disabled={requesting}
-                className="bg-[#6240E8] hover:bg-[#5233D2] text-white text-xs h-9 px-5 shadow-sm"
+                className="bg-[#0D5C5A] hover:bg-[#5233D2] text-white text-xs h-9 px-5 shadow-sm"
               >
                 {requesting ? 'Starting...' : 'Start AI Reading'}
               </Button>
@@ -401,7 +401,7 @@ export default function PrescriptionDetailPage() {
                   </div>
                   <div className="flex items-center gap-2">
                     <span className="text-xs text-slate-500">Confidence:</span>
-                    <Badge className="bg-purple-100 text-purple-800 border-purple-200 text-xs font-semibold">
+                    <Badge className="bg-[#CCFBF1] text-[#0D5C5A] border-[#EBECEF] text-xs font-semibold">
                       {Math.round((extraction.overallConfidence || 0) * 100)}% Match
                     </Badge>
                   </div>
@@ -457,7 +457,7 @@ export default function PrescriptionDetailPage() {
                       <div className="flex flex-wrap items-start justify-between gap-2">
                         <div>
                           <div className="flex items-center gap-2">
-                            <h4 className="font-bold text-sm text-[#351F65]">
+                            <h4 className="font-bold text-sm text-[#0F172A]">
                               {item.rawMedicineName}
                             </h4>
                             {item.normalizedMedicineName &&
@@ -543,7 +543,7 @@ export default function PrescriptionDetailPage() {
                             {match.candidates[0].matchReasons.map((r, rIdx) => (
                               <span
                                 key={rIdx}
-                                className="text-[10px] px-2 py-0.5 rounded bg-purple-50 text-purple-700 font-mono"
+                                className="text-[10px] px-2 py-0.5 rounded bg-[#F0FDFA] text-[#0D5C5A] font-mono"
                               >
                                 {r.replace(/_/g, ' ')}
                               </span>

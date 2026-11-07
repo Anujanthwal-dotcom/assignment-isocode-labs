@@ -41,7 +41,7 @@ export default function AdminAnalyticsRefillsPage() {
     <div className="space-y-6 max-w-7xl mx-auto py-6 px-4">
       <Link
         href="/admin/analytics"
-        className="inline-flex items-center text-xs font-semibold text-[#6240E8] hover:underline"
+        className="inline-flex items-center text-xs font-semibold text-[#0D5C5A] hover:underline"
       >
         &larr; Back to Analytics Overview
       </Link>
@@ -83,7 +83,7 @@ export default function AdminAnalyticsRefillsPage() {
             <Card className="border-slate-200 shadow-xs">
               <CardContent className="p-4 space-y-1">
                 <span className="text-xs text-slate-500 font-medium">Active Subscriptions</span>
-                <div className="text-2xl font-bold text-[#6240E8]">{data.activeSubscriptions}</div>
+                <div className="text-2xl font-bold text-[#0D5C5A]">{data.activeSubscriptions}</div>
                 <span className="text-[11px] text-slate-400">Opted-in customer plans</span>
               </CardContent>
             </Card>
@@ -111,7 +111,7 @@ export default function AdminAnalyticsRefillsPage() {
             <Card className="border-slate-200 shadow-xs">
               <CardContent className="p-4 space-y-1">
                 <span className="text-xs text-slate-500 font-medium">Conversion Rate</span>
-                <div className="text-2xl font-bold text-indigo-600">
+                <div className="text-2xl font-bold text-[#0284C7]">
                   {data.conversionRatePercentage}%
                 </div>
                 <span className="text-[11px] text-slate-400">Handed over / Reminders sent</span>
@@ -148,7 +148,7 @@ export default function AdminAnalyticsRefillsPage() {
                         <TableCell className="text-right font-semibold text-emerald-600 text-xs">
                           {row.remindersSent}
                         </TableCell>
-                        <TableCell className="text-right font-semibold text-[#6240E8] text-xs">
+                        <TableCell className="text-right font-semibold text-[#0D5C5A] text-xs">
                           {row.refillOrders}
                         </TableCell>
                       </TableRow>

@@ -113,9 +113,9 @@ export default function CustomerMedicinesPage() {
   return (
     <div className="space-y-6 max-w-[1100px] mx-auto">
       {/* Top Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-2 border-b border-[#EAE8F0]">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-2 border-b border-[#EBECEF]">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight text-[#351F65]">Medicine Catalogue</h1>
+          <h1 className="text-2xl font-bold tracking-tight text-[#0F172A]">Medicine Catalogue</h1>
           <p className="text-sm text-[#78879A] mt-1">
             Browse genuine verified medicines. Showing {totalCount} active catalogued medicines.
           </p>
@@ -124,7 +124,7 @@ export default function CustomerMedicinesPage() {
           variant="outline"
           size="sm"
           onClick={() => router.push('/customer/cart')}
-          className="text-xs border-[#6240E8]/30 text-[#6240E8] hover:bg-[#F7F5FD]"
+          className="text-xs border-[#0D5C5A]/30 text-[#0D5C5A] hover:bg-[#F0FDFA]"
         >
           View Cart &rarr;
         </Button>
@@ -136,7 +136,7 @@ export default function CustomerMedicinesPage() {
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           placeholder="Search medicines by name, brand, generic salt, or SKU..."
-          className="h-11 px-4 pr-16 rounded-xl border-[#EAE8F0] bg-white text-sm shadow-xs focus:ring-2 focus:ring-[#6240E8]"
+          className="h-11 px-4 pr-16 rounded-xl border-[#EBECEF] bg-white text-sm shadow-xs focus:ring-2 focus:ring-[#0D5C5A]"
         />
         {search && (
           <button
@@ -172,7 +172,7 @@ export default function CustomerMedicinesPage() {
           </Button>
         </Card>
       ) : medicines.length === 0 ? (
-        <Card className="p-12 border-[#EAE8F0] bg-white text-center">
+        <Card className="p-12 border-[#EBECEF] bg-white text-center">
           <h3 className="text-base font-semibold text-slate-800">No Medicines Found</h3>
           <p className="text-xs text-slate-500 mt-1 max-w-sm mx-auto">
             We couldn&apos;t find any active medicines matching &quot;{debouncedSearch}&quot;. Try
@@ -194,14 +194,14 @@ export default function CustomerMedicinesPage() {
           {medicines.map((med) => (
             <Card
               key={med.id}
-              className="border-[#EAE8F0] bg-white hover:border-[#6240E8]/40 hover:shadow-xs transition-all flex flex-col justify-between"
+              className="border-[#EBECEF] bg-white hover:border-[#0D5C5A]/40 hover:shadow-xs transition-all flex flex-col justify-between"
             >
               <CardContent className="p-5 space-y-3">
                 <div className="flex items-start justify-between gap-2">
                   <div className="space-y-1">
                     <Link
                       href={`/customer/medicines/${med.id}`}
-                      className="font-bold text-base text-[#351F65] hover:text-[#6240E8] transition-colors line-clamp-1"
+                      className="font-bold text-base text-[#0F172A] hover:text-[#0D5C5A] transition-colors line-clamp-1"
                     >
                       {med.name}
                     </Link>
@@ -240,7 +240,7 @@ export default function CustomerMedicinesPage() {
                     <span className="text-[11px] text-slate-400 block uppercase font-semibold">
                       MRP
                     </span>
-                    <span className="text-lg font-extrabold text-[#351F65]">
+                    <span className="text-lg font-extrabold text-[#0F172A]">
                       ₹{med.mrp.toFixed(2)}
                     </span>
                   </div>
@@ -258,7 +258,7 @@ export default function CustomerMedicinesPage() {
                       size="sm"
                       onClick={() => handleAddToCart(med.id)}
                       disabled={addingId === med.id}
-                      className="text-xs h-8 px-3 bg-[#6240E8] text-white hover:bg-[#5233D0]"
+                      className="text-xs h-8 px-3 bg-[#0D5C5A] text-white hover:bg-[#0A4846]"
                     >
                       {addedId === med.id ? '✓ Added' : '+ Add'}
                     </Button>
@@ -272,7 +272,7 @@ export default function CustomerMedicinesPage() {
 
       {/* Pagination Controls */}
       {totalPages > 1 && (
-        <div className="flex items-center justify-between pt-4 border-t border-[#EAE8F0]">
+        <div className="flex items-center justify-between pt-4 border-t border-[#EBECEF]">
           <span className="text-xs text-slate-500">
             Page {page} of {totalPages} ({totalCount} total medicines)
           </span>

@@ -53,7 +53,7 @@ export default function AdminAnalyticsStoreDetailPage() {
     <div className="space-y-6 max-w-6xl mx-auto py-6 px-4">
       <Link
         href="/admin/analytics/orders"
-        className="inline-flex items-center text-xs font-semibold text-[#6240E8] hover:underline"
+        className="inline-flex items-center text-xs font-semibold text-[#0D5C5A] hover:underline"
       >
         &larr; Back to Stores Overview
       </Link>
@@ -86,7 +86,7 @@ export default function AdminAnalyticsStoreDetailPage() {
         <Card className="border-slate-200 shadow-xs">
           <CardContent className="p-4 space-y-1">
             <span className="text-xs text-slate-500 font-medium">Median Verification Time</span>
-            <div className="text-2xl font-bold text-[#6240E8]">
+            <div className="text-2xl font-bold text-[#0D5C5A]">
               {verification.medianVerificationMinutes} min
             </div>
           </CardContent>

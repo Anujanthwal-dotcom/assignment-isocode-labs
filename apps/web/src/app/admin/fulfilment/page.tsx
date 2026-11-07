@@ -28,7 +28,7 @@ export default function AdminFulfilmentOverviewPage() {
 
   return (
     <div className="space-y-6">
-      <div className="pb-2 border-b border-[#EAE8F0] flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+      <div className="pb-2 border-b border-[#EBECEF] flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold text-[#14161A] tracking-tight">
             Fulfilment Operations
@@ -53,15 +53,15 @@ export default function AdminFulfilmentOverviewPage() {
         <div className="space-y-6">
           {/* Key Metric Tiles */}
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-            <div className="p-5 bg-white rounded-2xl border border-[#EAE8F0] shadow-xs">
+            <div className="p-5 bg-white rounded-2xl border border-[#EBECEF] shadow-xs">
               <span className="text-xs font-semibold text-[#78879A] block">Awaiting Routing</span>
               <span className="text-2xl font-extrabold text-[#14161A] mt-1 block">
                 {metrics?.awaitingRouting || 0}
               </span>
-              <span className="text-[10px] text-purple-700 font-medium">Pharmacist approved</span>
+              <span className="text-[10px] text-[#0D5C5A] font-medium">Pharmacist approved</span>
             </div>
 
-            <div className="p-5 bg-white rounded-2xl border border-[#EAE8F0] shadow-xs">
+            <div className="p-5 bg-white rounded-2xl border border-[#EBECEF] shadow-xs">
               <span className="text-xs font-semibold text-[#78879A] block">Stock Reserved</span>
               <span className="text-2xl font-extrabold text-amber-600 mt-1 block">
                 {metrics?.stockReserved || 0}
@@ -69,17 +69,17 @@ export default function AdminFulfilmentOverviewPage() {
               <span className="text-[10px] text-[#78879A]">Active holds</span>
             </div>
 
-            <div className="p-5 bg-white rounded-2xl border border-[#EAE8F0] shadow-xs">
+            <div className="p-5 bg-white rounded-2xl border border-[#EBECEF] shadow-xs">
               <span className="text-xs font-semibold text-[#78879A] block">
                 Picking &amp; Packed
               </span>
-              <span className="text-2xl font-extrabold text-[#6240E8] mt-1 block">
+              <span className="text-2xl font-extrabold text-[#0D5C5A] mt-1 block">
                 {(metrics?.picking || 0) + (metrics?.packed || 0)}
               </span>
               <span className="text-[10px] text-[#78879A]">Store in-progress</span>
             </div>
 
-            <div className="p-5 bg-white rounded-2xl border border-[#EAE8F0] shadow-xs">
+            <div className="p-5 bg-white rounded-2xl border border-[#EBECEF] shadow-xs">
               <span className="text-xs font-semibold text-[#78879A] block">Handed Over</span>
               <span className="text-2xl font-extrabold text-emerald-600 mt-1 block">
                 {metrics?.handedOver || 0}
@@ -93,7 +93,7 @@ export default function AdminFulfilmentOverviewPage() {
           {/* Secondary Operational Panels */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {/* Quick Actions & Navigation */}
-            <div className="p-5 bg-white rounded-2xl border border-[#EAE8F0] shadow-xs space-y-3">
+            <div className="p-5 bg-white rounded-2xl border border-[#EBECEF] shadow-xs space-y-3">
               <h3 className="font-bold text-sm text-[#14161A]">Fulfilment Management</h3>
               <p className="text-xs text-[#78879A]">
                 Monitor store-routed orders, trigger automatic nearest-store routing, or manually
@@ -102,21 +102,21 @@ export default function AdminFulfilmentOverviewPage() {
               <div className="pt-2 space-y-2">
                 <Link
                   href="/admin/fulfilment/orders"
-                  className="w-full py-2 px-3 rounded-xl border border-[#EAE8F0] hover:border-[#6240E8] text-xs font-semibold flex items-center justify-between text-[#14161A] hover:bg-slate-50 transition-colors"
+                  className="w-full py-2 px-3 rounded-xl border border-[#EBECEF] hover:border-[#0D5C5A] text-xs font-semibold flex items-center justify-between text-[#14161A] hover:bg-slate-50 transition-colors"
                 >
                   <span>All Fulfilment Orders</span>
                   <span className="text-[#78879A]">&rarr;</span>
                 </Link>
                 <Link
                   href="/admin/fulfilment/invoices"
-                  className="w-full py-2 px-3 rounded-xl border border-[#EAE8F0] hover:border-[#6240E8] text-xs font-semibold flex items-center justify-between text-[#14161A] hover:bg-slate-50 transition-colors"
+                  className="w-full py-2 px-3 rounded-xl border border-[#EBECEF] hover:border-[#0D5C5A] text-xs font-semibold flex items-center justify-between text-[#14161A] hover:bg-slate-50 transition-colors"
                 >
                   <span>Issued Pharmacy Invoices</span>
                   <span className="text-[#78879A]">&rarr;</span>
                 </Link>
                 <Link
                   href="/admin/inventory/reservations"
-                  className="w-full py-2 px-3 rounded-xl border border-[#EAE8F0] hover:border-[#6240E8] text-xs font-semibold flex items-center justify-between text-[#14161A] hover:bg-slate-50 transition-colors"
+                  className="w-full py-2 px-3 rounded-xl border border-[#EBECEF] hover:border-[#0D5C5A] text-xs font-semibold flex items-center justify-between text-[#14161A] hover:bg-slate-50 transition-colors"
                 >
                   <span>Active Stock Reservations</span>
                   <span className="text-[#78879A]">&rarr;</span>
@@ -125,7 +125,7 @@ export default function AdminFulfilmentOverviewPage() {
             </div>
 
             {/* Stock Unavailable Watchdog */}
-            <div className="p-5 bg-white rounded-2xl border border-[#EAE8F0] shadow-xs space-y-3">
+            <div className="p-5 bg-white rounded-2xl border border-[#EBECEF] shadow-xs space-y-3">
               <h3 className="font-bold text-sm text-[#14161A]">Stock Unavailable Queue</h3>
               <div className="text-3xl font-extrabold text-amber-600">
                 {metrics?.stockUnavailable || 0}
@@ -137,7 +137,7 @@ export default function AdminFulfilmentOverviewPage() {
               <div className="pt-2">
                 <Link
                   href="/admin/fulfilment/orders?status=STOCK_UNAVAILABLE"
-                  className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#6240E8] hover:underline"
+                  className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#0D5C5A] hover:underline"
                 >
                   <span>Inspect &amp; Retry Routing &rarr;</span>
                 </Link>
@@ -145,7 +145,7 @@ export default function AdminFulfilmentOverviewPage() {
             </div>
 
             {/* Inventory Holds */}
-            <div className="p-5 bg-white rounded-2xl border border-[#EAE8F0] shadow-xs space-y-3">
+            <div className="p-5 bg-white rounded-2xl border border-[#EBECEF] shadow-xs space-y-3">
               <h3 className="font-bold text-sm text-[#14161A]">Inventory Reservation Holds</h3>
               <div className="flex items-baseline gap-3">
                 <div>
@@ -172,7 +172,7 @@ export default function AdminFulfilmentOverviewPage() {
               <div className="pt-2">
                 <Link
                   href="/admin/inventory/reservations"
-                  className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#6240E8] hover:underline"
+                  className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#0D5C5A] hover:underline"
                 >
                   <span>View Reservation Ledger &rarr;</span>
                 </Link>

@@ -95,7 +95,7 @@ export default function PharmacistReviewQueuePage() {
   return (
     <div className="flex-1 p-6 max-w-7xl w-full mx-auto space-y-6">
       {/* Header section with Store Scoping Context */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2 border-b border-[#EAE8F0]">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2 border-b border-[#EBECEF]">
         <div>
           <h1 className="text-2xl font-bold text-[#14161A] tracking-tight">
             Prescription Verification Queue
@@ -107,7 +107,7 @@ export default function PharmacistReviewQueuePage() {
         </div>
 
         {storeInfo && (
-          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-[#F7F5FD] border border-[#EAE8F0] text-xs font-medium text-[#351F65]">
+          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-[#F0FDFA] border border-[#EBECEF] text-xs font-medium text-[#0F172A]">
             <span>
               Store: <strong className="font-semibold">{storeInfo.name}</strong> ({storeInfo.code})
             </span>
@@ -116,7 +116,7 @@ export default function PharmacistReviewQueuePage() {
       </div>
 
       {/* Filters Bar */}
-      <div className="bg-white rounded-xl border border-[#EAE8F0] p-4 shadow-2xs flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div className="bg-white rounded-xl border border-[#EBECEF] p-4 shadow-2xs flex flex-col md:flex-row md:items-center justify-between gap-4">
         {/* Status Tabs */}
         <div className="flex flex-wrap items-center gap-1.5">
           {[
@@ -132,8 +132,8 @@ export default function PharmacistReviewQueuePage() {
               onClick={() => setStatusFilter(tab.value)}
               className={`px-3 py-1.5 text-xs font-medium rounded-lg transition-colors ${
                 statusFilter === tab.value
-                  ? 'bg-[#6240E8] text-white shadow-xs'
-                  : 'text-[#6C757D] hover:bg-[#F8F9FB] hover:text-[#351F65]'
+                  ? 'bg-[#0D5C5A] text-white shadow-xs'
+                  : 'text-[#6C757D] hover:bg-[#F8F9FB] hover:text-[#0F172A]'
               }`}
             >
               {tab.label}
@@ -148,15 +148,15 @@ export default function PharmacistReviewQueuePage() {
             placeholder="Search order number or customer..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full px-3 py-2 text-xs rounded-lg border border-[#EAE8F0] bg-[#F8F9FB] focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#6240E8]/30"
+            className="w-full px-3 py-2 text-xs rounded-lg border border-[#EBECEF] bg-[#F8F9FB] focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#0D5C5A]/30"
           />
         </div>
       </div>
 
       {/* Content Body */}
       {loading ? (
-        <div className="bg-white rounded-xl border border-[#EAE8F0] p-12 text-center shadow-2xs">
-          <div className="inline-block h-8 w-8 animate-spin rounded-full border-3 border-[#6240E8] border-t-transparent" />
+        <div className="bg-white rounded-xl border border-[#EBECEF] p-12 text-center shadow-2xs">
+          <div className="inline-block h-8 w-8 animate-spin rounded-full border-3 border-[#0D5C5A] border-t-transparent" />
           <p className="text-xs text-[#78879A] mt-3">Loading verification queue...</p>
         </div>
       ) : error ? (
@@ -167,18 +167,18 @@ export default function PharmacistReviewQueuePage() {
           <span>{error}</span>
         </div>
       ) : queue.length === 0 ? (
-        <div className="bg-white rounded-xl border border-[#EAE8F0] p-12 text-center shadow-2xs space-y-3">
+        <div className="bg-white rounded-xl border border-[#EBECEF] p-12 text-center shadow-2xs space-y-3">
           <h3 className="text-sm font-semibold text-[#14161A]">All caught up!</h3>
           <p className="text-xs text-[#78879A] max-w-sm mx-auto">
             There are no pending prescriptions currently assigned to your store queue.
           </p>
         </div>
       ) : (
-        <div className="bg-white rounded-xl border border-[#EAE8F0] shadow-2xs overflow-hidden">
+        <div className="bg-white rounded-xl border border-[#EBECEF] shadow-2xs overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full text-left border-collapse text-xs">
               <thead>
-                <tr className="border-b border-[#EAE8F0] bg-[#F8F9FB] text-[#78879A] font-semibold">
+                <tr className="border-b border-[#EBECEF] bg-[#F8F9FB] text-[#78879A] font-semibold">
                   <th className="py-3 px-4">Order Number</th>
                   <th className="py-3 px-4">Placed Date</th>
                   <th className="py-3 px-4">Customer</th>
@@ -187,10 +187,10 @@ export default function PharmacistReviewQueuePage() {
                   <th className="py-3 px-4 text-right">Action</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-[#EAE8F0]">
+              <tbody className="divide-y divide-[#EBECEF]">
                 {queue.map((item) => (
-                  <tr key={item.orderId} className="hover:bg-[#F7F5FD]/50 transition-colors">
-                    <td className="py-3 px-4 font-semibold text-[#351F65]">{item.orderNumber}</td>
+                  <tr key={item.orderId} className="hover:bg-[#F0FDFA]/50 transition-colors">
+                    <td className="py-3 px-4 font-semibold text-[#0F172A]">{item.orderNumber}</td>
                     <td className="py-3 px-4 text-[#78879A]">
                       {new Date(item.placedAt).toLocaleString()}
                     </td>
@@ -203,7 +203,7 @@ export default function PharmacistReviewQueuePage() {
                     <td className="py-3 px-4 text-right">
                       <Link
                         href={`/pharmacist/orders/${item.orderId}/review`}
-                        className="inline-flex items-center px-3 py-1.5 rounded-lg text-xs font-semibold bg-[#6240E8] text-white hover:bg-[#5230D8] transition-colors shadow-2xs"
+                        className="inline-flex items-center px-3 py-1.5 rounded-lg text-xs font-semibold bg-[#0D5C5A] text-white hover:bg-[#0A4846] transition-colors shadow-2xs"
                       >
                         Verify Rx &rarr;
                       </Link>

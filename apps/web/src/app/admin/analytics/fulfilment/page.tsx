@@ -41,7 +41,7 @@ export default function AdminAnalyticsFulfilmentPage() {
     <div className="space-y-6 max-w-7xl mx-auto py-6 px-4">
       <Link
         href="/admin/analytics"
-        className="inline-flex items-center text-xs font-semibold text-[#6240E8] hover:underline"
+        className="inline-flex items-center text-xs font-semibold text-[#0D5C5A] hover:underline"
       >
         &larr; Back to Analytics Overview
       </Link>

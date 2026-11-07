@@ -185,7 +185,7 @@ export default function StockImportsPage() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-[24px] font-bold tracking-tight text-[#351F65]">Stock Imports</h1>
+          <h1 className="text-[24px] font-bold tracking-tight text-[#0F172A]">Stock Imports</h1>
           <p className="text-[14px] text-[#78879A]">
             Import daily stock data snapshots using all-or-nothing deterministic CSV processing and
             private MinIO storage.
@@ -205,7 +205,7 @@ export default function StockImportsPage() {
               setUploadSuccess(null);
               setIsUploadOpen(true);
             }}
-            className="inline-flex items-center gap-2 bg-[#6240E8] hover:bg-[#542F9B] text-white"
+            className="inline-flex items-center gap-2 bg-[#0D5C5A] hover:bg-[#542F9B] text-white"
           >
             <span>Upload CSV</span>
           </Button>
@@ -232,11 +232,11 @@ export default function StockImportsPage() {
       </div>
 
       {/* Import History Table */}
-      <div className="rounded-[12px] border border-[#EAE8F0] bg-white shadow-xs overflow-hidden">
+      <div className="rounded-[12px] border border-[#EBECEF] bg-white shadow-xs overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse text-[13px]">
             <thead>
-              <tr className="border-b border-[#EAE8F0] bg-[#F8F9FB] text-[#78879A] font-semibold">
+              <tr className="border-b border-[#EBECEF] bg-[#F8F9FB] text-[#78879A] font-semibold">
                 <th className="py-3 px-4">File Name</th>
                 <th className="py-3 px-4">Target Location</th>
                 <th className="py-3 px-4">Imported By</th>
@@ -248,12 +248,12 @@ export default function StockImportsPage() {
                 <th className="py-3 px-4 text-right">Actions</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-[#EAE8F0]">
+            <tbody className="divide-y divide-[#EBECEF]">
               {loading ? (
                 <tr>
                   <td colSpan={9} className="py-12 text-center text-[#78879A]">
                     <div className="flex items-center justify-center gap-2">
-                      <div className="w-4 h-4 border-2 border-[#6240E8] border-t-transparent rounded-full animate-spin" />
+                      <div className="w-4 h-4 border-2 border-[#0D5C5A] border-t-transparent rounded-full animate-spin" />
                       <span>Loading import batch history...</span>
                     </div>
                   </td>
@@ -262,7 +262,7 @@ export default function StockImportsPage() {
                 <tr>
                   <td colSpan={9} className="py-12 text-center text-[#78879A]">
                     <div className="flex flex-col items-center justify-center gap-1">
-                      <p className="font-semibold text-[#351F65]">No stock imports recorded</p>
+                      <p className="font-semibold text-[#0F172A]">No stock imports recorded</p>
                       <p className="text-[12px]">
                         Click &apos;Upload CSV&apos; above to submit the daily stock snapshot for a
                         store or warehouse.
@@ -325,7 +325,7 @@ export default function StockImportsPage() {
                         variant="outline"
                         size="sm"
                         onClick={() => handleOpenDetails(item.id)}
-                        className="h-8 text-[12px] inline-flex items-center gap-1 text-[#351F65]"
+                        className="h-8 text-[12px] inline-flex items-center gap-1 text-[#0F172A]"
                       >
                         <span>Details</span>
                       </Button>
@@ -338,7 +338,7 @@ export default function StockImportsPage() {
         </div>
 
         {/* Pagination Footer */}
-        <div className="flex items-center justify-between border-t border-[#EAE8F0] px-4 py-3 text-[13px] text-[#78879A]">
+        <div className="flex items-center justify-between border-t border-[#EBECEF] px-4 py-3 text-[13px] text-[#78879A]">
           <div>
             Showing <span className="font-semibold text-[#14161A]">{imports.length}</span> of{' '}
             <span className="font-semibold text-[#14161A]">{total}</span> import batches
@@ -353,7 +353,7 @@ export default function StockImportsPage() {
             >
               Previous
             </Button>
-            <span className="px-2 font-medium text-[#351F65]">
+            <span className="px-2 font-medium text-[#0F172A]">
               Page {page} of {totalPages}
             </span>
             <Button
@@ -373,7 +373,7 @@ export default function StockImportsPage() {
       <Dialog open={isUploadOpen} onOpenChange={setIsUploadOpen}>
         <DialogContent className="max-w-[480px]">
           <DialogHeader>
-            <DialogTitle className="text-[#351F65] text-[18px]">Upload Daily Stock CSV</DialogTitle>
+            <DialogTitle className="text-[#0F172A] text-[18px]">Upload Daily Stock CSV</DialogTitle>
           </DialogHeader>
 
           <form onSubmit={handleUploadSubmit} className="space-y-4">
@@ -386,14 +386,14 @@ export default function StockImportsPage() {
             )}
 
             <div>
-              <label className="block text-[12px] font-semibold text-[#351F65] mb-1">
+              <label className="block text-[12px] font-semibold text-[#0F172A] mb-1">
                 Target Location <span className="text-[#DC3545]">*</span>
               </label>
               <select
                 required
                 value={uploadLocation}
                 onChange={(e) => setUploadLocation(e.target.value)}
-                className="h-[44px] w-full rounded-[8px] border border-[#CED4DA] bg-white px-3 text-[14px] text-[#14161A] focus:outline-none focus:border-[#6240E8]"
+                className="h-[44px] w-full rounded-[8px] border border-[#CED4DA] bg-white px-3 text-[14px] text-[#14161A] focus:outline-none focus:border-[#0D5C5A]"
               >
                 <optgroup label="Central Warehouse">
                   {warehouses.map((w) => (
@@ -413,7 +413,7 @@ export default function StockImportsPage() {
             </div>
 
             <div>
-              <label className="block text-[12px] font-semibold text-[#351F65] mb-1">
+              <label className="block text-[12px] font-semibold text-[#0F172A] mb-1">
                 Select CSV File <span className="text-[#DC3545]">*</span>
               </label>
               <div className="border-2 border-dashed border-[#CED4DA] rounded-[8px] p-4 text-center hover:bg-[#F8F9FB] transition-colors cursor-pointer relative">
@@ -429,17 +429,17 @@ export default function StockImportsPage() {
                   }}
                   className="absolute inset-0 opacity-0 cursor-pointer"
                 />
-                <div className="font-bold text-[#6240E8] text-sm mb-2">[CSV]</div>
+                <div className="font-bold text-[#0D5C5A] text-sm mb-2">[CSV]</div>
                 {selectedFile ? (
                   <div>
-                    <p className="font-semibold text-[#351F65] text-[13px]">{selectedFile.name}</p>
+                    <p className="font-semibold text-[#0F172A] text-[13px]">{selectedFile.name}</p>
                     <p className="text-[11px] text-[#78879A]">
                       {(selectedFile.size / 1024).toFixed(1)} KB
                     </p>
                   </div>
                 ) : (
                   <div>
-                    <p className="font-semibold text-[#351F65] text-[13px]">
+                    <p className="font-semibold text-[#0F172A] text-[13px]">
                       Click to choose CSV file
                     </p>
                     <p className="text-[11px] text-[#78879A]">or drag & drop here (max 5 MB)</p>
@@ -460,7 +460,7 @@ export default function StockImportsPage() {
               <Button
                 type="submit"
                 disabled={uploading || !selectedFile}
-                className="bg-[#6240E8] hover:bg-[#542F9B] text-white"
+                className="bg-[#0D5C5A] hover:bg-[#542F9B] text-white"
               >
                 {uploading && (
                   <span className="mr-2 inline-block w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin" />
@@ -479,17 +479,17 @@ export default function StockImportsPage() {
       >
         <DialogContent className="max-w-[620px]">
           <DialogHeader>
-            <DialogTitle className="text-[#351F65] text-[18px]">Import Batch Outcome</DialogTitle>
+            <DialogTitle className="text-[#0F172A] text-[18px]">Import Batch Outcome</DialogTitle>
           </DialogHeader>
 
           {loadingDetails ? (
             <div className="py-12 text-center text-[#78879A]">
-              <div className="w-5 h-5 border-2 border-[#6240E8] border-t-transparent rounded-full animate-spin mx-auto mb-2" />
+              <div className="w-5 h-5 border-2 border-[#0D5C5A] border-t-transparent rounded-full animate-spin mx-auto mb-2" />
               Loading batch records...
             </div>
           ) : importDetails ? (
             <div className="space-y-4">
-              <div className="grid grid-cols-2 gap-3 text-[12px] bg-[#F8F9FB] p-3 rounded-[8px] border border-[#EAE8F0]">
+              <div className="grid grid-cols-2 gap-3 text-[12px] bg-[#F8F9FB] p-3 rounded-[8px] border border-[#EBECEF]">
                 <div>
                   <span className="text-[#78879A]">File:</span>{' '}
                   <span className="font-semibold text-[#14161A] font-mono">
@@ -531,13 +531,13 @@ export default function StockImportsPage() {
               {/* Row Outcomes List */}
               {importDetails.rows && importDetails.rows.length > 0 ? (
                 <div>
-                  <h4 className="text-[12px] font-bold text-[#351F65] mb-2">
+                  <h4 className="text-[12px] font-bold text-[#0F172A] mb-2">
                     Row-by-Row Validation Details:
                   </h4>
-                  <div className="max-h-[280px] overflow-y-auto border border-[#EAE8F0] rounded-[6px]">
+                  <div className="max-h-[280px] overflow-y-auto border border-[#EBECEF] rounded-[6px]">
                     <table className="w-full text-left text-[12px] border-collapse">
                       <thead>
-                        <tr className="bg-[#F8F9FB] border-b border-[#EAE8F0] text-[#78879A]">
+                        <tr className="bg-[#F8F9FB] border-b border-[#EBECEF] text-[#78879A]">
                           <th className="p-2">Row #</th>
                           <th className="p-2">SKU</th>
                           <th className="p-2 text-right">Qty</th>
@@ -545,7 +545,7 @@ export default function StockImportsPage() {
                           <th className="p-2">Message / Reason</th>
                         </tr>
                       </thead>
-                      <tbody className="divide-y divide-[#EAE8F0]">
+                      <tbody className="divide-y divide-[#EBECEF]">
                         {importDetails.rows.map((r) => (
                           <tr key={r.id}>
                             <td className="p-2 font-mono text-[#78879A]">{r.rowNumber}</td>

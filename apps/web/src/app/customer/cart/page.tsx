@@ -77,9 +77,9 @@ export default function CustomerCartPage() {
   return (
     <div className="max-w-[950px] mx-auto space-y-6">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-2 border-b border-[#EAE8F0]">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-2 border-b border-[#EBECEF]">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight text-[#351F65]">Shopping Cart</h1>
+          <h1 className="text-2xl font-bold tracking-tight text-[#0F172A]">Shopping Cart</h1>
           <p className="text-sm text-[#78879A] mt-1">
             Review your selected medicines before prescription verification and checkout.
           </p>
@@ -103,7 +103,7 @@ export default function CustomerCartPage() {
           <p className="text-sm text-red-700 font-medium">{error}</p>
         </Card>
       ) : !cart || cart.items.length === 0 ? (
-        <Card className="p-12 border-[#EAE8F0] bg-white text-center">
+        <Card className="p-12 border-[#EBECEF] bg-white text-center">
           <h3 className="text-base font-semibold text-slate-800">Your Cart is Empty</h3>
           <p className="text-xs text-slate-500 mt-1 max-w-sm mx-auto">
             You don&apos;t have any medicines in your cart yet. Browse our catalogue to select
@@ -112,7 +112,7 @@ export default function CustomerCartPage() {
           <Button
             size="sm"
             onClick={() => router.push('/customer/medicines')}
-            className="mt-4 text-xs bg-[#6240E8] text-white hover:bg-[#5233D0]"
+            className="mt-4 text-xs bg-[#0D5C5A] text-white hover:bg-[#0A4846]"
           >
             Browse Medicines
           </Button>
@@ -140,7 +140,7 @@ export default function CustomerCartPage() {
                 <Card
                   key={item.id}
                   className={`border transition-all p-4 ${
-                    isInactive ? 'border-red-300 bg-red-50/50' : 'border-[#EAE8F0] bg-white'
+                    isInactive ? 'border-red-300 bg-red-50/50' : 'border-[#EBECEF] bg-white'
                   }`}
                 >
                   <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
@@ -148,7 +148,7 @@ export default function CustomerCartPage() {
                       <div className="flex items-center gap-2">
                         <Link
                           href={`/customer/medicines/${item.medicine.id}`}
-                          className="font-bold text-sm text-[#351F65] hover:text-[#6240E8]"
+                          className="font-bold text-sm text-[#0F172A] hover:text-[#0D5C5A]"
                         >
                           {item.medicine.name}
                         </Link>
@@ -193,7 +193,7 @@ export default function CustomerCartPage() {
                       </div>
 
                       {/* Line Total */}
-                      <span className="font-bold text-base text-[#351F65] min-w-[70px] text-right">
+                      <span className="font-bold text-base text-[#0F172A] min-w-[70px] text-right">
                         ₹{item.lineTotal.toFixed(2)}
                       </span>
 
@@ -226,8 +226,8 @@ export default function CustomerCartPage() {
 
           {/* Cart Summary (Col 4) */}
           <div className="lg:col-span-4 space-y-4">
-            <Card className="border-[#EAE8F0] bg-white p-5 space-y-4">
-              <CardTitle className="text-base font-bold text-[#351F65]">Order Summary</CardTitle>
+            <Card className="border-[#EBECEF] bg-white p-5 space-y-4">
+              <CardTitle className="text-base font-bold text-[#0F172A]">Order Summary</CardTitle>
 
               <div className="space-y-2 text-xs text-slate-600 border-b border-slate-100 pb-3">
                 <div className="flex justify-between">
@@ -249,8 +249,8 @@ export default function CustomerCartPage() {
               </div>
 
               <div className="flex justify-between items-baseline pt-1">
-                <span className="font-bold text-sm text-[#351F65]">Total Amount</span>
-                <span className="font-extrabold text-2xl text-[#6240E8]">
+                <span className="font-bold text-sm text-[#0F172A]">Total Amount</span>
+                <span className="font-extrabold text-2xl text-[#0D5C5A]">
                   ₹{cart.subtotal.toFixed(2)}
                 </span>
               </div>
@@ -262,7 +262,7 @@ export default function CustomerCartPage() {
               <Button
                 onClick={() => router.push('/customer/checkout')}
                 disabled={cart.items.length === 0 || cart.hasInactiveItems}
-                className="w-full bg-[#6240E8] text-white hover:bg-[#5233D0] h-11 text-xs font-semibold shadow-xs flex items-center justify-center gap-1.5"
+                className="w-full bg-[#0D5C5A] text-white hover:bg-[#0A4846] h-11 text-xs font-semibold shadow-xs flex items-center justify-center gap-1.5"
               >
                 <span>Proceed to Checkout</span>
                 <span>&rarr;</span>

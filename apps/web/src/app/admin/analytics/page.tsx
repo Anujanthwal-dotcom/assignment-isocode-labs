@@ -70,7 +70,7 @@ export default function AdminAnalyticsOverviewPage() {
 
       {loading ? (
         <div className="py-20 text-center text-slate-500">
-          <div className="w-6 h-6 border-2 border-[#6240E8] border-t-transparent rounded-full animate-spin mx-auto mb-3" />
+          <div className="w-6 h-6 border-2 border-[#0D5C5A] border-t-transparent rounded-full animate-spin mx-auto mb-3" />
           Aggregating platform metrics from live stores...
         </div>
       ) : error ? (
@@ -136,7 +136,7 @@ export default function AdminAnalyticsOverviewPage() {
                 <span className="text-xs font-medium text-slate-500 block">
                   Handed Over / Dispensed
                 </span>
-                <div className="text-2xl font-bold text-indigo-600">{data.handedOverOrders}</div>
+                <div className="text-2xl font-bold text-[#0284C7]">{data.handedOverOrders}</div>
                 <span className="text-[11px] text-slate-500">Completed physical handovers</span>
               </CardContent>
             </Card>
@@ -154,7 +154,7 @@ export default function AdminAnalyticsOverviewPage() {
                 <span className="text-xs font-medium text-slate-500 block">
                   Refill Subscriptions
                 </span>
-                <div className="text-2xl font-bold text-[#6240E8]">
+                <div className="text-2xl font-bold text-[#0D5C5A]">
                   {data.activeRefillSubscriptionsCount}
                 </div>
                 <span className="text-[11px] text-slate-500">Customer active reminders</span>
@@ -165,7 +165,7 @@ export default function AdminAnalyticsOverviewPage() {
           {/* Module Deep-Dive Navigation Cards */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 pt-2">
             <Link href="/admin/analytics/orders">
-              <Card className="p-5 border-slate-200 hover:border-[#6240E8] transition-all cursor-pointer h-full flex flex-col justify-between">
+              <Card className="p-5 border-slate-200 hover:border-[#0D5C5A] transition-all cursor-pointer h-full flex flex-col justify-between">
                 <div className="space-y-2">
                   <div className="flex items-center justify-between">
                     <span className="font-bold text-slate-900 text-sm">Orders by Store</span>
@@ -174,14 +174,14 @@ export default function AdminAnalyticsOverviewPage() {
                     Store-level order distribution, status breakdowns, and timeline volumes.
                   </p>
                 </div>
-                <div className="flex items-center text-xs font-semibold text-[#6240E8] mt-4">
+                <div className="flex items-center text-xs font-semibold text-[#0D5C5A] mt-4">
                   View Store Breakdown &rarr;
                 </div>
               </Card>
             </Link>
 
             <Link href="/admin/analytics/verification">
-              <Card className="p-5 border-slate-200 hover:border-[#6240E8] transition-all cursor-pointer h-full flex flex-col justify-between">
+              <Card className="p-5 border-slate-200 hover:border-[#0D5C5A] transition-all cursor-pointer h-full flex flex-col justify-between">
                 <div className="space-y-2">
                   <div className="flex items-center justify-between">
                     <span className="font-bold text-slate-900 text-sm">
@@ -192,14 +192,14 @@ export default function AdminAnalyticsOverviewPage() {
                     Pharmacist review median durations, rejection rates, and decision reasons.
                   </p>
                 </div>
-                <div className="flex items-center text-xs font-semibold text-[#6240E8] mt-4">
+                <div className="flex items-center text-xs font-semibold text-[#0D5C5A] mt-4">
                   View Verification KPIs &rarr;
                 </div>
               </Card>
             </Link>
 
             <Link href="/admin/analytics/fulfilment">
-              <Card className="p-5 border-slate-200 hover:border-[#6240E8] transition-all cursor-pointer h-full flex flex-col justify-between">
+              <Card className="p-5 border-slate-200 hover:border-[#0D5C5A] transition-all cursor-pointer h-full flex flex-col justify-between">
                 <div className="space-y-2">
                   <div className="flex items-center justify-between">
                     <span className="font-bold text-slate-900 text-sm">Fulfilment Operations</span>
@@ -208,14 +208,14 @@ export default function AdminAnalyticsOverviewPage() {
                     Picking &amp; packing median durations, stock holds, and stockout exceptions.
                   </p>
                 </div>
-                <div className="flex items-center text-xs font-semibold text-[#6240E8] mt-4">
+                <div className="flex items-center text-xs font-semibold text-[#0D5C5A] mt-4">
                   View Fulfilment KPIs &rarr;
                 </div>
               </Card>
             </Link>
 
             <Link href="/admin/analytics/refills">
-              <Card className="p-5 border-slate-200 hover:border-[#6240E8] transition-all cursor-pointer h-full flex flex-col justify-between">
+              <Card className="p-5 border-slate-200 hover:border-[#0D5C5A] transition-all cursor-pointer h-full flex flex-col justify-between">
                 <div className="space-y-2">
                   <div className="flex items-center justify-between">
                     <span className="font-bold text-slate-900 text-sm">Refill Automation</span>
@@ -224,7 +224,7 @@ export default function AdminAnalyticsOverviewPage() {
                     Refill reminder conversion rates, scheduled vs sent notifications, and reorders.
                   </p>
                 </div>
-                <div className="flex items-center text-xs font-semibold text-[#6240E8] mt-4">
+                <div className="flex items-center text-xs font-semibold text-[#0D5C5A] mt-4">
                   View Refill Metrics &rarr;
                 </div>
               </Card>

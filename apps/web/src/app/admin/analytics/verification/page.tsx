@@ -42,7 +42,7 @@ export default function AdminAnalyticsVerificationPage() {
     <div className="space-y-6 max-w-7xl mx-auto py-6 px-4">
       <Link
         href="/admin/analytics"
-        className="inline-flex items-center text-xs font-semibold text-[#6240E8] hover:underline"
+        className="inline-flex items-center text-xs font-semibold text-[#0D5C5A] hover:underline"
       >
         &larr; Back to Analytics Overview
       </Link>
@@ -94,7 +94,7 @@ export default function AdminAnalyticsVerificationPage() {
             <Card className="border-slate-200 shadow-xs">
               <CardContent className="p-4 space-y-1">
                 <span className="text-xs text-slate-500 font-medium">Median Verification Time</span>
-                <div className="text-2xl font-bold text-[#6240E8]">
+                <div className="text-2xl font-bold text-[#0D5C5A]">
                   {data.medianVerificationMinutes} min
                 </div>
                 <span className="text-[11px] text-slate-400">p50 review turnaround</span>
@@ -153,7 +153,7 @@ export default function AdminAnalyticsVerificationPage() {
                         <TableCell className="text-right text-xs font-semibold text-slate-800">
                           {s.reviewedCount}
                         </TableCell>
-                        <TableCell className="text-right text-xs font-bold text-[#6240E8]">
+                        <TableCell className="text-right text-xs font-bold text-[#0D5C5A]">
                           {s.medianMinutes} min
                         </TableCell>
                         <TableCell className="text-right text-xs text-slate-600">

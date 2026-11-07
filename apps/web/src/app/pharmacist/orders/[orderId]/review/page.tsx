@@ -297,7 +297,7 @@ export default function PharmacistOrderReviewPage() {
   if (loading) {
     return (
       <div className="flex-1 p-12 flex flex-col items-center justify-center space-y-3">
-        <div className="inline-block h-8 w-8 animate-spin rounded-full border-3 border-[#6240E8] border-t-transparent" />
+        <div className="inline-block h-8 w-8 animate-spin rounded-full border-3 border-[#0D5C5A] border-t-transparent" />
         <p className="text-xs text-[#78879A]">Loading clinical verification workspace...</p>
       </div>
     );
@@ -306,7 +306,7 @@ export default function PharmacistOrderReviewPage() {
   if (error && !reviewData) {
     return (
       <div className="flex-1 p-8 flex items-center justify-center">
-        <div className="bg-white border border-[#EAE8F0] p-6 rounded-xl max-w-md w-full text-center space-y-4 shadow-sm">
+        <div className="bg-white border border-[#EBECEF] p-6 rounded-xl max-w-md w-full text-center space-y-4 shadow-sm">
           <span className="font-bold text-xs uppercase px-2 py-0.5 rounded bg-rose-100 text-rose-800">
             RESTRICTED
           </span>
@@ -314,7 +314,7 @@ export default function PharmacistOrderReviewPage() {
           <p className="text-xs text-[#6C757D]">{error}</p>
           <Link
             href="/pharmacist/review-queue"
-            className="inline-flex items-center gap-2 px-4 py-2 text-xs font-semibold rounded-lg bg-[#6240E8] text-white hover:bg-[#5230D8] transition-colors"
+            className="inline-flex items-center gap-2 px-4 py-2 text-xs font-semibold rounded-lg bg-[#0D5C5A] text-white hover:bg-[#0A4846] transition-colors"
           >
             &larr; Return to Queue
           </Link>
@@ -338,18 +338,18 @@ export default function PharmacistOrderReviewPage() {
   return (
     <div className="flex flex-col space-y-4">
       {/* Top Sticky Bar */}
-      <div className="sticky top-[64px] z-30 bg-white border-b border-[#EAE8F0] px-6 py-3 flex flex-wrap items-center justify-between gap-4 shadow-2xs">
+      <div className="sticky top-[64px] z-30 bg-white border-b border-[#EBECEF] px-6 py-3 flex flex-wrap items-center justify-between gap-4 shadow-2xs">
         <div className="flex items-center gap-3">
           <Link
             href="/pharmacist/review-queue"
-            className="px-2 py-1 text-xs font-semibold text-[#6240E8] hover:bg-[#F8F9FB] rounded"
+            className="px-2 py-1 text-xs font-semibold text-[#0D5C5A] hover:bg-[#F8F9FB] rounded"
           >
             &larr; Back
           </Link>
           <div>
             <div className="flex items-center gap-2">
               <span className="text-sm font-bold text-[#14161A]">Order {order.orderNumber}</span>
-              <span className="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-[#F7F5FD] text-[#6240E8] border border-[#EAE8F0]">
+              <span className="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-[#F0FDFA] text-[#0D5C5A] border border-[#EBECEF]">
                 {order.status}
               </span>
             </div>
@@ -410,15 +410,15 @@ export default function PharmacistOrderReviewPage() {
       {/* Side-by-side workspace: Desktop 2-column layout */}
       <div className="flex-1 p-6 grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
         {/* Left Column: Original Prescription Viewer (5 cols) */}
-        <div className="lg:col-span-5 bg-white rounded-xl border border-[#EAE8F0] shadow-2xs overflow-hidden flex flex-col sticky top-[130px] max-h-[calc(100vh-160px)]">
-          <div className="p-3 bg-[#F8F9FB] border-b border-[#EAE8F0] flex items-center justify-between">
-            <span className="text-xs font-semibold text-[#351F65]">
+        <div className="lg:col-span-5 bg-white rounded-xl border border-[#EBECEF] shadow-2xs overflow-hidden flex flex-col sticky top-[130px] max-h-[calc(100vh-160px)]">
+          <div className="p-3 bg-[#F8F9FB] border-b border-[#EBECEF] flex items-center justify-between">
+            <span className="text-xs font-semibold text-[#0F172A]">
               Original Prescription Document
             </span>
             <div className="flex items-center gap-1">
               <button
                 onClick={() => setZoomLevel((z) => Math.max(50, z - 20))}
-                className="px-2 py-0.5 rounded bg-white border border-[#EAE8F0] text-xs font-bold text-[#78879A] hover:bg-slate-50"
+                className="px-2 py-0.5 rounded bg-white border border-[#EBECEF] text-xs font-bold text-[#78879A] hover:bg-slate-50"
                 title="Zoom Out"
               >
                 -
@@ -426,14 +426,14 @@ export default function PharmacistOrderReviewPage() {
               <span className="text-[10px] text-[#78879A] px-1">{zoomLevel}%</span>
               <button
                 onClick={() => setZoomLevel((z) => Math.min(200, z + 20))}
-                className="px-2 py-0.5 rounded bg-white border border-[#EAE8F0] text-xs font-bold text-[#78879A] hover:bg-slate-50"
+                className="px-2 py-0.5 rounded bg-white border border-[#EBECEF] text-xs font-bold text-[#78879A] hover:bg-slate-50"
                 title="Zoom In"
               >
                 +
               </button>
               <button
                 onClick={() => setZoomLevel(100)}
-                className="px-2 py-0.5 rounded bg-white border border-[#EAE8F0] text-[10px] font-semibold text-[#78879A] hover:bg-slate-50"
+                className="px-2 py-0.5 rounded bg-white border border-[#EBECEF] text-[10px] font-semibold text-[#78879A] hover:bg-slate-50"
                 title="Reset Zoom"
               >
                 Reset
@@ -473,7 +473,7 @@ export default function PharmacistOrderReviewPage() {
           </div>
 
           {/* Document details footer */}
-          <div className="p-3 bg-white border-t border-[#EAE8F0] text-[11px] text-[#78879A] space-y-1">
+          <div className="p-3 bg-white border-t border-[#EBECEF] text-[11px] text-[#78879A] space-y-1">
             <div>
               Filename: <strong className="text-[#14161A]">{prescription.originalFileName}</strong>
             </div>
@@ -484,12 +484,12 @@ export default function PharmacistOrderReviewPage() {
         {/* Right Column: AI Extraction & Item Verification (7 cols) */}
         <div className="lg:col-span-7 space-y-4">
           {/* AI Warning Banner */}
-          <div className="rounded-xl bg-[#F7F5FD] border border-[#6240E8]/30 p-4 shadow-2xs">
-            <span className="font-bold text-[10px] uppercase px-1.5 py-0.5 rounded bg-[#6240E8] text-white inline-block mb-1">
+          <div className="rounded-xl bg-[#F0FDFA] border border-[#0D5C5A]/30 p-4 shadow-2xs">
+            <span className="font-bold text-[10px] uppercase px-1.5 py-0.5 rounded bg-[#0D5C5A] text-white inline-block mb-1">
               AI ASSISTIVE DRAFT
             </span>
             <div>
-              <h4 className="text-xs font-bold text-[#351F65]">
+              <h4 className="text-xs font-bold text-[#0F172A]">
                 AI-generated draft — pharmacist verification required.
               </h4>
               <p className="text-[11px] text-[#78879A] mt-1 leading-relaxed">
@@ -535,7 +535,7 @@ export default function PharmacistOrderReviewPage() {
                         ? 'border-rose-300 bg-rose-50/10'
                         : isBlocked
                           ? 'border-rose-400 bg-rose-50/20'
-                          : 'border-[#EAE8F0]'
+                          : 'border-[#EBECEF]'
                   }`}
                 >
                   {/* Item Top Bar */}
@@ -558,7 +558,7 @@ export default function PharmacistOrderReviewPage() {
                           item.schedule === 'OTC'
                             ? 'bg-blue-50 text-blue-700 border border-blue-200'
                             : item.schedule === 'SCHEDULE_H'
-                              ? 'bg-purple-50 text-purple-700 border border-purple-200'
+                              ? 'bg-[#F0FDFA] text-[#0D5C5A] border border-[#EBECEF]'
                               : item.schedule === 'SCHEDULE_H1'
                                 ? 'bg-amber-50 text-amber-800 border border-amber-300'
                                 : 'bg-rose-100 text-rose-800 border border-rose-300'
@@ -589,7 +589,7 @@ export default function PharmacistOrderReviewPage() {
                         : evalRes?.decision === 'REQUIRES_H1_REGISTER'
                           ? 'bg-amber-50 border border-amber-300 text-amber-800'
                           : evalRes?.decision === 'REQUIRES_PRESCRIPTION'
-                            ? 'bg-purple-50 border border-purple-200 text-purple-800'
+                            ? 'bg-[#F0FDFA] border border-[#EBECEF] text-[#0D5C5A]'
                             : 'bg-emerald-50 border border-emerald-200 text-emerald-800'
                     }`}
                   >
@@ -605,9 +605,9 @@ export default function PharmacistOrderReviewPage() {
 
                   {/* AI Extracted draft info */}
                   {draft && (
-                    <div className="p-3 bg-[#F8F9FB] rounded-lg border border-[#EAE8F0] space-y-2 text-xs">
+                    <div className="p-3 bg-[#F8F9FB] rounded-lg border border-[#EBECEF] space-y-2 text-xs">
                       <div className="flex items-center justify-between text-[11px] text-[#78879A]">
-                        <span className="font-medium text-[#351F65]">AI Draft Extraction</span>
+                        <span className="font-medium text-[#0F172A]">AI Draft Extraction</span>
                         <span>
                           Confidence: <strong>{(draft.confidence * 100).toFixed(0)}%</strong>
                         </span>
@@ -656,7 +656,7 @@ export default function PharmacistOrderReviewPage() {
                           )
                         }
                         placeholder="e.g. 1 tablet twice daily"
-                        className="w-full px-2.5 py-1.5 rounded-lg border border-[#EAE8F0] text-xs focus:outline-none focus:ring-1 focus:ring-[#6240E8]"
+                        className="w-full px-2.5 py-1.5 rounded-lg border border-[#EBECEF] text-xs focus:outline-none focus:ring-1 focus:ring-[#0D5C5A]"
                       />
                     </div>
                     <div>
@@ -670,7 +670,7 @@ export default function PharmacistOrderReviewPage() {
                           handleFieldChange(item.orderItemId, 'reviewedDuration', e.target.value)
                         }
                         placeholder="e.g. 7 days"
-                        className="w-full px-2.5 py-1.5 rounded-lg border border-[#EAE8F0] text-xs focus:outline-none focus:ring-1 focus:ring-[#6240E8]"
+                        className="w-full px-2.5 py-1.5 rounded-lg border border-[#EBECEF] text-xs focus:outline-none focus:ring-1 focus:ring-[#0D5C5A]"
                       />
                     </div>
                   </div>
@@ -691,12 +691,12 @@ export default function PharmacistOrderReviewPage() {
                   )}
 
                   {/* Item Decision Buttons */}
-                  <div className="pt-2 border-t border-[#EAE8F0] flex flex-wrap items-center justify-between gap-2">
+                  <div className="pt-2 border-t border-[#EBECEF] flex flex-wrap items-center justify-between gap-2">
                     <div className="flex items-center gap-1.5">
                       <button
                         type="button"
                         onClick={() => handleSaveFields(item.orderItemId)}
-                        className="px-2.5 py-1 rounded text-[11px] font-medium text-[#6240E8] hover:bg-[#F7F5FD] border border-[#EAE8F0]"
+                        className="px-2.5 py-1 rounded text-[11px] font-medium text-[#0D5C5A] hover:bg-[#F0FDFA] border border-[#EBECEF]"
                       >
                         Save Corrections
                       </button>
@@ -704,7 +704,7 @@ export default function PharmacistOrderReviewPage() {
                         type="button"
                         onClick={() => setAlternativeModal({ itemId: item.orderItemId })}
                         disabled={isBlocked || isApproved}
-                        className="px-2.5 py-1 rounded text-[11px] font-medium text-[#351F65] hover:bg-[#F8F9FB] border border-[#EAE8F0] disabled:opacity-50"
+                        className="px-2.5 py-1 rounded text-[11px] font-medium text-[#0F172A] hover:bg-[#F8F9FB] border border-[#EBECEF] disabled:opacity-50"
                       >
                         Propose Generic
                       </button>
@@ -745,7 +745,7 @@ export default function PharmacistOrderReviewPage() {
       {/* MODAL: Schedule H1 Details */}
       {h1Modal && (
         <div className="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-[1px] flex items-center justify-center p-4">
-          <div className="bg-white rounded-xl border border-[#EAE8F0] max-w-md w-full p-6 shadow-xl space-y-4">
+          <div className="bg-white rounded-xl border border-[#EBECEF] max-w-md w-full p-6 shadow-xl space-y-4">
             <h3 className="text-base font-bold text-[#14161A]">Schedule H1 Register Details</h3>
             <p className="text-xs text-[#78879A]">
               Under regulatory requirements, Schedule H1 substances require recorded patient and
@@ -753,41 +753,41 @@ export default function PharmacistOrderReviewPage() {
             </p>
             <div className="space-y-3 text-xs">
               <div>
-                <label className="block font-medium text-[#351F65] mb-1">Patient Full Name *</label>
+                <label className="block font-medium text-[#0F172A] mb-1">Patient Full Name *</label>
                 <input
                   type="text"
                   value={h1PatientName}
                   onChange={(e) => setH1PatientName(e.target.value)}
-                  className="w-full px-3 py-2 rounded-lg border border-[#EAE8F0] text-xs focus:ring-2 focus:ring-[#6240E8]/20 focus:outline-none"
+                  className="w-full px-3 py-2 rounded-lg border border-[#EBECEF] text-xs focus:ring-2 focus:ring-[#0D5C5A]/20 focus:outline-none"
                   placeholder="e.g. Debasish Ghosh"
                 />
               </div>
               <div>
-                <label className="block font-medium text-[#351F65] mb-1">
+                <label className="block font-medium text-[#0F172A] mb-1">
                   Prescribing Doctor *
                 </label>
                 <input
                   type="text"
                   value={h1PrescriberName}
                   onChange={(e) => setH1PrescriberName(e.target.value)}
-                  className="w-full px-3 py-2 rounded-lg border border-[#EAE8F0] text-xs focus:ring-2 focus:ring-[#6240E8]/20 focus:outline-none"
+                  className="w-full px-3 py-2 rounded-lg border border-[#EBECEF] text-xs focus:ring-2 focus:ring-[#0D5C5A]/20 focus:outline-none"
                   placeholder="e.g. Dr. A. K. Mukherjee, MD"
                 />
               </div>
               <div>
-                <label className="block font-medium text-[#351F65] mb-1">
+                <label className="block font-medium text-[#0F172A] mb-1">
                   Clinic / Hospital / Reg No
                 </label>
                 <input
                   type="text"
                   value={h1PrescriberDetails}
                   onChange={(e) => setH1PrescriberDetails(e.target.value)}
-                  className="w-full px-3 py-2 rounded-lg border border-[#EAE8F0] text-xs focus:ring-2 focus:ring-[#6240E8]/20 focus:outline-none"
+                  className="w-full px-3 py-2 rounded-lg border border-[#EBECEF] text-xs focus:ring-2 focus:ring-[#0D5C5A]/20 focus:outline-none"
                   placeholder="e.g. Apollo Gleneagles Hospital (Reg #12345)"
                 />
               </div>
             </div>
-            <div className="flex items-center justify-end gap-2 pt-2 border-t border-[#EAE8F0]">
+            <div className="flex items-center justify-end gap-2 pt-2 border-t border-[#EBECEF]">
               <button
                 type="button"
                 onClick={() => setH1Modal(null)}
@@ -811,7 +811,7 @@ export default function PharmacistOrderReviewPage() {
       {/* MODAL: Reject Item Reason */}
       {rejectItemModal && (
         <div className="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-[1px] flex items-center justify-center p-4">
-          <div className="bg-white rounded-xl border border-[#EAE8F0] max-w-md w-full p-6 shadow-xl space-y-4">
+          <div className="bg-white rounded-xl border border-[#EBECEF] max-w-md w-full p-6 shadow-xl space-y-4">
             <h3 className="text-base font-bold text-[#14161A]">Reject Medicine Item</h3>
             <p className="text-xs text-[#78879A]">
               Provide a clear reason for rejecting this item. The customer will see this explanation
@@ -822,9 +822,9 @@ export default function PharmacistOrderReviewPage() {
               value={rejectItemReason}
               onChange={(e) => setRejectItemReason(e.target.value)}
               placeholder="e.g. Strength prescribed does not match patient age, or unreadable dosage..."
-              className="w-full p-2.5 rounded-lg border border-[#EAE8F0] text-xs focus:ring-2 focus:ring-[#6240E8]/20 focus:outline-none"
+              className="w-full p-2.5 rounded-lg border border-[#EBECEF] text-xs focus:ring-2 focus:ring-[#0D5C5A]/20 focus:outline-none"
             />
-            <div className="flex items-center justify-end gap-2 pt-2 border-t border-[#EAE8F0]">
+            <div className="flex items-center justify-end gap-2 pt-2 border-t border-[#EBECEF]">
               <button
                 type="button"
                 onClick={() => setRejectItemModal(null)}
@@ -848,7 +848,7 @@ export default function PharmacistOrderReviewPage() {
       {/* MODAL: Propose Generic Alternative */}
       {alternativeModal && (
         <div className="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-[1px] flex items-center justify-center p-4">
-          <div className="bg-white rounded-xl border border-[#EAE8F0] max-w-md w-full p-6 shadow-xl space-y-4">
+          <div className="bg-white rounded-xl border border-[#EBECEF] max-w-md w-full p-6 shadow-xl space-y-4">
             <h3 className="text-base font-bold text-[#14161A]">Propose Generic Alternative</h3>
             <p className="text-xs text-[#78879A]">
               Propose an active-ingredient equivalent catalogue medicine. Customer must explicitly
@@ -856,13 +856,13 @@ export default function PharmacistOrderReviewPage() {
             </p>
             <div className="space-y-3 text-xs">
               <div>
-                <label className="block font-medium text-[#351F65] mb-1">
+                <label className="block font-medium text-[#0F172A] mb-1">
                   Select Catalogue Alternative
                 </label>
                 <select
                   value={altProposedMedicineId}
                   onChange={(e) => setAltProposedMedicineId(e.target.value)}
-                  className="w-full px-3 py-2 rounded-lg border border-[#EAE8F0] text-xs focus:ring-2 focus:ring-[#6240E8]/20 focus:outline-none"
+                  className="w-full px-3 py-2 rounded-lg border border-[#EBECEF] text-xs focus:ring-2 focus:ring-[#0D5C5A]/20 focus:outline-none"
                 >
                   <option value="">-- Choose Catalogue Medicine --</option>
                   {catalogueMedicines.map((m) => (
@@ -873,17 +873,17 @@ export default function PharmacistOrderReviewPage() {
                 </select>
               </div>
               <div>
-                <label className="block font-medium text-[#351F65] mb-1">Pharmacist Reason</label>
+                <label className="block font-medium text-[#0F172A] mb-1">Pharmacist Reason</label>
                 <textarea
                   rows={2}
                   value={altReason}
                   onChange={(e) => setAltReason(e.target.value)}
                   placeholder="e.g. Economical alternative with identical active ingredient..."
-                  className="w-full p-2.5 rounded-lg border border-[#EAE8F0] text-xs focus:ring-2 focus:ring-[#6240E8]/20 focus:outline-none"
+                  className="w-full p-2.5 rounded-lg border border-[#EBECEF] text-xs focus:ring-2 focus:ring-[#0D5C5A]/20 focus:outline-none"
                 />
               </div>
             </div>
-            <div className="flex items-center justify-end gap-2 pt-2 border-t border-[#EAE8F0]">
+            <div className="flex items-center justify-end gap-2 pt-2 border-t border-[#EBECEF]">
               <button
                 type="button"
                 onClick={() => setAlternativeModal(null)}
@@ -895,7 +895,7 @@ export default function PharmacistOrderReviewPage() {
                 type="button"
                 onClick={handleProposeAlternative}
                 disabled={actionLoading || !altProposedMedicineId || !altReason.trim()}
-                className="px-4 py-1.5 text-xs font-semibold rounded-lg bg-[#6240E8] text-white hover:bg-[#5230D8] disabled:opacity-50"
+                className="px-4 py-1.5 text-xs font-semibold rounded-lg bg-[#0D5C5A] text-white hover:bg-[#0A4846] disabled:opacity-50"
               >
                 Send Proposal
               </button>
@@ -907,7 +907,7 @@ export default function PharmacistOrderReviewPage() {
       {/* MODAL: Reject Entire Prescription */}
       {rejectPrescriptionModal && (
         <div className="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-[1px] flex items-center justify-center p-4">
-          <div className="bg-white rounded-xl border border-[#EAE8F0] max-w-md w-full p-6 shadow-xl space-y-4">
+          <div className="bg-white rounded-xl border border-[#EBECEF] max-w-md w-full p-6 shadow-xl space-y-4">
             <h3 className="text-base font-bold text-[#14161A]">Reject Entire Prescription</h3>
             <p className="text-xs text-[#78879A]">
               Rejecting this prescription marks the order as REJECTED. Please provide an explicit
@@ -918,9 +918,9 @@ export default function PharmacistOrderReviewPage() {
               value={rejectPrescriptionReason}
               onChange={(e) => setRejectPrescriptionReason(e.target.value)}
               placeholder="e.g. Prescription expired, prescriber signature invalid, or illegible document..."
-              className="w-full p-2.5 rounded-lg border border-[#EAE8F0] text-xs focus:ring-2 focus:ring-[#6240E8]/20 focus:outline-none"
+              className="w-full p-2.5 rounded-lg border border-[#EBECEF] text-xs focus:ring-2 focus:ring-[#0D5C5A]/20 focus:outline-none"
             />
-            <div className="flex items-center justify-end gap-2 pt-2 border-t border-[#EAE8F0]">
+            <div className="flex items-center justify-end gap-2 pt-2 border-t border-[#EBECEF]">
               <button
                 type="button"
                 onClick={() => setRejectPrescriptionModal(false)}
@@ -944,7 +944,7 @@ export default function PharmacistOrderReviewPage() {
       {/* MODAL: Request Re-upload */}
       {reuploadModal && (
         <div className="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-[1px] flex items-center justify-center p-4">
-          <div className="bg-white rounded-xl border border-[#EAE8F0] max-w-md w-full p-6 shadow-xl space-y-4">
+          <div className="bg-white rounded-xl border border-[#EBECEF] max-w-md w-full p-6 shadow-xl space-y-4">
             <h3 className="text-base font-bold text-[#14161A]">Request Prescription Re-upload</h3>
             <p className="text-xs text-[#78879A]">
               The customer will be notified in the customer app to upload a clearer replacement
@@ -955,9 +955,9 @@ export default function PharmacistOrderReviewPage() {
               value={reuploadReason}
               onChange={(e) => setReuploadReason(e.target.value)}
               placeholder="e.g. Image blurry, corners cut off, doctor stamp not visible..."
-              className="w-full p-2.5 rounded-lg border border-[#EAE8F0] text-xs focus:ring-2 focus:ring-[#6240E8]/20 focus:outline-none"
+              className="w-full p-2.5 rounded-lg border border-[#EBECEF] text-xs focus:ring-2 focus:ring-[#0D5C5A]/20 focus:outline-none"
             />
-            <div className="flex items-center justify-end gap-2 pt-2 border-t border-[#EAE8F0]">
+            <div className="flex items-center justify-end gap-2 pt-2 border-t border-[#EBECEF]">
               <button
                 type="button"
                 onClick={() => setReuploadModal(false)}

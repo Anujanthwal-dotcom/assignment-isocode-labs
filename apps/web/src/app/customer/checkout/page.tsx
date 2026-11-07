@@ -184,8 +184,8 @@ export default function CustomerCheckoutPage() {
   return (
     <div className="max-w-[1000px] mx-auto space-y-6">
       {/* Header */}
-      <div className="pb-2 border-b border-[#EAE8F0]">
-        <h1 className="text-2xl font-bold tracking-tight text-[#351F65]">Order Checkout</h1>
+      <div className="pb-2 border-b border-[#EBECEF]">
+        <h1 className="text-2xl font-bold tracking-tight text-[#0F172A]">Order Checkout</h1>
         <p className="text-sm text-[#78879A] mt-1">
           Complete the required verification details to submit your pharmacy order.
         </p>
@@ -218,12 +218,12 @@ export default function CustomerCheckoutPage() {
         {/* Left Column: Multi-section Steps (Col 8) */}
         <div className="lg:col-span-8 space-y-5">
           {/* Section 1: Who is this order for? */}
-          <Card className="border-[#EAE8F0] bg-white p-5 space-y-3">
+          <Card className="border-[#EBECEF] bg-white p-5 space-y-3">
             <div className="flex items-center gap-2 border-b border-slate-100 pb-2">
-              <span className="flex h-6 w-6 items-center justify-center rounded-full bg-[#6240E8] text-white text-xs font-bold">
+              <span className="flex h-6 w-6 items-center justify-center rounded-full bg-[#0D5C5A] text-white text-xs font-bold">
                 1
               </span>
-              <h2 className="font-bold text-sm text-[#351F65]">Select Patient</h2>
+              <h2 className="font-bold text-sm text-[#0F172A]">Select Patient</h2>
             </div>
 
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 pt-1">
@@ -235,7 +235,7 @@ export default function CustomerCheckoutPage() {
                 }}
                 className={`p-3 rounded-lg border text-left transition-all ${
                   selectedFamilyMemberId === ''
-                    ? 'border-[#6240E8] bg-[#F7F5FD] text-[#6240E8]'
+                    ? 'border-[#0D5C5A] bg-[#F0FDFA] text-[#0D5C5A]'
                     : 'border-slate-200 hover:border-slate-300 text-slate-700'
                 }`}
               >
@@ -252,7 +252,7 @@ export default function CustomerCheckoutPage() {
                   }}
                   className={`p-3 rounded-lg border text-left transition-all truncate ${
                     selectedFamilyMemberId === member.id
-                      ? 'border-[#6240E8] bg-[#F7F5FD] text-[#6240E8]'
+                      ? 'border-[#0D5C5A] bg-[#F0FDFA] text-[#0D5C5A]'
                       : 'border-slate-200 hover:border-slate-300 text-slate-700'
                   }`}
                 >
@@ -266,13 +266,13 @@ export default function CustomerCheckoutPage() {
           </Card>
 
           {/* Section 2: Prescription Selection / Upload */}
-          <Card className="border-[#EAE8F0] bg-white p-5 space-y-3">
+          <Card className="border-[#EBECEF] bg-white p-5 space-y-3">
             <div className="flex items-center justify-between border-b border-slate-100 pb-2">
               <div className="flex items-center gap-2">
-                <span className="flex h-6 w-6 items-center justify-center rounded-full bg-[#6240E8] text-white text-xs font-bold">
+                <span className="flex h-6 w-6 items-center justify-center rounded-full bg-[#0D5C5A] text-white text-xs font-bold">
                   2
                 </span>
-                <h2 className="font-bold text-sm text-[#351F65]">Attach Prescription *</h2>
+                <h2 className="font-bold text-sm text-[#0F172A]">Attach Prescription *</h2>
               </div>
             </div>
 
@@ -299,7 +299,7 @@ export default function CustomerCheckoutPage() {
                       onClick={() => setSelectedPrescriptionId(rx.id)}
                       className={`p-3 rounded-lg border text-left transition-all ${
                         selectedPrescriptionId === rx.id
-                          ? 'border-[#6240E8] bg-[#F7F5FD] text-[#6240E8] shadow-2xs'
+                          ? 'border-[#0D5C5A] bg-[#F0FDFA] text-[#0D5C5A] shadow-2xs'
                           : 'border-slate-200 hover:border-slate-300 text-slate-700'
                       }`}
                     >
@@ -334,7 +334,7 @@ export default function CustomerCheckoutPage() {
                       setInlineFile(e.target.files[0]);
                     }
                   }}
-                  className="text-xs text-slate-600 file:mr-2 file:py-1.5 file:px-3 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-purple-50 file:text-[#6240E8] hover:file:bg-purple-100 cursor-pointer"
+                  className="text-xs text-slate-600 file:mr-2 file:py-1.5 file:px-3 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-[#F0FDFA] file:text-[#0D5C5A] hover:file:bg-[#CCFBF1] cursor-pointer"
                 />
                 {inlineFile && (
                   <Button
@@ -342,7 +342,7 @@ export default function CustomerCheckoutPage() {
                     type="button"
                     onClick={handleInlineUpload}
                     disabled={uploadingInline}
-                    className="text-xs bg-[#6240E8] text-white hover:bg-[#5233D0] h-8 shrink-0"
+                    className="text-xs bg-[#0D5C5A] text-white hover:bg-[#0A4846] h-8 shrink-0"
                   >
                     {uploadingInline ? 'Uploading...' : 'Upload & Select'}
                   </Button>
@@ -353,17 +353,17 @@ export default function CustomerCheckoutPage() {
           </Card>
 
           {/* Section 3: Delivery Address Selection */}
-          <Card className="border-[#EAE8F0] bg-white p-5 space-y-3">
+          <Card className="border-[#EBECEF] bg-white p-5 space-y-3">
             <div className="flex items-center justify-between border-b border-slate-100 pb-2">
               <div className="flex items-center gap-2">
-                <span className="flex h-6 w-6 items-center justify-center rounded-full bg-[#6240E8] text-white text-xs font-bold">
+                <span className="flex h-6 w-6 items-center justify-center rounded-full bg-[#0D5C5A] text-white text-xs font-bold">
                   3
                 </span>
-                <h2 className="font-bold text-sm text-[#351F65]">Delivery Address *</h2>
+                <h2 className="font-bold text-sm text-[#0F172A]">Delivery Address *</h2>
               </div>
               <Link
                 href="/customer/addresses"
-                className="text-xs text-[#6240E8] font-semibold hover:underline"
+                className="text-xs text-[#0D5C5A] font-semibold hover:underline"
               >
                 + Add New
               </Link>
@@ -377,7 +377,7 @@ export default function CustomerCheckoutPage() {
                 <Button
                   size="sm"
                   onClick={() => router.push('/customer/addresses')}
-                  className="text-xs bg-[#6240E8] text-white"
+                  className="text-xs bg-[#0D5C5A] text-white"
                 >
                   Add Delivery Address
                 </Button>
@@ -391,14 +391,14 @@ export default function CustomerCheckoutPage() {
                     onClick={() => setSelectedAddressId(addr.id)}
                     className={`p-3 rounded-lg border text-left transition-all ${
                       selectedAddressId === addr.id
-                        ? 'border-[#6240E8] bg-[#F7F5FD] text-[#351F65] shadow-2xs'
+                        ? 'border-[#0D5C5A] bg-[#F0FDFA] text-[#0F172A] shadow-2xs'
                         : 'border-slate-200 hover:border-slate-300 text-slate-700'
                     }`}
                   >
                     <div className="flex items-center justify-between">
                       <span className="font-bold text-xs">{addr.label}</span>
                       {addr.isDefault && (
-                        <span className="text-[9px] font-semibold bg-[#6240E8] text-white px-1.5 py-0.2 rounded">
+                        <span className="text-[9px] font-semibold bg-[#0D5C5A] text-white px-1.5 py-0.2 rounded">
                           Default
                         </span>
                       )}
@@ -416,12 +416,12 @@ export default function CustomerCheckoutPage() {
           </Card>
 
           {/* Section 4: Payment Method */}
-          <Card className="border-[#EAE8F0] bg-white p-5 space-y-3">
+          <Card className="border-[#EBECEF] bg-white p-5 space-y-3">
             <div className="flex items-center gap-2 border-b border-slate-100 pb-2">
-              <span className="flex h-6 w-6 items-center justify-center rounded-full bg-[#6240E8] text-white text-xs font-bold">
+              <span className="flex h-6 w-6 items-center justify-center rounded-full bg-[#0D5C5A] text-white text-xs font-bold">
                 4
               </span>
-              <h2 className="font-bold text-sm text-[#351F65]">Payment Method *</h2>
+              <h2 className="font-bold text-sm text-[#0F172A]">Payment Method *</h2>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
@@ -430,7 +430,7 @@ export default function CustomerCheckoutPage() {
                 onClick={() => setPaymentMethod('UPI')}
                 className={`p-4 rounded-xl border text-left transition-all ${
                   paymentMethod === 'UPI'
-                    ? 'border-[#6240E8] bg-[#F7F5FD] text-[#351F65] shadow-2xs'
+                    ? 'border-[#0D5C5A] bg-[#F0FDFA] text-[#0F172A] shadow-2xs'
                     : 'border-slate-200 hover:border-slate-300'
                 }`}
               >
@@ -447,7 +447,7 @@ export default function CustomerCheckoutPage() {
                 onClick={() => setPaymentMethod('COD')}
                 className={`p-4 rounded-xl border text-left transition-all ${
                   paymentMethod === 'COD'
-                    ? 'border-[#6240E8] bg-[#F7F5FD] text-[#351F65] shadow-2xs'
+                    ? 'border-[#0D5C5A] bg-[#F0FDFA] text-[#0F172A] shadow-2xs'
                     : 'border-slate-200 hover:border-slate-300'
                 }`}
               >
@@ -462,7 +462,7 @@ export default function CustomerCheckoutPage() {
           </Card>
 
           {/* Section 5: Delivery Note */}
-          <Card className="border-[#EAE8F0] bg-white p-5 space-y-2">
+          <Card className="border-[#EBECEF] bg-white p-5 space-y-2">
             <label className="text-xs font-semibold text-slate-700 block">
               Customer Delivery Note (Optional)
             </label>
@@ -478,8 +478,8 @@ export default function CustomerCheckoutPage() {
 
         {/* Right Column: Order Review & Submit (Col 4) */}
         <div className="lg:col-span-4 space-y-4">
-          <Card className="border-[#EAE8F0] bg-white p-5 space-y-4 sticky top-20">
-            <CardTitle className="text-base font-bold text-[#351F65]">Order Summary</CardTitle>
+          <Card className="border-[#EBECEF] bg-white p-5 space-y-4 sticky top-20">
+            <CardTitle className="text-base font-bold text-[#0F172A]">Order Summary</CardTitle>
 
             <div className="max-h-[220px] overflow-y-auto space-y-2 pr-1 divide-y divide-slate-100 text-xs">
               {cart.items.map((item) => (
@@ -515,8 +515,8 @@ export default function CustomerCheckoutPage() {
             </div>
 
             <div className="flex justify-between items-baseline">
-              <span className="font-bold text-sm text-[#351F65]">Total Payable</span>
-              <span className="font-extrabold text-2xl text-[#6240E8]">
+              <span className="font-bold text-sm text-[#0F172A]">Total Payable</span>
+              <span className="font-extrabold text-2xl text-[#0D5C5A]">
                 ₹{cart.subtotal.toFixed(2)}
               </span>
             </div>
@@ -524,7 +524,7 @@ export default function CustomerCheckoutPage() {
             <Button
               onClick={handlePlaceOrder}
               disabled={submitting || !selectedAddressId || !selectedPrescriptionId}
-              className="w-full bg-[#6240E8] text-white hover:bg-[#5233D0] h-12 text-xs font-bold shadow-xs flex items-center justify-center"
+              className="w-full bg-[#0D5C5A] text-white hover:bg-[#0A4846] h-12 text-xs font-bold shadow-xs flex items-center justify-center"
             >
               {submitting ? 'Placing Order...' : 'Confirm & Place Order →'}
             </Button>

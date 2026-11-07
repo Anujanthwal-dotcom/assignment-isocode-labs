@@ -213,7 +213,7 @@ export default function MedicineCataloguePage() {
       {/* Page Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-[24px] font-bold tracking-tight text-[#351F65]">
+          <h1 className="text-[24px] font-bold tracking-tight text-[#0F172A]">
             Medicine Catalogue
           </h1>
           <p className="text-[14px] text-[#78879A]">
@@ -222,7 +222,7 @@ export default function MedicineCataloguePage() {
         </div>
         <Button
           onClick={handleOpenAdd}
-          className="inline-flex items-center gap-2 bg-[#6240E8] hover:bg-[#542F9B] text-white"
+          className="inline-flex items-center gap-2 bg-[#0D5C5A] hover:bg-[#542F9B] text-white"
         >
           <span>Add Medicine</span>
         </Button>
@@ -231,7 +231,7 @@ export default function MedicineCataloguePage() {
       {error && <SemanticAlert type="error" title="Error Loading Catalogue" description={error} />}
 
       {/* Filter & Search Bar */}
-      <div className="rounded-[12px] border border-[#EAE8F0] bg-white p-4 shadow-xs flex flex-col md:flex-row gap-3 items-stretch md:items-center justify-between">
+      <div className="rounded-[12px] border border-[#EBECEF] bg-white p-4 shadow-xs flex flex-col md:flex-row gap-3 items-stretch md:items-center justify-between">
         <div className="relative flex-1 min-w-[240px]">
           <Input
             placeholder="Search medicine name, SKU, or generic..."
@@ -240,7 +240,7 @@ export default function MedicineCataloguePage() {
               setSearch(e.target.value);
               setPage(1);
             }}
-            className="bg-[#F8F9FB] border-[#EAE8F0]"
+            className="bg-[#F8F9FB] border-[#EBECEF]"
           />
         </div>
 
@@ -254,7 +254,7 @@ export default function MedicineCataloguePage() {
               setStatusFilter(e.target.value);
               setPage(1);
             }}
-            className="h-[38px] rounded-[6px] border border-[#CED4DA] bg-white px-2.5 text-[13px] text-[#14161A] focus:outline-none focus:border-[#6240E8]"
+            className="h-[38px] rounded-[6px] border border-[#CED4DA] bg-white px-2.5 text-[13px] text-[#14161A] focus:outline-none focus:border-[#0D5C5A]"
           >
             <option value="ALL">All Statuses</option>
             <option value="ACTIVE">Active</option>
@@ -270,7 +270,7 @@ export default function MedicineCataloguePage() {
               setScheduleFilter(e.target.value);
               setPage(1);
             }}
-            className="h-[38px] rounded-[6px] border border-[#CED4DA] bg-white px-2.5 text-[13px] text-[#14161A] focus:outline-none focus:border-[#6240E8]"
+            className="h-[38px] rounded-[6px] border border-[#CED4DA] bg-white px-2.5 text-[13px] text-[#14161A] focus:outline-none focus:border-[#0D5C5A]"
           >
             <option value="ALL">All Schedules</option>
             <option value="OTC">OTC</option>
@@ -283,11 +283,11 @@ export default function MedicineCataloguePage() {
       </div>
 
       {/* Catalogue Table */}
-      <div className="rounded-[12px] border border-[#EAE8F0] bg-white shadow-xs overflow-hidden">
+      <div className="rounded-[12px] border border-[#EBECEF] bg-white shadow-xs overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse text-[13px]">
             <thead>
-              <tr className="border-b border-[#EAE8F0] bg-[#F8F9FB] text-[#78879A] font-semibold">
+              <tr className="border-b border-[#EBECEF] bg-[#F8F9FB] text-[#78879A] font-semibold">
                 <th className="py-3 px-4">SKU</th>
                 <th className="py-3 px-4">Medicine</th>
                 <th className="py-3 px-4">Generic</th>
@@ -298,12 +298,12 @@ export default function MedicineCataloguePage() {
                 <th className="py-3 px-4 text-right">Actions</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-[#EAE8F0]">
+            <tbody className="divide-y divide-[#EBECEF]">
               {loading ? (
                 <tr>
                   <td colSpan={8} className="py-12 text-center text-[#78879A]">
                     <div className="flex items-center justify-center gap-2">
-                      <div className="w-4 h-4 border-2 border-[#6240E8] border-t-transparent rounded-full animate-spin" />
+                      <div className="w-4 h-4 border-2 border-[#0D5C5A] border-t-transparent rounded-full animate-spin" />
                       <span>Loading catalogue entries...</span>
                     </div>
                   </td>
@@ -312,7 +312,7 @@ export default function MedicineCataloguePage() {
                 <tr>
                   <td colSpan={8} className="py-12 text-center text-[#78879A]">
                     <div className="flex flex-col items-center justify-center gap-1">
-                      <p className="font-semibold text-[#351F65]">No medicines found</p>
+                      <p className="font-semibold text-[#0F172A]">No medicines found</p>
                       <p className="text-[12px]">
                         Try adjusting your search criteria or add a new medicine.
                       </p>
@@ -322,7 +322,7 @@ export default function MedicineCataloguePage() {
               ) : (
                 medicines.map((med) => (
                   <tr key={med.id} className="hover:bg-[#F8F9FB]/60 transition-colors">
-                    <td className="py-3 px-4 font-mono text-[12px] font-medium text-[#351F65]">
+                    <td className="py-3 px-4 font-mono text-[12px] font-medium text-[#0F172A]">
                       {med.sku}
                     </td>
                     <td className="py-3 px-4">
@@ -338,7 +338,7 @@ export default function MedicineCataloguePage() {
                         : '—'}
                     </td>
                     <td className="py-3 px-4">
-                      <span className="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-medium bg-[#F7F5FD] text-[#6240E8] border border-[#D6D1F7]">
+                      <span className="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-medium bg-[#F0FDFA] text-[#0D5C5A] border border-[#EBECEF]">
                         {SCHEDULE_LABELS[med.schedule] || med.schedule}
                       </span>
                     </td>
@@ -360,7 +360,7 @@ export default function MedicineCataloguePage() {
                       <div className="flex items-center justify-end gap-1.5">
                         <button
                           onClick={() => handleOpenEdit(med)}
-                          className="px-2 py-0.5 rounded text-xs font-semibold text-[#6240E8] hover:bg-[#F7F5FD]"
+                          className="px-2 py-0.5 rounded text-xs font-semibold text-[#0D5C5A] hover:bg-[#F0FDFA]"
                           title="Edit Medicine"
                         >
                           Edit
@@ -388,7 +388,7 @@ export default function MedicineCataloguePage() {
         </div>
 
         {/* Pagination Footer */}
-        <div className="flex items-center justify-between border-t border-[#EAE8F0] px-4 py-3 text-[13px] text-[#78879A]">
+        <div className="flex items-center justify-between border-t border-[#EBECEF] px-4 py-3 text-[13px] text-[#78879A]">
           <div>
             Showing total <span className="font-semibold text-[#14161A]">{total}</span> medicines
           </div>
@@ -402,7 +402,7 @@ export default function MedicineCataloguePage() {
             >
               Previous
             </Button>
-            <span className="px-2 font-medium text-[#351F65]">
+            <span className="px-2 font-medium text-[#0F172A]">
               Page {page} of {totalPages}
             </span>
             <Button
@@ -422,7 +422,7 @@ export default function MedicineCataloguePage() {
       <Dialog open={isFormOpen} onOpenChange={setIsFormOpen}>
         <DialogContent className="max-w-[560px]">
           <DialogHeader>
-            <DialogTitle className="text-[#351F65] text-[18px]">
+            <DialogTitle className="text-[#0F172A] text-[18px]">
               {editingMedicine ? 'Edit Medicine' : 'Add New Medicine'}
             </DialogTitle>
           </DialogHeader>
@@ -434,7 +434,7 @@ export default function MedicineCataloguePage() {
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div>
-                <label className="block text-[12px] font-semibold text-[#351F65] mb-1">
+                <label className="block text-[12px] font-semibold text-[#0F172A] mb-1">
                   SKU <span className="text-[#DC3545]">*</span>
                 </label>
                 <Input
@@ -448,7 +448,7 @@ export default function MedicineCataloguePage() {
               </div>
 
               <div>
-                <label className="block text-[12px] font-semibold text-[#351F65] mb-1">
+                <label className="block text-[12px] font-semibold text-[#0F172A] mb-1">
                   Medicine Name <span className="text-[#DC3545]">*</span>
                 </label>
                 <Input
@@ -460,7 +460,7 @@ export default function MedicineCataloguePage() {
               </div>
 
               <div>
-                <label className="block text-[12px] font-semibold text-[#351F65] mb-1">
+                <label className="block text-[12px] font-semibold text-[#0F172A] mb-1">
                   Brand Name
                 </label>
                 <Input
@@ -471,7 +471,7 @@ export default function MedicineCataloguePage() {
               </div>
 
               <div>
-                <label className="block text-[12px] font-semibold text-[#351F65] mb-1">
+                <label className="block text-[12px] font-semibold text-[#0F172A] mb-1">
                   Generic Name
                 </label>
                 <Input
@@ -482,7 +482,7 @@ export default function MedicineCataloguePage() {
               </div>
 
               <div>
-                <label className="block text-[12px] font-semibold text-[#351F65] mb-1">
+                <label className="block text-[12px] font-semibold text-[#0F172A] mb-1">
                   Manufacturer
                 </label>
                 <Input
@@ -493,7 +493,7 @@ export default function MedicineCataloguePage() {
               </div>
 
               <div>
-                <label className="block text-[12px] font-semibold text-[#351F65] mb-1">
+                <label className="block text-[12px] font-semibold text-[#0F172A] mb-1">
                   Strength
                 </label>
                 <Input
@@ -504,7 +504,7 @@ export default function MedicineCataloguePage() {
               </div>
 
               <div>
-                <label className="block text-[12px] font-semibold text-[#351F65] mb-1">
+                <label className="block text-[12px] font-semibold text-[#0F172A] mb-1">
                   Dosage Form
                 </label>
                 <Input
@@ -515,7 +515,7 @@ export default function MedicineCataloguePage() {
               </div>
 
               <div>
-                <label className="block text-[12px] font-semibold text-[#351F65] mb-1">
+                <label className="block text-[12px] font-semibold text-[#0F172A] mb-1">
                   Pack Size
                 </label>
                 <Input
@@ -526,7 +526,7 @@ export default function MedicineCataloguePage() {
               </div>
 
               <div>
-                <label className="block text-[12px] font-semibold text-[#351F65] mb-1">
+                <label className="block text-[12px] font-semibold text-[#0F172A] mb-1">
                   Statutory Drug Schedule
                 </label>
                 <select
@@ -534,7 +534,7 @@ export default function MedicineCataloguePage() {
                   onChange={(e) =>
                     setFormData({ ...formData, schedule: e.target.value as MedicineSchedule })
                   }
-                  className="h-[44px] w-full rounded-[8px] border border-[#CED4DA] bg-white px-3 text-[14px] text-[#14161A] focus:outline-none focus:border-[#6240E8]"
+                  className="h-[44px] w-full rounded-[8px] border border-[#CED4DA] bg-white px-3 text-[14px] text-[#14161A] focus:outline-none focus:border-[#0D5C5A]"
                 >
                   <option value="OTC">OTC (Over the Counter)</option>
                   <option value="SCHEDULE_H">Schedule H</option>
@@ -546,7 +546,7 @@ export default function MedicineCataloguePage() {
               </div>
 
               <div>
-                <label className="block text-[12px] font-semibold text-[#351F65] mb-1">
+                <label className="block text-[12px] font-semibold text-[#0F172A] mb-1">
                   MRP (₹ INR) <span className="text-[#DC3545]">*</span>
                 </label>
                 <Input
@@ -573,7 +573,7 @@ export default function MedicineCataloguePage() {
               <Button
                 type="submit"
                 disabled={formSubmitting}
-                className="bg-[#6240E8] hover:bg-[#542F9B] text-white"
+                className="bg-[#0D5C5A] hover:bg-[#542F9B] text-white"
               >
                 {formSubmitting && (
                   <span className="mr-2 inline-block w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin" />
@@ -592,7 +592,7 @@ export default function MedicineCataloguePage() {
       >
         <DialogContent className="max-w-[440px]">
           <DialogHeader>
-            <DialogTitle className="text-[#351F65] text-[18px]">
+            <DialogTitle className="text-[#0F172A] text-[18px]">
               {deactivatingMedicine?.status === 'ACTIVE'
                 ? 'Deactivate Medicine?'
                 : 'Activate Medicine?'}

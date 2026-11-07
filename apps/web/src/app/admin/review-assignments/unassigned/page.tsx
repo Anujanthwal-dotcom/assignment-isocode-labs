@@ -74,7 +74,7 @@ export default function AdminUnassignedOrdersPage() {
 
   return (
     <div className="flex-1 p-6 max-w-7xl w-full mx-auto space-y-6">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2 border-b border-[#EAE8F0]">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2 border-b border-[#EBECEF]">
         <div>
           <div className="flex items-center gap-2">
             <Link
@@ -109,12 +109,12 @@ export default function AdminUnassignedOrdersPage() {
       )}
 
       {loading ? (
-        <div className="bg-white rounded-xl border border-[#EAE8F0] p-12 text-center shadow-2xs">
-          <div className="inline-block h-8 w-8 animate-spin rounded-full border-3 border-[#6240E8] border-t-transparent" />
+        <div className="bg-white rounded-xl border border-[#EBECEF] p-12 text-center shadow-2xs">
+          <div className="inline-block h-8 w-8 animate-spin rounded-full border-3 border-[#0D5C5A] border-t-transparent" />
           <p className="text-xs text-[#78879A] mt-3">Loading unassigned orders...</p>
         </div>
       ) : orders.length === 0 ? (
-        <div className="bg-white rounded-xl border border-[#EAE8F0] p-12 text-center shadow-2xs space-y-3">
+        <div className="bg-white rounded-xl border border-[#EBECEF] p-12 text-center shadow-2xs space-y-3">
           <div className="w-12 h-12 rounded-full bg-emerald-50 text-emerald-600 font-bold text-base flex items-center justify-center mx-auto">
             ✓
           </div>
@@ -124,11 +124,11 @@ export default function AdminUnassignedOrdersPage() {
           </p>
         </div>
       ) : (
-        <div className="bg-white rounded-xl border border-[#EAE8F0] shadow-2xs overflow-hidden">
+        <div className="bg-white rounded-xl border border-[#EBECEF] shadow-2xs overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full text-left border-collapse text-xs">
               <thead>
-                <tr className="border-b border-[#EAE8F0] bg-[#F8F9FB] text-[#78879A] font-semibold">
+                <tr className="border-b border-[#EBECEF] bg-[#F8F9FB] text-[#78879A] font-semibold">
                   <th className="py-3 px-4">Order Number</th>
                   <th className="py-3 px-4">Placed Date</th>
                   <th className="py-3 px-4">Customer</th>
@@ -138,10 +138,10 @@ export default function AdminUnassignedOrdersPage() {
                   <th className="py-3 px-4 text-right">Action</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-[#EAE8F0]">
+              <tbody className="divide-y divide-[#EBECEF]">
                 {orders.map((item) => (
-                  <tr key={item.orderId} className="hover:bg-[#F7F5FD]/50 transition-colors">
-                    <td className="py-3 px-4 font-semibold text-[#351F65]">{item.orderNumber}</td>
+                  <tr key={item.orderId} className="hover:bg-[#F0FDFA]/50 transition-colors">
+                    <td className="py-3 px-4 font-semibold text-[#0F172A]">{item.orderNumber}</td>
                     <td className="py-3 px-4 text-[#78879A]">
                       {new Date(item.placedAt).toLocaleString()}
                     </td>
@@ -157,7 +157,7 @@ export default function AdminUnassignedOrdersPage() {
                     <td className="py-3 px-4 text-right">
                       <button
                         onClick={() => setSelectedOrder(item)}
-                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-[#6240E8] text-white hover:bg-[#5230D8] transition-colors shadow-2xs"
+                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-[#0D5C5A] text-white hover:bg-[#0A4846] transition-colors shadow-2xs"
                       >
                         <span>Assign Store</span>
                       </button>
@@ -173,7 +173,7 @@ export default function AdminUnassignedOrdersPage() {
       {/* Assignment Modal */}
       {selectedOrder && (
         <div className="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-[1px] flex items-center justify-center p-4">
-          <div className="bg-white rounded-xl border border-[#EAE8F0] max-w-md w-full p-6 shadow-xl space-y-4">
+          <div className="bg-white rounded-xl border border-[#EBECEF] max-w-md w-full p-6 shadow-xl space-y-4">
             <h3 className="text-base font-bold text-[#14161A]">
               Assign Order {selectedOrder.orderNumber}
             </h3>
@@ -184,13 +184,13 @@ export default function AdminUnassignedOrdersPage() {
 
             <div className="space-y-3 text-xs">
               <div>
-                <label className="block font-medium text-[#351F65] mb-1">
+                <label className="block font-medium text-[#0F172A] mb-1">
                   Target Pharmacy Store *
                 </label>
                 <select
                   value={selectedStoreId}
                   onChange={(e) => setSelectedStoreId(e.target.value)}
-                  className="w-full px-3 py-2 rounded-lg border border-[#EAE8F0] text-xs focus:ring-2 focus:ring-[#6240E8]/20 focus:outline-none"
+                  className="w-full px-3 py-2 rounded-lg border border-[#EBECEF] text-xs focus:ring-2 focus:ring-[#0D5C5A]/20 focus:outline-none"
                 >
                   {stores.map((s) => (
                     <option key={s.id} value={s.id}>
@@ -201,7 +201,7 @@ export default function AdminUnassignedOrdersPage() {
               </div>
 
               <div>
-                <label className="block font-medium text-[#351F65] mb-1">
+                <label className="block font-medium text-[#0F172A] mb-1">
                   Assignment Note / Reason
                 </label>
                 <input
@@ -209,12 +209,12 @@ export default function AdminUnassignedOrdersPage() {
                   value={assignReason}
                   onChange={(e) => setAssignReason(e.target.value)}
                   placeholder="e.g. Manual assignment by admin to Salt Lake store"
-                  className="w-full px-3 py-2 rounded-lg border border-[#EAE8F0] text-xs focus:ring-2 focus:ring-[#6240E8]/20 focus:outline-none"
+                  className="w-full px-3 py-2 rounded-lg border border-[#EBECEF] text-xs focus:ring-2 focus:ring-[#0D5C5A]/20 focus:outline-none"
                 />
               </div>
             </div>
 
-            <div className="flex items-center justify-end gap-2 pt-2 border-t border-[#EAE8F0]">
+            <div className="flex items-center justify-end gap-2 pt-2 border-t border-[#EBECEF]">
               <button
                 type="button"
                 onClick={() => setSelectedOrder(null)}
@@ -226,7 +226,7 @@ export default function AdminUnassignedOrdersPage() {
                 type="button"
                 onClick={handleAssignSubmit}
                 disabled={actionLoading || !selectedStoreId}
-                className="inline-flex items-center gap-1.5 px-4 py-1.5 text-xs font-semibold rounded-lg bg-[#6240E8] text-white hover:bg-[#5230D8] disabled:opacity-50"
+                className="inline-flex items-center gap-1.5 px-4 py-1.5 text-xs font-semibold rounded-lg bg-[#0D5C5A] text-white hover:bg-[#0A4846] disabled:opacity-50"
               >
                 <span>Confirm Assignment</span>
               </button>

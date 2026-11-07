@@ -57,7 +57,7 @@ export default function PackingWorkspacePage() {
   return (
     <div className="space-y-6 max-w-4xl mx-auto">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-3 border-b border-[#EAE8F0]">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-3 border-b border-[#EBECEF]">
         <div>
           <div className="flex items-center gap-2">
             <Link
@@ -87,8 +87,8 @@ export default function PackingWorkspacePage() {
       ) : (
         <div className="space-y-6 text-xs">
           {/* Order Summary Card */}
-          <div className="bg-white rounded-2xl border border-[#EAE8F0] p-5 shadow-xs space-y-4">
-            <div className="flex items-center justify-between border-b border-[#EAE8F0] pb-3">
+          <div className="bg-white rounded-2xl border border-[#EBECEF] p-5 shadow-xs space-y-4">
+            <div className="flex items-center justify-between border-b border-[#EBECEF] pb-3">
               <div>
                 <span className="font-bold text-sm text-[#14161A]">Customer &amp; Delivery</span>
                 <p className="text-[#78879A] text-[11px]">
@@ -96,7 +96,7 @@ export default function PackingWorkspacePage() {
                 </p>
               </div>
               <div className="text-right">
-                <span className="font-bold text-sm text-[#6240E8]">
+                <span className="font-bold text-sm text-[#0D5C5A]">
                   ₹{orderDetail?.totalAmount.toFixed(2)}
                 </span>
                 <span className="block text-[10px] text-[#78879A] uppercase font-semibold">
@@ -107,7 +107,7 @@ export default function PackingWorkspacePage() {
 
             {/* Medicines List */}
             <div className="space-y-2">
-              <span className="font-bold text-[#351F65] block">Picked Medicines to Pack:</span>
+              <span className="font-bold text-[#0F172A] block">Picked Medicines to Pack:</span>
               <div className="divide-y divide-slate-100 border border-slate-100 rounded-xl overflow-hidden">
                 {orderDetail?.items?.map((item: any) => (
                   <div
@@ -133,11 +133,11 @@ export default function PackingWorkspacePage() {
           </div>
 
           {/* Verification Checklist */}
-          <div className="bg-[#F7F5FD] rounded-2xl border border-[#D6D1F7] p-5 space-y-4">
-            <h3 className="text-sm font-bold text-[#351F65]">
+          <div className="bg-[#F0FDFA] rounded-2xl border border-[#EBECEF] p-5 space-y-4">
+            <h3 className="text-sm font-bold text-[#0F172A]">
               Pharmacist Pre-Packing Verification Checklist
             </h3>
-            <ul className="space-y-2.5 text-xs text-[#351F65]">
+            <ul className="space-y-2.5 text-xs text-[#0F172A]">
               <li className="flex items-start gap-2">
                 <span className="text-emerald-600 font-bold shrink-0 mt-0.5">✓</span>
                 <span>
@@ -160,13 +160,13 @@ export default function PackingWorkspacePage() {
               </li>
             </ul>
 
-            <div className="pt-2 border-t border-purple-200">
+            <div className="pt-2 border-t border-[#EBECEF]">
               <label className="flex items-center gap-2.5 cursor-pointer font-bold text-[#14161A]">
                 <input
                   type="checkbox"
                   checked={checklistConfirmed}
                   onChange={(e) => setChecklistConfirmed(e.target.checked)}
-                  className="w-4 h-4 rounded text-[#6240E8] focus:ring-[#6240E8]"
+                  className="w-4 h-4 rounded text-[#0D5C5A] focus:ring-[#0D5C5A]"
                 />
                 <span>
                   I confirm that all medicines have been verified, sealed, and packed according to
@@ -184,7 +184,7 @@ export default function PackingWorkspacePage() {
                 value={notes}
                 onChange={(e) => setNotes(e.target.value)}
                 placeholder="e.g. Tamper-evident seal #7788 applied, bubble-wrapped fragile bottle..."
-                className="w-full p-2 border border-[#EAE8F0] rounded-xl text-xs bg-white focus:outline-none focus:ring-2 focus:ring-[#6240E8]/20 focus:border-[#6240E8]"
+                className="w-full p-2 border border-[#EBECEF] rounded-xl text-xs bg-white focus:outline-none focus:ring-2 focus:ring-[#0D5C5A]/20 focus:border-[#0D5C5A]"
               />
             </div>
           </div>
@@ -199,7 +199,7 @@ export default function PackingWorkspacePage() {
             <button
               onClick={handleCompletePacking}
               disabled={packingBusy || !checklistConfirmed}
-              className="px-5 py-2 rounded-xl text-xs font-semibold bg-[#6240E8] text-white hover:bg-[#5232d4] disabled:opacity-50 shadow-xs inline-flex items-center gap-1.5"
+              className="px-5 py-2 rounded-xl text-xs font-semibold bg-[#0D5C5A] text-white hover:bg-[#0A4846] disabled:opacity-50 shadow-xs inline-flex items-center gap-1.5"
             >
               <span>
                 {packingBusy ? 'Generating Invoice...' : 'Complete Packing & Issue Invoice'} &rarr;

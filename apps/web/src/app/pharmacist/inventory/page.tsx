@@ -92,7 +92,7 @@ export default function PharmacistInventoryPage() {
               Salt Lake Store (KOL-001)
             </span>
           </div>
-          <h1 className="text-[24px] font-bold text-[#351F65] tracking-tight">
+          <h1 className="text-[24px] font-bold text-[#0F172A] tracking-tight">
             Store Stock Inventory
           </h1>
           <p className="text-[13px] text-[#78879A]">
@@ -104,7 +104,7 @@ export default function PharmacistInventoryPage() {
       {error && <SemanticAlert type="error" title="Inventory Error" description={error} />}
 
       {/* Filter Toolbar */}
-      <div className="flex flex-col sm:flex-row items-center justify-between gap-3 bg-white p-4 rounded-[8px] border border-[#EAE8F0]">
+      <div className="flex flex-col sm:flex-row items-center justify-between gap-3 bg-white p-4 rounded-[8px] border border-[#EBECEF]">
         <div className="relative w-full sm:w-[320px]">
           <Input
             placeholder="Search medicine name or SKU in store..."
@@ -126,7 +126,7 @@ export default function PharmacistInventoryPage() {
                 setStatusFilter(e.target.value);
                 setPage(1);
               }}
-              className="h-9 px-3 rounded-[6px] border border-[#EAE8F0] bg-white text-[13px] text-[#351F65] focus:outline-none focus:ring-1 focus:ring-[#6240E8]"
+              className="h-9 px-3 rounded-[6px] border border-[#EBECEF] bg-white text-[13px] text-[#0F172A] focus:outline-none focus:ring-1 focus:ring-[#0D5C5A]"
             >
               <option value="ALL">All Stock Statuses</option>
               <option value="IN_STOCK">In Stock (&gt; 0)</option>
@@ -138,10 +138,10 @@ export default function PharmacistInventoryPage() {
       </div>
 
       {/* Inventory Balances Table */}
-      <div className="bg-white rounded-[8px] border border-[#EAE8F0] overflow-hidden shadow-xs">
+      <div className="bg-white rounded-[8px] border border-[#EBECEF] overflow-hidden shadow-xs">
         <div className="overflow-x-auto">
-          <table className="w-full text-left text-[13px] text-[#351F65]">
-            <thead className="bg-[#F8F9FB] border-b border-[#EAE8F0] text-[11px] font-semibold text-[#78879A] uppercase tracking-wider">
+          <table className="w-full text-left text-[13px] text-[#0F172A]">
+            <thead className="bg-[#F8F9FB] border-b border-[#EBECEF] text-[11px] font-semibold text-[#78879A] uppercase tracking-wider">
               <tr>
                 <th className="py-3 px-4">Medicine &amp; SKU</th>
                 <th className="py-3 px-4">Dosage / Pack</th>
@@ -152,7 +152,7 @@ export default function PharmacistInventoryPage() {
                 <th className="py-3 px-4 text-center">Action</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-[#EAE8F0]">
+            <tbody className="divide-y divide-[#EBECEF]">
               {loading ? (
                 <tr>
                   <td colSpan={7} className="py-12 text-center text-[#78879A]">
@@ -194,9 +194,9 @@ export default function PharmacistInventoryPage() {
                   }
 
                   return (
-                    <tr key={item.id} className="hover:bg-[#F7F5FD]/40 transition-colors">
+                    <tr key={item.id} className="hover:bg-[#F0FDFA]/40 transition-colors">
                       <td className="py-3 px-4">
-                        <div className="font-semibold text-[#351F65]">
+                        <div className="font-semibold text-[#0F172A]">
                           {item.medicine?.name || 'Unnamed Medicine'}
                         </div>
                         <div className="text-[11px] text-[#78879A] font-mono">
@@ -211,14 +211,14 @@ export default function PharmacistInventoryPage() {
                       <td className="py-3 px-4 text-right text-[#A66B16] font-medium">
                         {reserved > 0 ? `${reserved}` : '0'}
                       </td>
-                      <td className="py-3 px-4 text-right font-bold text-[#6240E8]">{available}</td>
+                      <td className="py-3 px-4 text-right font-bold text-[#0D5C5A]">{available}</td>
                       <td className="py-3 px-4 text-center">{statusBadge}</td>
                       <td className="py-3 px-4 text-center">
                         <Button
                           size="sm"
                           variant="ghost"
                           onClick={() => handleOpenHistory(item)}
-                          className="h-8 text-xs text-[#6240E8] hover:bg-[#F7F5FD]"
+                          className="h-8 text-xs text-[#0D5C5A] hover:bg-[#F0FDFA]"
                         >
                           Audit History
                         </Button>
@@ -233,7 +233,7 @@ export default function PharmacistInventoryPage() {
 
         {/* Pagination Footer */}
         {!loading && totalPages > 1 && (
-          <div className="p-4 border-t border-[#EAE8F0] flex items-center justify-between text-[12px] text-[#78879A]">
+          <div className="p-4 border-t border-[#EBECEF] flex items-center justify-between text-[12px] text-[#78879A]">
             <span>
               Showing {balances.length} of {total} SKUs
             </span>
@@ -247,7 +247,7 @@ export default function PharmacistInventoryPage() {
               >
                 &larr; Prev
               </Button>
-              <span className="text-[#351F65] font-medium">
+              <span className="text-[#0F172A] font-medium">
                 Page {page} of {totalPages}
               </span>
               <Button
@@ -271,19 +271,19 @@ export default function PharmacistInventoryPage() {
       >
         <DialogContent className="max-w-2xl">
           <DialogHeader>
-            <DialogTitle className="text-[18px] font-bold text-[#351F65]">
+            <DialogTitle className="text-[18px] font-bold text-[#0F172A]">
               Store Stock Movement History
             </DialogTitle>
             <p className="text-[12px] text-[#78879A]">
               Immutable audit ledger of balance adjustments, inward receipts, allocations, and
               dispensing for{' '}
-              <strong className="text-[#351F65]">{historyBalance?.medicine?.name}</strong>.
+              <strong className="text-[#0F172A]">{historyBalance?.medicine?.name}</strong>.
             </p>
           </DialogHeader>
 
           <div className="max-h-[360px] overflow-y-auto">
             <table className="w-full text-left text-[12px]">
-              <thead className="bg-[#F8F9FB] border-b border-[#EAE8F0] text-[10px] uppercase text-[#78879A] font-semibold sticky top-0">
+              <thead className="bg-[#F8F9FB] border-b border-[#EBECEF] text-[10px] uppercase text-[#78879A] font-semibold sticky top-0">
                 <tr>
                   <th className="py-2.5 px-3">Timestamp</th>
                   <th className="py-2.5 px-3">Type</th>
@@ -291,7 +291,7 @@ export default function PharmacistInventoryPage() {
                   <th className="py-2.5 px-3">Reference / Order ID</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-[#EAE8F0]">
+              <tbody className="divide-y divide-[#EBECEF]">
                 {loadingMovements ? (
                   <tr>
                     <td colSpan={4} className="py-8 text-center text-[#78879A]">
@@ -309,11 +309,11 @@ export default function PharmacistInventoryPage() {
                     const delta = Number((mov as any).deltaQuantity ?? mov.quantityChange ?? 0);
                     const isPositive = delta > 0;
                     return (
-                      <tr key={mov.id} className="hover:bg-[#F7F5FD]/50">
+                      <tr key={mov.id} className="hover:bg-[#F0FDFA]/50">
                         <td className="py-2 px-3 text-[#78879A]">
                           {new Date(mov.createdAt).toLocaleString()}
                         </td>
-                        <td className="py-2 px-3 font-semibold text-[#351F65]">
+                        <td className="py-2 px-3 font-semibold text-[#0F172A]">
                           {mov.movementType}
                         </td>
                         <td

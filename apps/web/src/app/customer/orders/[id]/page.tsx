@@ -202,12 +202,12 @@ export default function CustomerOrderDetailPage() {
 
   const getStatusColor = (
     status: string,
-  ): 'warning' | 'purple' | 'success' | 'danger' | 'information' => {
+  ): 'warning' | 'success' | 'danger' | 'information' => {
     switch (status) {
       case 'PENDING_VERIFICATION':
         return 'warning';
       case 'UNDER_REVIEW':
-        return 'purple';
+        return 'information';
       case 'APPROVED':
       case 'READY_FOR_HANDOVER':
       case 'HANDED_OVER':
@@ -251,15 +251,15 @@ export default function CustomerOrderDetailPage() {
       <div className="space-y-2">
         <button
           onClick={() => router.push('/customer/orders')}
-          className="inline-flex items-center text-xs font-semibold text-[#6240E8] hover:underline"
+          className="inline-flex items-center text-xs font-semibold text-[#0D5C5A] hover:underline"
         >
           &larr; Back to Orders
         </button>
 
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-2 border-b border-[#EAE8F0]">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-2 border-b border-[#EBECEF]">
           <div>
             <div className="flex items-center gap-3">
-              <h1 className="text-2xl font-bold tracking-tight text-[#351F65]">
+              <h1 className="text-2xl font-bold tracking-tight text-[#0F172A]">
                 {order.orderNumber}
               </h1>
               <StatusBadge
@@ -293,7 +293,7 @@ export default function CustomerOrderDetailPage() {
                 variant="outline"
                 size="sm"
                 onClick={() => router.push(`/customer/orders/${orderId}/invoice`)}
-                className="text-xs h-9 px-3 border-[#6240E8]/40 text-[#6240E8] hover:bg-purple-50 inline-flex items-center gap-1.5"
+                className="text-xs h-9 px-3 border-[#0D5C5A]/40 text-[#0D5C5A] hover:bg-[#F0FDFA] inline-flex items-center gap-1.5"
               >
                 View Invoice
               </Button>
@@ -390,12 +390,12 @@ export default function CustomerOrderDetailPage() {
 
       {/* Verification / Fulfilment Stage Notice */}
       {!isReuploadRequested && (
-        <div className="rounded-xl border border-[#D6D1F7] bg-[#F7F5FD] p-4 text-xs text-[#351F65] flex items-start gap-3">
-          <span className="font-bold text-[11px] uppercase px-1.5 py-0.5 rounded bg-[#6240E8]/10 text-[#6240E8]">
+        <div className="rounded-xl border border-[#EBECEF] bg-[#F0FDFA] p-4 text-xs text-[#0F172A] flex items-start gap-3">
+          <span className="font-bold text-[11px] uppercase px-1.5 py-0.5 rounded bg-[#0D5C5A]/10 text-[#0D5C5A]">
             CLINICAL REVIEW
           </span>
           <div className="leading-relaxed">
-            <strong className="block font-semibold text-[#6240E8] mb-0.5">
+            <strong className="block font-semibold text-[#0D5C5A] mb-0.5">
               Pharmacist Verification Status:{' '}
               {verification?.reviewStatus?.replace(/_/g, ' ') || 'PENDING'}
             </strong>
@@ -409,9 +409,9 @@ export default function CustomerOrderDetailPage() {
         {/* Left Column: Items & Details (Col 8) */}
         <div className="lg:col-span-8 space-y-6">
           {/* Order Items Table Card with Verification Actions */}
-          <Card className="border-[#EAE8F0] bg-white overflow-hidden shadow-xs">
+          <Card className="border-[#EBECEF] bg-white overflow-hidden shadow-xs">
             <CardHeader className="py-4 px-5 border-b border-slate-100 bg-[#F8F9FB] flex flex-row items-center justify-between">
-              <CardTitle className="text-sm font-bold text-[#351F65]">
+              <CardTitle className="text-sm font-bold text-[#0F172A]">
                 Prescribed Medicines &amp; Verification Status ({order.items.length})
               </CardTitle>
             </CardHeader>
@@ -432,7 +432,7 @@ export default function CustomerOrderDetailPage() {
                       <div className="flex items-start justify-between">
                         <div className="space-y-0.5">
                           <div className="flex items-center gap-2">
-                            <span className="font-bold text-sm text-[#351F65]">
+                            <span className="font-bold text-sm text-[#0F172A]">
                               {item.medicineNameSnapshot}
                             </span>
                             {isApproved && (
@@ -459,7 +459,7 @@ export default function CustomerOrderDetailPage() {
                           </p>
                         </div>
                         <div className="text-right">
-                          <span className="font-extrabold text-sm text-[#351F65] block">
+                          <span className="font-extrabold text-sm text-[#0F172A] block">
                             ₹{item.lineTotal.toFixed(2)}
                           </span>
                           {(isRejected || isBlocked) && order.status !== 'CANCELLED' && (
@@ -493,12 +493,12 @@ export default function CustomerOrderDetailPage() {
 
                       {/* Generic Alternative Proposal Card */}
                       {proposal && (
-                        <div className="p-3 bg-purple-50/70 border border-[#D6D1F7] rounded-xl space-y-2.5 text-xs text-[#351F65]">
+                        <div className="p-3 bg-[#F0FDFA] border border-[#EBECEF] rounded-xl space-y-2.5 text-xs text-[#0F172A]">
                           <div className="flex items-center justify-between">
-                            <span className="font-bold text-[#6240E8]">
+                            <span className="font-bold text-[#0D5C5A]">
                               Generic Alternative Proposed by Pharmacist
                             </span>
-                            <span className="font-mono text-[10px] text-purple-700 font-semibold uppercase">
+                            <span className="font-mono text-[10px] text-[#0D5C5A] font-semibold uppercase">
                               Same Active Ingredient
                             </span>
                           </div>
@@ -507,7 +507,7 @@ export default function CustomerOrderDetailPage() {
                             molecule <strong>{proposal.activeIngredient}</strong> (
                             {proposal.strength}, {proposal.dosageForm}):
                           </p>
-                          <div className="grid grid-cols-2 gap-2 p-2 bg-white rounded-lg border border-purple-100 text-[11px]">
+                          <div className="grid grid-cols-2 gap-2 p-2 bg-white rounded-lg border border-[#EBECEF] text-[11px]">
                             <div>
                               <span className="text-slate-400 block text-[10px]">
                                 Current Selection
@@ -523,7 +523,7 @@ export default function CustomerOrderDetailPage() {
                               <span className="text-slate-400 block text-[10px]">
                                 Proposed Alternative
                               </span>
-                              <span className="font-bold text-[#6240E8]">
+                              <span className="font-bold text-[#0D5C5A]">
                                 {proposal.proposedMedicine.name}
                               </span>
                               <div className="text-emerald-600 font-mono font-bold">
@@ -544,7 +544,7 @@ export default function CustomerOrderDetailPage() {
                               size="sm"
                               onClick={() => handleAlternativeResponse(proposal.id, 'ACCEPT')}
                               disabled={actionLoading === `alt-${proposal.id}`}
-                              className="bg-[#6240E8] hover:bg-[#5232d4] text-white text-[11px] h-7 px-3"
+                              className="bg-[#0D5C5A] hover:bg-[#0A4846] text-white text-[11px] h-7 px-3"
                             >
                               Accept Alternative
                             </Button>
@@ -570,8 +570,8 @@ export default function CustomerOrderDetailPage() {
           {/* Delivery Address & Patient Information */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             {/* Delivery Address Snapshot */}
-            <Card className="border-[#EAE8F0] bg-white p-5 space-y-2">
-              <div className="text-xs font-bold text-[#351F65] border-b border-slate-100 pb-2">
+            <Card className="border-[#EBECEF] bg-white p-5 space-y-2">
+              <div className="text-xs font-bold text-[#0F172A] border-b border-slate-100 pb-2">
                 <span>Delivery Address (Snapshot)</span>
               </div>
               <div className="text-xs text-slate-600 space-y-1 pt-1">
@@ -590,8 +590,8 @@ export default function CustomerOrderDetailPage() {
             </Card>
 
             {/* Patient & Prescription Info */}
-            <Card className="border-[#EAE8F0] bg-white p-5 space-y-2">
-              <div className="text-xs font-bold text-[#351F65] border-b border-slate-100 pb-2">
+            <Card className="border-[#EBECEF] bg-white p-5 space-y-2">
+              <div className="text-xs font-bold text-[#0F172A] border-b border-slate-100 pb-2">
                 <span>Patient &amp; Prescription</span>
               </div>
               <div className="text-xs text-slate-600 space-y-2 pt-1">
@@ -618,7 +618,7 @@ export default function CustomerOrderDetailPage() {
                         variant="outline"
                         size="sm"
                         onClick={() => handlePreviewPrescription(order.prescriptionId)}
-                        className="text-[11px] h-7 px-2 border-[#6240E8]/30 text-[#6240E8]"
+                        className="text-[11px] h-7 px-2 border-[#0D5C5A]/30 text-[#0D5C5A]"
                       >
                         Preview
                       </Button>
@@ -630,14 +630,14 @@ export default function CustomerOrderDetailPage() {
           </div>
 
           {/* Status History Timeline */}
-          <Card className="border-[#EAE8F0] bg-white p-5 space-y-3">
-            <CardTitle className="text-sm font-bold text-[#351F65]">
+          <Card className="border-[#EBECEF] bg-white p-5 space-y-3">
+            <CardTitle className="text-sm font-bold text-[#0F172A]">
               Order Lifecycle &amp; Status History
             </CardTitle>
-            <div className="relative pl-6 space-y-4 border-l-2 border-purple-100 ml-2 pt-1">
+            <div className="relative pl-6 space-y-4 border-l-2 border-[#EBECEF] ml-2 pt-1">
               {history.map((hist) => (
                 <div key={hist.id} className="relative">
-                  <div className="absolute -left-[31px] top-0.5 h-3.5 w-3.5 rounded-full border-2 border-white bg-[#6240E8] shadow-xs" />
+                  <div className="absolute -left-[31px] top-0.5 h-3.5 w-3.5 rounded-full border-2 border-white bg-[#0D5C5A] shadow-xs" />
                   <div className="text-xs">
                     <span className="font-bold text-slate-900">
                       {hist.newStatus.replace(/_/g, ' ')}
@@ -663,8 +663,8 @@ export default function CustomerOrderDetailPage() {
 
         {/* Right Column: Payment & Price Breakdown (Col 4) */}
         <div className="lg:col-span-4 space-y-4">
-          <Card className="border-[#EAE8F0] bg-white p-5 space-y-4">
-            <CardTitle className="text-sm font-bold text-[#351F65]">Payment Summary</CardTitle>
+          <Card className="border-[#EBECEF] bg-white p-5 space-y-4">
+            <CardTitle className="text-sm font-bold text-[#0F172A]">Payment Summary</CardTitle>
 
             <div className="p-3 bg-slate-50 rounded-lg border border-slate-100 text-xs space-y-1.5">
               <div className="flex justify-between items-center">
@@ -705,8 +705,8 @@ export default function CustomerOrderDetailPage() {
             </div>
 
             <div className="flex justify-between items-baseline pt-1">
-              <span className="font-bold text-sm text-[#351F65]">Total Amount</span>
-              <span className="font-extrabold text-2xl text-[#6240E8]">
+              <span className="font-bold text-sm text-[#0F172A]">Total Amount</span>
+              <span className="font-extrabold text-2xl text-[#0D5C5A]">
                 ₹{(verification?.totalAmount ?? order.totalAmount).toFixed(2)}
               </span>
             </div>
@@ -727,7 +727,7 @@ export default function CustomerOrderDetailPage() {
       <Dialog open={previewOpen} onOpenChange={setPreviewOpen}>
         <DialogContent className="sm:max-w-[700px] max-h-[85vh] flex flex-col">
           <DialogHeader>
-            <DialogTitle className="text-base font-bold text-[#351F65]">
+            <DialogTitle className="text-base font-bold text-[#0F172A]">
               Prescription Document
             </DialogTitle>
           </DialogHeader>

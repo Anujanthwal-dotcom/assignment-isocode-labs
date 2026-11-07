@@ -37,7 +37,7 @@ export default function AdminInvoiceDetailPage() {
   return (
     <div className="space-y-6 max-w-3xl mx-auto">
       {/* Header */}
-      <div className="flex items-center justify-between gap-4 pb-3 border-b border-[#EAE8F0] print:hidden">
+      <div className="flex items-center justify-between gap-4 pb-3 border-b border-[#EBECEF] print:hidden">
         <div className="flex items-center gap-2">
           <Link
             href="/admin/fulfilment/invoices"
@@ -51,7 +51,7 @@ export default function AdminInvoiceDetailPage() {
         {invoice && (
           <button
             onClick={handlePrint}
-            className="px-3 py-1.5 rounded-lg text-xs font-semibold bg-[#6240E8] text-white hover:bg-[#5232d4] shadow-xs flex items-center gap-1.5"
+            className="px-3 py-1.5 rounded-lg text-xs font-semibold bg-[#0D5C5A] text-white hover:bg-[#0A4846] shadow-xs flex items-center gap-1.5"
           >
             <span>Print Invoice</span>
           </button>
@@ -66,11 +66,11 @@ export default function AdminInvoiceDetailPage() {
           {error}
         </div>
       ) : (
-        <div className="bg-white rounded-2xl border border-[#EAE8F0] p-8 shadow-xs space-y-6 text-xs text-[#14161A] print:border-none print:shadow-none print:p-0">
-          <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4 border-b border-[#EAE8F0] pb-6">
+        <div className="bg-white rounded-2xl border border-[#EBECEF] p-8 shadow-xs space-y-6 text-xs text-[#14161A] print:border-none print:shadow-none print:p-0">
+          <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4 border-b border-[#EBECEF] pb-6">
             <div>
               <div className="flex items-center gap-2">
-                <span className="text-lg font-bold text-[#351F65] tracking-tight">
+                <span className="text-lg font-bold text-[#0F172A] tracking-tight">
                   {invoice.storeName}
                 </span>
               </div>
@@ -86,7 +86,7 @@ export default function AdminInvoiceDetailPage() {
               <span className="text-xs font-bold uppercase tracking-wider text-[#78879A] block">
                 Tax Invoice
               </span>
-              <span className="text-base font-extrabold font-mono text-[#6240E8] block">
+              <span className="text-base font-extrabold font-mono text-[#0D5C5A] block">
                 {invoice.invoiceNumber}
               </span>
               <span className="text-[11px] text-[#78879A] block mt-1">
@@ -102,7 +102,7 @@ export default function AdminInvoiceDetailPage() {
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-4 border-b border-[#EAE8F0] pb-4">
+          <div className="grid grid-cols-2 gap-4 border-b border-[#EBECEF] pb-4">
             <div>
               <span className="text-[10px] font-bold text-[#78879A] uppercase tracking-wider block mb-1">
                 Billed To (Patient / Customer)
@@ -131,7 +131,7 @@ export default function AdminInvoiceDetailPage() {
 
           <div>
             <table className="w-full text-left text-xs">
-              <thead className="bg-[#F8F9FB] border-b border-[#EAE8F0] text-[#78879A] uppercase tracking-wider text-[10px]">
+              <thead className="bg-[#F8F9FB] border-b border-[#EBECEF] text-[#78879A] uppercase tracking-wider text-[10px]">
                 <tr>
                   <th className="py-2.5 px-3">Medicine Description</th>
                   <th className="py-2.5 px-3">SKU</th>
@@ -140,7 +140,7 @@ export default function AdminInvoiceDetailPage() {
                   <th className="py-2.5 px-3 text-right">Line Total</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-[#EAE8F0]">
+              <tbody className="divide-y divide-[#EBECEF]">
                 {invoice.items?.map((item: any) => (
                   <tr key={item.id}>
                     <td className="py-3 px-3">
@@ -152,7 +152,7 @@ export default function AdminInvoiceDetailPage() {
                     <td className="py-3 px-3 font-mono text-[11px] text-[#78879A]">{item.sku}</td>
                     <td className="py-3 px-3 text-right">₹{item.unitPrice.toFixed(2)}</td>
                     <td className="py-3 px-3 text-right font-bold">{item.quantity}</td>
-                    <td className="py-3 px-3 text-right font-bold text-[#351F65]">
+                    <td className="py-3 px-3 text-right font-bold text-[#0F172A]">
                       ₹{item.lineTotal.toFixed(2)}
                     </td>
                   </tr>
@@ -173,9 +173,9 @@ export default function AdminInvoiceDetailPage() {
                   ₹{invoice.deliveryFee.toFixed(2)}
                 </span>
               </div>
-              <div className="flex justify-between border-t border-[#EAE8F0] pt-2 font-bold text-sm text-[#351F65]">
+              <div className="flex justify-between border-t border-[#EBECEF] pt-2 font-bold text-sm text-[#0F172A]">
                 <span>Total Amount:</span>
-                <span className="text-base text-[#6240E8]">₹{invoice.total.toFixed(2)}</span>
+                <span className="text-base text-[#0D5C5A]">₹{invoice.total.toFixed(2)}</span>
               </div>
             </div>
           </div>

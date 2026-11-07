@@ -35,7 +35,7 @@ export const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children 
     return (
       <div className="min-h-screen flex items-center justify-center bg-slate-50">
         <div className="flex flex-col items-center gap-3">
-          <div className="h-8 w-8 animate-spin rounded-full border-3 border-indigo-600 border-t-transparent" />
+          <div className="h-8 w-8 animate-spin rounded-full border-3 border-[#0D5C5A] border-t-transparent" />
           <p className="text-xs font-medium text-slate-500">Checking authentication...</p>
         </div>
       </div>

@@ -32,7 +32,7 @@ export default function ComplianceOverviewPage() {
 
   return (
     <div className="flex-1 p-6 max-w-7xl w-full mx-auto space-y-6">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2 border-b border-[#EAE8F0]">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2 border-b border-[#EBECEF]">
         <div>
           <h1 className="text-2xl font-bold text-[#14161A] tracking-tight">
             Compliance Policy Administration
@@ -44,7 +44,7 @@ export default function ComplianceOverviewPage() {
         </div>
 
         <div className="flex items-center gap-2">
-          <span className="px-3 py-1 rounded-lg text-xs font-semibold bg-[#F7F5FD] text-[#6240E8] border border-[#EAE8F0]">
+          <span className="px-3 py-1 rounded-lg text-xs font-semibold bg-[#F0FDFA] text-[#0D5C5A] border border-[#EBECEF]">
             Role: {user?.role}
           </span>
         </div>
@@ -69,17 +69,17 @@ export default function ComplianceOverviewPage() {
       )}
 
       {loading ? (
-        <div className="bg-white rounded-xl border border-[#EAE8F0] p-12 text-center shadow-2xs">
-          <div className="inline-block h-8 w-8 animate-spin rounded-full border-3 border-[#6240E8] border-t-transparent" />
+        <div className="bg-white rounded-xl border border-[#EBECEF] p-12 text-center shadow-2xs">
+          <div className="inline-block h-8 w-8 animate-spin rounded-full border-3 border-[#0D5C5A] border-t-transparent" />
           <p className="text-xs text-[#78879A] mt-3">Loading compliance overview...</p>
         </div>
       ) : overview ? (
         <div className="space-y-6">
           {/* Quick Stat Cards */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            <div className="bg-white rounded-xl border border-[#EAE8F0] p-4 shadow-2xs space-y-1">
+            <div className="bg-white rounded-xl border border-[#EBECEF] p-4 shadow-2xs space-y-1">
               <span className="text-[11px] font-medium text-[#78879A]">Active Policy Version</span>
-              <div className="text-lg font-bold text-[#351F65]">
+              <div className="text-lg font-bold text-[#0F172A]">
                 {overview.activeRuleSet ? `v${overview.activeRuleSet.version}` : 'None'}
               </div>
               <span className="text-[11px] text-[#6C757D] block truncate">
@@ -87,13 +87,13 @@ export default function ComplianceOverviewPage() {
               </span>
             </div>
 
-            <div className="bg-white rounded-xl border border-[#EAE8F0] p-4 shadow-2xs space-y-1">
+            <div className="bg-white rounded-xl border border-[#EBECEF] p-4 shadow-2xs space-y-1">
               <span className="text-[11px] font-medium text-[#78879A]">Total Rule Versions</span>
               <div className="text-lg font-bold text-[#14161A]">{overview.totalRuleSets}</div>
               <span className="text-[11px] text-[#6C757D]">Stored in PostgreSQL</span>
             </div>
 
-            <div className="bg-white rounded-xl border border-[#EAE8F0] p-4 shadow-2xs space-y-1">
+            <div className="bg-white rounded-xl border border-[#EBECEF] p-4 shadow-2xs space-y-1">
               <span className="text-[11px] font-medium text-[#78879A]">Blocked Item Reviews</span>
               <div className="text-lg font-bold text-rose-600">
                 {overview.blockedItemReviewsCount}
@@ -101,9 +101,9 @@ export default function ComplianceOverviewPage() {
               <span className="text-[11px] text-[#6C757D]">Hard compliance blocks</span>
             </div>
 
-            <div className="bg-white rounded-xl border border-[#EAE8F0] p-4 shadow-2xs space-y-1">
+            <div className="bg-white rounded-xl border border-[#EBECEF] p-4 shadow-2xs space-y-1">
               <span className="text-[11px] font-medium text-[#78879A]">H1 Register Entries</span>
-              <div className="text-lg font-bold text-[#6240E8]">{overview.h1RegisterCount}</div>
+              <div className="text-lg font-bold text-[#0D5C5A]">{overview.h1RegisterCount}</div>
               <span className="text-[11px] text-[#6C757D]">Schedule H1 logged</span>
             </div>
           </div>
@@ -112,11 +112,11 @@ export default function ComplianceOverviewPage() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <Link
               href="/admin/compliance/rules"
-              className="bg-white rounded-xl border border-[#EAE8F0] p-5 shadow-2xs hover:border-[#6240E8] transition-all group"
+              className="bg-white rounded-xl border border-[#EBECEF] p-5 shadow-2xs hover:border-[#0D5C5A] transition-all group"
             >
               <div className="flex items-center justify-between mb-3">
-                <span className="text-xs font-bold text-[#6240E8]">[Policy]</span>
-                <span className="text-[#78879A] group-hover:text-[#6240E8] group-hover:translate-x-1 transition-transform">
+                <span className="text-xs font-bold text-[#0D5C5A]">[Policy]</span>
+                <span className="text-[#78879A] group-hover:text-[#0D5C5A] group-hover:translate-x-1 transition-transform">
                   &rarr;
                 </span>
               </div>
@@ -128,11 +128,11 @@ export default function ComplianceOverviewPage() {
 
             <Link
               href="/admin/compliance/decisions"
-              className="bg-white rounded-xl border border-[#EAE8F0] p-5 shadow-2xs hover:border-[#6240E8] transition-all group"
+              className="bg-white rounded-xl border border-[#EBECEF] p-5 shadow-2xs hover:border-[#0D5C5A] transition-all group"
             >
               <div className="flex items-center justify-between mb-3">
-                <span className="text-xs font-bold text-[#6240E8]">[Audit]</span>
-                <span className="text-[#78879A] group-hover:text-[#6240E8] group-hover:translate-x-1 transition-transform">
+                <span className="text-xs font-bold text-[#0D5C5A]">[Audit]</span>
+                <span className="text-[#78879A] group-hover:text-[#0D5C5A] group-hover:translate-x-1 transition-transform">
                   &rarr;
                 </span>
               </div>
@@ -144,11 +144,11 @@ export default function ComplianceOverviewPage() {
 
             <Link
               href="/admin/compliance/h1-register"
-              className="bg-white rounded-xl border border-[#EAE8F0] p-5 shadow-2xs hover:border-[#6240E8] transition-all group"
+              className="bg-white rounded-xl border border-[#EBECEF] p-5 shadow-2xs hover:border-[#0D5C5A] transition-all group"
             >
               <div className="flex items-center justify-between mb-3">
-                <span className="text-xs font-bold text-[#6240E8]">[H1 Log]</span>
-                <span className="text-[#78879A] group-hover:text-[#6240E8] group-hover:translate-x-1 transition-transform">
+                <span className="text-xs font-bold text-[#0D5C5A]">[H1 Log]</span>
+                <span className="text-[#78879A] group-hover:text-[#0D5C5A] group-hover:translate-x-1 transition-transform">
                   &rarr;
                 </span>
               </div>
@@ -161,9 +161,9 @@ export default function ComplianceOverviewPage() {
 
           {/* Recent Blocked Items Report */}
           {overview.recentBlockedItems?.length > 0 && (
-            <div className="bg-white rounded-xl border border-[#EAE8F0] p-5 shadow-2xs space-y-3">
+            <div className="bg-white rounded-xl border border-[#EBECEF] p-5 shadow-2xs space-y-3">
               <h3 className="text-sm font-bold text-[#14161A]">Recent Hard-Blocked Items</h3>
-              <div className="divide-y divide-[#EAE8F0] text-xs">
+              <div className="divide-y divide-[#EBECEF] text-xs">
                 {overview.recentBlockedItems.map((item: any) => (
                   <div key={item.id} className="py-2.5 flex items-center justify-between gap-4">
                     <div>

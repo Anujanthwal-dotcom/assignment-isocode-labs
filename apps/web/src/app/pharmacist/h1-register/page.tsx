@@ -35,7 +35,7 @@ export default function PharmacistH1RegisterPage() {
 
   return (
     <div className="flex-1 p-6 max-w-7xl w-full mx-auto space-y-6">
-      <div className="pb-2 border-b border-[#EAE8F0]">
+      <div className="pb-2 border-b border-[#EBECEF]">
         <h1 className="text-2xl font-bold text-[#14161A] tracking-tight">
           Schedule H1 Drug Register
         </h1>
@@ -45,8 +45,8 @@ export default function PharmacistH1RegisterPage() {
       </div>
 
       {loading ? (
-        <div className="bg-white rounded-xl border border-[#EAE8F0] p-12 text-center shadow-2xs">
-          <div className="inline-block h-8 w-8 animate-spin rounded-full border-3 border-[#6240E8] border-t-transparent" />
+        <div className="bg-white rounded-xl border border-[#EBECEF] p-12 text-center shadow-2xs">
+          <div className="inline-block h-8 w-8 animate-spin rounded-full border-3 border-[#0D5C5A] border-t-transparent" />
           <p className="text-xs text-[#78879A] mt-3">Loading H1 register entries...</p>
         </div>
       ) : error ? (
@@ -57,7 +57,7 @@ export default function PharmacistH1RegisterPage() {
           <span>{error}</span>
         </div>
       ) : entries.length === 0 ? (
-        <div className="bg-white rounded-xl border border-[#EAE8F0] p-12 text-center shadow-2xs space-y-3">
+        <div className="bg-white rounded-xl border border-[#EBECEF] p-12 text-center shadow-2xs space-y-3">
           <h3 className="text-sm font-semibold text-[#14161A]">No H1 Entries Yet</h3>
           <p className="text-xs text-[#78879A] max-w-sm mx-auto">
             Schedule H1 entries will appear here automatically when pharmacists verify and approve
@@ -65,11 +65,11 @@ export default function PharmacistH1RegisterPage() {
           </p>
         </div>
       ) : (
-        <div className="bg-white rounded-xl border border-[#EAE8F0] shadow-2xs overflow-hidden">
+        <div className="bg-white rounded-xl border border-[#EBECEF] shadow-2xs overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full text-left border-collapse text-xs">
               <thead>
-                <tr className="border-b border-[#EAE8F0] bg-[#F8F9FB] text-[#78879A] font-semibold">
+                <tr className="border-b border-[#EBECEF] bg-[#F8F9FB] text-[#78879A] font-semibold">
                   <th className="py-3 px-4">Date &amp; Time</th>
                   <th className="py-3 px-4">Patient Name</th>
                   <th className="py-3 px-4">Prescribing Doctor</th>
@@ -79,21 +79,21 @@ export default function PharmacistH1RegisterPage() {
                   <th className="py-3 px-4">Register Status</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-[#EAE8F0]">
+              <tbody className="divide-y divide-[#EBECEF]">
                 {entries.map((entry) => (
-                  <tr key={entry.id} className="hover:bg-[#F7F5FD]/50 transition-colors">
+                  <tr key={entry.id} className="hover:bg-[#F0FDFA]/50 transition-colors">
                     <td className="py-3 px-4 text-[#78879A]">
                       {new Date(entry.createdAt).toLocaleString()}
                     </td>
                     <td className="py-3 px-4 font-semibold text-[#14161A]">{entry.patientName}</td>
-                    <td className="py-3 px-4 text-[#351F65]">
+                    <td className="py-3 px-4 text-[#0F172A]">
                       <div>{entry.prescriberName}</div>
                       {entry.prescriberDetails && (
                         <div className="text-[10px] text-[#78879A]">{entry.prescriberDetails}</div>
                       )}
                     </td>
                     <td className="py-3 px-4 font-medium text-[#14161A]">{entry.medicineName}</td>
-                    <td className="py-3 px-4 font-semibold text-[#351F65]">{entry.quantity}</td>
+                    <td className="py-3 px-4 font-semibold text-[#0F172A]">{entry.quantity}</td>
                     <td className="py-3 px-4 text-[#78879A]">
                       {entry.pharmacistEmail || 'Registered Pharmacist'}
                     </td>

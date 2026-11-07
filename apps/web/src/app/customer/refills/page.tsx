@@ -52,9 +52,9 @@ export default function CustomerRefillsPage() {
 
   return (
     <div className="space-y-6 max-w-5xl mx-auto py-6 px-4">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-[#EAE8F0]">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-[#EBECEF]">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight text-[#351F65]">
+          <h1 className="text-2xl font-bold tracking-tight text-[#0F172A]">
             Medicine Refills &amp; Supply Estimates
           </h1>
           <p className="text-sm text-[#78879A] mt-1">
@@ -64,7 +64,7 @@ export default function CustomerRefillsPage() {
         <Link href="/customer/notifications">
           <Button
             variant="outline"
-            className="flex items-center gap-2 border-[#EAE8F0] text-[#351F65]"
+            className="flex items-center gap-2 border-[#EBECEF] text-[#0F172A]"
           >
             Reminder Alerts
           </Button>
@@ -72,12 +72,12 @@ export default function CustomerRefillsPage() {
       </div>
 
       {/* Advisory Banner */}
-      <div className="p-4 bg-[#F7F5FD] border border-[#6240E8]/20 rounded-xl flex items-start gap-3">
-        <span className="font-bold text-[11px] uppercase px-1.5 py-0.5 rounded bg-[#6240E8]/10 text-[#6240E8]">
+      <div className="p-4 bg-[#F0FDFA] border border-[#0D5C5A]/20 rounded-xl flex items-start gap-3">
+        <span className="font-bold text-[11px] uppercase px-1.5 py-0.5 rounded bg-[#0D5C5A]/10 text-[#0D5C5A]">
           NOTICE
         </span>
         <div className="text-xs text-[#55476D] leading-relaxed">
-          <strong className="text-[#351F65]">Important Notice:</strong> Refill dates are estimates
+          <strong className="text-[#0F172A]">Important Notice:</strong> Refill dates are estimates
           based on the last quantity dispensed and pharmacist-confirmed dosage. Actual usage may
           vary. Please follow your prescription and consult your pharmacist if your dosage changes.
         </div>
@@ -90,14 +90,14 @@ export default function CustomerRefillsPage() {
       ) : error ? (
         <div className="p-4 rounded-xl bg-red-50 text-red-700 border border-red-200">{error}</div>
       ) : estimates.length === 0 ? (
-        <Card className="p-12 text-center space-y-4 border-[#EAE8F0]">
-          <h3 className="text-lg font-semibold text-[#351F65]">No Refill Estimates Yet</h3>
+        <Card className="p-12 text-center space-y-4 border-[#EBECEF]">
+          <h3 className="text-lg font-semibold text-[#0F172A]">No Refill Estimates Yet</h3>
           <p className="text-sm text-[#78879A] max-w-md mx-auto">
             Once you receive your delivered order with pharmacist-verified dosage instructions,
             automatic supply estimates and reminder options will appear here.
           </p>
           <Link href="/customer/orders">
-            <Button variant="outline" className="border-[#6240E8] text-[#6240E8] mt-2">
+            <Button variant="outline" className="border-[#0D5C5A] text-[#0D5C5A] mt-2">
               View Your Orders &rarr;
             </Button>
           </Link>
@@ -111,12 +111,12 @@ export default function CustomerRefillsPage() {
             return (
               <Card
                 key={est.id}
-                className="border-[#EAE8F0] shadow-xs flex flex-col justify-between hover:border-[#6240E8]/40 transition-colors"
+                className="border-[#EBECEF] shadow-xs flex flex-col justify-between hover:border-[#0D5C5A]/40 transition-colors"
               >
                 <CardHeader className="pb-3">
                   <div className="flex items-start justify-between gap-2">
                     <div>
-                      <CardTitle className="text-base font-bold text-[#351F65]">
+                      <CardTitle className="text-base font-bold text-[#0F172A]">
                         {est.medicineName}
                       </CardTitle>
                       {est.familyMemberName && (
@@ -140,7 +140,7 @@ export default function CustomerRefillsPage() {
                 </CardHeader>
                 <CardContent className="space-y-4 text-xs text-[#55476D] flex-1">
                   {isEligible ? (
-                    <div className="grid grid-cols-2 gap-2 bg-[#F8F9FB] p-3 rounded-lg border border-[#EAE8F0]">
+                    <div className="grid grid-cols-2 gap-2 bg-[#F8F9FB] p-3 rounded-lg border border-[#EBECEF]">
                       <div>
                         <span className="text-[10px] text-[#78879A] uppercase font-bold block">
                           Dispensed
@@ -184,7 +184,7 @@ export default function CustomerRefillsPage() {
                   )}
 
                   {/* Subscription Controls */}
-                  <div className="pt-2 border-t border-[#EAE8F0] flex items-center justify-between">
+                  <div className="pt-2 border-t border-[#EBECEF] flex items-center justify-between">
                     {sub ? (
                       <div className="flex items-center gap-2">
                         <span className="text-xs font-medium text-slate-700">
@@ -204,12 +204,12 @@ export default function CustomerRefillsPage() {
                           variant="outline"
                           onClick={() => handleReorder(sub.id)}
                           disabled={reorderingId === sub.id}
-                          className="h-8 border-[#6240E8] text-[#6240E8] hover:bg-[#F7F5FD]"
+                          className="h-8 border-[#0D5C5A] text-[#0D5C5A] hover:bg-[#F0FDFA]"
                         >
                           Reorder
                         </Button>
                         <Link href={`/customer/refills/${sub.id}`}>
-                          <Button size="sm" variant="ghost" className="h-8 text-[#6240E8] px-2">
+                          <Button size="sm" variant="ghost" className="h-8 text-[#0D5C5A] px-2">
                             Manage
                           </Button>
                         </Link>
@@ -218,7 +218,7 @@ export default function CustomerRefillsPage() {
                       <Link href={`/customer/refills/new?estimateId=${est.id}`}>
                         <Button
                           size="sm"
-                          className="h-8 bg-[#6240E8] hover:bg-[#5233D1] text-white"
+                          className="h-8 bg-[#0D5C5A] hover:bg-[#5233D1] text-white"
                         >
                           Enable Reminders
                         </Button>

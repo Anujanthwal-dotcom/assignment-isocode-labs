@@ -20,7 +20,7 @@ export const TableHeader = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <thead
     ref={ref}
-    className={cn('[&_tr]:border-b border-[#EAE8F0] bg-[#EFF2F7]', className)}
+    className={cn('[&_tr]:border-b border-[#EBECEF] bg-[#EFF2F7]', className)}
     {...props}
   />
 ));
@@ -41,7 +41,7 @@ export const TableFooter = React.forwardRef<
   <tfoot
     ref={ref}
     className={cn(
-      'border-t border-[#EAE8F0] bg-[#EFF2F7] font-medium [&>tr]:last:border-b-0',
+      'border-t border-[#EBECEF] bg-[#EFF2F7] font-medium [&>tr]:last:border-b-0',
       className,
     )}
     {...props}
@@ -56,7 +56,7 @@ export const TableRow = React.forwardRef<
   <tr
     ref={ref}
     className={cn(
-      'h-[52px] border-b border-[#EAE8F0] transition-colors hover:bg-[#F7F5FD] data-[state=selected]:bg-[#EAE8F0]',
+      'h-[52px] border-b border-[#EBECEF] transition-colors hover:bg-[#F0FDFA] data-[state=selected]:bg-[#EBECEF]',
       className,
     )}
     {...props}
@@ -71,7 +71,7 @@ export const TableHead = React.forwardRef<
   <th
     ref={ref}
     className={cn(
-      'h-[44px] px-[16px] text-left align-middle text-[12px] font-semibold text-[#351F65] uppercase tracking-wider [&:has([role=checkbox])]:pr-0',
+      'h-[44px] px-[16px] text-left align-middle text-[12px] font-semibold text-[#0F172A] uppercase tracking-wider [&:has([role=checkbox])]:pr-0',
       className,
     )}
     {...props}

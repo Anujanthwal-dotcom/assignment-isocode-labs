@@ -79,7 +79,7 @@ export default function CustomerHomePage() {
 
   const getStatusColor = (
     status: string,
-  ): 'warning' | 'purple' | 'success' | 'danger' | 'information' => {
+  ): 'warning' | 'success' | 'danger' | 'information' => {
     switch (status) {
       case 'PENDING_VERIFICATION':
         return 'warning';

@@ -69,7 +69,7 @@ export default function PharmacistFulfilmentQueuePage() {
         );
       case 'PICKING':
         return (
-          <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-purple-50 text-purple-700 border border-purple-200">
+          <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-[#F0FDFA] text-[#0D5C5A] border border-[#EBECEF]">
             Picking in Progress
           </span>
         );
@@ -119,7 +119,7 @@ export default function PharmacistFulfilmentQueuePage() {
 
   return (
     <div className="space-y-6">
-      <div className="pb-2 border-b border-[#EAE8F0] flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+      <div className="pb-2 border-b border-[#EBECEF] flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold text-[#14161A] tracking-tight">
             Store Fulfilment Queue
@@ -132,7 +132,7 @@ export default function PharmacistFulfilmentQueuePage() {
 
       {/* Tabs & Search */}
       <div className="flex flex-col sm:flex-row gap-4 items-stretch sm:items-center justify-between">
-        <div className="flex gap-1.5 p-1 bg-white rounded-xl border border-[#EAE8F0] text-xs font-semibold overflow-x-auto">
+        <div className="flex gap-1.5 p-1 bg-white rounded-xl border border-[#EBECEF] text-xs font-semibold overflow-x-auto">
           {[
             { id: 'ALL', label: 'All Orders' },
             { id: 'STOCK_RESERVED', label: 'Stock Reserved' },
@@ -146,7 +146,7 @@ export default function PharmacistFulfilmentQueuePage() {
               onClick={() => setSelectedStatus(tab.id)}
               className={`px-3 py-1.5 rounded-lg whitespace-nowrap transition-colors ${
                 selectedStatus === tab.id
-                  ? 'bg-[#6240E8] text-white shadow-xs'
+                  ? 'bg-[#0D5C5A] text-white shadow-xs'
                   : 'text-[#78879A] hover:bg-slate-50'
               }`}
             >
@@ -161,13 +161,13 @@ export default function PharmacistFulfilmentQueuePage() {
             placeholder="Search order #, customer..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full px-3 py-2 border border-[#EAE8F0] rounded-xl text-xs bg-white focus:outline-none focus:ring-2 focus:ring-[#6240E8]/20 focus:border-[#6240E8]"
+            className="w-full px-3 py-2 border border-[#EBECEF] rounded-xl text-xs bg-white focus:outline-none focus:ring-2 focus:ring-[#0D5C5A]/20 focus:border-[#0D5C5A]"
           />
         </div>
       </div>
 
       {/* Table Card */}
-      <div className="bg-white rounded-2xl border border-[#EAE8F0] shadow-xs overflow-hidden">
+      <div className="bg-white rounded-2xl border border-[#EBECEF] shadow-xs overflow-hidden">
         {loading ? (
           <div className="p-12 text-center text-xs text-[#78879A]">
             Loading assigned fulfilment orders...
@@ -184,7 +184,7 @@ export default function PharmacistFulfilmentQueuePage() {
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-left text-xs">
-              <thead className="bg-[#F8F9FB] border-b border-[#EAE8F0] text-[#78879A] uppercase tracking-wider text-[10px]">
+              <thead className="bg-[#F8F9FB] border-b border-[#EBECEF] text-[#78879A] uppercase tracking-wider text-[10px]">
                 <tr>
                   <th className="py-3 px-4">Order #</th>
                   <th className="py-3 px-4">Customer</th>
@@ -195,12 +195,12 @@ export default function PharmacistFulfilmentQueuePage() {
                   <th className="py-3 px-4 text-right">Action</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-[#EAE8F0] text-[#14161A]">
+              <tbody className="divide-y divide-[#EBECEF] text-[#14161A]">
                 {filteredOrders.map((row) => {
                   const action = getNextAction(row);
                   return (
                     <tr key={row.orderId} className="hover:bg-[#F8F9FB]/50">
-                      <td className="py-3 px-4 font-mono font-bold text-[#6240E8]">
+                      <td className="py-3 px-4 font-mono font-bold text-[#0D5C5A]">
                         <Link
                           href={`/pharmacist/fulfilment/${row.orderId}`}
                           className="hover:underline"
@@ -247,7 +247,7 @@ export default function PharmacistFulfilmentQueuePage() {
                           {row.routingMethod || 'AUTOMATIC'}
                         </span>
                         {row.distanceKm !== null && row.distanceKm !== undefined ? (
-                          <span className="text-[10px] text-purple-700 font-bold">
+                          <span className="text-[10px] text-[#0D5C5A] font-bold">
                             {row.distanceKm} km
                           </span>
                         ) : (
@@ -258,7 +258,7 @@ export default function PharmacistFulfilmentQueuePage() {
                       <td className="py-3 px-4 text-right">
                         <Link
                           href={action.href}
-                          className="inline-flex items-center px-3 py-1.5 rounded-lg text-xs font-semibold bg-[#6240E8] text-white hover:bg-[#5232d4] transition-colors"
+                          className="inline-flex items-center px-3 py-1.5 rounded-lg text-xs font-semibold bg-[#0D5C5A] text-white hover:bg-[#0A4846] transition-colors"
                         >
                           {action.label} &rarr;
                         </Link>

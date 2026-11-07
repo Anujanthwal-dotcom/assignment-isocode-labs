@@ -39,7 +39,7 @@ export default function AdminInvoicesListPage() {
 
   return (
     <div className="space-y-6">
-      <div className="pb-2 border-b border-[#EAE8F0] flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+      <div className="pb-2 border-b border-[#EBECEF] flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
           <div className="flex items-center gap-2">
             <Link
@@ -63,12 +63,12 @@ export default function AdminInvoicesListPage() {
             placeholder="Search invoice #, order #..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full px-3 py-2 border border-[#EAE8F0] rounded-xl text-xs bg-white focus:outline-none focus:ring-2 focus:ring-[#6240E8]/20 focus:border-[#6240E8]"
+            className="w-full px-3 py-2 border border-[#EBECEF] rounded-xl text-xs bg-white focus:outline-none focus:ring-2 focus:ring-[#0D5C5A]/20 focus:border-[#0D5C5A]"
           />
         </div>
       </div>
 
-      <div className="bg-white rounded-2xl border border-[#EAE8F0] shadow-xs overflow-hidden">
+      <div className="bg-white rounded-2xl border border-[#EBECEF] shadow-xs overflow-hidden">
         {loading ? (
           <div className="p-12 text-center text-xs text-[#78879A]">Loading invoices...</div>
         ) : error ? (
@@ -81,7 +81,7 @@ export default function AdminInvoicesListPage() {
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-left text-xs">
-              <thead className="bg-[#F8F9FB] border-b border-[#EAE8F0] text-[#78879A] uppercase tracking-wider text-[10px]">
+              <thead className="bg-[#F8F9FB] border-b border-[#EBECEF] text-[#78879A] uppercase tracking-wider text-[10px]">
                 <tr>
                   <th className="py-3 px-4">Invoice #</th>
                   <th className="py-3 px-4">Order #</th>
@@ -92,10 +92,10 @@ export default function AdminInvoicesListPage() {
                   <th className="py-3 px-4 text-right">View</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-[#EAE8F0] text-[#14161A]">
+              <tbody className="divide-y divide-[#EBECEF] text-[#14161A]">
                 {filtered.map((row) => (
                   <tr key={row.id} className="hover:bg-[#F8F9FB]/50">
-                    <td className="py-3 px-4 font-mono font-bold text-[#6240E8]">
+                    <td className="py-3 px-4 font-mono font-bold text-[#0D5C5A]">
                       {row.invoiceNumber}
                     </td>
                     <td className="py-3 px-4 font-mono font-bold">{row.orderNumber}</td>
@@ -103,7 +103,7 @@ export default function AdminInvoicesListPage() {
                       <span className="font-semibold block">{row.storeName}</span>
                       <span className="text-[10px] text-[#78879A] font-mono">{row.storeCode}</span>
                     </td>
-                    <td className="py-3 px-4 font-bold text-sm text-[#351F65]">
+                    <td className="py-3 px-4 font-bold text-sm text-[#0F172A]">
                       ₹{row.total.toFixed(2)}
                     </td>
                     <td className="py-3 px-4">

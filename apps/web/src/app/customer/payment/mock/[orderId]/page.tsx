@@ -94,13 +94,13 @@ export default function CustomerMockPaymentPage() {
         </div>
       </div>
 
-      <Card className="border-[#EAE8F0] bg-white shadow-xs">
+      <Card className="border-[#EBECEF] bg-white shadow-xs">
         <CardHeader className="pb-4 border-b border-slate-100">
           <div className="flex items-center justify-between">
-            <CardTitle className="text-lg font-bold text-[#351F65]">
+            <CardTitle className="text-lg font-bold text-[#0F172A]">
               Simulate Mock UPI Payment
             </CardTitle>
-            <span className="text-xs font-mono font-semibold text-purple-700 bg-purple-50 px-2 py-0.5 rounded">
+            <span className="text-xs font-mono font-semibold text-[#0D5C5A] bg-[#F0FDFA] px-2 py-0.5 rounded">
               UPI Gateway
             </span>
           </div>
@@ -125,7 +125,7 @@ export default function CustomerMockPaymentPage() {
             </div>
             <div className="flex justify-between pt-2 border-t border-slate-200 text-sm">
               <span className="font-bold text-slate-900">Total Payable Amount:</span>
-              <span className="font-extrabold text-[#6240E8]">₹{order.totalAmount.toFixed(2)}</span>
+              <span className="font-extrabold text-[#0D5C5A]">₹{order.totalAmount.toFixed(2)}</span>
             </div>
           </div>
 

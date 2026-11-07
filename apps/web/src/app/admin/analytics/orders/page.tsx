@@ -42,7 +42,7 @@ export default function AdminAnalyticsOrdersPage() {
     <div className="space-y-6 max-w-7xl mx-auto py-6 px-4">
       <Link
         href="/admin/analytics"
-        className="inline-flex items-center text-xs font-semibold text-[#6240E8] hover:underline"
+        className="inline-flex items-center text-xs font-semibold text-[#0D5C5A] hover:underline"
       >
         &larr; Back to Analytics Overview
       </Link>
@@ -127,7 +127,7 @@ export default function AdminAnalyticsOrdersPage() {
                       <TableCell className="text-right text-blue-600 font-medium">
                         {s.inFulfilment}
                       </TableCell>
-                      <TableCell className="text-right text-indigo-600 font-semibold">
+                      <TableCell className="text-right text-[#0284C7] font-semibold">
                         {s.handedOver}
                       </TableCell>
                       <TableCell className="text-right text-slate-500">
@@ -135,7 +135,7 @@ export default function AdminAnalyticsOrdersPage() {
                       </TableCell>
                       <TableCell className="text-right">
                         <Link href={`/admin/analytics/stores/${s.storeId}`}>
-                          <Button size="sm" variant="ghost" className="h-8 text-[#6240E8] text-xs">
+                          <Button size="sm" variant="ghost" className="h-8 text-[#0D5C5A] text-xs">
                             Drill Down &rarr;
                           </Button>
                         </Link>

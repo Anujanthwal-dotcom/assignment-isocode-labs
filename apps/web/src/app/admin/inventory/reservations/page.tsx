@@ -60,7 +60,7 @@ export default function AdminReservationsPage() {
 
   return (
     <div className="space-y-6">
-      <div className="pb-2 border-b border-[#EAE8F0] flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+      <div className="pb-2 border-b border-[#EBECEF] flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
           <div className="flex items-center gap-2">
             <Link
@@ -81,7 +81,7 @@ export default function AdminReservationsPage() {
 
       {/* Tabs & Search */}
       <div className="flex flex-col sm:flex-row gap-4 items-stretch sm:items-center justify-between">
-        <div className="flex gap-1.5 p-1 bg-white rounded-xl border border-[#EAE8F0] text-xs font-semibold overflow-x-auto">
+        <div className="flex gap-1.5 p-1 bg-white rounded-xl border border-[#EBECEF] text-xs font-semibold overflow-x-auto">
           {[
             { id: 'ACTIVE', label: 'Active Holds' },
             { id: 'CONSUMED', label: 'Consumed (Dispensed)' },
@@ -94,7 +94,7 @@ export default function AdminReservationsPage() {
               onClick={() => setSelectedStatus(tab.id)}
               className={`px-3 py-1.5 rounded-lg whitespace-nowrap transition-colors ${
                 selectedStatus === tab.id
-                  ? 'bg-[#6240E8] text-white shadow-xs'
+                  ? 'bg-[#0D5C5A] text-white shadow-xs'
                   : 'text-[#78879A] hover:bg-slate-50'
               }`}
             >
@@ -109,13 +109,13 @@ export default function AdminReservationsPage() {
             placeholder="Search order #, medicine, store..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full px-3 py-2 border border-[#EAE8F0] rounded-xl text-xs bg-white focus:outline-none focus:ring-2 focus:ring-[#6240E8]/20 focus:border-[#6240E8]"
+            className="w-full px-3 py-2 border border-[#EBECEF] rounded-xl text-xs bg-white focus:outline-none focus:ring-2 focus:ring-[#0D5C5A]/20 focus:border-[#0D5C5A]"
           />
         </div>
       </div>
 
       {/* Table */}
-      <div className="bg-white rounded-2xl border border-[#EAE8F0] shadow-xs overflow-hidden">
+      <div className="bg-white rounded-2xl border border-[#EBECEF] shadow-xs overflow-hidden">
         {loading ? (
           <div className="p-12 text-center text-xs text-[#78879A]">
             Loading reservation records...
@@ -132,7 +132,7 @@ export default function AdminReservationsPage() {
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-left text-xs">
-              <thead className="bg-[#F8F9FB] border-b border-[#EAE8F0] text-[#78879A] uppercase tracking-wider text-[10px]">
+              <thead className="bg-[#F8F9FB] border-b border-[#EBECEF] text-[#78879A] uppercase tracking-wider text-[10px]">
                 <tr>
                   <th className="py-3 px-4">Reserved At</th>
                   <th className="py-3 px-4">Order #</th>
@@ -144,7 +144,7 @@ export default function AdminReservationsPage() {
                   <th className="py-3 px-4 text-right">Action</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-[#EAE8F0] text-[#14161A]">
+              <tbody className="divide-y divide-[#EBECEF] text-[#14161A]">
                 {filtered.map((row) => (
                   <tr key={row.id} className="hover:bg-[#F8F9FB]/50">
                     <td className="py-3 px-4 text-[11px] text-[#78879A] font-mono">
@@ -154,7 +154,7 @@ export default function AdminReservationsPage() {
                         second: '2-digit',
                       })}
                     </td>
-                    <td className="py-3 px-4 font-mono font-bold text-[#6240E8]">
+                    <td className="py-3 px-4 font-mono font-bold text-[#0D5C5A]">
                       {row.orderNumber}
                     </td>
                     <td className="py-3 px-4 font-semibold">
@@ -167,7 +167,7 @@ export default function AdminReservationsPage() {
                       <span className="font-bold text-[#14161A] block">{row.medicineName}</span>
                       <span className="text-[10px] text-[#78879A] font-mono">{row.sku}</span>
                     </td>
-                    <td className="py-3 px-4 font-bold text-sm text-[#351F65]">{row.quantity}</td>
+                    <td className="py-3 px-4 font-bold text-sm text-[#0F172A]">{row.quantity}</td>
                     <td className="py-3 px-4 text-[11px] text-[#78879A] font-mono">
                       {new Date(row.expiresAt).toLocaleTimeString('en-IN', {
                         hour: '2-digit',

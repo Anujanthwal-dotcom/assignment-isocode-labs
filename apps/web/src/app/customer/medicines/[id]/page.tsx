@@ -123,13 +123,13 @@ export default function CustomerMedicineDetailPage() {
       <div>
         <button
           onClick={() => router.back()}
-          className="inline-flex items-center text-xs font-semibold text-[#6240E8] hover:underline"
+          className="inline-flex items-center text-xs font-semibold text-[#0D5C5A] hover:underline"
         >
           &larr; Back to Catalogue
         </button>
       </div>
 
-      <Card className="border-[#EAE8F0] bg-white shadow-xs">
+      <Card className="border-[#EBECEF] bg-white shadow-xs">
         <CardContent className="p-6 md:p-8 space-y-6">
           {/* Header & Badges */}
           <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3 pb-4 border-b border-slate-100">
@@ -137,7 +137,7 @@ export default function CustomerMedicineDetailPage() {
               <span className="text-xs font-mono text-slate-400 uppercase tracking-wider block mb-1">
                 SKU: {medicine.sku}
               </span>
-              <h1 className="text-2xl font-bold tracking-tight text-[#351F65]">{medicine.name}</h1>
+              <h1 className="text-2xl font-bold tracking-tight text-[#0F172A]">{medicine.name}</h1>
               {medicine.genericName && (
                 <p className="text-sm text-slate-600 mt-1">
                   Salt Composition:{' '}
@@ -146,20 +146,20 @@ export default function CustomerMedicineDetailPage() {
               )}
             </div>
             <div className="self-start sm:self-auto">
-              <Badge variant="purple" className="text-xs font-semibold px-2.5 py-1">
+              <Badge variant="primary" className="text-xs font-semibold px-2.5 py-1">
                 {medicine.schedule.replace(/_/g, ' ')}
               </Badge>
             </div>
           </div>
 
           {/* Pricing & Cart Action Box */}
-          <div className="p-5 rounded-xl bg-[#F8F9FB] border border-[#EAE8F0] flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div className="p-5 rounded-xl bg-[#F8F9FB] border border-[#EBECEF] flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div>
               <span className="text-xs text-slate-400 font-medium uppercase block">
                 Maximum Retail Price
               </span>
               <div className="flex items-baseline gap-2 mt-0.5">
-                <span className="text-3xl font-extrabold text-[#351F65]">
+                <span className="text-3xl font-extrabold text-[#0F172A]">
                   ₹{medicine.mrp.toFixed(2)}
                 </span>
                 <span className="text-xs text-slate-500 font-medium">inclusive of all taxes</span>
@@ -193,7 +193,7 @@ export default function CustomerMedicineDetailPage() {
               <Button
                 onClick={handleAddToCart}
                 disabled={adding}
-                className="h-10 px-5 bg-[#6240E8] text-white hover:bg-[#5233D0] shadow-xs text-sm font-semibold"
+                className="h-10 px-5 bg-[#0D5C5A] text-white hover:bg-[#0A4846] shadow-xs text-sm font-semibold"
               >
                 {added ? '✓ Added to Cart' : '+ Add to Cart'}
               </Button>

@@ -79,12 +79,12 @@ export default function PickingWorkspacePage() {
   return (
     <div className="space-y-6 max-w-4xl mx-auto">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-3 border-b border-[#EAE8F0]">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-3 border-b border-[#EBECEF]">
         <div>
           <div className="flex items-center gap-2">
             <Link
               href="/pharmacist/fulfilment"
-              className="px-2 py-1 text-xs font-semibold text-[#6240E8] hover:bg-[#F8F9FB] rounded"
+              className="px-2 py-1 text-xs font-semibold text-[#0D5C5A] hover:bg-[#F8F9FB] rounded"
             >
               &larr; Back
             </Link>
@@ -130,20 +130,20 @@ export default function PickingWorkspacePage() {
             </div>
           )}
 
-          <div className="bg-white rounded-2xl border border-[#EAE8F0] shadow-xs overflow-hidden">
-            <div className="p-4 bg-[#F8F9FB] border-b border-[#EAE8F0] flex items-center justify-between text-xs">
-              <span className="font-bold text-[#351F65]">
+          <div className="bg-white rounded-2xl border border-[#EBECEF] shadow-xs overflow-hidden">
+            <div className="p-4 bg-[#F8F9FB] border-b border-[#EBECEF] flex items-center justify-between text-xs">
+              <span className="font-bold text-[#0F172A]">
                 Approved Prescription Medicines ({checklist?.items?.length || 0})
               </span>
               <span className="text-[11px] text-[#78879A]">
                 Status:{' '}
-                <strong className="text-[#6240E8]">
+                <strong className="text-[#0D5C5A]">
                   {checklist?.allPicked ? 'ALL ITEMS PICKED' : 'PICKING IN PROGRESS'}
                 </strong>
               </span>
             </div>
 
-            <div className="divide-y divide-[#EAE8F0]">
+            <div className="divide-y divide-[#EBECEF]">
               {checklist?.items?.map((item: any) => {
                 const isPicked = item.picking?.status === 'PICKED';
                 const isException = item.picking?.status === 'EXCEPTION';
@@ -183,7 +183,7 @@ export default function PickingWorkspacePage() {
                     </div>
 
                     <div className="flex items-center gap-2 self-end sm:self-auto">
-                      <span className="font-extrabold text-sm text-[#351F65] mr-2">
+                      <span className="font-extrabold text-sm text-[#0F172A] mr-2">
                         Qty: {item.quantityRequired}
                       </span>
                       {!isPicked && (
@@ -220,7 +220,7 @@ export default function PickingWorkspacePage() {
       {/* Exception Modal */}
       {exceptionItem && (
         <div className="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-[1px] flex items-center justify-center p-4">
-          <div className="bg-white rounded-xl border border-[#EAE8F0] max-w-md w-full p-6 shadow-xl space-y-4 text-xs">
+          <div className="bg-white rounded-xl border border-[#EBECEF] max-w-md w-full p-6 shadow-xl space-y-4 text-xs">
             <h3 className="text-base font-bold text-[#14161A]">Report Picking Exception</h3>
             <p className="text-[#78879A]">
               Describe the issue encountered for <strong>{exceptionItem.medicineName}</strong> (e.g.
@@ -231,9 +231,9 @@ export default function PickingWorkspacePage() {
               value={exceptionReason}
               onChange={(e) => setExceptionReason(e.target.value)}
               placeholder="Provide reason for halting fulfilment of this item..."
-              className="w-full p-2.5 rounded-lg border border-[#EAE8F0] text-xs focus:ring-2 focus:ring-[#6240E8]/20 focus:outline-none"
+              className="w-full p-2.5 rounded-lg border border-[#EBECEF] text-xs focus:ring-2 focus:ring-[#0D5C5A]/20 focus:outline-none"
             />
-            <div className="flex justify-end gap-2 pt-2 border-t border-[#EAE8F0]">
+            <div className="flex justify-end gap-2 pt-2 border-t border-[#EBECEF]">
               <button
                 type="button"
                 onClick={() => setExceptionItem(null)}

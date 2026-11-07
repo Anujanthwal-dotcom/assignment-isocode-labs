@@ -120,7 +120,7 @@ export default function CustomerRefillSubscriptionPage() {
     return (
       <div className="max-w-2xl mx-auto py-16 text-center space-y-4">
         <span className="font-bold uppercase text-xs text-red-600 block mb-1">Notice</span>
-        <h2 className="text-xl font-bold text-[#351F65]">Subscription Not Found</h2>
+        <h2 className="text-xl font-bold text-[#0F172A]">Subscription Not Found</h2>
         <Link href="/customer/refills">
           <Button variant="outline">&larr; Back to Refills</Button>
         </Link>
@@ -132,14 +132,14 @@ export default function CustomerRefillSubscriptionPage() {
     <div className="max-w-3xl mx-auto py-6 px-4 space-y-6">
       <Link
         href="/customer/refills"
-        className="inline-flex items-center text-xs font-semibold text-[#6240E8] hover:underline"
+        className="inline-flex items-center text-xs font-semibold text-[#0D5C5A] hover:underline"
       >
         &larr; Back to Medicine Refills
       </Link>
 
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-[#EAE8F0]">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-[#EBECEF]">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight text-[#351F65]">{sub.medicineName}</h1>
+          <h1 className="text-2xl font-bold tracking-tight text-[#0F172A]">{sub.medicineName}</h1>
           <p className="text-xs text-[#78879A] mt-1">
             {sub.familyMemberName ? `Patient: ${sub.familyMemberName} • ` : ''}Refill Reminder
             Settings
@@ -158,7 +158,7 @@ export default function CustomerRefillSubscriptionPage() {
           <Button
             onClick={handleReorder}
             disabled={updating}
-            className="bg-[#6240E8] hover:bg-[#5233D1] text-white"
+            className="bg-[#0D5C5A] hover:bg-[#5233D1] text-white"
           >
             One-Tap Reorder
           </Button>
@@ -166,8 +166,8 @@ export default function CustomerRefillSubscriptionPage() {
       </div>
 
       {/* Advisory Banner */}
-      <div className="p-4 bg-[#F7F5FD] border border-[#6240E8]/20 rounded-xl flex items-start gap-3">
-        <span className="font-bold text-[11px] uppercase px-1.5 py-0.5 rounded bg-[#6240E8]/10 text-[#6240E8]">
+      <div className="p-4 bg-[#F0FDFA] border border-[#0D5C5A]/20 rounded-xl flex items-start gap-3">
+        <span className="font-bold text-[11px] uppercase px-1.5 py-0.5 rounded bg-[#0D5C5A]/10 text-[#0D5C5A]">
           NOTICE
         </span>
         <div className="text-xs text-[#55476D] leading-relaxed">
@@ -177,9 +177,9 @@ export default function CustomerRefillSubscriptionPage() {
         </div>
       </div>
 
-      <Card className="border-[#EAE8F0] shadow-xs">
+      <Card className="border-[#EBECEF] shadow-xs">
         <CardHeader>
-          <CardTitle className="text-base font-semibold text-[#351F65]">
+          <CardTitle className="text-base font-semibold text-[#0F172A]">
             Reminder Schedule Preferences
           </CardTitle>
         </CardHeader>
@@ -197,8 +197,8 @@ export default function CustomerRefillSubscriptionPage() {
                   disabled={updating || sub.status !== 'ACTIVE'}
                   className={`px-4 py-2 rounded-lg text-xs font-semibold border transition-colors ${
                     leadDays === days
-                      ? 'bg-[#6240E8] text-white border-[#6240E8]'
-                      : 'bg-white text-slate-700 border-[#EAE8F0] hover:bg-slate-50'
+                      ? 'bg-[#0D5C5A] text-white border-[#0D5C5A]'
+                      : 'bg-white text-slate-700 border-[#EBECEF] hover:bg-slate-50'
                   }`}
                 >
                   {days} Days Before
@@ -216,7 +216,7 @@ export default function CustomerRefillSubscriptionPage() {
             </p>
           </div>
 
-          <div className="pt-4 border-t border-[#EAE8F0] flex items-center justify-between">
+          <div className="pt-4 border-t border-[#EBECEF] flex items-center justify-between">
             <Button
               variant="outline"
               onClick={handlePauseResume}
@@ -239,9 +239,9 @@ export default function CustomerRefillSubscriptionPage() {
       </Card>
 
       {/* Reminder History Table */}
-      <Card className="border-[#EAE8F0] shadow-xs">
+      <Card className="border-[#EBECEF] shadow-xs">
         <CardHeader>
-          <CardTitle className="text-base font-semibold text-[#351F65]">
+          <CardTitle className="text-base font-semibold text-[#0F172A]">
             Reminder Delivery History
           </CardTitle>
         </CardHeader>
@@ -251,7 +251,7 @@ export default function CustomerRefillSubscriptionPage() {
               No reminders scheduled or sent yet.
             </p>
           ) : (
-            <div className="divide-y divide-[#EAE8F0] text-xs">
+            <div className="divide-y divide-[#EBECEF] text-xs">
               {reminders.map((rem) => (
                 <div key={rem.id} className="py-2.5 flex items-center justify-between">
                   <div>

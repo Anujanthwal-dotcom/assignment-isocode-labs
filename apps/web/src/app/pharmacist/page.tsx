@@ -56,7 +56,7 @@ export default function PharmacistDashboardPage() {
                 Authenticated Role
               </span>
               <div className="mt-1">
-                <StatusBadge status="purple" label={user?.role || 'PHARMACIST'} />
+                <StatusBadge status="information" label={user?.role || 'PHARMACIST'} />
               </div>
             </div>
 

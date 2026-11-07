@@ -46,14 +46,14 @@ export default function NewRefillSubscriptionPage() {
     <div className="max-w-xl mx-auto py-8 px-4 space-y-6">
       <Link
         href="/customer/refills"
-        className="inline-flex items-center text-xs font-semibold text-[#6240E8] hover:underline"
+        className="inline-flex items-center text-xs font-semibold text-[#0D5C5A] hover:underline"
       >
         &larr; Back to Refills
       </Link>
 
-      <Card className="border-[#EAE8F0] shadow-xs">
+      <Card className="border-[#EBECEF] shadow-xs">
         <CardHeader>
-          <CardTitle className="text-xl font-bold text-[#351F65]">
+          <CardTitle className="text-xl font-bold text-[#0F172A]">
             Opt In to Medicine Refill Reminders
           </CardTitle>
           <p className="text-xs text-[#78879A] mt-1">
@@ -80,8 +80,8 @@ export default function NewRefillSubscriptionPage() {
                     onClick={() => setLeadDays(days)}
                     className={`py-3 px-2 rounded-xl text-center border transition-all ${
                       leadDays === days
-                        ? 'border-[#6240E8] bg-[#F7F5FD] text-[#6240E8] font-bold shadow-xs'
-                        : 'border-[#EAE8F0] bg-white text-slate-700 hover:bg-slate-50 text-xs font-medium'
+                        ? 'border-[#0D5C5A] bg-[#F0FDFA] text-[#0D5C5A] font-bold shadow-xs'
+                        : 'border-[#EBECEF] bg-white text-slate-700 hover:bg-slate-50 text-xs font-medium'
                     }`}
                   >
                     <div className="text-sm">{days} Days</div>
@@ -91,8 +91,8 @@ export default function NewRefillSubscriptionPage() {
               </div>
             </div>
 
-            <div className="p-3 bg-[#F8F9FB] rounded-lg border border-[#EAE8F0] text-xs text-[#55476D] space-y-2">
-              <div className="flex items-center gap-2 font-medium text-[#351F65]">
+            <div className="p-3 bg-[#F8F9FB] rounded-lg border border-[#EBECEF] text-xs text-[#55476D] space-y-2">
+              <div className="flex items-center gap-2 font-medium text-[#0F172A]">
                 <span className="font-bold text-[10px] uppercase px-1 py-0.5 rounded bg-emerald-100 text-emerald-800">
                   GUARANTEE
                 </span>
@@ -113,7 +113,7 @@ export default function NewRefillSubscriptionPage() {
               <Button
                 type="submit"
                 disabled={submitting}
-                className="bg-[#6240E8] hover:bg-[#5233D1] text-white"
+                className="bg-[#0D5C5A] hover:bg-[#5233D1] text-white"
               >
                 {submitting ? 'Enabling...' : 'Confirm & Enable Reminders'}
               </Button>

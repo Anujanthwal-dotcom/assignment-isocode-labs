@@ -72,12 +72,12 @@ export default function CustomerOrdersPage() {
 
   const getStatusColor = (
     status: OrderStatus,
-  ): 'warning' | 'purple' | 'success' | 'danger' | 'information' => {
+  ): 'warning' | 'success' | 'danger' | 'information' => {
     switch (status) {
       case 'PENDING_VERIFICATION':
         return 'warning';
       case 'UNDER_REVIEW':
-        return 'purple';
+        return 'information';
       case 'APPROVED':
       case 'DELIVERED':
         return 'success';
@@ -92,9 +92,9 @@ export default function CustomerOrdersPage() {
   return (
     <div className="max-w-[950px] mx-auto space-y-6">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-2 border-b border-[#EAE8F0]">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-2 border-b border-[#EBECEF]">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight text-[#351F65]">My Orders</h1>
+          <h1 className="text-2xl font-bold tracking-tight text-[#0F172A]">My Orders</h1>
           <p className="text-sm text-[#78879A] mt-1">
             Track and view previous pharmacy orders. Total {totalCount} order(s).
           </p>
@@ -102,7 +102,7 @@ export default function CustomerOrdersPage() {
         <Button
           onClick={() => router.push('/customer/medicines')}
           size="sm"
-          className="text-xs bg-[#6240E8] text-white hover:bg-[#5233D0]"
+          className="text-xs bg-[#0D5C5A] text-white hover:bg-[#0A4846]"
         >
           Order Medicines
         </Button>
@@ -125,7 +125,7 @@ export default function CustomerOrdersPage() {
             setStatusFilter(e.target.value);
             setPage(1);
           }}
-          className="h-10 px-3 rounded-lg border border-slate-300 bg-white text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#6240E8]"
+          className="h-10 px-3 rounded-lg border border-slate-300 bg-white text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#0D5C5A]"
         >
           <option value="">All Statuses</option>
           <option value="PENDING_VERIFICATION">Pending Verification</option>
@@ -144,7 +144,7 @@ export default function CustomerOrdersPage() {
           <p className="text-sm text-red-700 font-medium">{error}</p>
         </Card>
       ) : orders.length === 0 ? (
-        <Card className="p-12 border-[#EAE8F0] bg-white text-center">
+        <Card className="p-12 border-[#EBECEF] bg-white text-center">
           <h3 className="text-base font-semibold text-slate-800">No Orders Found</h3>
           <p className="text-xs text-slate-500 mt-1 max-w-sm mx-auto">
             {debouncedSearch || statusFilter
@@ -171,12 +171,12 @@ export default function CustomerOrdersPage() {
             <Card
               key={order.id}
               onClick={() => router.push(`/customer/orders/${order.id}`)}
-              className="p-5 border-[#EAE8F0] bg-white hover:border-[#6240E8] cursor-pointer transition-all hover:shadow-xs space-y-3"
+              className="p-5 border-[#EBECEF] bg-white hover:border-[#0D5C5A] cursor-pointer transition-all hover:shadow-xs space-y-3"
             >
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
                 <div className="flex items-center gap-3">
                   <div>
-                    <span className="font-bold text-sm text-[#351F65] block">
+                    <span className="font-bold text-sm text-[#0F172A] block">
                       {order.orderNumber}
                     </span>
                     <span className="text-xs text-[#78879A] mt-0.5 block">
@@ -197,7 +197,7 @@ export default function CustomerOrdersPage() {
                     status={getStatusColor(order.status)}
                     label={order.status.replace(/_/g, ' ')}
                   />
-                  <span className="font-bold text-base text-[#351F65]">
+                  <span className="font-bold text-base text-[#0F172A]">
                     ₹{order.totalAmount.toFixed(2)}
                   </span>
                 </div>
@@ -218,7 +218,7 @@ export default function CustomerOrdersPage() {
                   </span>
                   )
                 </span>
-                <span className="text-[#6240E8] font-semibold hover:underline">
+                <span className="text-[#0D5C5A] font-semibold hover:underline">
                   View Full Details &rarr;
                 </span>
               </div>
@@ -229,7 +229,7 @@ export default function CustomerOrdersPage() {
 
       {/* Pagination */}
       {totalPages > 1 && (
-        <div className="flex items-center justify-between pt-4 border-t border-[#EAE8F0]">
+        <div className="flex items-center justify-between pt-4 border-t border-[#EBECEF]">
           <span className="text-xs text-slate-500">
             Page {page} of {totalPages}
           </span>

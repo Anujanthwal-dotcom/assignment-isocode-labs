@@ -73,8 +73,8 @@ export const OtpInput: React.FC<OtpInputProps> = ({
             onChange={(e) => handleChange(index, e)}
             onKeyDown={(e) => handleKeyDown(index, e)}
             className={cn(
-              'h-[44px] w-[40px] text-center rounded-[8px] bg-white text-[16px] font-semibold text-[#351F65] border border-[#CED4DA] transition-colors',
-              'focus-visible:outline-none focus-visible:border-[#6240E8] focus-visible:ring-2 focus-visible:ring-[#6240E8]/20',
+              'h-[44px] w-[40px] text-center rounded-[8px] bg-white text-[16px] font-semibold text-[#0F172A] border border-[#CED4DA] transition-colors',
+              'focus-visible:outline-none focus-visible:border-[#0D5C5A] focus-visible:ring-2 focus-visible:ring-[#0D5C5A]/20',
               hasError && 'border-[#DC3545] focus-visible:border-[#DC3545]',
               disabled && 'opacity-50 cursor-not-allowed bg-[#EFF2F7]',
             )}
