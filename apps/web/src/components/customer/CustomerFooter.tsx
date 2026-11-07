@@ -5,9 +5,9 @@ import { ShieldCheck, Truck, CheckCircle2, PhoneCall, FileText } from 'lucide-re
 
 export const CustomerFooter: React.FC = () => {
   return (
-    <footer className="w-full border-t border-[#E2E8F0] bg-white text-[#0F172A] mt-12">
+    <footer className="w-full border-t border-[#EBECEF] bg-white text-[#0F172A] mt-12">
       {/* 1. Clinical Pharmacy Assurance & Compliance Notes */}
-      <div className="border-b border-[#E2E8F0] bg-[#F8FAFC] py-8 px-4 sm:px-6 lg:px-8">
+      <div className="border-b border-[#EBECEF] bg-[#F8F9FA] py-8 px-4 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-[1200px] space-y-6">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
             <div className="flex items-center gap-2 text-[#0D5C5A]">
@@ -23,7 +23,7 @@ export const CustomerFooter: React.FC = () => {
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-5 text-xs text-[#475569]">
             {/* Note 1 */}
-            <div className="p-4 rounded-[12px] bg-white border border-[#E2E8F0] space-y-1.5 shadow-xs">
+            <div className="p-4 rounded-[14px] bg-white border border-[#EBECEF] space-y-1.5 shadow-[0_1px_4px_rgba(0,0,0,0.02)]">
               <div className="flex items-center gap-2 text-[#0D5C5A] font-bold text-[13px]">
                 <CheckCircle2 className="h-4 w-4 text-[#059669] shrink-0" />
                 <span>Schedule H &amp; H1 Regulatory Sign-off</span>
@@ -34,7 +34,7 @@ export const CustomerFooter: React.FC = () => {
             </div>
 
             {/* Note 2 */}
-            <div className="p-4 rounded-[12px] bg-white border border-[#E2E8F0] space-y-1.5 shadow-xs">
+            <div className="p-4 rounded-[14px] bg-white border border-[#EBECEF] space-y-1.5 shadow-[0_1px_4px_rgba(0,0,0,0.02)]">
               <div className="flex items-center gap-2 text-[#0D5C5A] font-bold text-[13px]">
                 <Truck className="h-4 w-4 text-[#059669] shrink-0" />
                 <span>100% Tamper-Evident Cold-Chain Packaging</span>
@@ -45,7 +45,7 @@ export const CustomerFooter: React.FC = () => {
             </div>
 
             {/* Note 3 */}
-            <div className="p-4 rounded-[12px] bg-white border border-[#E2E8F0] space-y-1.5 shadow-xs">
+            <div className="p-4 rounded-[14px] bg-white border border-[#EBECEF] space-y-1.5 shadow-[0_1px_4px_rgba(0,0,0,0.02)]">
               <div className="flex items-center gap-2 text-[#0D5C5A] font-bold text-[13px]">
                 <FileText className="h-4 w-4 text-[#059669] shrink-0" />
                 <span>Zero Counterfeit &bull; Batch Traceability</span>

@@ -70,7 +70,7 @@ export const CustomerNavbar: React.FC = () => {
   ];
 
   return (
-    <header className="sticky top-0 z-40 w-full border-b border-[#E2E8F0] bg-white shadow-xs">
+    <header className="sticky top-0 z-40 w-full border-b border-[#EBECEF] bg-white shadow-[0_1px_4px_rgba(0,0,0,0.02)]">
       <div className="mx-auto flex h-[58px] sm:h-[64px] max-w-[1200px] items-center justify-between px-3 sm:px-4 lg:px-8 gap-2 sm:gap-4">
         {/* Left: Location Selection Dropdown (No Branding) */}
         <div className="flex items-center gap-3 lg:gap-6">
@@ -87,7 +87,7 @@ export const CustomerNavbar: React.FC = () => {
                 <Link
                   key={link.href}
                   href={link.href}
-                  className={`rounded-[6px] px-3 py-1.5 text-[14px] font-medium transition-colors ${
+                  className={`rounded-[8px] px-3 py-1.5 text-[14px] font-medium transition-colors ${
                     isActive
                       ? 'font-semibold text-[#0D5C5A] bg-[#F0FDFA]'
                       : 'text-[#475569] hover:text-[#0D5C5A] hover:bg-[#F0FDFA]'
@@ -123,7 +123,7 @@ export const CustomerNavbar: React.FC = () => {
           {/* Notifications */}
           <Link
             href="/customer/notifications"
-            className="relative flex h-9 w-9 items-center justify-center rounded-[8px] border border-[#E2E8F0] bg-white text-[#0F172A] hover:bg-[#F0FDFA] hover:text-[#0D5C5A] transition-colors"
+            className="relative flex h-9 w-9 items-center justify-center rounded-[10px] border border-[#EBECEF] bg-white text-[#0F172A] hover:bg-[#F0FDFA] hover:text-[#0D5C5A] transition-colors"
             title="Notifications"
             aria-label="View notifications"
           >
@@ -134,7 +134,7 @@ export const CustomerNavbar: React.FC = () => {
           {/* Cart */}
           <Link
             href="/customer/cart"
-            className="relative flex h-9 items-center justify-center px-3 rounded-[8px] border border-[#E2E8F0] bg-white text-xs font-semibold text-[#0F172A] hover:bg-[#F0FDFA] hover:text-[#0D5C5A] transition-colors gap-1.5"
+            className="relative flex h-9 items-center justify-center px-3 rounded-[10px] border border-[#EBECEF] bg-white text-xs font-semibold text-[#0F172A] hover:bg-[#F0FDFA] hover:text-[#0D5C5A] transition-colors gap-1.5"
             title="Shopping Cart"
             aria-label="View shopping cart"
           >
@@ -149,7 +149,7 @@ export const CustomerNavbar: React.FC = () => {
 
           {/* Profile Dropdown */}
           <DropdownMenu>
-            <DropdownMenuTrigger className="flex items-center gap-2 rounded-[8px] border border-[#E2E8F0] bg-[#F8FAFC] px-2.5 h-9 text-[13px] font-medium text-[#0F172A] hover:bg-[#F0FDFA] hover:text-[#0D5C5A] transition-colors focus:outline-none focus:ring-2 focus:ring-[#14B8A6] cursor-pointer">
+            <DropdownMenuTrigger className="flex items-center gap-2 rounded-[10px] border border-[#EBECEF] bg-[#F8FAFC] px-2.5 h-9 text-[13px] font-medium text-[#0F172A] hover:bg-[#F0FDFA] hover:text-[#0D5C5A] transition-colors focus:outline-none focus:ring-2 focus:ring-[#14B8A6] cursor-pointer">
               <div className="flex h-6 w-6 items-center justify-center rounded-full bg-[#CCFBF1] text-[#047857]">
                 <User className="h-3.5 w-3.5" />
               </div>

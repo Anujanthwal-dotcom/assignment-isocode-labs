@@ -28,9 +28,9 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
             disabled={disabled}
             readOnly={readOnly}
             className={cn(
-              'h-[44px] w-full rounded-[8px] bg-white px-[12px] text-[14px] leading-[20px] text-[#0F172A] border placeholder:text-[#94A3B8] transition-all duration-150',
-              'border-[#CBD5E1] hover:border-[#94A3B8]',
-              'focus-visible:outline-none focus-visible:border-[#0D5C5A] focus-visible:ring-3 focus-visible:ring-[#14B8A6]/20',
+              'h-[44px] w-full rounded-[12px] bg-white px-[14px] text-[14px] leading-[20px] text-[#0F172A] border placeholder:text-[#94A3B8] transition-all duration-150',
+              'border-[#E2E8F0] hover:border-[#CBD5E1]',
+              'focus-visible:outline-none focus-visible:border-[#0D5C5A] focus-visible:ring-2 focus-visible:ring-[#0D5C5A]/15',
               hasError &&
                 'border-[#DC2626] bg-[#FEF2F2]/40 focus-visible:border-[#DC2626] focus-visible:ring-[#DC2626]/20',
               disabled && 'opacity-50 cursor-not-allowed bg-[#EFF4FF]',

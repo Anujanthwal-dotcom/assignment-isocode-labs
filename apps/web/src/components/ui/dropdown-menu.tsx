@@ -20,7 +20,7 @@ export const DropdownMenuContent = React.forwardRef<
       ref={ref}
       sideOffset={sideOffset}
       className={cn(
-        'z-50 min-w-[200px] overflow-hidden rounded-[8px] border border-[#CBD5E1] bg-white p-[6px] text-[#0F172A] shadow-[0_4px_6px_-1px_rgba(13,92,90,0.04),0_10px_24px_-3px_rgba(15,23,42,0.08)] data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95',
+        'z-50 min-w-[200px] overflow-hidden rounded-[12px] border border-[#EBECEF] bg-white p-[6px] text-[#0F172A] shadow-[0_4px_20px_-2px_rgba(15,23,42,0.08)] data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95',
         className,
       )}
       {...props}
@@ -39,7 +39,7 @@ export const DropdownMenuItem = React.forwardRef<
   <DropdownMenuPrimitive.Item
     ref={ref}
     className={cn(
-      'relative flex h-[38px] cursor-pointer select-none items-center rounded-[6px] px-[10px] text-[14px] leading-[20px] font-medium outline-none transition-colors data-[disabled]:pointer-events-none data-[disabled]:opacity-50 hover:bg-[#F0FDFA] hover:text-[#0D5C5A] focus:bg-[#F0FDFA] focus:text-[#0D5C5A]',
+      'relative flex h-[38px] cursor-pointer select-none items-center rounded-[8px] px-[10px] text-[14px] leading-[20px] font-medium outline-none transition-colors data-[disabled]:pointer-events-none data-[disabled]:opacity-50 hover:bg-[#F0FDFA] hover:text-[#0D5C5A] focus:bg-[#F0FDFA] focus:text-[#0D5C5A]',
       inset && 'pl-8',
       destructive && 'text-[#DC2626] hover:bg-[#FEF2F2] hover:text-[#DC2626] focus:bg-[#FEF2F2] focus:text-[#DC2626]',
       className,
@@ -55,7 +55,7 @@ export const DropdownMenuSeparator = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <DropdownMenuPrimitive.Separator
     ref={ref}
-    className={cn('-mx-1 my-1 h-px bg-[#E2E8F0]', className)}
+    className={cn('-mx-1 my-1 h-px bg-[#F1F3F5]', className)}
     {...props}
   />
 ));

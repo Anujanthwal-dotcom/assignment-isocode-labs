@@ -137,19 +137,19 @@ export default function CustomerHomePage() {
             </p>
           </div>
 
-          {/* Integrated Search Command Bar */}
+          {/* Integrated Search Command Bar (Floating Pill) */}
           <form onSubmit={handleSearchSubmit} className="pt-2">
-            <div className="relative flex items-center rounded-[12px] overflow-hidden bg-white shadow-xs">
-              <Search className="absolute left-4 h-5 w-5 text-slate-400 pointer-events-none" />
+            <div className="relative flex items-center rounded-full overflow-hidden bg-white shadow-[0_4px_20px_rgba(0,0,0,0.08)] border border-white/80 transition-all focus-within:ring-2 focus-within:ring-[#5EEAD4]">
+              <Search className="absolute left-4 sm:left-5 h-5 w-5 text-slate-400 pointer-events-none" />
               <Input
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Search by brand name, generic formulation, or active ingredient..."
-                className="h-13 pl-11 pr-28 border-0 bg-transparent text-[#0F172A] placeholder:text-slate-400 text-sm sm:text-base focus-visible:ring-0 shadow-none"
+                className="h-13 pl-12 sm:pl-13 pr-32 border-0 bg-transparent text-[#0F172A] placeholder:text-slate-400 text-sm sm:text-base focus-visible:ring-0 shadow-none rounded-full"
               />
               <Button
                 type="submit"
-                className="absolute right-1.5 h-10 px-4 rounded-[8px] bg-[#004341] hover:bg-[#002D2C] text-white text-xs sm:text-sm font-semibold transition-all cursor-pointer"
+                className="absolute right-1.5 h-10 px-5 sm:px-6 rounded-full bg-[#004341] hover:bg-[#002D2C] text-white text-xs sm:text-sm font-semibold transition-all cursor-pointer shadow-xs"
               >
                 Search
               </Button>
@@ -167,7 +167,7 @@ export default function CustomerHomePage() {
                 key={med}
                 type="button"
                 onClick={() => handleQuickChipClick(med)}
-                className="rounded-full bg-[#004341] hover:bg-[#002D2C] border border-[#14B8A6]/30 px-3 py-1 text-xs font-medium text-white transition-colors cursor-pointer"
+                className="rounded-full bg-[#004341]/80 hover:bg-[#004341] border border-[#14B8A6]/30 px-3.5 py-1 text-xs font-medium text-white transition-all cursor-pointer hover:border-[#14B8A6]/60"
               >
                 {med}
               </button>
@@ -178,7 +178,7 @@ export default function CustomerHomePage() {
           <div className="flex flex-wrap items-center gap-3 pt-2">
             <Button
               onClick={() => router.push('/customer/prescriptions')}
-              className="bg-white text-[#0D5C5A] hover:bg-[#F0FDFA] text-xs sm:text-sm font-bold h-10 px-5 rounded-[8px] shadow-xs cursor-pointer flex items-center"
+              className="bg-white text-[#0D5C5A] hover:bg-[#F0FDFA] text-xs sm:text-sm font-bold h-10 px-5 rounded-full shadow-xs cursor-pointer flex items-center"
             >
               <UploadCloud className="h-4 w-4 mr-1.5 text-[#0D5C5A]" />
               Upload Prescription (Rx)
@@ -186,7 +186,7 @@ export default function CustomerHomePage() {
             <Button
               variant="outline"
               onClick={() => router.push('/customer/medicines')}
-              className="border-white/40 text-white hover:bg-[#004341] text-xs sm:text-sm font-semibold h-10 px-5 rounded-[8px] cursor-pointer flex items-center"
+              className="border-white/40 text-white hover:bg-[#004341] text-xs sm:text-sm font-semibold h-10 px-5 rounded-full cursor-pointer flex items-center"
             >
               <Pill className="h-4 w-4 mr-1.5 text-teal-200" />
               Browse Catalogue
@@ -207,10 +207,10 @@ export default function CustomerHomePage() {
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5">
             <Link
               href="/customer/medicines"
-              className="p-5 rounded-[16px] border border-[#E2E8F0] bg-white hover:border-[#0D5C5A] hover:bg-[#F8FAFC] transition-all group block shadow-xs"
+              className="p-5 sm:p-6 rounded-[16px] border border-[#EBECEF] bg-white hover:border-[#14B8A6] hover:shadow-[0_4px_16px_rgba(0,0,0,0.04)] transition-all group block shadow-[0_2px_10px_rgba(0,0,0,0.02)]"
             >
-              <div className="flex items-center justify-between mb-3">
-                <div className="h-10 w-10 rounded-[10px] bg-[#F0FDFA] flex items-center justify-center text-[#0D5C5A] group-hover:bg-[#0D5C5A] group-hover:text-white transition-colors">
+              <div className="flex items-center justify-between mb-3.5">
+                <div className="h-11 w-11 rounded-[12px] bg-[#F0FDFA] flex items-center justify-center text-[#0D5C5A] group-hover:bg-[#0D5C5A] group-hover:text-white transition-colors">
                   <Pill className="h-5 w-5" />
                 </div>
                 <ArrowRight className="h-4 w-4 text-slate-400 group-hover:text-[#0D5C5A] group-hover:translate-x-0.5 transition-all" />
@@ -225,10 +225,10 @@ export default function CustomerHomePage() {
 
             <Link
               href="/customer/prescriptions"
-              className="p-5 rounded-[16px] border border-[#E2E8F0] bg-white hover:border-[#0D5C5A] hover:bg-[#F8FAFC] transition-all group block shadow-xs"
+              className="p-5 sm:p-6 rounded-[16px] border border-[#EBECEF] bg-white hover:border-[#14B8A6] hover:shadow-[0_4px_16px_rgba(0,0,0,0.04)] transition-all group block shadow-[0_2px_10px_rgba(0,0,0,0.02)]"
             >
-              <div className="flex items-center justify-between mb-3">
-                <div className="h-10 w-10 rounded-[10px] bg-[#F0FDFA] flex items-center justify-center text-[#0D5C5A] group-hover:bg-[#0D5C5A] group-hover:text-white transition-colors">
+              <div className="flex items-center justify-between mb-3.5">
+                <div className="h-11 w-11 rounded-[12px] bg-[#F0FDFA] flex items-center justify-center text-[#0D5C5A] group-hover:bg-[#0D5C5A] group-hover:text-white transition-colors">
                   <FileText className="h-5 w-5" />
                 </div>
                 <ArrowRight className="h-4 w-4 text-slate-400 group-hover:text-[#0D5C5A] group-hover:translate-x-0.5 transition-all" />
@@ -243,10 +243,10 @@ export default function CustomerHomePage() {
 
             <Link
               href="/customer/refills"
-              className="p-5 rounded-[16px] border border-[#E2E8F0] bg-white hover:border-[#0D5C5A] hover:bg-[#F8FAFC] transition-all group block shadow-xs"
+              className="p-5 sm:p-6 rounded-[16px] border border-[#EBECEF] bg-white hover:border-[#14B8A6] hover:shadow-[0_4px_16px_rgba(0,0,0,0.04)] transition-all group block shadow-[0_2px_10px_rgba(0,0,0,0.02)]"
             >
-              <div className="flex items-center justify-between mb-3">
-                <div className="h-10 w-10 rounded-[10px] bg-[#F0FDFA] flex items-center justify-center text-[#0D5C5A] group-hover:bg-[#0D5C5A] group-hover:text-white transition-colors">
+              <div className="flex items-center justify-between mb-3.5">
+                <div className="h-11 w-11 rounded-[12px] bg-[#F0FDFA] flex items-center justify-center text-[#0D5C5A] group-hover:bg-[#0D5C5A] group-hover:text-white transition-colors">
                   <Repeat className="h-5 w-5" />
                 </div>
                 <ArrowRight className="h-4 w-4 text-slate-400 group-hover:text-[#0D5C5A] group-hover:translate-x-0.5 transition-all" />
@@ -261,8 +261,8 @@ export default function CustomerHomePage() {
           </div>
 
           {/* Recent Orders & Fulfillment Tracking Section */}
-          <div className="rounded-[16px] border border-[#E2E8F0] bg-white p-5 sm:p-6 shadow-xs space-y-4">
-            <div className="flex items-center justify-between pb-3.5 border-b border-[#E2E8F0]">
+          <div className="rounded-[16px] border border-[#EBECEF] bg-white p-5 sm:p-6 shadow-[0_2px_10px_rgba(0,0,0,0.02)] space-y-4">
+            <div className="flex items-center justify-between pb-3.5 border-b border-[#F1F3F5]">
               <div className="flex items-center gap-2.5">
                 <div className="h-8 w-8 rounded-[8px] bg-[#F0FDFA] flex items-center justify-center text-[#0D5C5A]">
                   <Clock className="h-4 w-4" />
@@ -322,7 +322,7 @@ export default function CustomerHomePage() {
                     <div
                       key={order.id}
                       onClick={() => router.push(`/customer/orders/${order.id}`)}
-                      className="p-4 sm:p-5 rounded-[12px] border border-[#E2E8F0] hover:border-[#0D5C5A] bg-white transition-all cursor-pointer hover:shadow-xs space-y-3 group"
+                      className="p-4 sm:p-5 rounded-[14px] border border-[#EBECEF] hover:border-[#14B8A6] bg-white transition-all cursor-pointer shadow-[0_1px_4px_rgba(0,0,0,0.02)] hover:shadow-[0_4px_16px_rgba(0,0,0,0.04)] space-y-3 group"
                     >
                       {/* Top Header of Order */}
                       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
@@ -384,7 +384,7 @@ export default function CustomerHomePage() {
                       </div>
 
                       {/* Bottom Meta & Track CTA */}
-                      <div className="flex items-center justify-between text-xs text-[#64748B] pt-1.5 border-t border-[#E2E8F0]">
+                      <div className="flex items-center justify-between text-xs text-[#64748B] pt-2 border-t border-[#F1F3F5]">
                         <span>
                           {order.items?.length || 0} item(s) &bull; Payment:{' '}
                           <span className="font-semibold text-[#0F172A]">{order.paymentMethod}</span>
@@ -406,10 +406,10 @@ export default function CustomerHomePage() {
             ===================================================================== */}
         <div className="lg:col-span-4 space-y-5">
           {/* Widget 1: Family Health Circle */}
-          <div className="rounded-[16px] border border-[#E2E8F0] bg-white p-5 sm:p-6 shadow-xs space-y-3">
+          <div className="rounded-[16px] border border-[#EBECEF] bg-white p-5 sm:p-6 shadow-[0_2px_10px_rgba(0,0,0,0.02)] space-y-3">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <div className="h-8 w-8 rounded-[8px] bg-[#F0FDFA] flex items-center justify-center text-[#0D5C5A]">
+                <div className="h-8 w-8 rounded-[10px] bg-[#F0FDFA] flex items-center justify-center text-[#0D5C5A]">
                   <Users className="h-4 w-4" />
                 </div>
                 <h2 className="font-display font-bold text-sm text-[#0F172A]">Family Health Circle</h2>
@@ -425,7 +425,7 @@ export default function CustomerHomePage() {
               Prescriptions and dosage records managed for family members:
             </p>
             <div className="space-y-2 pt-1">
-              <div className="flex items-center justify-between p-3 rounded-[10px] bg-[#F8FAFC] border border-[#E2E8F0]">
+              <div className="flex items-center justify-between p-3 rounded-[12px] bg-[#F8F9FA] border border-[#EBECEF]">
                 <div className="flex items-center gap-2.5">
                   <div className="h-7 w-7 rounded-full bg-[#CCFBF1] text-[#047857] font-bold text-xs flex items-center justify-center">
                     DG
@@ -435,12 +435,12 @@ export default function CustomerHomePage() {
                     <span className="text-[10px] text-[#64748B]">Self (Primary Account)</span>
                   </div>
                 </div>
-                <span className="text-[10px] font-semibold text-[#047857] bg-[#CCFBF1] px-2 py-0.5 rounded-full">
+                <span className="text-[10px] font-semibold text-[#047857] bg-[#CCFBF1] px-2.5 py-0.5 rounded-full">
                   Active
                 </span>
               </div>
 
-              <div className="flex items-center justify-between p-3 rounded-[10px] bg-[#F8FAFC] border border-[#E2E8F0]">
+              <div className="flex items-center justify-between p-3 rounded-[12px] bg-[#F8F9FA] border border-[#EBECEF]">
                 <div className="flex items-center gap-2.5">
                   <div className="h-7 w-7 rounded-full bg-[#E0F2FE] text-[#0284C7] font-bold text-xs flex items-center justify-center">
                     MG
@@ -450,7 +450,7 @@ export default function CustomerHomePage() {
                     <span className="text-[10px] text-[#64748B]">Mother (Senior Care)</span>
                   </div>
                 </div>
-                <span className="text-[10px] font-semibold text-[#0D5C5A] bg-[#F0FDFA] border border-[#99F6E4] px-2 py-0.5 rounded-full">
+                <span className="text-[10px] font-semibold text-[#0D5C5A] bg-[#F0FDFA] border border-[#99F6E4] px-2.5 py-0.5 rounded-full">
                   2 Active Rx
                 </span>
               </div>
@@ -458,10 +458,10 @@ export default function CustomerHomePage() {
           </div>
 
           {/* Widget 2: Auto-Ship Cycle Watch */}
-          <div className="rounded-[16px] border border-[#E2E8F0] bg-white p-5 sm:p-6 shadow-xs space-y-3">
+          <div className="rounded-[16px] border border-[#EBECEF] bg-white p-5 sm:p-6 shadow-[0_2px_10px_rgba(0,0,0,0.02)] space-y-3">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <div className="h-8 w-8 rounded-[8px] bg-[#FFFBEB] flex items-center justify-center text-[#D97706]">
+                <div className="h-8 w-8 rounded-[10px] bg-[#FFFBEB] flex items-center justify-center text-[#D97706]">
                   <RotateCw className="h-4 w-4" />
                 </div>
                 <h2 className="font-display font-bold text-sm text-[#0F172A]">Refill Subscription Watch</h2>
@@ -476,7 +476,7 @@ export default function CustomerHomePage() {
             <p className="text-xs text-[#64748B] leading-relaxed">
               Continuous care subscriptions scheduled for recurring monthly dispatch:
             </p>
-            <div className="p-3.5 rounded-[10px] bg-[#F8FAFC] border border-[#E2E8F0] space-y-2">
+            <div className="p-3.5 rounded-[12px] bg-[#F8F9FA] border border-[#EBECEF] space-y-2">
               <div className="flex items-start justify-between">
                 <div>
                   <span className="font-display font-bold text-xs text-[#0F172A] block">
@@ -484,7 +484,7 @@ export default function CustomerHomePage() {
                   </span>
                   <span className="text-[11px] text-[#64748B]">For: Maya Ghosh &bull; Daily (Morning)</span>
                 </div>
-                <span className="text-[10px] font-bold text-[#D97706] bg-[#FFFBEB] px-2 py-0.5 rounded-full border border-[#FDE68A]">
+                <span className="text-[10px] font-bold text-[#D97706] bg-[#FFFBEB] px-2.5 py-0.5 rounded-full border border-[#FDE68A]">
                   5 Doses Left
                 </span>
               </div>

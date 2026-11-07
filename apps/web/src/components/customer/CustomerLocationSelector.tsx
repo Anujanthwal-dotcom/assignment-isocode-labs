@@ -138,7 +138,7 @@ export const CustomerLocationSelector: React.FC = () => {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger
-        className="flex items-center gap-2 rounded-[8px] border border-[#CBD5E1] bg-white px-2.5 py-1 text-left hover:border-[#0D5C5A] hover:bg-[#F0FDFA] transition-all cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#14B8A6]"
+        className="flex items-center gap-2 rounded-[10px] border border-[#EBECEF] bg-white px-2.5 py-1 text-left hover:border-[#14B8A6] hover:bg-[#F0FDFA] transition-all cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#14B8A6] shadow-[0_1px_3px_rgba(0,0,0,0.02)]"
         title="Change delivery location"
         aria-label="Delivery location selector"
       >
