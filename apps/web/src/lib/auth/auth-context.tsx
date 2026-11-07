@@ -2,13 +2,11 @@
 
 import * as React from 'react';
 import { apiFetch } from '../api/client';
-import { CurrentUser, RequestOtpResponse } from '@pharmacy/shared-types';
+import { CurrentUser } from '@pharmacy/shared-types';
 
 interface AuthContextType {
   user: CurrentUser | null;
   loading: boolean;
-  requestCustomerOtp: (phone: string) => Promise<RequestOtpResponse>;
-  verifyCustomerOtp: (phone: string, otp: string) => Promise<CurrentUser>;
   loginCustomer: (email: string, pass: string) => Promise<CurrentUser>;
   loginStaff: (email: string, pass: string) => Promise<CurrentUser>;
   logout: () => Promise<void>;
@@ -37,22 +35,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   React.useEffect(() => {
     refreshUser();
   }, [refreshUser]);
-
-  const requestCustomerOtp = async (phone: string): Promise<RequestOtpResponse> => {
-    return apiFetch<RequestOtpResponse>('/auth/customer/request-otp', {
-      method: 'POST',
-      body: JSON.stringify({ phone }),
-    });
-  };
-
-  const verifyCustomerOtp = async (phone: string, otp: string): Promise<CurrentUser> => {
-    const data = await apiFetch<CurrentUser>('/auth/customer/verify-otp', {
-      method: 'POST',
-      body: JSON.stringify({ phone, otp }),
-    });
-    setUser(data);
-    return data;
-  };
 
   const loginCustomer = async (email: string, password: string): Promise<CurrentUser> => {
     const data = await apiFetch<CurrentUser>('/auth/customer/login', {
@@ -87,8 +69,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       value={{
         user,
         loading,
-        requestCustomerOtp,
-        verifyCustomerOtp,
         loginCustomer,
         loginStaff,
         logout,
