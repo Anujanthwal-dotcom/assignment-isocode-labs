@@ -14,7 +14,7 @@ import {
   Package,
   Repeat,
   LogOut,
-  HeartPulse,
+  Hash,
 } from 'lucide-react';
 import {
   DropdownMenu,
@@ -24,6 +24,7 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
 } from '@/components/ui/dropdown-menu';
+import { CustomerLocationSelector } from '@/components/customer/CustomerLocationSelector';
 import { useAuth } from '@/lib/auth/auth-context';
 import { apiFetch } from '@/lib/api/client';
 
@@ -70,25 +71,13 @@ export const CustomerNavbar: React.FC = () => {
 
   return (
     <header className="sticky top-0 z-40 w-full border-b border-[#E2E8F0] bg-white shadow-xs">
-      <div className="mx-auto flex h-[56px] sm:h-[64px] max-w-[1200px] items-center justify-between px-4 lg:px-8">
-        {/* Logo & Brand */}
-        <div className="flex items-center gap-6 lg:gap-8">
-          <Link href="/customer" className="flex items-center gap-2.5 group">
-            <div className="flex h-8 w-8 items-center justify-center rounded-[8px] bg-[#0D5C5A] text-white shadow-xs group-hover:bg-[#0A4846] transition-colors">
-              <HeartPulse className="h-4.5 w-4.5 text-white" />
-            </div>
-            <div className="flex flex-col">
-              <span className="font-display text-[16px] font-bold tracking-tight text-[#0D5C5A] leading-tight">
-                Pharmacy Care
-              </span>
-              <span className="text-[10px] font-medium text-[#64748B] hidden sm:block">
-                Kolkata &amp; Howrah
-              </span>
-            </div>
-          </Link>
+      <div className="mx-auto flex h-[58px] sm:h-[64px] max-w-[1200px] items-center justify-between px-3 sm:px-4 lg:px-8 gap-2 sm:gap-4">
+        {/* Left: Location Selection Dropdown (No Branding) */}
+        <div className="flex items-center gap-3 lg:gap-6">
+          <CustomerLocationSelector />
 
           {/* Desktop Navigation Links */}
-          <nav className="hidden md:flex items-center gap-1">
+          <nav className="hidden lg:flex items-center gap-1">
             {navLinks.map((link) => {
               const isActive =
                 link.href === '/customer'
@@ -111,8 +100,26 @@ export const CustomerNavbar: React.FC = () => {
           </nav>
         </div>
 
-        {/* Right Actions: Notifications, Cart & Profile */}
+        {/* Right Actions: Desk Number Squaricle, Notifications, Cart & Profile */}
         <div className="flex items-center gap-2 sm:gap-3">
+          {/* Sample Customer Desk Number in Squaricle */}
+          <div
+            className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-[10px] bg-[#F0FDFA] border border-[#99F6E4] shadow-xs cursor-default select-none"
+            title="Assigned Customer Service Desk"
+          >
+            <div className="flex h-5 w-5 items-center justify-center rounded-[6px] bg-[#CCFBF1] text-[#0D5C5A]">
+              <Hash className="h-3 w-3 stroke-[2.5]" />
+            </div>
+            <div className="flex flex-col">
+              <span className="text-[9px] font-bold text-[#047857] uppercase tracking-wider leading-none hidden sm:block">
+                Assigned Desk
+              </span>
+              <span className="tabular-nums font-mono text-[12px] font-bold text-[#0D5C5A] leading-tight">
+                Desk #04
+              </span>
+            </div>
+          </div>
+
           {/* Notifications */}
           <Link
             href="/customer/notifications"
@@ -146,7 +153,7 @@ export const CustomerNavbar: React.FC = () => {
               <div className="flex h-6 w-6 items-center justify-center rounded-full bg-[#CCFBF1] text-[#047857]">
                 <User className="h-3.5 w-3.5" />
               </div>
-              <span className="hidden sm:inline max-w-[120px] truncate font-semibold">
+              <span className="hidden md:inline max-w-[110px] truncate font-semibold">
                 {user?.profile?.fullName || 'Account'}
               </span>
               <ChevronDown className="h-3.5 w-3.5 text-slate-400" />

@@ -29,8 +29,8 @@ export const AuthSplitLayout: React.FC<AuthSplitLayoutProps> = ({
           className="absolute inset-0 bg-cover bg-center z-0 scale-100 transition-transform duration-1000 ease-out"
           style={{ backgroundImage: "url('/images/kolkata-pharmacy.jpg')" }}
         />
-        {/* Balanced Ambient Gradient for Center Tagline Readability */}
-        <div className="absolute inset-0 bg-gradient-to-r from-slate-950/85 via-slate-950/60 to-slate-950/30 z-0" />
+        {/* Solid Ambient Scrim for Center Tagline Readability */}
+        <div className="absolute inset-0 bg-slate-950/75 z-0" />
 
         {/* Main Tag Line (Vertically Centered) */}
         <div className="relative z-10 max-w-xl space-y-3">
