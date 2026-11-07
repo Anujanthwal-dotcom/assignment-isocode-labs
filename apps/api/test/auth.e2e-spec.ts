@@ -5,6 +5,8 @@ import cookieParser from 'cookie-parser';
 import { AppModule } from '../src/app.module';
 import { PrismaService } from '../src/prisma/prisma.service';
 import { UserRole, UserStatus } from '@prisma/client';
+import { describe, it } from 'node:test';
+import { afterAll, beforeAll, expect } from 'vitest';
 
 describe('Auth & RBAC Integration Tests (18 Scenarios)', () => {
   let app: INestApplication;
