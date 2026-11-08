@@ -8,6 +8,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/u
 import { apiFetch } from '@/lib/api/client';
 import Link from 'next/link';
 import { PrescriptionDTO, FamilyMemberDTO } from '@pharmacy/shared-types';
+import { MissingPrescriptionIllustration } from '@/components/customer/MissingPrescriptionIllustration';
 
 export default function CustomerPrescriptionsPage() {
   const [prescriptions, setPrescriptions] = React.useState<PrescriptionDTO[]>([]);
@@ -29,6 +30,7 @@ export default function CustomerPrescriptionsPage() {
   const [previewUrl, setPreviewUrl] = React.useState<string | null>(null);
   const [previewFileName, setPreviewFileName] = React.useState('');
   const [previewMime, setPreviewMime] = React.useState('');
+  const [previewImageError, setPreviewImageError] = React.useState(false);
 
   const loadData = async () => {
     try {
@@ -110,15 +112,22 @@ export default function CustomerPrescriptionsPage() {
     setPreviewFileName(fileName);
     setPreviewMime(mime);
     setPreviewLoading(true);
+    setPreviewImageError(false);
+    setPreviewUrl(null);
     setPreviewOpen(true);
     try {
-      const res = await apiFetch<{ url?: string; viewUrl?: string }>(
+      const res = await apiFetch<{ url?: string; viewUrl?: string; exists?: boolean }>(
         `/customer/prescriptions/${id}/preview-url`,
       );
-      setPreviewUrl(res.url || res.viewUrl || null);
-    } catch (err: unknown) {
-      alert((err as Error).message || 'Failed to generate preview URL.');
-      setPreviewOpen(false);
+      if (res.exists === false) {
+        setPreviewUrl(null);
+        setPreviewImageError(true);
+      } else {
+        setPreviewUrl(res.url || res.viewUrl || null);
+      }
+    } catch {
+      setPreviewUrl(null);
+      setPreviewImageError(true);
     } finally {
       setPreviewLoading(false);
     }
@@ -389,23 +398,34 @@ export default function CustomerPrescriptionsPage() {
               <div className="text-xs text-slate-500">
                 Generating secure 5-minute pre-signed link...
               </div>
-            ) : previewUrl ? (
+            ) : previewUrl && !previewImageError ? (
               previewMime.includes('pdf') ? (
                 <iframe
                   src={previewUrl}
                   title="Prescription PDF"
                   className="w-full h-[550px] rounded border border-slate-200"
+                  onError={() => setPreviewImageError(true)}
                 />
               ) : (
                 /* eslint-disable-next-line @next/next/no-img-element */
                 <img
                   src={previewUrl}
                   alt="Prescription Preview"
+                  onError={() => setPreviewImageError(true)}
                   className="max-h-[550px] max-w-full object-contain rounded"
                 />
               )
             ) : (
-              <div className="text-xs text-red-500">Failed to render prescription preview.</div>
+              <MissingPrescriptionIllustration
+                fileName={previewFileName}
+                mimeType={previewMime}
+                onReupload={() => {
+                  setPreviewOpen(false);
+                  setSelectedFile(null);
+                  setUploadError(null);
+                  setIsUploadOpen(true);
+                }}
+              />
             )}
           </div>
         </DialogContent>

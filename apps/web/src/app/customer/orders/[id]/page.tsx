@@ -8,6 +8,7 @@ import { StatusBadge } from '@/components/shared/StatusBadge';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { apiFetch } from '@/lib/api/client';
 import { OrderDTO, OrderStatusHistoryDTO } from '@pharmacy/shared-types';
+import { MissingPrescriptionIllustration } from '@/components/customer/MissingPrescriptionIllustration';
 
 interface VerificationItem {
   orderItemId: string;
@@ -72,6 +73,7 @@ export default function CustomerOrderDetailPage() {
   const [previewOpen, setPreviewOpen] = React.useState(false);
   const [previewUrl, setPreviewUrl] = React.useState<string | null>(null);
   const [previewLoading, setPreviewLoading] = React.useState(false);
+  const [previewImageError, setPreviewImageError] = React.useState(false);
 
   const fetchOrderDetails = React.useCallback(async () => {
     try {
@@ -155,15 +157,22 @@ export default function CustomerOrderDetailPage() {
 
   const handlePreviewPrescription = async (prescriptionId: string) => {
     setPreviewLoading(true);
+    setPreviewImageError(false);
+    setPreviewUrl(null);
     setPreviewOpen(true);
     try {
-      const res = await apiFetch<{ url?: string; viewUrl?: string }>(
+      const res = await apiFetch<{ url?: string; viewUrl?: string; exists?: boolean }>(
         `/customer/prescriptions/${prescriptionId}/preview-url`,
       );
-      setPreviewUrl(res.url || res.viewUrl || null);
-    } catch (err: unknown) {
-      alert((err as Error).message || 'Failed to load prescription document.');
-      setPreviewOpen(false);
+      if (res.exists === false) {
+        setPreviewUrl(null);
+        setPreviewImageError(true);
+      } else {
+        setPreviewUrl(res.url || res.viewUrl || null);
+      }
+    } catch {
+      setPreviewUrl(null);
+      setPreviewImageError(true);
     } finally {
       setPreviewLoading(false);
     }
@@ -734,14 +743,27 @@ export default function CustomerOrderDetailPage() {
           <div className="flex-1 overflow-auto p-2 bg-slate-900/5 rounded-lg flex items-center justify-center min-h-[400px]">
             {previewLoading ? (
               <div className="text-xs text-slate-500">Loading document securely...</div>
-            ) : previewUrl ? (
-              <iframe
-                src={previewUrl}
-                title="Prescription Document"
-                className="w-full h-[550px] rounded border border-slate-200"
-              />
+            ) : previewUrl && !previewImageError ? (
+              order?.prescription?.originalFileName?.toLowerCase().endsWith('.pdf') ? (
+                <iframe
+                  src={previewUrl}
+                  title="Prescription Document"
+                  className="w-full h-[550px] rounded border border-slate-200"
+                  onError={() => setPreviewImageError(true)}
+                />
+              ) : (
+                /* eslint-disable-next-line @next/next/no-img-element */
+                <img
+                  src={previewUrl}
+                  alt="Prescription Document"
+                  onError={() => setPreviewImageError(true)}
+                  className="max-h-[550px] max-w-full object-contain rounded"
+                />
+              )
             ) : (
-              <div className="text-xs text-red-500">Failed to render prescription document.</div>
+              <MissingPrescriptionIllustration
+                fileName={order?.prescription?.originalFileName}
+              />
             )}
           </div>
         </DialogContent>

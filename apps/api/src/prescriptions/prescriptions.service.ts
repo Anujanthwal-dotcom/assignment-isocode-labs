@@ -215,6 +215,19 @@ export class PrescriptionsService {
       });
     }
 
+    const fileExists = await this.storageService.prescriptionFileExists(rx.objectKey);
+    if (!fileExists) {
+      return {
+        prescriptionId: rx.id,
+        fileName: rx.originalFileName,
+        mimeType: rx.mimeType,
+        exists: false,
+        viewUrl: null,
+        url: null,
+        expiresInSeconds: 0,
+      };
+    }
+
     // Generate 5-minute pre-signed URL (300 seconds)
     const viewUrl = await this.storageService.getPresignedPrescriptionUrl(rx.objectKey, 300);
 
@@ -233,6 +246,7 @@ export class PrescriptionsService {
       prescriptionId: rx.id,
       fileName: rx.originalFileName,
       mimeType: rx.mimeType,
+      exists: true,
       viewUrl,
       url: viewUrl,
       expiresInSeconds: 300,

@@ -9,6 +9,7 @@ import { Badge } from '@/components/ui/badge';
 import { apiFetch, ApiError } from '@/lib/api/client';
 import Link from 'next/link';
 import { PrescriptionDTO, PrescriptionAIExtractionDTO } from '@pharmacy/shared-types';
+import { MissingPrescriptionIllustration } from '@/components/customer/MissingPrescriptionIllustration';
 
 export default function PrescriptionDetailPage() {
   const params = useParams();
@@ -16,6 +17,7 @@ export default function PrescriptionDetailPage() {
 
   const [prescription, setPrescription] = React.useState<PrescriptionDTO | null>(null);
   const [viewUrl, setViewUrl] = React.useState<string | null>(null);
+  const [previewImageError, setPreviewImageError] = React.useState(false);
   const [extraction, setExtraction] = React.useState<PrescriptionAIExtractionDTO | null>(null);
   const [loading, setLoading] = React.useState(true);
   const [requesting, setRequesting] = React.useState(false);
@@ -28,12 +30,19 @@ export default function PrescriptionDetailPage() {
       setPrescription(rx);
 
       try {
-        const fileRes = await apiFetch<{ viewUrl: string }>(
-          `/customer/prescriptions/${prescriptionId}/file`,
+        const fileRes = await apiFetch<{ viewUrl?: string; url?: string; exists?: boolean }>(
+          `/customer/prescriptions/${prescriptionId}/preview-url`,
         );
-        setViewUrl(fileRes.viewUrl);
+        if (fileRes.exists === false) {
+          setViewUrl(null);
+          setPreviewImageError(true);
+        } else {
+          setViewUrl(fileRes.viewUrl || fileRes.url || null);
+          setPreviewImageError(false);
+        }
       } catch {
-        // Preview generation may fail if file is missing
+        setViewUrl(null);
+        setPreviewImageError(true);
       }
     } catch (err: unknown) {
       setError((err as Error).message || 'Failed to load prescription.');
@@ -205,7 +214,7 @@ export default function PrescriptionDetailPage() {
             <label className="text-xs font-semibold text-slate-700 block mb-2">
               Prescription Document Preview
             </label>
-            {viewUrl ? (
+            {viewUrl && !previewImageError ? (
               prescription.mimeType === 'application/pdf' ? (
                 <div className="border border-slate-200 rounded-lg overflow-hidden h-[340px] bg-slate-50 flex flex-col items-center justify-center p-4 text-center">
                   <p className="text-xs text-slate-600 font-medium">PDF Document Ready</p>
@@ -223,13 +232,18 @@ export default function PrescriptionDetailPage() {
                   <img
                     src={viewUrl}
                     alt="Prescription Scan"
+                    onError={() => setPreviewImageError(true)}
                     className="max-h-full max-w-full object-contain"
                   />
                 </div>
               )
             ) : (
-              <div className="border border-dashed border-slate-200 rounded-lg h-[200px] flex items-center justify-center text-xs text-slate-400">
-                Preview temporarily unavailable
+              <div className="border border-slate-200 rounded-lg bg-slate-50/70 p-2">
+                <MissingPrescriptionIllustration
+                  compact
+                  fileName={prescription?.originalFileName}
+                  mimeType={prescription?.mimeType}
+                />
               </div>
             )}
           </div>

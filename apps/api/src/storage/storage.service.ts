@@ -128,6 +128,15 @@ export class StorageService implements OnModuleInit {
     }
   }
 
+  async prescriptionFileExists(objectKey: string): Promise<boolean> {
+    try {
+      await this.client.statObject(this.prescriptionBucket, objectKey);
+      return true;
+    } catch {
+      return false;
+    }
+  }
+
   async getPresignedPrescriptionUrl(
     objectKey: string,
     expirySeconds: number = 300,
