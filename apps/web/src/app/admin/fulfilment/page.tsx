@@ -27,16 +27,12 @@ export default function AdminFulfilmentOverviewPage() {
   }, [fetchMetrics]);
 
   return (
-    <div className="space-y-6">
-      <div className="pb-2 border-b border-[#EBECEF] flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+    <div className="mx-auto w-full max-w-7xl space-y-8 py-2">
+      <div className="border-b border-slate-200 pb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-5">
         <div>
-          <h1 className="text-2xl font-bold text-[#14161A] tracking-tight">
+          <h1 className="font-display text-2xl font-bold tracking-tight text-[#0F172A] sm:text-[28px] sm:leading-[36px]">
             Fulfilment Operations
           </h1>
-          <p className="text-sm text-[#78879A] mt-1">
-            Store routing, concurrency-safe inventory reservations, and end-to-end pharmacy
-            dispensing lifecycle.
-          </p>
         </div>
       </div>
 
@@ -50,12 +46,12 @@ export default function AdminFulfilmentOverviewPage() {
           {error}
         </div>
       ) : (
-        <div className="space-y-6">
+        <div className="space-y-8">
           {/* Key Metric Tiles */}
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-5">
             <div className="p-5 bg-white rounded-2xl border border-[#EBECEF] shadow-xs">
               <span className="text-xs font-semibold text-[#78879A] block">Awaiting Routing</span>
-              <span className="text-2xl font-extrabold text-[#14161A] mt-1 block">
+              <span className="text-[26px] leading-[32px] font-extrabold text-[#14161A] mt-1 block">
                 {metrics?.awaitingRouting || 0}
               </span>
               <span className="text-[10px] text-[#0D5C5A] font-medium">Pharmacist approved</span>
@@ -63,7 +59,7 @@ export default function AdminFulfilmentOverviewPage() {
 
             <div className="p-5 bg-white rounded-2xl border border-[#EBECEF] shadow-xs">
               <span className="text-xs font-semibold text-[#78879A] block">Stock Reserved</span>
-              <span className="text-2xl font-extrabold text-amber-600 mt-1 block">
+              <span className="text-[26px] leading-[32px] font-extrabold text-amber-600 mt-1 block">
                 {metrics?.stockReserved || 0}
               </span>
               <span className="text-[10px] text-[#78879A]">Active holds</span>
@@ -73,7 +69,7 @@ export default function AdminFulfilmentOverviewPage() {
               <span className="text-xs font-semibold text-[#78879A] block">
                 Picking &amp; Packed
               </span>
-              <span className="text-2xl font-extrabold text-[#0D5C5A] mt-1 block">
+              <span className="text-[26px] leading-[32px] font-extrabold text-[#0D5C5A] mt-1 block">
                 {(metrics?.picking || 0) + (metrics?.packed || 0)}
               </span>
               <span className="text-[10px] text-[#78879A]">Store in-progress</span>
@@ -81,7 +77,7 @@ export default function AdminFulfilmentOverviewPage() {
 
             <div className="p-5 bg-white rounded-2xl border border-[#EBECEF] shadow-xs">
               <span className="text-xs font-semibold text-[#78879A] block">Handed Over</span>
-              <span className="text-2xl font-extrabold text-emerald-600 mt-1 block">
+              <span className="text-[26px] leading-[32px] font-extrabold text-emerald-600 mt-1 block">
                 {metrics?.handedOver || 0}
               </span>
               <span className="text-[10px] text-emerald-700 font-medium">
@@ -95,10 +91,6 @@ export default function AdminFulfilmentOverviewPage() {
             {/* Quick Actions & Navigation */}
             <div className="p-5 bg-white rounded-2xl border border-[#EBECEF] shadow-xs space-y-3">
               <h3 className="font-bold text-sm text-[#14161A]">Fulfilment Management</h3>
-              <p className="text-xs text-[#78879A]">
-                Monitor store-routed orders, trigger automatic nearest-store routing, or manually
-                assign store exceptions.
-              </p>
               <div className="pt-2 space-y-2">
                 <Link
                   href="/admin/fulfilment/orders"
@@ -130,10 +122,6 @@ export default function AdminFulfilmentOverviewPage() {
               <div className="text-3xl font-extrabold text-amber-600">
                 {metrics?.stockUnavailable || 0}
               </div>
-              <p className="text-xs text-[#78879A]">
-                Orders where no single active fulfillment store had complete available stock for all
-                approved items. Multi-store splitting is prohibited under policy.
-              </p>
               <div className="pt-2">
                 <Link
                   href="/admin/fulfilment/orders?status=STOCK_UNAVAILABLE"
@@ -152,7 +140,7 @@ export default function AdminFulfilmentOverviewPage() {
                   <span className="text-[10px] text-[#78879A] block uppercase font-bold">
                     Active Holds
                   </span>
-                  <span className="text-2xl font-extrabold text-[#14161A]">
+                  <span className="text-[26px] leading-[32px] font-extrabold text-[#14161A]">
                     {metrics?.activeReservationsCount || 0}
                   </span>
                 </div>
@@ -160,15 +148,11 @@ export default function AdminFulfilmentOverviewPage() {
                   <span className="text-[10px] text-[#78879A] block uppercase font-bold">
                     TTL Expired
                   </span>
-                  <span className="text-2xl font-extrabold text-slate-400">
+                  <span className="text-[26px] leading-[32px] font-extrabold text-slate-400">
                     {metrics?.expiredReservationsCount || 0}
                   </span>
                 </div>
               </div>
-              <p className="text-xs text-[#78879A]">
-                formula: <code>availableStock = onHand - reserved</code>. Reservations auto-expire
-                after TTL (30 mins) if unpicked.
-              </p>
               <div className="pt-2">
                 <Link
                   href="/admin/inventory/reservations"

@@ -39,18 +39,15 @@ export default function AdminInvoicesListPage() {
   });
 
   return (
-    <div className="space-y-6">
-      <div className="pb-2 border-b border-[#EBECEF] flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+    <div className="mx-auto w-full max-w-7xl space-y-8 py-2">
+      <div className="border-b border-slate-200 pb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-5">
         <div>
-          <div className="flex items-center gap-3">
+          <div className="flex flex-col items-start gap-3">
             <BackButton href="/admin/fulfilment" label="Fulfilment Overview" />
-            <h1 className="text-2xl font-bold text-[#14161A] tracking-tight">
+            <h1 className="font-display text-2xl font-bold tracking-tight text-[#0F172A] sm:text-[28px] sm:leading-[36px]">
               Platform Pharmacy Invoices
             </h1>
           </div>
-          <p className="text-sm text-[#78879A] mt-1">
-            Deterministic sequence invoices issued by physical stores upon order packing completion.
-          </p>
         </div>
 
         <div className="relative max-w-xs w-full">
@@ -79,30 +76,30 @@ export default function AdminInvoicesListPage() {
             <table className="w-full text-left text-xs">
               <thead className="bg-[#F8F9FB] border-b border-[#EBECEF] text-[#78879A] uppercase tracking-wider text-[10px]">
                 <tr>
-                  <th className="py-3 px-4">Invoice #</th>
-                  <th className="py-3 px-4">Order #</th>
-                  <th className="py-3 px-4">Fulfillment Store</th>
-                  <th className="py-3 px-4">Amount</th>
-                  <th className="py-3 px-4">Payment</th>
-                  <th className="py-3 px-4">Issued At</th>
-                  <th className="py-3 px-4 text-right">View</th>
+                  <th className="py-3.5 px-4">Invoice #</th>
+                  <th className="py-3.5 px-4">Order #</th>
+                  <th className="py-3.5 px-4">Fulfillment Store</th>
+                  <th className="py-3.5 px-4">Amount</th>
+                  <th className="py-3.5 px-4">Payment</th>
+                  <th className="py-3.5 px-4">Issued At</th>
+                  <th className="py-3.5 px-4 text-right">View</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-[#EBECEF] text-[#14161A]">
                 {filtered.map((row) => (
                   <tr key={row.id} className="hover:bg-[#F8F9FB]/50">
-                    <td className="py-3 px-4 font-mono font-bold text-[#0D5C5A]">
+                    <td className="py-3.5 px-4 font-mono font-bold text-[#0D5C5A]">
                       {row.invoiceNumber}
                     </td>
-                    <td className="py-3 px-4 font-mono font-bold">{row.orderNumber}</td>
-                    <td className="py-3 px-4">
+                    <td className="py-3.5 px-4 font-mono font-bold">{row.orderNumber}</td>
+                    <td className="py-3.5 px-4">
                       <span className="font-semibold block">{row.storeName}</span>
                       <span className="text-[10px] text-[#78879A] font-mono">{row.storeCode}</span>
                     </td>
-                    <td className="py-3 px-4 font-bold text-sm text-[#0F172A]">
+                    <td className="py-3.5 px-4 font-bold text-sm text-[#0F172A]">
                       ₹{row.total.toFixed(2)}
                     </td>
-                    <td className="py-3 px-4">
+                    <td className="py-3.5 px-4">
                       <span className="font-semibold block">{row.paymentMethod}</span>
                       <span
                         className={`text-[10px] font-bold ${
@@ -112,13 +109,13 @@ export default function AdminInvoicesListPage() {
                         {row.paymentStatus}
                       </span>
                     </td>
-                    <td className="py-3 px-4 text-[11px] text-[#78879A] font-mono">
+                    <td className="py-3.5 px-4 text-[11px] text-[#78879A] font-mono">
                       {new Date(row.issuedAt).toLocaleString('en-IN', {
                         dateStyle: 'short',
                         timeStyle: 'short',
                       })}
                     </td>
-                    <td className="py-3 px-4 text-right">
+                    <td className="py-3.5 px-4 text-right">
                       <Link
                         href={`/admin/fulfilment/invoices/${row.orderId}`}
                         className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-100 hover:bg-slate-200 text-[#14161A]"

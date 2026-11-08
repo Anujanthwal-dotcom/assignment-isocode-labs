@@ -229,15 +229,11 @@ export default function StockImportsPage() {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="mx-auto w-full max-w-7xl space-y-8 py-2">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-5 border-b border-slate-200 pb-6">
         <div>
-          <h1 className="text-[24px] font-bold tracking-tight text-[#0F172A]">Stock Imports</h1>
-          <p className="text-[14px] text-[#78879A]">
-            Import daily stock data snapshots using all-or-nothing deterministic CSV processing and
-            private MinIO storage.
-          </p>
+          <h1 className="font-display text-2xl font-bold tracking-tight text-[#0F172A] sm:text-[28px] sm:leading-[36px]">Stock Imports</h1>
         </div>
         <div className="flex items-center gap-2">
           <Button
@@ -285,15 +281,15 @@ export default function StockImportsPage() {
           <table className="w-full text-left border-collapse text-[13px]">
             <thead>
               <tr className="border-b border-[#EBECEF] bg-[#F8F9FB] text-[#78879A] font-semibold">
-                <th className="py-3 px-4">File Name</th>
-                <th className="py-3 px-4">Target Location</th>
-                <th className="py-3 px-4">Imported By</th>
-                <th className="py-3 px-4 text-center">Status</th>
-                <th className="py-3 px-4 text-right">Total Rows</th>
-                <th className="py-3 px-4 text-right">Applied</th>
-                <th className="py-3 px-4 text-right">Rejected</th>
-                <th className="py-3 px-4">Imported At</th>
-                <th className="py-3 px-4 text-right">Actions</th>
+                <th className="py-3.5 px-4">File Name</th>
+                <th className="py-3.5 px-4">Target Location</th>
+                <th className="py-3.5 px-4">Imported By</th>
+                <th className="py-3.5 px-4 text-center">Status</th>
+                <th className="py-3.5 px-4 text-right">Total Rows</th>
+                <th className="py-3.5 px-4 text-right">Applied</th>
+                <th className="py-3.5 px-4 text-right">Rejected</th>
+                <th className="py-3.5 px-4">Imported At</th>
+                <th className="py-3.5 px-4 text-right">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-[#EBECEF]">
@@ -321,20 +317,20 @@ export default function StockImportsPage() {
               ) : (
                 imports.map((item) => (
                   <tr key={item.id} className="hover:bg-[#F8F9FB]/60 transition-colors">
-                    <td className="py-3 px-4 font-mono font-medium text-[#14161A]">
+                    <td className="py-3.5 px-4 font-mono font-medium text-[#14161A]">
                       <div className="flex items-center gap-1.5">
                         <span className="truncate max-w-[200px]" title={item.fileName}>
                           {item.fileName}
                         </span>
                       </div>
                     </td>
-                    <td className="py-3 px-4">
+                    <td className="py-3.5 px-4">
                       <div className="font-medium text-[#14161A]">
                         <span>{item.locationName}</span>
                       </div>
                     </td>
-                    <td className="py-3 px-4 text-[#6C757D]">{item.importedByEmail}</td>
-                    <td className="py-3 px-4 text-center">
+                    <td className="py-3.5 px-4 text-[#6C757D]">{item.importedByEmail}</td>
+                    <td className="py-3.5 px-4 text-center">
                       {item.status === 'COMPLETED' && (
                         <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[11px] font-medium bg-[#E8F8EC] text-[#0FAC26] border border-[#B0E6BC]">
                           Completed
@@ -351,16 +347,16 @@ export default function StockImportsPage() {
                         </span>
                       )}
                     </td>
-                    <td className="py-3 px-4 text-right font-medium text-[#14161A]">
+                    <td className="py-3.5 px-4 text-right font-medium text-[#14161A]">
                       {item.totalRows}
                     </td>
-                    <td className="py-3 px-4 text-right font-bold text-[#0FAC26]">
+                    <td className="py-3.5 px-4 text-right font-bold text-[#0FAC26]">
                       {item.appliedRows}
                     </td>
-                    <td className="py-3 px-4 text-right font-bold text-[#DC3545]">
+                    <td className="py-3.5 px-4 text-right font-bold text-[#DC3545]">
                       {item.rejectedRows}
                     </td>
-                    <td className="py-3 px-4 text-[#78879A] text-[12px]">
+                    <td className="py-3.5 px-4 text-[#78879A] text-[12px]">
                       {new Date(item.createdAt).toLocaleDateString('en-IN', {
                         day: '2-digit',
                         month: 'short',
@@ -368,7 +364,7 @@ export default function StockImportsPage() {
                         minute: '2-digit',
                       })}
                     </td>
-                    <td className="py-3 px-4 text-right">
+                    <td className="py-3.5 px-4 text-right">
                       <Button
                         variant="outline"
                         size="sm"

@@ -116,16 +116,13 @@ export default function AdminSalesAndOrdersPage() {
   });
 
   return (
-    <div className="space-y-6">
+    <div className="mx-auto w-full max-w-7xl space-y-8 py-2">
       {/* Page Header */}
-      <div className="pb-2 border-b border-[#EBECEF] flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+      <div className="border-b border-slate-200 pb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-5">
         <div>
-          <h1 className="text-2xl font-bold text-[#14161A] tracking-tight">
+          <h1 className="font-display text-2xl font-bold tracking-tight text-[#0F172A] sm:text-[28px] sm:leading-[36px]">
             Sales &amp; Orders Monitor
           </h1>
-          <p className="text-sm text-[#78879A] mt-1">
-            Real-time platform sales revenue, order fulfillment status, line-item pricing, and financial audits.
-          </p>
         </div>
 
         {/* Date Filters */}
@@ -156,35 +153,35 @@ export default function AdminSalesAndOrdersPage() {
       </div>
 
       {/* Financial & Sales KPI Tiles */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <div className="p-4 bg-white rounded-xl border border-[#EBECEF] shadow-xs space-y-1">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-5">
+        <div className="p-5 bg-white rounded-xl border border-[#EBECEF] shadow-xs space-y-1">
           <div className="flex items-center justify-between text-xs text-[#78879A] font-medium">
             <span>Total Sales (GMV)</span>
             <span className="font-bold text-[#0D5C5A]">₹</span>
           </div>
-          <div className="text-2xl font-extrabold text-[#14161A]">
+          <div className="text-[26px] leading-[32px] font-extrabold text-[#14161A]">
             ₹{(analytics?.totalRevenue ?? 0).toLocaleString('en-IN', { minimumFractionDigits: 2 })}
           </div>
           <span className="text-[11px] text-slate-500">Recorded orders in period</span>
         </div>
 
-        <div className="p-4 bg-white rounded-xl border border-[#EBECEF] shadow-xs space-y-1">
+        <div className="p-5 bg-white rounded-xl border border-[#EBECEF] shadow-xs space-y-1">
           <div className="flex items-center justify-between text-xs text-[#78879A] font-medium">
             <span>Delivered Revenue</span>
             <CheckCircle2 className="h-4 w-4 text-emerald-600" />
           </div>
-          <div className="text-2xl font-extrabold text-emerald-600">
+          <div className="text-[26px] leading-[32px] font-extrabold text-emerald-600">
             ₹{(analytics?.deliveredRevenue ?? 0).toLocaleString('en-IN', { minimumFractionDigits: 2 })}
           </div>
           <span className="text-[11px] text-emerald-700">Fulfilled &amp; collected</span>
         </div>
 
-        <div className="p-4 bg-white rounded-xl border border-[#EBECEF] shadow-xs space-y-1">
+        <div className="p-5 bg-white rounded-xl border border-[#EBECEF] shadow-xs space-y-1">
           <div className="flex items-center justify-between text-xs text-[#78879A] font-medium">
             <span>Total Orders Placed</span>
             <ShoppingBag className="h-4 w-4 text-blue-600" />
           </div>
-          <div className="text-2xl font-extrabold text-blue-600">
+          <div className="text-[26px] leading-[32px] font-extrabold text-blue-600">
             {analytics?.totalOrders ?? totalCount}
           </div>
           <span className="text-[11px] text-slate-500">
@@ -192,12 +189,12 @@ export default function AdminSalesAndOrdersPage() {
           </span>
         </div>
 
-        <div className="p-4 bg-white rounded-xl border border-[#EBECEF] shadow-xs space-y-1">
+        <div className="p-5 bg-white rounded-xl border border-[#EBECEF] shadow-xs space-y-1">
           <div className="flex items-center justify-between text-xs text-[#78879A] font-medium">
             <span>Avg Order Value (AOV)</span>
             <DollarSign className="h-4 w-4 text-[#0D5C5A]" />
           </div>
-          <div className="text-2xl font-extrabold text-[#0D5C5A]">
+          <div className="text-[26px] leading-[32px] font-extrabold text-[#0D5C5A]">
             ₹{(analytics?.averageOrderValue ?? 0).toLocaleString('en-IN', { minimumFractionDigits: 2 })}
           </div>
           <span className="text-[11px] text-slate-500">Per order average</span>
@@ -266,20 +263,20 @@ export default function AdminSalesAndOrdersPage() {
               <table className="w-full text-left text-xs border-collapse">
                 <thead>
                   <tr className="bg-[#F8F9FB] border-b border-[#EBECEF] text-[#78879A] font-semibold">
-                    <th className="py-3 px-4">Order Number</th>
-                    <th className="py-3 px-4">Customer Details</th>
-                    <th className="py-3 px-4">Store Hub</th>
-                    <th className="py-3 px-4">Order Items</th>
-                    <th className="py-3 px-4 text-right">Total Amount</th>
-                    <th className="py-3 px-4">Payment</th>
-                    <th className="py-3 px-4">Order Status</th>
-                    <th className="py-3 px-4 text-right">Actions</th>
+                    <th className="py-3.5 px-4">Order Number</th>
+                    <th className="py-3.5 px-4">Customer Details</th>
+                    <th className="py-3.5 px-4">Store Hub</th>
+                    <th className="py-3.5 px-4">Order Items</th>
+                    <th className="py-3.5 px-4 text-right">Total Amount</th>
+                    <th className="py-3.5 px-4">Payment</th>
+                    <th className="py-3.5 px-4">Order Status</th>
+                    <th className="py-3.5 px-4 text-right">Actions</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-[#EBECEF]">
                   {filteredOrders.map((ord) => (
                     <tr key={ord.orderId} className="hover:bg-[#F0FDFA]/40 transition-colors">
-                      <td className="py-3 px-4">
+                      <td className="py-3.5 px-4">
                         <span className="font-mono font-bold text-[#0D5C5A] block">
                           {ord.orderNumber}
                         </span>
@@ -288,7 +285,7 @@ export default function AdminSalesAndOrdersPage() {
                         </span>
                       </td>
 
-                      <td className="py-3 px-4">
+                      <td className="py-3.5 px-4">
                         <span className="font-semibold text-[#14161A] block">
                           {ord.customerName}
                         </span>
@@ -297,7 +294,7 @@ export default function AdminSalesAndOrdersPage() {
                         </span>
                       </td>
 
-                      <td className="py-3 px-4">
+                      <td className="py-3.5 px-4">
                         {ord.assignedStore ? (
                           <span className="font-medium text-slate-800">
                             {ord.assignedStore.name} ({ord.assignedStore.code})
@@ -309,7 +306,7 @@ export default function AdminSalesAndOrdersPage() {
                         )}
                       </td>
 
-                      <td className="py-3 px-4">
+                      <td className="py-3.5 px-4">
                         <div className="max-w-[200px]">
                           <span className="font-semibold text-slate-800 block truncate">
                             {ord.items && ord.items.length > 0
@@ -322,7 +319,7 @@ export default function AdminSalesAndOrdersPage() {
                         </div>
                       </td>
 
-                      <td className="py-3 px-4 text-right">
+                      <td className="py-3.5 px-4 text-right">
                         <span className="font-extrabold text-[#14161A] text-sm block">
                           ₹{ord.totalAmount.toFixed(2)}
                         </span>
@@ -333,7 +330,7 @@ export default function AdminSalesAndOrdersPage() {
                         )}
                       </td>
 
-                      <td className="py-3 px-4">
+                      <td className="py-3.5 px-4">
                         <div className="space-y-0.5">
                           <span className="font-semibold text-[11px] text-slate-700 block">
                             {ord.paymentMethod}
@@ -350,7 +347,7 @@ export default function AdminSalesAndOrdersPage() {
                         </div>
                       </td>
 
-                      <td className="py-3 px-4">
+                      <td className="py-3.5 px-4">
                         <StatusBadge
                           status={
                             ord.status === 'DELIVERED' || ord.status === 'HANDED_OVER'
@@ -365,7 +362,7 @@ export default function AdminSalesAndOrdersPage() {
                         />
                       </td>
 
-                      <td className="py-3 px-4 text-right space-x-1.5 whitespace-nowrap">
+                      <td className="py-3.5 px-4 text-right space-x-1.5 whitespace-nowrap">
                         <Button
                           size="sm"
                           variant="outline"

@@ -36,10 +36,10 @@ export default function AdminInvoiceDetailPage() {
   };
 
   return (
-    <div className="space-y-6 max-w-3xl mx-auto">
+    <div className="mx-auto w-full max-w-3xl space-y-8 py-2">
       {/* Header */}
-      <div className="flex items-center justify-between gap-4 pb-3 border-b border-[#EBECEF] print:hidden">
-        <div className="flex items-center gap-3">
+      <div className="flex items-center justify-between gap-5 pb-3 border-b border-[#EBECEF] print:hidden">
+        <div className="flex flex-col items-start gap-3">
           <BackButton href="/admin/fulfilment/invoices" label="All Invoices" />
           <h1 className="text-xl font-bold text-[#14161A] tracking-tight">Invoice Details</h1>
         </div>
@@ -62,8 +62,8 @@ export default function AdminInvoiceDetailPage() {
           {error}
         </div>
       ) : (
-        <div className="bg-white rounded-2xl border border-[#EBECEF] p-8 shadow-xs space-y-6 text-xs text-[#14161A] print:border-none print:shadow-none print:p-0">
-          <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4 border-b border-[#EBECEF] pb-6">
+        <div className="bg-white rounded-2xl border border-[#EBECEF] p-8 shadow-xs space-y-8 text-xs text-[#14161A] print:border-none print:shadow-none print:p-0">
+          <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-5 border-b border-[#EBECEF] pb-6">
             <div>
               <div className="flex items-center gap-2">
                 <span className="text-lg font-bold text-[#0F172A] tracking-tight">
@@ -98,7 +98,7 @@ export default function AdminInvoiceDetailPage() {
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-4 border-b border-[#EBECEF] pb-4">
+          <div className="grid grid-cols-2 gap-5 border-b border-[#EBECEF] pb-4">
             <div>
               <span className="text-[10px] font-bold text-[#78879A] uppercase tracking-wider block mb-1">
                 Billed To (Patient / Customer)

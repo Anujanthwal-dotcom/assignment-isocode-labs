@@ -39,19 +39,16 @@ export default function AdminAnalyticsFulfilmentPage() {
   }, [loadData, period]);
 
   return (
-    <div className="space-y-6 max-w-7xl mx-auto py-6 px-4">
+    <div className="mx-auto w-full max-w-7xl space-y-8 py-2">
       <div>
         <BackButton href="/admin/analytics" label="Analytics Overview" />
       </div>
 
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-200">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-5 border-b border-slate-200 pb-6">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight text-slate-900">
+          <h1 className="font-display text-2xl font-bold tracking-tight text-[#0F172A] sm:text-[28px] sm:leading-[36px]">
             Store Fulfilment Operations
           </h1>
-          <p className="text-sm text-slate-500 mt-1">
-            Automated routing, picking &amp; packing cycle durations, and handover volumes.
-          </p>
         </div>
 
         <div className="flex items-center gap-1 bg-slate-100 p-1 rounded-xl border border-slate-200 text-xs">
@@ -78,35 +75,35 @@ export default function AdminAnalyticsFulfilmentPage() {
         </div>
       ) : data ? (
         <>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-5">
             <Card className="border-slate-200 shadow-xs">
-              <CardContent className="p-4 space-y-1">
+              <CardContent className="p-5 space-y-1.5">
                 <span className="text-xs text-slate-500 font-medium">Orders Routed</span>
-                <div className="text-2xl font-bold text-slate-900">{data.ordersRouted}</div>
+                <div className="text-[26px] leading-[32px] font-bold text-slate-900">{data.ordersRouted}</div>
                 <span className="text-[11px] text-slate-400">Assigned to stores</span>
               </CardContent>
             </Card>
 
             <Card className="border-slate-200 shadow-xs">
-              <CardContent className="p-4 space-y-1">
+              <CardContent className="p-5 space-y-1.5">
                 <span className="text-xs text-slate-500 font-medium">Stock Reservations Held</span>
-                <div className="text-2xl font-bold text-blue-600">{data.stockReserved}</div>
+                <div className="text-[26px] leading-[32px] font-bold text-blue-600">{data.stockReserved}</div>
                 <span className="text-[11px] text-slate-400">Atomic inventory holds</span>
               </CardContent>
             </Card>
 
             <Card className="border-slate-200 shadow-xs">
-              <CardContent className="p-4 space-y-1">
+              <CardContent className="p-5 space-y-1.5">
                 <span className="text-xs text-slate-500 font-medium">Completed Handovers</span>
-                <div className="text-2xl font-bold text-emerald-600">{data.handedOverCount}</div>
+                <div className="text-[26px] leading-[32px] font-bold text-emerald-600">{data.handedOverCount}</div>
                 <span className="text-[11px] text-slate-400">Physical stock dispensed</span>
               </CardContent>
             </Card>
 
             <Card className="border-slate-200 shadow-xs">
-              <CardContent className="p-4 space-y-1">
+              <CardContent className="p-5 space-y-1.5">
                 <span className="text-xs text-slate-500 font-medium">Stockout Incidents</span>
-                <div className="text-2xl font-bold text-red-600">{data.stockUnavailableCount}</div>
+                <div className="text-[26px] leading-[32px] font-bold text-red-600">{data.stockUnavailableCount}</div>
                 <span className="text-[11px] text-slate-400">Routing rejections</span>
               </CardContent>
             </Card>

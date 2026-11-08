@@ -209,16 +209,13 @@ export default function MedicineCataloguePage() {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="mx-auto w-full max-w-7xl space-y-8 py-2">
       {/* Page Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-5 border-b border-slate-200 pb-6">
         <div>
-          <h1 className="text-[24px] font-bold tracking-tight text-[#0F172A]">
+          <h1 className="font-display text-2xl font-bold tracking-tight text-[#0F172A] sm:text-[28px] sm:leading-[36px]">
             Medicine Catalogue
           </h1>
-          <p className="text-[14px] text-[#78879A]">
-            Manage pharmacy chain products, statutory drug schedules, and standard retail pricing.
-          </p>
         </div>
         <Button
           onClick={handleOpenAdd}
@@ -288,14 +285,14 @@ export default function MedicineCataloguePage() {
           <table className="w-full text-left border-collapse text-[13px]">
             <thead>
               <tr className="border-b border-[#EBECEF] bg-[#F8F9FB] text-[#78879A] font-semibold">
-                <th className="py-3 px-4">SKU</th>
-                <th className="py-3 px-4">Medicine</th>
-                <th className="py-3 px-4">Generic</th>
-                <th className="py-3 px-4">Strength / Form</th>
-                <th className="py-3 px-4">Schedule</th>
-                <th className="py-3 px-4 text-right">MRP (INR)</th>
-                <th className="py-3 px-4 text-center">Status</th>
-                <th className="py-3 px-4 text-right">Actions</th>
+                <th className="py-3.5 px-4">SKU</th>
+                <th className="py-3.5 px-4">Medicine</th>
+                <th className="py-3.5 px-4">Generic</th>
+                <th className="py-3.5 px-4">Strength / Form</th>
+                <th className="py-3.5 px-4">Schedule</th>
+                <th className="py-3.5 px-4 text-right">MRP (INR)</th>
+                <th className="py-3.5 px-4 text-center">Status</th>
+                <th className="py-3.5 px-4 text-right">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-[#EBECEF]">
@@ -322,30 +319,30 @@ export default function MedicineCataloguePage() {
               ) : (
                 medicines.map((med) => (
                   <tr key={med.id} className="hover:bg-[#F8F9FB]/60 transition-colors">
-                    <td className="py-3 px-4 font-mono text-[12px] font-medium text-[#0F172A]">
+                    <td className="py-3.5 px-4 font-mono text-[12px] font-medium text-[#0F172A]">
                       {med.sku}
                     </td>
-                    <td className="py-3 px-4">
+                    <td className="py-3.5 px-4">
                       <div className="font-semibold text-[#14161A]">{med.name}</div>
                       {med.brandName && (
                         <div className="text-[11px] text-[#78879A]">{med.brandName}</div>
                       )}
                     </td>
-                    <td className="py-3 px-4 text-[#6C757D]">{med.genericName || '—'}</td>
-                    <td className="py-3 px-4 text-[#6C757D]">
+                    <td className="py-3.5 px-4 text-[#6C757D]">{med.genericName || '—'}</td>
+                    <td className="py-3.5 px-4 text-[#6C757D]">
                       {med.strength || med.dosageForm
                         ? `${med.strength || ''} ${med.dosageForm ? `(${med.dosageForm})` : ''}`
                         : '—'}
                     </td>
-                    <td className="py-3 px-4">
+                    <td className="py-3.5 px-4">
                       <span className="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-medium bg-[#F0FDFA] text-[#0D5C5A] border border-[#EBECEF]">
                         {SCHEDULE_LABELS[med.schedule] || med.schedule}
                       </span>
                     </td>
-                    <td className="py-3 px-4 text-right font-semibold text-[#14161A]">
+                    <td className="py-3.5 px-4 text-right font-semibold text-[#14161A]">
                       {formatINR(med.mrp)}
                     </td>
-                    <td className="py-3 px-4 text-center">
+                    <td className="py-3.5 px-4 text-center">
                       {med.status === 'ACTIVE' ? (
                         <span className="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-medium bg-[#E8F8EC] text-[#0FAC26] border border-[#B0E6BC]">
                           Active
@@ -356,7 +353,7 @@ export default function MedicineCataloguePage() {
                         </span>
                       )}
                     </td>
-                    <td className="py-3 px-4 text-right">
+                    <td className="py-3.5 px-4 text-right">
                       <div className="flex items-center justify-end gap-1.5">
                         <button
                           onClick={() => handleOpenEdit(med)}

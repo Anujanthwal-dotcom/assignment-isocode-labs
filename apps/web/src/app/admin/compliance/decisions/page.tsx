@@ -77,19 +77,15 @@ export default function AdminComplianceDecisionsPage() {
   };
 
   return (
-    <div className="flex-1 p-6 max-w-7xl w-full mx-auto space-y-6">
-      <div className="pb-2 border-b border-[#EBECEF] flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+    <div className="mx-auto w-full max-w-7xl space-y-8 py-2">
+      <div className="border-b border-slate-200 pb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-5">
         <div>
-          <div className="flex items-center gap-3">
+          <div className="flex flex-col items-start gap-3">
             <BackButton href="/admin/compliance" label="Compliance Overview" />
-            <h1 className="text-2xl font-bold text-[#14161A] tracking-tight">
+            <h1 className="font-display text-2xl font-bold tracking-tight text-[#0F172A] sm:text-[28px] sm:leading-[36px]">
               Compliance Decision Audit Log
             </h1>
           </div>
-          <p className="text-sm text-[#78879A] mt-1">
-            Deterministic compliance evaluations snapshot at time of review, linked to versioned
-            rule sets.
-          </p>
         </div>
       </div>
 
@@ -125,39 +121,39 @@ export default function AdminComplianceDecisionsPage() {
             <table className="w-full text-left text-xs">
               <thead className="bg-[#F8F9FB] border-b border-[#EBECEF] text-[#78879A] uppercase tracking-wider text-[10px]">
                 <tr>
-                  <th className="py-3 px-4">Evaluation Timestamp</th>
-                  <th className="py-3 px-4">Order #</th>
-                  <th className="py-3 px-4">Medicine</th>
-                  <th className="py-3 px-4">Schedule</th>
-                  <th className="py-3 px-4">Deterministic Decision</th>
-                  <th className="py-3 px-4">Rule Reasons</th>
-                  <th className="py-3 px-4">Item Status</th>
-                  <th className="py-3 px-4">Pharmacist</th>
+                  <th className="py-3.5 px-4">Evaluation Timestamp</th>
+                  <th className="py-3.5 px-4">Order #</th>
+                  <th className="py-3.5 px-4">Medicine</th>
+                  <th className="py-3.5 px-4">Schedule</th>
+                  <th className="py-3.5 px-4">Deterministic Decision</th>
+                  <th className="py-3.5 px-4">Rule Reasons</th>
+                  <th className="py-3.5 px-4">Item Status</th>
+                  <th className="py-3.5 px-4">Pharmacist</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-[#EBECEF] text-[#14161A]">
                 {filteredDecisions.map((row) => (
                   <tr key={row.id} className="hover:bg-[#F8F9FB]/50">
-                    <td className="py-3 px-4 font-mono text-[11px] text-[#78879A]">
+                    <td className="py-3.5 px-4 font-mono text-[11px] text-[#78879A]">
                       {new Date(row.evaluatedAt).toLocaleString('en-IN', {
                         dateStyle: 'medium',
                         timeStyle: 'short',
                       })}
                     </td>
-                    <td className="py-3 px-4 font-mono font-bold text-[#0D5C5A]">
+                    <td className="py-3.5 px-4 font-mono font-bold text-[#0D5C5A]">
                       {row.orderNumber}
                     </td>
-                    <td className="py-3 px-4">
+                    <td className="py-3.5 px-4">
                       <span className="font-semibold text-[#14161A] block">{row.medicineName}</span>
                       <span className="text-[10px] text-[#78879A] font-mono">{row.sku}</span>
                     </td>
-                    <td className="py-3 px-4">
+                    <td className="py-3.5 px-4">
                       <span className="px-2 py-0.5 rounded-md text-[10px] font-bold tracking-wider bg-slate-100 text-slate-700 border border-slate-200">
                         {row.schedule}
                       </span>
                     </td>
-                    <td className="py-3 px-4">{getDecisionBadge(row.decision)}</td>
-                    <td className="py-3 px-4 max-w-xs">
+                    <td className="py-3.5 px-4">{getDecisionBadge(row.decision)}</td>
+                    <td className="py-3.5 px-4 max-w-xs">
                       {row.reasons && row.reasons.length > 0 ? (
                         <ul className="list-disc list-inside text-[11px] text-[#78879A] space-y-0.5">
                           {row.reasons.map((r: string, idx: number) => (
@@ -170,8 +166,8 @@ export default function AdminComplianceDecisionsPage() {
                         <span className="text-[#78879A] italic text-[11px]">—</span>
                       )}
                     </td>
-                    <td className="py-3 px-4 font-semibold text-[11px]">{row.status}</td>
-                    <td className="py-3 px-4 text-[#78879A] text-[11px]">
+                    <td className="py-3.5 px-4 font-semibold text-[11px]">{row.status}</td>
+                    <td className="py-3.5 px-4 text-[#78879A] text-[11px]">
                       {row.pharmacistEmail || '—'}
                     </td>
                   </tr>

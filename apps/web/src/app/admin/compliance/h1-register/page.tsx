@@ -68,19 +68,15 @@ export default function AdminH1RegisterPage() {
   });
 
   return (
-    <div className="flex-1 p-6 max-w-7xl w-full mx-auto space-y-6">
-      <div className="pb-2 border-b border-[#EBECEF] flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+    <div className="mx-auto w-full max-w-7xl space-y-8 py-2">
+      <div className="border-b border-slate-200 pb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-5">
         <div>
-          <div className="flex items-center gap-3">
+          <div className="flex flex-col items-start gap-3">
             <BackButton href="/admin/compliance" label="Compliance Overview" />
-            <h1 className="text-2xl font-bold text-[#14161A] tracking-tight">
+            <h1 className="font-display text-2xl font-bold tracking-tight text-[#0F172A] sm:text-[28px] sm:leading-[36px]">
               Platform Schedule H1 Drug Register
             </h1>
           </div>
-          <p className="text-sm text-[#78879A] mt-1">
-            Centralized statutory register of Schedule H1 dispensed substances across all
-            fulfillment stores.
-          </p>
         </div>
       </div>
 
@@ -134,31 +130,31 @@ export default function AdminH1RegisterPage() {
             <table className="w-full text-left text-xs">
               <thead className="bg-[#F8F9FB] border-b border-[#EBECEF] text-[#78879A] uppercase tracking-wider text-[10px]">
                 <tr>
-                  <th className="py-3 px-4">Date &amp; Time</th>
-                  <th className="py-3 px-4">Store</th>
-                  <th className="py-3 px-4">Patient Name</th>
-                  <th className="py-3 px-4">Prescriber / Clinic</th>
-                  <th className="py-3 px-4">Medicine Name</th>
-                  <th className="py-3 px-4">Quantity</th>
-                  <th className="py-3 px-4">Verifying Pharmacist</th>
-                  <th className="py-3 px-4">Status</th>
+                  <th className="py-3.5 px-4">Date &amp; Time</th>
+                  <th className="py-3.5 px-4">Store</th>
+                  <th className="py-3.5 px-4">Patient Name</th>
+                  <th className="py-3.5 px-4">Prescriber / Clinic</th>
+                  <th className="py-3.5 px-4">Medicine Name</th>
+                  <th className="py-3.5 px-4">Quantity</th>
+                  <th className="py-3.5 px-4">Verifying Pharmacist</th>
+                  <th className="py-3.5 px-4">Status</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-[#EBECEF] text-[#14161A]">
                 {filteredEntries.map((row) => (
                   <tr key={row.id} className="hover:bg-[#F8F9FB]/50">
-                    <td className="py-3 px-4 font-mono text-[11px] text-[#78879A]">
+                    <td className="py-3.5 px-4 font-mono text-[11px] text-[#78879A]">
                       {new Date(row.createdAt).toLocaleString('en-IN', {
                         dateStyle: 'medium',
                         timeStyle: 'short',
                       })}
                     </td>
-                    <td className="py-3 px-4">
+                    <td className="py-3.5 px-4">
                       <span className="font-semibold text-[#14161A] block">{row.storeName}</span>
                       <span className="text-[10px] text-[#78879A] font-mono">{row.storeCode}</span>
                     </td>
-                    <td className="py-3 px-4 font-semibold text-[#14161A]">{row.patientName}</td>
-                    <td className="py-3 px-4">
+                    <td className="py-3.5 px-4 font-semibold text-[#14161A]">{row.patientName}</td>
+                    <td className="py-3.5 px-4">
                       <div className="font-medium text-[#14161A]">{row.prescriberName}</div>
                       {row.prescriberDetails && (
                         <div className="text-[10px] text-[#78879A] truncate max-w-[200px]">
@@ -166,10 +162,10 @@ export default function AdminH1RegisterPage() {
                         </div>
                       )}
                     </td>
-                    <td className="py-3 px-4 font-bold text-[#0D5C5A]">{row.medicineName}</td>
-                    <td className="py-3 px-4 font-bold">{row.quantity} units</td>
-                    <td className="py-3 px-4 text-[#78879A]">{row.pharmacistEmail}</td>
-                    <td className="py-3 px-4">
+                    <td className="py-3.5 px-4 font-bold text-[#0D5C5A]">{row.medicineName}</td>
+                    <td className="py-3.5 px-4 font-bold">{row.quantity} units</td>
+                    <td className="py-3.5 px-4 text-[#78879A]">{row.pharmacistEmail}</td>
+                    <td className="py-3.5 px-4">
                       <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-emerald-50 text-emerald-700 border border-emerald-200">
                         ✓ {row.status}
                       </span>

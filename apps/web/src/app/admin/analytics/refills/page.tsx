@@ -39,20 +39,16 @@ export default function AdminAnalyticsRefillsPage() {
   }, [loadData, period]);
 
   return (
-    <div className="space-y-6 max-w-7xl mx-auto py-6 px-4">
+    <div className="mx-auto w-full max-w-7xl space-y-8 py-2">
       <div>
         <BackButton href="/admin/analytics" label="Analytics Overview" />
       </div>
 
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-200">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-5 border-b border-slate-200 pb-6">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight text-slate-900">
+          <h1 className="font-display text-2xl font-bold tracking-tight text-[#0F172A] sm:text-[28px] sm:leading-[36px]">
             Refill Automation &amp; Reminder Analytics
           </h1>
-          <p className="text-sm text-slate-500 mt-1">
-            Customer subscription adoption, reminder delivery tracking, and reorder conversion
-            funnel.
-          </p>
         </div>
 
         <div className="flex items-center gap-1 bg-slate-100 p-1 rounded-xl border border-slate-200 text-xs">
@@ -77,29 +73,29 @@ export default function AdminAnalyticsRefillsPage() {
         <div className="py-16 text-center text-slate-400">Loading refill metrics...</div>
       ) : data ? (
         <>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-5">
             <Card className="border-slate-200 shadow-xs">
-              <CardContent className="p-4 space-y-1">
+              <CardContent className="p-5 space-y-1.5">
                 <span className="text-xs text-slate-500 font-medium">Active Subscriptions</span>
-                <div className="text-2xl font-bold text-[#0D5C5A]">{data.activeSubscriptions}</div>
+                <div className="text-[26px] leading-[32px] font-bold text-[#0D5C5A]">{data.activeSubscriptions}</div>
                 <span className="text-[11px] text-slate-400">Opted-in customer plans</span>
               </CardContent>
             </Card>
 
             <Card className="border-slate-200 shadow-xs">
-              <CardContent className="p-4 space-y-1">
+              <CardContent className="p-5 space-y-1.5">
                 <span className="text-xs text-slate-500 font-medium">
                   Supply Estimates Generated
                 </span>
-                <div className="text-2xl font-bold text-slate-900">{data.estimatesGenerated}</div>
+                <div className="text-[26px] leading-[32px] font-bold text-slate-900">{data.estimatesGenerated}</div>
                 <span className="text-[11px] text-slate-400">From physical dispensing</span>
               </CardContent>
             </Card>
 
             <Card className="border-slate-200 shadow-xs">
-              <CardContent className="p-4 space-y-1">
+              <CardContent className="p-5 space-y-1.5">
                 <span className="text-xs text-slate-500 font-medium">Reminders Sent</span>
-                <div className="text-2xl font-bold text-emerald-600">{data.remindersSent}</div>
+                <div className="text-[26px] leading-[32px] font-bold text-emerald-600">{data.remindersSent}</div>
                 <span className="text-[11px] text-slate-400">
                   {data.remindersScheduled} scheduled ({data.remindersSkipped} skipped)
                 </span>
@@ -107,9 +103,9 @@ export default function AdminAnalyticsRefillsPage() {
             </Card>
 
             <Card className="border-slate-200 shadow-xs">
-              <CardContent className="p-4 space-y-1">
+              <CardContent className="p-5 space-y-1.5">
                 <span className="text-xs text-slate-500 font-medium">Conversion Rate</span>
-                <div className="text-2xl font-bold text-[#0284C7]">
+                <div className="text-[26px] leading-[32px] font-bold text-[#0284C7]">
                   {data.conversionRatePercentage}%
                 </div>
                 <span className="text-[11px] text-slate-400">Handed over / Reminders sent</span>

@@ -74,19 +74,15 @@ export default function AdminUnassignedOrdersPage() {
   };
 
   return (
-    <div className="flex-1 p-6 max-w-7xl w-full mx-auto space-y-6">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2 border-b border-[#EBECEF]">
+    <div className="mx-auto w-full max-w-7xl space-y-8 py-2">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-5 border-b border-slate-200 pb-6">
         <div>
-          <div className="flex items-center gap-3">
+          <div className="flex flex-col items-start gap-3">
             <BackButton href="/admin/review-assignments" label="Assignments Overview" />
-            <h1 className="text-2xl font-bold text-[#14161A] tracking-tight">
+            <h1 className="font-display text-2xl font-bold tracking-tight text-[#0F172A] sm:text-[28px] sm:leading-[36px]">
               Unassigned Verification Orders
             </h1>
           </div>
-          <p className="text-sm text-[#78879A] mt-1">
-            Pending customer prescription orders awaiting store assignment for pharmacist clinical
-            review.
-          </p>
         </div>
       </div>
 
@@ -125,32 +121,32 @@ export default function AdminUnassignedOrdersPage() {
             <table className="w-full text-left border-collapse text-xs">
               <thead>
                 <tr className="border-b border-[#EBECEF] bg-[#F8F9FB] text-[#78879A] font-semibold">
-                  <th className="py-3 px-4">Order Number</th>
-                  <th className="py-3 px-4">Placed Date</th>
-                  <th className="py-3 px-4">Customer</th>
-                  <th className="py-3 px-4">Prescription</th>
-                  <th className="py-3 px-4">Medicines</th>
-                  <th className="py-3 px-4">Total Amount</th>
-                  <th className="py-3 px-4 text-right">Action</th>
+                  <th className="py-3.5 px-4">Order Number</th>
+                  <th className="py-3.5 px-4">Placed Date</th>
+                  <th className="py-3.5 px-4">Customer</th>
+                  <th className="py-3.5 px-4">Prescription</th>
+                  <th className="py-3.5 px-4">Medicines</th>
+                  <th className="py-3.5 px-4">Total Amount</th>
+                  <th className="py-3.5 px-4 text-right">Action</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-[#EBECEF]">
                 {orders.map((item) => (
                   <tr key={item.orderId} className="hover:bg-[#F0FDFA]/50 transition-colors">
-                    <td className="py-3 px-4 font-semibold text-[#0F172A]">{item.orderNumber}</td>
-                    <td className="py-3 px-4 text-[#78879A]">
+                    <td className="py-3.5 px-4 font-semibold text-[#0F172A]">{item.orderNumber}</td>
+                    <td className="py-3.5 px-4 text-[#78879A]">
                       {new Date(item.placedAt).toLocaleString()}
                     </td>
-                    <td className="py-3 px-4 text-[#14161A] font-medium">{item.customerName}</td>
-                    <td className="py-3 px-4 text-[#78879A]">{item.prescriptionFileName}</td>
-                    <td className="py-3 px-4 text-[#6C757D] max-w-[240px] truncate">
+                    <td className="py-3.5 px-4 text-[#14161A] font-medium">{item.customerName}</td>
+                    <td className="py-3.5 px-4 text-[#78879A]">{item.prescriptionFileName}</td>
+                    <td className="py-3.5 px-4 text-[#6C757D] max-w-[240px] truncate">
                       {item.medicineNames.join(', ')} ({item.itemCount} item
                       {item.itemCount > 1 ? 's' : ''})
                     </td>
-                    <td className="py-3 px-4 font-semibold text-[#14161A]">
+                    <td className="py-3.5 px-4 font-semibold text-[#14161A]">
                       ₹{item.totalAmount.toFixed(2)}
                     </td>
-                    <td className="py-3 px-4 text-right">
+                    <td className="py-3.5 px-4 text-right">
                       <button
                         onClick={() => setSelectedOrder(item)}
                         className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-[#0D5C5A] text-white hover:bg-[#0A4846] transition-colors shadow-2xs"
@@ -173,10 +169,6 @@ export default function AdminUnassignedOrdersPage() {
             <h3 className="text-base font-bold text-[#14161A]">
               Assign Order {selectedOrder.orderNumber}
             </h3>
-            <p className="text-xs text-[#78879A]">
-              Select which physical store will handle prescription verification and clinical review
-              for this order.
-            </p>
 
             <div className="space-y-3 text-xs">
               <div>

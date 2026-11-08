@@ -60,23 +60,20 @@ export default function AdminReservationsPage() {
   });
 
   return (
-    <div className="space-y-6">
-      <div className="pb-2 border-b border-[#EBECEF] flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+    <div className="mx-auto w-full max-w-7xl space-y-8 py-2">
+      <div className="border-b border-slate-200 pb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-5">
         <div>
-          <div className="flex items-center gap-3">
+          <div className="flex flex-col items-start gap-3">
             <BackButton href="/admin/fulfilment" label="Fulfilment Overview" />
-            <h1 className="text-2xl font-bold text-[#14161A] tracking-tight">
+            <h1 className="font-display text-2xl font-bold tracking-tight text-[#0F172A] sm:text-[28px] sm:leading-[36px]">
               Stock Reservation Ledger
             </h1>
           </div>
-          <p className="text-sm text-[#78879A] mt-1">
-            Real-time ledger of active, expired, consumed, and released inventory holds.
-          </p>
         </div>
       </div>
 
       {/* Tabs & Search */}
-      <div className="flex flex-col sm:flex-row gap-4 items-stretch sm:items-center justify-between">
+      <div className="flex flex-col sm:flex-row gap-5 items-stretch sm:items-center justify-between">
         <div className="flex gap-1.5 p-1 bg-white rounded-xl border border-[#EBECEF] text-xs font-semibold overflow-x-auto">
           {[
             { id: 'ACTIVE', label: 'Active Holds' },
@@ -130,47 +127,47 @@ export default function AdminReservationsPage() {
             <table className="w-full text-left text-xs">
               <thead className="bg-[#F8F9FB] border-b border-[#EBECEF] text-[#78879A] uppercase tracking-wider text-[10px]">
                 <tr>
-                  <th className="py-3 px-4">Reserved At</th>
-                  <th className="py-3 px-4">Order #</th>
-                  <th className="py-3 px-4">Store</th>
-                  <th className="py-3 px-4">Medicine</th>
-                  <th className="py-3 px-4">Qty</th>
-                  <th className="py-3 px-4">Expires At</th>
-                  <th className="py-3 px-4">Status</th>
-                  <th className="py-3 px-4 text-right">Action</th>
+                  <th className="py-3.5 px-4">Reserved At</th>
+                  <th className="py-3.5 px-4">Order #</th>
+                  <th className="py-3.5 px-4">Store</th>
+                  <th className="py-3.5 px-4">Medicine</th>
+                  <th className="py-3.5 px-4">Qty</th>
+                  <th className="py-3.5 px-4">Expires At</th>
+                  <th className="py-3.5 px-4">Status</th>
+                  <th className="py-3.5 px-4 text-right">Action</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-[#EBECEF] text-[#14161A]">
                 {filtered.map((row) => (
                   <tr key={row.id} className="hover:bg-[#F8F9FB]/50">
-                    <td className="py-3 px-4 text-[11px] text-[#78879A] font-mono">
+                    <td className="py-3.5 px-4 text-[11px] text-[#78879A] font-mono">
                       {new Date(row.reservedAt).toLocaleTimeString('en-IN', {
                         hour: '2-digit',
                         minute: '2-digit',
                         second: '2-digit',
                       })}
                     </td>
-                    <td className="py-3 px-4 font-mono font-bold text-[#0D5C5A]">
+                    <td className="py-3.5 px-4 font-mono font-bold text-[#0D5C5A]">
                       {row.orderNumber}
                     </td>
-                    <td className="py-3 px-4 font-semibold">
+                    <td className="py-3.5 px-4 font-semibold">
                       {row.storeName}
                       <span className="block text-[10px] text-[#78879A] font-mono">
                         {row.storeCode}
                       </span>
                     </td>
-                    <td className="py-3 px-4">
+                    <td className="py-3.5 px-4">
                       <span className="font-bold text-[#14161A] block">{row.medicineName}</span>
                       <span className="text-[10px] text-[#78879A] font-mono">{row.sku}</span>
                     </td>
-                    <td className="py-3 px-4 font-bold text-sm text-[#0F172A]">{row.quantity}</td>
-                    <td className="py-3 px-4 text-[11px] text-[#78879A] font-mono">
+                    <td className="py-3.5 px-4 font-bold text-sm text-[#0F172A]">{row.quantity}</td>
+                    <td className="py-3.5 px-4 text-[11px] text-[#78879A] font-mono">
                       {new Date(row.expiresAt).toLocaleTimeString('en-IN', {
                         hour: '2-digit',
                         minute: '2-digit',
                       })}
                     </td>
-                    <td className="py-3 px-4">
+                    <td className="py-3.5 px-4">
                       <span
                         className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${
                           row.status === 'ACTIVE'
@@ -183,7 +180,7 @@ export default function AdminReservationsPage() {
                         {row.status}
                       </span>
                     </td>
-                    <td className="py-3 px-4 text-right">
+                    <td className="py-3.5 px-4 text-right">
                       {row.status === 'ACTIVE' && (
                         <button
                           onClick={() => handleRelease(row.id)}

@@ -107,22 +107,18 @@ export default function AdminFulfilmentOrdersPage() {
   });
 
   return (
-    <div className="space-y-6">
-      <div className="pb-2 border-b border-[#EBECEF] flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+    <div className="mx-auto w-full max-w-7xl space-y-8 py-2">
+      <div className="border-b border-slate-200 pb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-5">
         <div>
-          <div className="flex items-center gap-3">
+          <div className="flex flex-col items-start gap-3">
             <BackButton href="/admin/fulfilment" label="Fulfilment Overview" />
-            <h1 className="text-2xl font-bold text-[#14161A] tracking-tight">Fulfilment Orders</h1>
+            <h1 className="font-display text-2xl font-bold tracking-tight text-[#0F172A] sm:text-[28px] sm:leading-[36px]">Fulfilment Orders</h1>
           </div>
-          <p className="text-sm text-[#78879A] mt-1">
-            Platform-wide visibility into routing decisions, active reservations, picking, and
-            delivery handovers.
-          </p>
         </div>
       </div>
 
       {/* Filter Tabs & Search */}
-      <div className="flex flex-col sm:flex-row gap-4 items-stretch sm:items-center justify-between">
+      <div className="flex flex-col sm:flex-row gap-5 items-stretch sm:items-center justify-between">
         <div className="flex gap-1.5 p-1 bg-white rounded-xl border border-[#EBECEF] text-xs font-semibold overflow-x-auto">
           {[
             { id: 'ALL', label: 'All' },
@@ -177,18 +173,18 @@ export default function AdminFulfilmentOrdersPage() {
             <table className="w-full text-left text-xs">
               <thead className="bg-[#F8F9FB] border-b border-[#EBECEF] text-[#78879A] uppercase tracking-wider text-[10px]">
                 <tr>
-                  <th className="py-3 px-4">Order #</th>
-                  <th className="py-3 px-4">Customer</th>
-                  <th className="py-3 px-4">Assigned Store</th>
-                  <th className="py-3 px-4">Items / Total</th>
-                  <th className="py-3 px-4">Status</th>
-                  <th className="py-3 px-4 text-right">Actions</th>
+                  <th className="py-3.5 px-4">Order #</th>
+                  <th className="py-3.5 px-4">Customer</th>
+                  <th className="py-3.5 px-4">Assigned Store</th>
+                  <th className="py-3.5 px-4">Items / Total</th>
+                  <th className="py-3.5 px-4">Status</th>
+                  <th className="py-3.5 px-4 text-right">Actions</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-[#EBECEF] text-[#14161A]">
                 {filteredOrders.map((row) => (
                   <tr key={row.orderId} className="hover:bg-[#F8F9FB]/50">
-                    <td className="py-3 px-4 font-mono font-bold text-[#0D5C5A]">
+                    <td className="py-3.5 px-4 font-mono font-bold text-[#0D5C5A]">
                       {row.orderNumber}
                       <span className="block text-[10px] text-[#78879A] font-normal">
                         {new Date(row.placedAt).toLocaleString('en-IN', {
@@ -197,7 +193,7 @@ export default function AdminFulfilmentOrdersPage() {
                         })}
                       </span>
                     </td>
-                    <td className="py-3 px-4 font-semibold">
+                    <td className="py-3.5 px-4 font-semibold">
                       {row.customerName}
                       {row.customerPhone && (
                         <span className="block text-[10px] text-[#78879A] font-normal">
@@ -205,7 +201,7 @@ export default function AdminFulfilmentOrdersPage() {
                         </span>
                       )}
                     </td>
-                    <td className="py-3 px-4">
+                    <td className="py-3.5 px-4">
                       {row.assignedStore ? (
                         <>
                           <span className="font-bold text-[#14161A] block">
@@ -220,7 +216,7 @@ export default function AdminFulfilmentOrdersPage() {
                         <span className="text-amber-600 italic text-[11px]">Unassigned</span>
                       )}
                     </td>
-                    <td className="py-3 px-4">
+                    <td className="py-3.5 px-4">
                       <span className="font-bold text-[#14161A]">
                         ₹{row.totalAmount.toFixed(2)}
                       </span>
@@ -228,7 +224,7 @@ export default function AdminFulfilmentOrdersPage() {
                         {row.itemCount} item(s)
                       </span>
                     </td>
-                    <td className="py-3 px-4">
+                    <td className="py-3.5 px-4">
                       <span
                         className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${
                           row.status === 'STOCK_RESERVED'
@@ -243,7 +239,7 @@ export default function AdminFulfilmentOrdersPage() {
                         {row.status}
                       </span>
                     </td>
-                    <td className="py-3 px-4 text-right">
+                    <td className="py-3.5 px-4 text-right">
                       <div className="flex items-center justify-end gap-2">
                         {(row.status === 'APPROVED' ||
                           row.status === 'PARTIALLY_APPROVED' ||

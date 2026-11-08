@@ -27,16 +27,12 @@ export default function AdminReviewAssignmentsPage() {
   }, [fetchAssignments]);
 
   return (
-    <div className="flex-1 p-6 max-w-7xl w-full mx-auto space-y-6">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2 border-b border-[#EBECEF]">
+    <div className="mx-auto w-full max-w-7xl space-y-8 py-2">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-5 border-b border-slate-200 pb-6">
         <div>
-          <h1 className="text-2xl font-bold text-[#14161A] tracking-tight">
+          <h1 className="font-display text-2xl font-bold tracking-tight text-[#0F172A] sm:text-[28px] sm:leading-[36px]">
             Store Review Assignments
           </h1>
-          <p className="text-sm text-[#78879A] mt-1">
-            Manage manual store routing for pending prescription orders awaiting pharmacist
-            verification.
-          </p>
         </div>
 
         <Link
@@ -80,29 +76,29 @@ export default function AdminReviewAssignmentsPage() {
             <table className="w-full text-left border-collapse text-xs">
               <thead>
                 <tr className="border-b border-[#EBECEF] bg-[#F8F9FB] text-[#78879A] font-semibold">
-                  <th className="py-3 px-4">Order Number</th>
-                  <th className="py-3 px-4">Customer</th>
-                  <th className="py-3 px-4">Assigned Store</th>
-                  <th className="py-3 px-4">Assigned Date</th>
-                  <th className="py-3 px-4">Assigned By</th>
-                  <th className="py-3 px-4">Order Status</th>
+                  <th className="py-3.5 px-4">Order Number</th>
+                  <th className="py-3.5 px-4">Customer</th>
+                  <th className="py-3.5 px-4">Assigned Store</th>
+                  <th className="py-3.5 px-4">Assigned Date</th>
+                  <th className="py-3.5 px-4">Assigned By</th>
+                  <th className="py-3.5 px-4">Order Status</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-[#EBECEF]">
                 {assignments.map((item) => (
                   <tr key={item.assignmentId} className="hover:bg-[#F0FDFA]/50 transition-colors">
-                    <td className="py-3 px-4 font-semibold text-[#0F172A]">{item.orderNumber}</td>
-                    <td className="py-3 px-4 text-[#14161A]">{item.customerName}</td>
-                    <td className="py-3 px-4">
+                    <td className="py-3.5 px-4 font-semibold text-[#0F172A]">{item.orderNumber}</td>
+                    <td className="py-3.5 px-4 text-[#14161A]">{item.customerName}</td>
+                    <td className="py-3.5 px-4">
                       <span className="font-semibold text-[#0D5C5A]">
                         {item.storeName} ({item.storeCode})
                       </span>
                     </td>
-                    <td className="py-3 px-4 text-[#78879A]">
+                    <td className="py-3.5 px-4 text-[#78879A]">
                       {new Date(item.assignedAt).toLocaleString()}
                     </td>
-                    <td className="py-3 px-4 text-[#78879A]">{item.assignedByEmail}</td>
-                    <td className="py-3 px-4">
+                    <td className="py-3.5 px-4 text-[#78879A]">{item.assignedByEmail}</td>
+                    <td className="py-3.5 px-4">
                       <span className="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-[#F0FDFA] text-[#0D5C5A] border border-[#EBECEF]">
                         {item.orderStatus}
                       </span>

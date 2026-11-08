@@ -29,16 +29,12 @@ export default function ComplianceOverviewPage() {
   }, [fetchOverview]);
 
   return (
-    <div className="flex-1 p-6 max-w-7xl w-full mx-auto space-y-6">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2 border-b border-[#EBECEF]">
+    <div className="mx-auto w-full max-w-7xl space-y-8 py-2">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-5 border-b border-slate-200 pb-6">
         <div>
-          <h1 className="text-2xl font-bold text-[#14161A] tracking-tight">
+          <h1 className="font-display text-2xl font-bold tracking-tight text-[#0F172A] sm:text-[28px] sm:leading-[36px]">
             Compliance Policy Administration
           </h1>
-          <p className="text-sm text-[#78879A] mt-1">
-            Deterministic pharmacy regulatory rules, Schedule H1 registers, and audit verification
-            history.
-          </p>
         </div>
 
         <div className="flex items-center gap-2">
@@ -61,10 +57,10 @@ export default function ComplianceOverviewPage() {
           <p className="text-xs text-[#78879A] mt-3">Loading compliance overview...</p>
         </div>
       ) : overview ? (
-        <div className="space-y-6">
+        <div className="space-y-8">
           {/* Quick Stat Cards */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            <div className="bg-white rounded-xl border border-[#EBECEF] p-4 shadow-2xs space-y-1">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+            <div className="bg-white rounded-xl border border-[#EBECEF] p-5 shadow-2xs space-y-1">
               <span className="text-[11px] font-medium text-[#78879A]">Active Policy Version</span>
               <div className="text-lg font-bold text-[#0F172A]">
                 {overview.activeRuleSet ? `v${overview.activeRuleSet.version}` : 'None'}
@@ -74,13 +70,13 @@ export default function ComplianceOverviewPage() {
               </span>
             </div>
 
-            <div className="bg-white rounded-xl border border-[#EBECEF] p-4 shadow-2xs space-y-1">
+            <div className="bg-white rounded-xl border border-[#EBECEF] p-5 shadow-2xs space-y-1">
               <span className="text-[11px] font-medium text-[#78879A]">Total Rule Versions</span>
               <div className="text-lg font-bold text-[#14161A]">{overview.totalRuleSets}</div>
               <span className="text-[11px] text-[#6C757D]">Stored in PostgreSQL</span>
             </div>
 
-            <div className="bg-white rounded-xl border border-[#EBECEF] p-4 shadow-2xs space-y-1">
+            <div className="bg-white rounded-xl border border-[#EBECEF] p-5 shadow-2xs space-y-1">
               <span className="text-[11px] font-medium text-[#78879A]">Blocked Item Reviews</span>
               <div className="text-lg font-bold text-rose-600">
                 {overview.blockedItemReviewsCount}
@@ -88,7 +84,7 @@ export default function ComplianceOverviewPage() {
               <span className="text-[11px] text-[#6C757D]">Hard compliance blocks</span>
             </div>
 
-            <div className="bg-white rounded-xl border border-[#EBECEF] p-4 shadow-2xs space-y-1">
+            <div className="bg-white rounded-xl border border-[#EBECEF] p-5 shadow-2xs space-y-1">
               <span className="text-[11px] font-medium text-[#78879A]">H1 Register Entries</span>
               <div className="text-lg font-bold text-[#0D5C5A]">{overview.h1RegisterCount}</div>
               <span className="text-[11px] text-[#6C757D]">Schedule H1 logged</span>
@@ -102,9 +98,6 @@ export default function ComplianceOverviewPage() {
                 <h3 className="text-sm font-bold text-[#14161A]">
                   Statutory Drug Schedule Rules &amp; Compliance Configuration
                 </h3>
-                <p className="text-xs text-[#78879A] mt-0.5">
-                  Deterministic policy engine parameters enforcing the Drugs and Cosmetics Act 1940 across all stores.
-                </p>
               </div>
               <Link
                 href="/admin/compliance/rules"
@@ -166,7 +159,7 @@ export default function ComplianceOverviewPage() {
           </div>
 
           {/* Navigation Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
             <Link
               href="/admin/compliance/rules"
               className="bg-white rounded-xl border border-[#EBECEF] p-5 shadow-2xs hover:border-[#0D5C5A] transition-all group"
@@ -178,9 +171,6 @@ export default function ComplianceOverviewPage() {
                 </span>
               </div>
               <h3 className="text-sm font-bold text-[#14161A]">Policy Rule Sets</h3>
-              <p className="text-xs text-[#78879A] mt-1">
-                View version history, create draft policies, and activate versioned rules.
-              </p>
             </Link>
 
             <Link
@@ -194,9 +184,6 @@ export default function ComplianceOverviewPage() {
                 </span>
               </div>
               <h3 className="text-sm font-bold text-[#14161A]">Compliance Decisions Audit</h3>
-              <p className="text-xs text-[#78879A] mt-1">
-                Inspect immutable snapshots of deterministic evaluations made on reviewed orders.
-              </p>
             </Link>
 
             <Link
@@ -210,9 +197,6 @@ export default function ComplianceOverviewPage() {
                 </span>
               </div>
               <h3 className="text-sm font-bold text-[#14161A]">Schedule H1 Register</h3>
-              <p className="text-xs text-[#78879A] mt-1">
-                Statutory patient and prescriber doctor entries recorded across all stores.
-              </p>
             </Link>
           </div>
 
@@ -222,7 +206,7 @@ export default function ComplianceOverviewPage() {
               <h3 className="text-sm font-bold text-[#14161A]">Recent Hard-Blocked Items</h3>
               <div className="divide-y divide-[#EBECEF] text-xs">
                 {overview.recentBlockedItems.map((item: any) => (
-                  <div key={item.id} className="py-2.5 flex items-center justify-between gap-4">
+                  <div key={item.id} className="py-2.5 flex items-center justify-between gap-5">
                     <div>
                       <strong className="text-[#14161A]">{item.medicineName}</strong>
                       <span className="ml-2 px-2 py-0.5 rounded-full text-[10px] font-bold bg-rose-50 text-rose-700 border border-rose-200">

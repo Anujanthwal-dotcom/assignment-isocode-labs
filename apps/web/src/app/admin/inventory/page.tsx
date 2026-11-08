@@ -206,21 +206,17 @@ export default function AdminInventoryPage() {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="mx-auto w-full max-w-7xl space-y-8 py-2">
       {/* Header */}
-      <div>
-        <h1 className="text-[24px] font-bold tracking-tight text-[#0F172A]">Chain Inventory</h1>
-        <p className="text-[14px] text-[#78879A]">
-          Track physical inventory quantities, reorder thresholds, and historical stock movements
-          across active pharmacy stores and the central distribution warehouse.
-        </p>
+      <div className="border-b border-slate-200 pb-6">
+        <h1 className="font-display text-2xl font-bold tracking-tight text-[#0F172A] sm:text-[28px] sm:leading-[36px]">Chain Inventory</h1>
       </div>
 
       {error && <SemanticAlert type="error" title="Inventory Error" description={error} />}
 
       {/* Summary Metrics Cards */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <div className="rounded-[12px] border border-[#EBECEF] bg-white p-4 shadow-xs">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-5">
+        <div className="rounded-[12px] border border-[#EBECEF] bg-white p-5 shadow-xs">
           <div className="flex items-center justify-between text-[#78879A] text-[12px] font-medium">
             <span>Total Units Stocked</span>
             <span className="font-bold text-[#0D5C5A]">[Stock]</span>
@@ -231,7 +227,7 @@ export default function AdminInventoryPage() {
           <p className="text-[11px] text-[#78879A] mt-1">Units recorded across locations</p>
         </div>
 
-        <div className="rounded-[12px] border border-[#F6DCB0] bg-[#FFF8EC] p-4 shadow-xs">
+        <div className="rounded-[12px] border border-[#F6DCB0] bg-[#FFF8EC] p-5 shadow-xs">
           <div className="flex items-center justify-between text-[#A66B16] text-[12px] font-medium">
             <span>Low-Stock Lines</span>
             <span className="font-bold text-[#A66B16]">[!]</span>
@@ -242,7 +238,7 @@ export default function AdminInventoryPage() {
           <p className="text-[11px] text-[#A66B16]/80 mt-1">Quantity ≤ Reorder Level</p>
         </div>
 
-        <div className="rounded-[12px] border border-[#F9CACA] bg-[#FDF2F2] p-4 shadow-xs">
+        <div className="rounded-[12px] border border-[#F9CACA] bg-[#FDF2F2] p-5 shadow-xs">
           <div className="flex items-center justify-between text-[#DC3545] text-[12px] font-medium">
             <span>Out of Stock</span>
             <span className="font-bold text-[#DC3545]">[Empty]</span>
@@ -253,7 +249,7 @@ export default function AdminInventoryPage() {
           <p className="text-[11px] text-[#DC3545]/80 mt-1">Quantity is exactly 0</p>
         </div>
 
-        <div className="rounded-[12px] border border-[#EBECEF] bg-white p-4 shadow-xs">
+        <div className="rounded-[12px] border border-[#EBECEF] bg-white p-5 shadow-xs">
           <div className="flex items-center justify-between text-[#78879A] text-[12px] font-medium">
             <span>Inventory Records</span>
             <span className="font-bold text-[#0088AA]">[Records]</span>
@@ -335,14 +331,14 @@ export default function AdminInventoryPage() {
           <table className="w-full text-left border-collapse text-[13px]">
             <thead>
               <tr className="border-b border-[#EBECEF] bg-[#F8F9FB] text-[#78879A] font-semibold">
-                <th className="py-3 px-4">SKU</th>
-                <th className="py-3 px-4">Medicine Name</th>
-                <th className="py-3 px-4">Location</th>
-                <th className="py-3 px-4 text-right">Current Stock</th>
-                <th className="py-3 px-4 text-right">Reorder Threshold</th>
-                <th className="py-3 px-4 text-center">Status</th>
-                <th className="py-3 px-4">Last Updated</th>
-                <th className="py-3 px-4 text-right">Actions</th>
+                <th className="py-3.5 px-4">SKU</th>
+                <th className="py-3.5 px-4">Medicine Name</th>
+                <th className="py-3.5 px-4">Location</th>
+                <th className="py-3.5 px-4 text-right">Current Stock</th>
+                <th className="py-3.5 px-4 text-right">Reorder Threshold</th>
+                <th className="py-3.5 px-4 text-center">Status</th>
+                <th className="py-3.5 px-4">Last Updated</th>
+                <th className="py-3.5 px-4 text-right">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-[#EBECEF]">
@@ -370,10 +366,10 @@ export default function AdminInventoryPage() {
                 balances.map((item) => {
                   return (
                     <tr key={item.id} className="hover:bg-[#F8F9FB]/60 transition-colors">
-                      <td className="py-3 px-4 font-mono text-[12px] font-medium text-[#0F172A]">
+                      <td className="py-3.5 px-4 font-mono text-[12px] font-medium text-[#0F172A]">
                         {item.medicine?.sku}
                       </td>
-                      <td className="py-3 px-4">
+                      <td className="py-3.5 px-4">
                         <div className="font-semibold text-[#14161A]">{item.medicine?.name}</div>
                         {item.medicine?.genericName && (
                           <div className="text-[11px] text-[#78879A]">
@@ -381,7 +377,7 @@ export default function AdminInventoryPage() {
                           </div>
                         )}
                       </td>
-                      <td className="py-3 px-4">
+                      <td className="py-3.5 px-4">
                         <div className="font-medium text-[#14161A]">
                           <span>{item.location?.name}</span>
                         </div>
@@ -389,11 +385,11 @@ export default function AdminInventoryPage() {
                           {item.location?.code} • {item.location?.city}
                         </span>
                       </td>
-                      <td className="py-3 px-4 text-right font-bold text-[#14161A]">
+                      <td className="py-3.5 px-4 text-right font-bold text-[#14161A]">
                         {item.quantity.toLocaleString('en-IN')}
                       </td>
-                      <td className="py-3 px-4 text-right text-[#6C757D]">{item.reorderLevel}</td>
-                      <td className="py-3 px-4 text-center">
+                      <td className="py-3.5 px-4 text-right text-[#6C757D]">{item.reorderLevel}</td>
+                      <td className="py-3.5 px-4 text-center">
                         {item.stockStatus === 'IN_STOCK' && (
                           <span className="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-medium bg-[#E8F8EC] text-[#0FAC26] border border-[#B0E6BC]">
                             In Stock
@@ -415,7 +411,7 @@ export default function AdminInventoryPage() {
                           </span>
                         )}
                       </td>
-                      <td className="py-3 px-4 text-[#78879A] text-[12px]">
+                      <td className="py-3.5 px-4 text-[#78879A] text-[12px]">
                         {new Date(item.updatedAt).toLocaleDateString('en-IN', {
                           day: '2-digit',
                           month: 'short',
@@ -423,7 +419,7 @@ export default function AdminInventoryPage() {
                           minute: '2-digit',
                         })}
                       </td>
-                      <td className="py-3 px-4 text-right">
+                      <td className="py-3.5 px-4 text-right">
                         <div className="flex items-center justify-end gap-1.5">
                           <button
                             onClick={() => handleOpenHistory(item)}

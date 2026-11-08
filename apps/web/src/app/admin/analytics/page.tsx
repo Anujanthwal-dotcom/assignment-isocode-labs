@@ -32,16 +32,13 @@ export default function AdminAnalyticsOverviewPage() {
   }, [loadOverview, period]);
 
   return (
-    <div className="space-y-6 max-w-7xl mx-auto py-6 px-4">
+    <div className="mx-auto w-full max-w-7xl space-y-8 py-2">
       {/* Header & Date Range Filter */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-4 border-b border-slate-200">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-5 border-b border-slate-200 pb-6">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight text-slate-900">
+          <h1 className="font-display text-2xl font-bold tracking-tight text-[#0F172A] sm:text-[28px] sm:leading-[36px]">
             Central Operations Analytics
           </h1>
-          <p className="text-sm text-slate-500 mt-1">
-            Real-time operational aggregates across Kolkata &amp; Howrah pharmacy stores.
-          </p>
         </div>
 
         {/* Date Filters */}
@@ -80,21 +77,21 @@ export default function AdminAnalyticsOverviewPage() {
       ) : data ? (
         <>
           {/* KPI Tiles (8 Critical Operational Cards) */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-5">
             <Card className="border-slate-200 shadow-xs">
-              <CardContent className="p-4 space-y-1">
+              <CardContent className="p-5 space-y-1.5">
                 <span className="text-xs font-medium text-slate-500 block">Total Orders</span>
-                <div className="text-2xl font-bold text-slate-900">{data.totalOrders}</div>
+                <div className="text-[26px] leading-[32px] font-bold text-slate-900">{data.totalOrders}</div>
                 <span className="text-[11px] text-slate-500">Recorded in period</span>
               </CardContent>
             </Card>
 
             <Card className="border-slate-200 shadow-xs">
-              <CardContent className="p-4 space-y-1">
+              <CardContent className="p-5 space-y-1.5">
                 <span className="text-xs font-medium text-slate-500 block">
                   Awaiting Verification
                 </span>
-                <div className="text-2xl font-bold text-amber-600">
+                <div className="text-[26px] leading-[32px] font-bold text-amber-600">
                   {data.pendingVerificationOrders}
                 </div>
                 <span className="text-[11px] text-slate-500">Pending pharmacist review</span>
@@ -102,59 +99,59 @@ export default function AdminAnalyticsOverviewPage() {
             </Card>
 
             <Card className="border-slate-200 shadow-xs">
-              <CardContent className="p-4 space-y-1">
+              <CardContent className="p-5 space-y-1.5">
                 <span className="text-xs font-medium text-slate-500 block">
                   Prescription Approved
                 </span>
-                <div className="text-2xl font-bold text-emerald-600">{data.approvedOrders}</div>
+                <div className="text-[26px] leading-[32px] font-bold text-emerald-600">{data.approvedOrders}</div>
                 <span className="text-[11px] text-slate-500">Verified &amp; compliant</span>
               </CardContent>
             </Card>
 
             <Card className="border-slate-200 shadow-xs">
-              <CardContent className="p-4 space-y-1">
+              <CardContent className="p-5 space-y-1.5">
                 <span className="text-xs font-medium text-slate-500 block">
                   Prescriptions Rejected
                 </span>
-                <div className="text-2xl font-bold text-red-600">{data.rejectedOrders}</div>
+                <div className="text-[26px] leading-[32px] font-bold text-red-600">{data.rejectedOrders}</div>
                 <span className="text-[11px] text-slate-500">Clinical/legal grounds</span>
               </CardContent>
             </Card>
 
             <Card className="border-slate-200 shadow-xs">
-              <CardContent className="p-4 space-y-1">
+              <CardContent className="p-5 space-y-1.5">
                 <span className="text-xs font-medium text-slate-500 block">
                   In Fulfilment Pipeline
                 </span>
-                <div className="text-2xl font-bold text-blue-600">{data.fulfilmentOrders}</div>
+                <div className="text-[26px] leading-[32px] font-bold text-blue-600">{data.fulfilmentOrders}</div>
                 <span className="text-[11px] text-slate-500">Reserved, Picking, Packed</span>
               </CardContent>
             </Card>
 
             <Card className="border-slate-200 shadow-xs">
-              <CardContent className="p-4 space-y-1">
+              <CardContent className="p-5 space-y-1.5">
                 <span className="text-xs font-medium text-slate-500 block">
                   Handed Over / Dispensed
                 </span>
-                <div className="text-2xl font-bold text-[#0284C7]">{data.handedOverOrders}</div>
+                <div className="text-[26px] leading-[32px] font-bold text-[#0284C7]">{data.handedOverOrders}</div>
                 <span className="text-[11px] text-slate-500">Completed physical handovers</span>
               </CardContent>
             </Card>
 
             <Card className="border-slate-200 shadow-xs">
-              <CardContent className="p-4 space-y-1">
+              <CardContent className="p-5 space-y-1.5">
                 <span className="text-xs font-medium text-slate-500 block">Active Stores</span>
-                <div className="text-2xl font-bold text-teal-600">{data.activeStoresCount}</div>
+                <div className="text-[26px] leading-[32px] font-bold text-teal-600">{data.activeStoresCount}</div>
                 <span className="text-[11px] text-slate-500">Operating in network</span>
               </CardContent>
             </Card>
 
             <Card className="border-slate-200 shadow-xs">
-              <CardContent className="p-4 space-y-1">
+              <CardContent className="p-5 space-y-1.5">
                 <span className="text-xs font-medium text-slate-500 block">
                   Refill Subscriptions
                 </span>
-                <div className="text-2xl font-bold text-[#0D5C5A]">
+                <div className="text-[26px] leading-[32px] font-bold text-[#0D5C5A]">
                   {data.activeRefillSubscriptionsCount}
                 </div>
                 <span className="text-[11px] text-slate-500">Customer active reminders</span>
@@ -163,16 +160,13 @@ export default function AdminAnalyticsOverviewPage() {
           </div>
 
           {/* Module Deep-Dive Navigation Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 pt-2">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5 pt-2">
             <Link href="/admin/analytics/orders">
               <Card className="p-5 border-slate-200 hover:border-[#0D5C5A] transition-all cursor-pointer h-full flex flex-col justify-between">
                 <div className="space-y-2">
                   <div className="flex items-center justify-between">
                     <span className="font-bold text-slate-900 text-sm">Orders by Store</span>
                   </div>
-                  <p className="text-xs text-slate-500 leading-relaxed">
-                    Store-level order distribution, status breakdowns, and timeline volumes.
-                  </p>
                 </div>
                 <div className="flex items-center text-xs font-semibold text-[#0D5C5A] mt-4">
                   View Store Breakdown &rarr;
@@ -188,9 +182,6 @@ export default function AdminAnalyticsOverviewPage() {
                       Verification Performance
                     </span>
                   </div>
-                  <p className="text-xs text-slate-500 leading-relaxed">
-                    Pharmacist review median durations, rejection rates, and decision reasons.
-                  </p>
                 </div>
                 <div className="flex items-center text-xs font-semibold text-[#0D5C5A] mt-4">
                   View Verification KPIs &rarr;
@@ -204,9 +195,6 @@ export default function AdminAnalyticsOverviewPage() {
                   <div className="flex items-center justify-between">
                     <span className="font-bold text-slate-900 text-sm">Fulfilment Operations</span>
                   </div>
-                  <p className="text-xs text-slate-500 leading-relaxed">
-                    Picking &amp; packing median durations, stock holds, and stockout exceptions.
-                  </p>
                 </div>
                 <div className="flex items-center text-xs font-semibold text-[#0D5C5A] mt-4">
                   View Fulfilment KPIs &rarr;
@@ -220,9 +208,6 @@ export default function AdminAnalyticsOverviewPage() {
                   <div className="flex items-center justify-between">
                     <span className="font-bold text-slate-900 text-sm">Refill Automation</span>
                   </div>
-                  <p className="text-xs text-slate-500 leading-relaxed">
-                    Refill reminder conversion rates, scheduled vs sent notifications, and reorders.
-                  </p>
                 </div>
                 <div className="flex items-center text-xs font-semibold text-[#0D5C5A] mt-4">
                   View Refill Metrics &rarr;

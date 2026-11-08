@@ -67,12 +67,12 @@ export default function ComplianceRuleSetDetailPage() {
   };
 
   return (
-    <div className="flex-1 p-6 max-w-7xl w-full mx-auto space-y-6">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2 border-b border-[#EBECEF]">
+    <div className="mx-auto w-full max-w-7xl space-y-8 py-2">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-5 border-b border-slate-200 pb-6">
         <div>
-          <div className="flex items-center gap-3">
+          <div className="flex flex-col items-start gap-3">
             <BackButton href="/admin/compliance/rules" label="Rule Sets" />
-            <h1 className="text-2xl font-bold text-[#14161A] tracking-tight flex items-center gap-2">
+            <h1 className="font-display text-2xl font-bold tracking-tight text-[#0F172A] sm:text-[28px] sm:leading-[36px] flex items-center gap-2">
               {ruleSet?.name || 'Rule Set Detail'}
               {ruleSet && (
                 <span className="font-mono text-sm px-2.5 py-0.5 rounded-md bg-[#F0FDFA] text-[#0D5C5A] border border-[#EBECEF]">
@@ -81,9 +81,6 @@ export default function ComplianceRuleSetDetailPage() {
               )}
             </h1>
           </div>
-          <p className="text-sm text-[#78879A] mt-1">
-            {ruleSet?.description || 'Schedule verification policy rules configuration.'}
-          </p>
         </div>
 
         {isDraft && (
@@ -127,7 +124,7 @@ export default function ComplianceRuleSetDetailPage() {
           <p className="text-xs text-[#78879A] mt-3">Loading rule set details...</p>
         </div>
       ) : ruleSet ? (
-        <div className="space-y-6">
+        <div className="space-y-8">
           {/* Rules Table */}
           <div className="bg-white rounded-xl border border-[#EBECEF] shadow-2xs overflow-hidden">
             <div className="p-4 bg-[#F8F9FB] border-b border-[#EBECEF]">
@@ -139,19 +136,19 @@ export default function ComplianceRuleSetDetailPage() {
               <table className="w-full text-left border-collapse text-xs">
                 <thead>
                   <tr className="border-b border-[#EBECEF] bg-[#F8F9FB] text-[#78879A] font-semibold">
-                    <th className="py-3 px-4">Schedule</th>
-                    <th className="py-3 px-4">Policy Action</th>
-                    <th className="py-3 px-4">Requires Rx</th>
-                    <th className="py-3 px-4">Pharmacist Review</th>
-                    <th className="py-3 px-4">Requires H1 Register</th>
-                    <th className="py-3 px-4">Hard Blocked</th>
-                    <th className="py-3 px-4">Policy Description</th>
+                    <th className="py-3.5 px-4">Schedule</th>
+                    <th className="py-3.5 px-4">Policy Action</th>
+                    <th className="py-3.5 px-4">Requires Rx</th>
+                    <th className="py-3.5 px-4">Pharmacist Review</th>
+                    <th className="py-3.5 px-4">Requires H1 Register</th>
+                    <th className="py-3.5 px-4">Hard Blocked</th>
+                    <th className="py-3.5 px-4">Policy Description</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-[#EBECEF]">
                   {ruleSet.rules?.map((rule: any) => (
                     <tr key={rule.id} className="hover:bg-[#F0FDFA]/50 transition-colors">
-                      <td className="py-3 px-4 font-bold text-[#14161A]">
+                      <td className="py-3.5 px-4 font-bold text-[#14161A]">
                         <span
                           className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${
                             rule.medicineSchedule === 'OTC'
@@ -166,31 +163,31 @@ export default function ComplianceRuleSetDetailPage() {
                           {rule.medicineSchedule}
                         </span>
                       </td>
-                      <td className="py-3 px-4 font-mono text-[11px] font-semibold text-[#0F172A]">
+                      <td className="py-3.5 px-4 font-mono text-[11px] font-semibold text-[#0F172A]">
                         {rule.policyAction}
                       </td>
-                      <td className="py-3 px-4">
+                      <td className="py-3.5 px-4">
                         {rule.requiresPrescription ? (
                           <span className="text-[#0D5C5A] font-semibold">Yes</span>
                         ) : (
                           <span className="text-[#78879A]">No</span>
                         )}
                       </td>
-                      <td className="py-3 px-4">
+                      <td className="py-3.5 px-4">
                         {rule.requiresPharmacistApproval ? (
                           <span className="text-emerald-700 font-semibold">Mandatory</span>
                         ) : (
                           <span className="text-[#78879A]">No</span>
                         )}
                       </td>
-                      <td className="py-3 px-4">
+                      <td className="py-3.5 px-4">
                         {rule.requiresH1Register ? (
                           <span className="text-amber-700 font-semibold">Mandatory</span>
                         ) : (
                           <span className="text-[#78879A]">No</span>
                         )}
                       </td>
-                      <td className="py-3 px-4">
+                      <td className="py-3.5 px-4">
                         {rule.hardBlocked ? (
                           <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-rose-600 text-white">
                             HARD BLOCKED
@@ -199,7 +196,7 @@ export default function ComplianceRuleSetDetailPage() {
                           <span className="text-slate-400">No</span>
                         )}
                       </td>
-                      <td className="py-3 px-4 text-[#6C757D] max-w-sm">
+                      <td className="py-3.5 px-4 text-[#6C757D] max-w-sm">
                         {rule.description || 'Standard deterministic rule'}
                       </td>
                     </tr>
@@ -218,10 +215,6 @@ export default function ComplianceRuleSetDetailPage() {
             <h3 className="text-base font-bold text-[#14161A]">
               Activate Version {ruleSet?.version}
             </h3>
-            <p className="text-xs text-[#78879A]">
-              Activating this compliance rule set will supersede the currently active version. All
-              future compliance evaluations will immediately bind to version {ruleSet?.version}.
-            </p>
 
             <div className="space-y-3 text-xs">
               <div>

@@ -40,19 +40,16 @@ export default function AdminAnalyticsVerificationPage() {
   }, [loadData, period]);
 
   return (
-    <div className="space-y-6 max-w-7xl mx-auto py-6 px-4">
+    <div className="mx-auto w-full max-w-7xl space-y-8 py-2">
       <div>
         <BackButton href="/admin/analytics" label="Analytics Overview" />
       </div>
 
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-200">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-5 border-b border-slate-200 pb-6">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight text-slate-900">
+          <h1 className="font-display text-2xl font-bold tracking-tight text-[#0F172A] sm:text-[28px] sm:leading-[36px]">
             Pharmacist Verification Performance
           </h1>
-          <p className="text-sm text-slate-500 mt-1">
-            Clinical review duration benchmarks, approval rates, and rejection categorization.
-          </p>
         </div>
 
         <div className="flex items-center gap-1 bg-slate-100 p-1 rounded-xl border border-slate-200 text-xs">
@@ -78,11 +75,11 @@ export default function AdminAnalyticsVerificationPage() {
       ) : data ? (
         <>
           {/* Metrics Tiles */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-5">
             <Card className="border-slate-200 shadow-xs">
-              <CardContent className="p-4 space-y-1">
+              <CardContent className="p-5 space-y-1.5">
                 <span className="text-xs text-slate-500 font-medium">Total Reviewed</span>
-                <div className="text-2xl font-bold text-slate-900">
+                <div className="text-[26px] leading-[32px] font-bold text-slate-900">
                   {data.totalPrescriptionsReviewed}
                 </div>
                 <span className="text-[11px] text-slate-400">Completed reviews</span>
@@ -90,9 +87,9 @@ export default function AdminAnalyticsVerificationPage() {
             </Card>
 
             <Card className="border-slate-200 shadow-xs">
-              <CardContent className="p-4 space-y-1">
+              <CardContent className="p-5 space-y-1.5">
                 <span className="text-xs text-slate-500 font-medium">Median Verification Time</span>
-                <div className="text-2xl font-bold text-[#0D5C5A]">
+                <div className="text-[26px] leading-[32px] font-bold text-[#0D5C5A]">
                   {data.medianVerificationMinutes} min
                 </div>
                 <span className="text-[11px] text-slate-400">p50 review turnaround</span>
@@ -100,9 +97,9 @@ export default function AdminAnalyticsVerificationPage() {
             </Card>
 
             <Card className="border-slate-200 shadow-xs">
-              <CardContent className="p-4 space-y-1">
+              <CardContent className="p-5 space-y-1.5">
                 <span className="text-xs text-slate-500 font-medium">Average Time</span>
-                <div className="text-2xl font-bold text-slate-700">
+                <div className="text-[26px] leading-[32px] font-bold text-slate-700">
                   {data.averageVerificationMinutes} min
                 </div>
                 <span className="text-[11px] text-slate-400">Arithmetic mean</span>
@@ -110,11 +107,11 @@ export default function AdminAnalyticsVerificationPage() {
             </Card>
 
             <Card className="border-slate-200 shadow-xs">
-              <CardContent className="p-4 space-y-1">
+              <CardContent className="p-5 space-y-1.5">
                 <span className="text-xs text-slate-500 font-medium">
                   Rejections &amp; Re-uploads
                 </span>
-                <div className="text-2xl font-bold text-red-600">
+                <div className="text-[26px] leading-[32px] font-bold text-red-600">
                   {data.rejectedCount + data.reuploadRequestedCount}
                 </div>
                 <span className="text-[11px] text-slate-400">
