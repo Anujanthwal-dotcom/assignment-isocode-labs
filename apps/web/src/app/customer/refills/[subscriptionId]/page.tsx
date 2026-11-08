@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import Link from 'next/link';
 import { RefillSubscriptionDto, RefillReminderDto } from '@pharmacy/shared-types';
+import { BackButton } from '@/components/shared/BackButton';
 
 export default function CustomerRefillSubscriptionPage() {
   const params = useParams();
@@ -121,21 +122,16 @@ export default function CustomerRefillSubscriptionPage() {
       <div className="max-w-2xl mx-auto py-16 text-center space-y-4">
         <span className="font-bold uppercase text-xs text-red-600 block mb-1">Notice</span>
         <h2 className="text-xl font-bold text-[#0F172A]">Subscription Not Found</h2>
-        <Link href="/customer/refills">
-          <Button variant="outline">&larr; Back to Refills</Button>
-        </Link>
+        <BackButton href="/customer/refills" label="Refills Dashboard" />
       </div>
     );
   }
 
   return (
     <div className="max-w-3xl mx-auto py-6 px-4 space-y-6">
-      <Link
-        href="/customer/refills"
-        className="inline-flex items-center text-xs font-semibold text-[#0D5C5A] hover:underline"
-      >
-        &larr; Back to Medicine Refills
-      </Link>
+      <div>
+        <BackButton href="/customer/refills" label="Medicine Refills" />
+      </div>
 
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-[#EBECEF]">
         <div>

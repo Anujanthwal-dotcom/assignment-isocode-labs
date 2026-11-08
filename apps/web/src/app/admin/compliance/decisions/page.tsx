@@ -2,6 +2,7 @@
 
 import * as React from 'react';
 import { apiFetch } from '@/lib/api/client';
+import { BackButton } from '@/components/shared/BackButton';
 
 export default function AdminComplianceDecisionsPage() {
   const [loading, setLoading] = React.useState(true);
@@ -79,9 +80,12 @@ export default function AdminComplianceDecisionsPage() {
     <div className="flex-1 p-6 max-w-7xl w-full mx-auto space-y-6">
       <div className="pb-2 border-b border-[#EBECEF] flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-[#14161A] tracking-tight">
-            Compliance Decision Audit Log
-          </h1>
+          <div className="flex items-center gap-3">
+            <BackButton href="/admin/compliance" label="Compliance Overview" />
+            <h1 className="text-2xl font-bold text-[#14161A] tracking-tight">
+              Compliance Decision Audit Log
+            </h1>
+          </div>
           <p className="text-sm text-[#78879A] mt-1">
             Deterministic compliance evaluations snapshot at time of review, linked to versioned
             rule sets.

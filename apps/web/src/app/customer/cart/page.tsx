@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation';
 import { Card, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { BackButton } from '@/components/shared/BackButton';
 import { apiFetch } from '@/lib/api/client';
 import { CartDTO } from '@pharmacy/shared-types';
 
@@ -213,14 +214,7 @@ export default function CustomerCartPage() {
             })}
 
             <div className="pt-2">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => router.push('/customer/medicines')}
-                className="text-xs text-slate-600 border-slate-300"
-              >
-                &larr; Continue Shopping
-              </Button>
+              <BackButton href="/customer/medicines" label="Continue Shopping" />
             </div>
           </div>
 

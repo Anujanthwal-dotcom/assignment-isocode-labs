@@ -6,6 +6,7 @@ import { useAuth } from '@/lib/auth/auth-context';
 import { StaffShell } from '@/components/staff/StaffShell';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { BackButton } from '@/components/shared/BackButton';
 import { apiFetch } from '@/lib/api/client';
 import {
   FileSpreadsheet,
@@ -217,6 +218,10 @@ export default function DailyCsvInjectionPage() {
   return (
     <StaffShell pageContext="Daily CSV Inventory Injection">
       <div className="max-w-4xl mx-auto space-y-6">
+        <div>
+          <BackButton href="/staff/inventory" label="Store Inventory" />
+        </div>
+
         {/* Header Title */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-[#EBECEF]">
           <div>

@@ -4,6 +4,7 @@ import * as React from 'react';
 import { useParams } from 'next/navigation';
 import Link from 'next/link';
 import { apiFetch } from '@/lib/api/client';
+import { BackButton } from '@/components/shared/BackButton';
 
 export default function OrderInvoiceDetailPage() {
   const params = useParams();
@@ -38,13 +39,8 @@ export default function OrderInvoiceDetailPage() {
     <div className="space-y-6 max-w-3xl mx-auto">
       {/* Header */}
       <div className="flex items-center justify-between gap-4 pb-3 border-b border-[#EBECEF] print:hidden">
-        <div className="flex items-center gap-2">
-          <Link
-            href="/pharmacist/fulfilment"
-            className="px-2 py-1 rounded text-xs font-semibold text-[#0D5C5A] hover:bg-[#F8F9FB] transition-colors"
-          >
-            &larr; Back to Fulfilment
-          </Link>
+        <div className="flex items-center gap-3">
+          <BackButton href="/pharmacist/fulfilment" label="Fulfilment Queue" />
           <h1 className="text-xl font-bold text-[#14161A] tracking-tight">Order Invoice</h1>
         </div>
 

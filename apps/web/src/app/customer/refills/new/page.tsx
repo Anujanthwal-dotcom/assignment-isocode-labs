@@ -6,6 +6,7 @@ import { apiFetch } from '@/lib/api/client';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
+import { BackButton } from '@/components/shared/BackButton';
 
 export default function NewRefillSubscriptionPage() {
   const searchParams = useSearchParams();
@@ -44,12 +45,9 @@ export default function NewRefillSubscriptionPage() {
 
   return (
     <div className="max-w-xl mx-auto py-8 px-4 space-y-6">
-      <Link
-        href="/customer/refills"
-        className="inline-flex items-center text-xs font-semibold text-[#0D5C5A] hover:underline"
-      >
-        &larr; Back to Refills
-      </Link>
+      <div>
+        <BackButton href="/customer/refills" label="Refills Dashboard" />
+      </div>
 
       <Card className="border-[#EBECEF] shadow-xs">
         <CardHeader>

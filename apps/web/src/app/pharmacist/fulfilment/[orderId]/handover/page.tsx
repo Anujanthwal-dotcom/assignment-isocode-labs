@@ -4,6 +4,7 @@ import * as React from 'react';
 import { useParams } from 'next/navigation';
 import Link from 'next/link';
 import { apiFetch } from '@/lib/api/client';
+import { BackButton } from '@/components/shared/BackButton';
 
 export default function HandoverWorkspacePage() {
   const params = useParams();
@@ -105,13 +106,8 @@ export default function HandoverWorkspacePage() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-3 border-b border-[#EBECEF]">
         <div>
-          <div className="flex items-center gap-2">
-            <Link
-              href="/pharmacist/fulfilment"
-              className="p-1 rounded-lg text-[#78879A] hover:bg-[#F8F9FB] transition-colors"
-            >
-              &larr; Back
-            </Link>
+          <div className="flex items-center gap-3">
+            <BackButton href="/pharmacist/fulfilment" label="Fulfilment Queue" />
             <h1 className="text-2xl font-bold text-[#14161A] tracking-tight">
               Order Handover: {orderDetail?.orderNumber || ''}
             </h1>

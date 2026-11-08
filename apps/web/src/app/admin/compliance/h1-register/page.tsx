@@ -2,6 +2,7 @@
 
 import * as React from 'react';
 import { apiFetch } from '@/lib/api/client';
+import { BackButton } from '@/components/shared/BackButton';
 
 interface StoreDTO {
   id: string;
@@ -70,9 +71,12 @@ export default function AdminH1RegisterPage() {
     <div className="flex-1 p-6 max-w-7xl w-full mx-auto space-y-6">
       <div className="pb-2 border-b border-[#EBECEF] flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-[#14161A] tracking-tight">
-            Platform Schedule H1 Drug Register
-          </h1>
+          <div className="flex items-center gap-3">
+            <BackButton href="/admin/compliance" label="Compliance Overview" />
+            <h1 className="text-2xl font-bold text-[#14161A] tracking-tight">
+              Platform Schedule H1 Drug Register
+            </h1>
+          </div>
           <p className="text-sm text-[#78879A] mt-1">
             Centralized statutory register of Schedule H1 dispensed substances across all
             fulfillment stores.

@@ -10,6 +10,7 @@ import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog';
 import { apiFetch } from '@/lib/api/client';
 import { MissingPrescriptionIllustration } from '@/components/customer/MissingPrescriptionIllustration';
+import { BackButton } from '@/components/shared/BackButton';
 import {
   ZoomIn,
   ZoomOut,
@@ -352,11 +353,9 @@ export default function PharmacistPrescriptionVerifyPage() {
         <Card className="p-6 bg-red-50 border-red-200 text-red-700">
           <h2 className="font-bold text-base">Prescription Not Found</h2>
           <p className="text-xs mt-1">This prescription does not exist or has been removed.</p>
-          <Link href="/pharmacist/review-queue" className="mt-4 inline-block">
-            <Button size="sm" variant="outline">
-              &larr; Back to Review Queue
-            </Button>
-          </Link>
+          <div className="mt-4">
+            <BackButton href="/pharmacist/review-queue" label="Review Queue" />
+          </div>
         </Card>
       </div>
     );
@@ -369,13 +368,7 @@ export default function PharmacistPrescriptionVerifyPage() {
       {/* Top Header Navigation */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-[#EBECEF]">
         <div className="flex items-center gap-3">
-          <Link
-            href="/pharmacist/review-queue"
-            className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#0D5C5A] hover:underline"
-          >
-            <ArrowLeft className="w-3.5 h-3.5" /> Back to Queue
-          </Link>
-          <span className="text-slate-300">|</span>
+          <BackButton href="/pharmacist/review-queue" label="Review Queue" />
           <h1 className="text-lg font-bold text-[#0F172A] tracking-tight">
             Prescription Verification &amp; Cost Quotation
           </h1>

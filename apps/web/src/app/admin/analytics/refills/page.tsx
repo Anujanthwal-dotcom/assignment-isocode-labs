@@ -3,6 +3,7 @@
 import * as React from 'react';
 import Link from 'next/link';
 import { apiFetch } from '@/lib/api/client';
+import { BackButton } from '@/components/shared/BackButton';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import {
   Table,
@@ -39,12 +40,9 @@ export default function AdminAnalyticsRefillsPage() {
 
   return (
     <div className="space-y-6 max-w-7xl mx-auto py-6 px-4">
-      <Link
-        href="/admin/analytics"
-        className="inline-flex items-center text-xs font-semibold text-[#0D5C5A] hover:underline"
-      >
-        &larr; Back to Analytics Overview
-      </Link>
+      <div>
+        <BackButton href="/admin/analytics" label="Analytics Overview" />
+      </div>
 
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-200">
         <div>

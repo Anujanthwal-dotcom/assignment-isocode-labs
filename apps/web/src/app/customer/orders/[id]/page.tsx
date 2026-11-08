@@ -9,6 +9,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/u
 import { apiFetch } from '@/lib/api/client';
 import { OrderDTO, OrderStatusHistoryDTO } from '@pharmacy/shared-types';
 import { MissingPrescriptionIllustration } from '@/components/customer/MissingPrescriptionIllustration';
+import { BackButton } from '@/components/shared/BackButton';
 
 interface VerificationItem {
   orderItemId: string;
@@ -258,12 +259,7 @@ export default function CustomerOrderDetailPage() {
     <div className="max-w-[1000px] mx-auto space-y-6">
       {/* Top Breadcrumb & Actions */}
       <div className="space-y-2">
-        <button
-          onClick={() => router.push('/customer/orders')}
-          className="inline-flex items-center text-xs font-semibold text-[#0D5C5A] hover:underline"
-        >
-          &larr; Back to Orders
-        </button>
+        <BackButton href="/customer/orders" label="My Orders" />
 
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-2 border-b border-[#EBECEF]">
           <div>

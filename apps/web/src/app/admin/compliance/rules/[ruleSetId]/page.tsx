@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import { apiFetch } from '@/lib/api/client';
 import { useAuth } from '@/lib/auth/auth-context';
+import { BackButton } from '@/components/shared/BackButton';
 
 export default function ComplianceRuleSetDetailPage() {
   const params = useParams();
@@ -69,13 +70,8 @@ export default function ComplianceRuleSetDetailPage() {
     <div className="flex-1 p-6 max-w-7xl w-full mx-auto space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2 border-b border-[#EBECEF]">
         <div>
-          <div className="flex items-center gap-2">
-            <Link
-              href="/admin/compliance/rules"
-              className="p-1 rounded-lg text-[#78879A] hover:bg-[#F8F9FB] transition-colors"
-            >
-              &larr; Back
-            </Link>
+          <div className="flex items-center gap-3">
+            <BackButton href="/admin/compliance/rules" label="Rule Sets" />
             <h1 className="text-2xl font-bold text-[#14161A] tracking-tight flex items-center gap-2">
               {ruleSet?.name || 'Rule Set Detail'}
               {ruleSet && (

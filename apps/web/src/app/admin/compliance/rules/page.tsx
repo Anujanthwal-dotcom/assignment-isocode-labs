@@ -4,6 +4,7 @@ import * as React from 'react';
 import Link from 'next/link';
 import { apiFetch } from '@/lib/api/client';
 import { useAuth } from '@/lib/auth/auth-context';
+import { BackButton } from '@/components/shared/BackButton';
 
 export default function ComplianceRuleSetsPage() {
   const { user } = useAuth();
@@ -91,13 +92,8 @@ export default function ComplianceRuleSetsPage() {
     <div className="flex-1 p-6 max-w-7xl w-full mx-auto space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2 border-b border-[#EBECEF]">
         <div>
-          <div className="flex items-center gap-2">
-            <Link
-              href="/admin/compliance"
-              className="p-1 rounded-lg text-[#78879A] hover:bg-[#F8F9FB] transition-colors"
-            >
-              &larr; Back
-            </Link>
+          <div className="flex items-center gap-3">
+            <BackButton href="/admin/compliance" label="Compliance Overview" />
             <h1 className="text-2xl font-bold text-[#14161A] tracking-tight">
               Versioned Compliance Rule Sets
             </h1>

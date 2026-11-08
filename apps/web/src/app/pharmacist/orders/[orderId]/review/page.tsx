@@ -5,6 +5,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { useParams, useRouter } from 'next/navigation';
 import { apiFetch } from '@/lib/api/client';
+import { BackButton } from '@/components/shared/BackButton';
 
 export default function PharmacistOrderReviewPage() {
   const params = useParams();
@@ -312,12 +313,9 @@ export default function PharmacistOrderReviewPage() {
           </span>
           <h2 className="text-base font-semibold text-[#14161A]">Access Restricted</h2>
           <p className="text-xs text-[#6C757D]">{error}</p>
-          <Link
-            href="/pharmacist/review-queue"
-            className="inline-flex items-center gap-2 px-4 py-2 text-xs font-semibold rounded-lg bg-[#0D5C5A] text-white hover:bg-[#0A4846] transition-colors"
-          >
-            &larr; Return to Queue
-          </Link>
+          <div className="pt-2">
+            <BackButton href="/pharmacist/review-queue" label="Return to Queue" />
+          </div>
         </div>
       </div>
     );
@@ -340,12 +338,7 @@ export default function PharmacistOrderReviewPage() {
       {/* Top Sticky Bar */}
       <div className="sticky top-[64px] z-30 bg-white border-b border-[#EBECEF] px-6 py-3 flex flex-wrap items-center justify-between gap-4 shadow-2xs">
         <div className="flex items-center gap-3">
-          <Link
-            href="/pharmacist/review-queue"
-            className="px-2 py-1 text-xs font-semibold text-[#0D5C5A] hover:bg-[#F8F9FB] rounded"
-          >
-            &larr; Back
-          </Link>
+          <BackButton href="/pharmacist/review-queue" label="Review Queue" />
           <div>
             <div className="flex items-center gap-2">
               <span className="text-sm font-bold text-[#14161A]">Order {order.orderNumber}</span>

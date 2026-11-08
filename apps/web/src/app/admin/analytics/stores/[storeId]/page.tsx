@@ -7,6 +7,7 @@ import { apiFetch } from '@/lib/api/client';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { BackButton } from '@/components/shared/BackButton';
 
 export default function AdminAnalyticsStoreDetailPage() {
   const params = useParams();
@@ -40,9 +41,7 @@ export default function AdminAnalyticsStoreDetailPage() {
     return (
       <div className="max-w-xl mx-auto py-12 text-center space-y-4">
         <h2 className="text-xl font-bold text-slate-800">Store Not Found</h2>
-        <Link href="/admin/analytics/orders">
-          <Button variant="outline">&larr; Back to Stores</Button>
-        </Link>
+        <BackButton href="/admin/analytics/orders" label="Back to Stores" />
       </div>
     );
   }
@@ -51,12 +50,9 @@ export default function AdminAnalyticsStoreDetailPage() {
 
   return (
     <div className="space-y-6 max-w-6xl mx-auto py-6 px-4">
-      <Link
-        href="/admin/analytics/orders"
-        className="inline-flex items-center text-xs font-semibold text-[#0D5C5A] hover:underline"
-      >
-        &larr; Back to Stores Overview
-      </Link>
+      <div>
+        <BackButton href="/admin/analytics/orders" label="Stores Overview" />
+      </div>
 
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-200">
         <div>

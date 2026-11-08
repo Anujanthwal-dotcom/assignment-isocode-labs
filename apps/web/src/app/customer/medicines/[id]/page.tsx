@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { apiFetch } from '@/lib/api/client';
 import { CustomerMedicineDTO } from '@pharmacy/shared-types';
+import { BackButton } from '@/components/shared/BackButton';
 
 export default function CustomerMedicineDetailPage() {
   const params = useParams();
@@ -121,12 +122,7 @@ export default function CustomerMedicineDetailPage() {
     <div className="max-w-[800px] mx-auto space-y-6">
       {/* Back button */}
       <div>
-        <button
-          onClick={() => router.back()}
-          className="inline-flex items-center text-xs font-semibold text-[#0D5C5A] hover:underline"
-        >
-          &larr; Back to Catalogue
-        </button>
+        <BackButton href="/customer/medicines" label="Medicines Catalogue" />
       </div>
 
       <Card className="border-[#EBECEF] bg-white shadow-xs">

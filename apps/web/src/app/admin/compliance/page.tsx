@@ -95,6 +95,76 @@ export default function ComplianceOverviewPage() {
             </div>
           </div>
 
+          {/* Compliance Setup & Drug Schedule Policy Matrix */}
+          <div className="bg-white rounded-xl border border-[#EBECEF] p-5 shadow-2xs space-y-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <h3 className="text-sm font-bold text-[#14161A]">
+                  Statutory Drug Schedule Rules &amp; Compliance Configuration
+                </h3>
+                <p className="text-xs text-[#78879A] mt-0.5">
+                  Deterministic policy engine parameters enforcing the Drugs and Cosmetics Act 1940 across all stores.
+                </p>
+              </div>
+              <Link
+                href="/admin/compliance/rules"
+                className="text-xs font-semibold text-[#0D5C5A] hover:underline"
+              >
+                Configure Rule Sets &rarr;
+              </Link>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 text-xs">
+              <div className="p-3 bg-slate-50 rounded-lg border border-slate-200 space-y-1">
+                <div className="flex items-center justify-between">
+                  <span className="font-bold text-slate-900">Schedule H</span>
+                  <span className="px-1.5 py-0.5 bg-amber-50 text-amber-700 font-bold rounded text-[10px]">
+                    Rx Required
+                  </span>
+                </div>
+                <p className="text-[11px] text-slate-500">
+                  Valid registered doctor prescription mandatory. Maximum 60 days prescription validity threshold.
+                </p>
+              </div>
+
+              <div className="p-3 bg-[#F0FDFA] rounded-lg border border-[#99F6E4] space-y-1">
+                <div className="flex items-center justify-between">
+                  <span className="font-bold text-[#0D5C5A]">Schedule H1</span>
+                  <span className="px-1.5 py-0.5 bg-[#CCFBF1] text-[#0D5C5A] font-bold rounded text-[10px]">
+                    Log Mandatory
+                  </span>
+                </div>
+                <p className="text-[11px] text-[#0D5C5A]/80">
+                  Antibiotics &amp; habit-forming drugs. Automatic statutory entry generated in H1 Register on dispensing.
+                </p>
+              </div>
+
+              <div className="p-3 bg-rose-50 rounded-lg border border-rose-200 space-y-1">
+                <div className="flex items-center justify-between">
+                  <span className="font-bold text-rose-800">Schedule X</span>
+                  <span className="px-1.5 py-0.5 bg-rose-100 text-rose-800 font-bold rounded text-[10px]">
+                    Dual Review
+                  </span>
+                </div>
+                <p className="text-[11px] text-rose-700/80">
+                  Strict psychotropic narcotics. 30 days validity limit, duplicate prescription upload required.
+                </p>
+              </div>
+
+              <div className="p-3 bg-slate-50 rounded-lg border border-slate-200 space-y-1">
+                <div className="flex items-center justify-between">
+                  <span className="font-bold text-slate-900">Over-The-Counter</span>
+                  <span className="px-1.5 py-0.5 bg-emerald-50 text-emerald-700 font-bold rounded text-[10px]">
+                    Direct Checkout
+                  </span>
+                </div>
+                <p className="text-[11px] text-slate-500">
+                  Direct cart checkout without mandatory clinical verification. Quantity caps enforced.
+                </p>
+              </div>
+            </div>
+          </div>
+
           {/* Navigation Cards */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <Link

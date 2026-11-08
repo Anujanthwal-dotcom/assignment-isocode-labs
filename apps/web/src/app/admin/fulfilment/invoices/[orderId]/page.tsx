@@ -4,6 +4,7 @@ import * as React from 'react';
 import { useParams } from 'next/navigation';
 import Link from 'next/link';
 import { apiFetch } from '@/lib/api/client';
+import { BackButton } from '@/components/shared/BackButton';
 
 export default function AdminInvoiceDetailPage() {
   const params = useParams();
@@ -38,13 +39,8 @@ export default function AdminInvoiceDetailPage() {
     <div className="space-y-6 max-w-3xl mx-auto">
       {/* Header */}
       <div className="flex items-center justify-between gap-4 pb-3 border-b border-[#EBECEF] print:hidden">
-        <div className="flex items-center gap-2">
-          <Link
-            href="/admin/fulfilment/invoices"
-            className="p-1 rounded-lg text-[#78879A] hover:bg-[#F8F9FB] transition-colors"
-          >
-            &larr; Back
-          </Link>
+        <div className="flex items-center gap-3">
+          <BackButton href="/admin/fulfilment/invoices" label="All Invoices" />
           <h1 className="text-xl font-bold text-[#14161A] tracking-tight">Invoice Details</h1>
         </div>
 

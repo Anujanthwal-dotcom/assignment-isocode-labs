@@ -13,6 +13,7 @@ import {
   CustomerAddressDTO,
 } from '@pharmacy/shared-types';
 import { MissingPrescriptionIllustration } from '@/components/customer/MissingPrescriptionIllustration';
+import { BackButton } from '@/components/shared/BackButton';
 import {
   CheckCircle2,
   AlertCircle,
@@ -206,11 +207,9 @@ export default function PrescriptionDetailPage() {
           <p className="text-sm mt-1">
             This prescription does not exist or you do not have permission to view it.
           </p>
-          <Link href="/customer/prescriptions" className="inline-block mt-4">
-            <Button variant="outline" size="sm">
-              &larr; Back to Prescriptions
-            </Button>
-          </Link>
+          <div className="mt-4">
+            <BackButton href="/customer/prescriptions" label="My Prescriptions" />
+          </div>
         </div>
       </div>
     );
@@ -224,12 +223,7 @@ export default function PrescriptionDetailPage() {
     <div className="max-w-[1100px] mx-auto space-y-6 pb-16">
       {/* Top Navigation */}
       <div className="flex items-center justify-between pb-3 border-b border-[#EBECEF]">
-        <Link
-          href="/customer/prescriptions"
-          className="inline-flex items-center text-sm font-semibold text-[#0D5C5A] hover:underline"
-        >
-          &larr; Back to Prescriptions
-        </Link>
+        <BackButton href="/customer/prescriptions" label="My Prescriptions" />
         <span className="text-xs text-slate-400 font-mono">ID: {prescription.id}</span>
       </div>
 
@@ -694,11 +688,9 @@ export default function PrescriptionDetailPage() {
                       </p>
                     </div>
                   </div>
-                  <Link href="/customer/prescriptions">
-                    <Button size="sm" variant="outline" className="text-xs border-red-300 text-red-700 hover:bg-red-100/50">
-                      &larr; Back to Prescriptions
-                    </Button>
-                  </Link>
+                  <div className="pt-1">
+                    <BackButton href="/customer/prescriptions" label="Return to Prescriptions" />
+                  </div>
                 </Card>
               ) : prescription?.status === 'REUPLOAD_REQUIRED' ? (
                 <Card className="p-6 border-amber-200 bg-amber-50/40 space-y-4">

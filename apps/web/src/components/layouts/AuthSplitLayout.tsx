@@ -2,6 +2,7 @@
 
 import * as React from 'react';
 import Link from 'next/link';
+import { BackButton } from '@/components/shared/BackButton';
 
 interface AuthSplitLayoutProps {
   title: string;
@@ -50,12 +51,7 @@ export const AuthSplitLayout: React.FC<AuthSplitLayoutProps> = ({
         <div className="w-full max-w-md mx-auto space-y-6">
           {backHref && (
             <div>
-              <Link
-                href={backHref}
-                className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#64748B] hover:text-[#0D5C5A] transition-colors"
-              >
-                ← {backLabel}
-              </Link>
+              <BackButton href={backHref} label={backLabel} variant="subtle" />
             </div>
           )}
 

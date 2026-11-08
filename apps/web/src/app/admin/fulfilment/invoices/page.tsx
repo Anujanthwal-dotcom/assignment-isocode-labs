@@ -3,6 +3,7 @@
 import * as React from 'react';
 import Link from 'next/link';
 import { apiFetch } from '@/lib/api/client';
+import { BackButton } from '@/components/shared/BackButton';
 
 export default function AdminInvoicesListPage() {
   const [loading, setLoading] = React.useState(true);
@@ -41,13 +42,8 @@ export default function AdminInvoicesListPage() {
     <div className="space-y-6">
       <div className="pb-2 border-b border-[#EBECEF] flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <div className="flex items-center gap-2">
-            <Link
-              href="/admin/fulfilment"
-              className="p-1 rounded-lg text-[#78879A] hover:bg-[#F8F9FB] transition-colors"
-            >
-              &larr; Back
-            </Link>
+          <div className="flex items-center gap-3">
+            <BackButton href="/admin/fulfilment" label="Fulfilment Overview" />
             <h1 className="text-2xl font-bold text-[#14161A] tracking-tight">
               Platform Pharmacy Invoices
             </h1>
