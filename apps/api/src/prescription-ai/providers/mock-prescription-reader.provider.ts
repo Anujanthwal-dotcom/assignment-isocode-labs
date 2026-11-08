@@ -219,6 +219,159 @@ export class MockPrescriptionReader implements PrescriptionReader {
       };
     }
 
+    // Omeprazole / Gastric prescription (Dr. P. Sengupta, AMRI Hospitals)
+    if (hint.includes('omeprazole') || hint.includes('gastric') || hint.includes('sengupta')) {
+      return {
+        documentReadable: true,
+        overallConfidence: 0.96,
+        patientName: 'Debasish Ghosh',
+        prescriberName: 'Dr. P. Sengupta (AMRI Hospitals Salt Lake)',
+        prescriptionDate: '2026-11-04',
+        items: [
+          {
+            rawMedicineName: 'Omeprazole 20 mg',
+            normalizedMedicineName: 'Omeprazole',
+            strength: '20 mg',
+            dosageForm: 'Capsule',
+            dosageInstructions: '1 capsule daily before breakfast for 14 days',
+            frequency: 'Once daily before meals',
+            duration: '14 days',
+            quantity: 14,
+            confidence: 0.97,
+            sourceText: 'Cap. Omez (Omeprazole) 20mg 1 OD ac x 14d #14',
+            warnings: [],
+          },
+        ],
+        unreadableSections: [],
+        generalWarnings: [],
+      };
+    }
+
+    // Atorvastatin / Cardio prescription (Dr. R. Chakraborty, Apollo Gleneagles)
+    if (hint.includes('atorvastatin') || hint.includes('cardio') || hint.includes('chakraborty')) {
+      return {
+        documentReadable: true,
+        overallConfidence: 0.95,
+        patientName: 'Debasish Ghosh',
+        prescriberName: 'Dr. R. Chakraborty (Apollo Gleneagles Kolkata)',
+        prescriptionDate: '2026-11-04',
+        items: [
+          {
+            rawMedicineName: 'Atorvastatin 20 mg',
+            normalizedMedicineName: 'Atorvastatin',
+            strength: '20 mg',
+            dosageForm: 'Tablet',
+            dosageInstructions: '1 tablet daily at bedtime for 30 days',
+            frequency: 'Once daily at bedtime',
+            duration: '30 days',
+            quantity: 30,
+            confidence: 0.96,
+            sourceText: 'Tab. Atorva (Atorvastatin) 20mg 1 HS x 30d #30',
+            warnings: [],
+          },
+        ],
+        unreadableSections: [],
+        generalWarnings: [],
+      };
+    }
+
+    // Cetirizine / Derm prescription (Dr. K. Bose, Woodlands Hospital)
+    if (hint.includes('cetirizine') || hint.includes('derm') || hint.includes('bose')) {
+      return {
+        documentReadable: true,
+        overallConfidence: 0.96,
+        patientName: 'Debasish Ghosh',
+        prescriberName: 'Dr. K. Bose (Woodlands Hospital Alipore)',
+        prescriptionDate: '2026-11-04',
+        items: [
+          {
+            rawMedicineName: 'Cetirizine 10 mg',
+            normalizedMedicineName: 'Cetirizine',
+            strength: '10 mg',
+            dosageForm: 'Tablet',
+            dosageInstructions: '1 tablet once daily at night for 10 days',
+            frequency: 'Once daily at night',
+            duration: '10 days',
+            quantity: 10,
+            confidence: 0.97,
+            sourceText: 'Tab. Cetzine (Cetirizine) 10mg 1 OD nocte x 10d #10',
+            warnings: [],
+          },
+        ],
+        unreadableSections: [],
+        generalWarnings: [],
+      };
+    }
+
+    // Alprazolam / Rina Sen Schedule H1 prescription (Dr. Sen)
+    if (hint.includes('alprazolam') || hint.includes('rina')) {
+      return {
+        documentReadable: true,
+        overallConfidence: 0.95,
+        patientName: 'Rina Sen',
+        prescriberName: 'Dr. S. Sen (Reg. WB-32941)',
+        prescriptionDate: '2026-11-03',
+        items: [
+          {
+            rawMedicineName: 'Alprazolam 0.5 mg',
+            normalizedMedicineName: 'Alprazolam',
+            strength: '0.5 mg',
+            dosageForm: 'Tablet',
+            dosageInstructions: '1 tablet once daily at bedtime SOS',
+            frequency: 'At bedtime SOS',
+            duration: '15 days',
+            quantity: 15,
+            confidence: 0.95,
+            sourceText: 'Tab. Alprax 0.5mg 1 tab HS SOS #15',
+            warnings: ['Schedule H1 substance — mandatory H1 register logging required'],
+          },
+        ],
+        unreadableSections: [],
+        generalWarnings: [],
+      };
+    }
+
+    // Maya Ghosh chronic prescription (Metformin + Telmisartan)
+    if (hint.includes('chronic') || hint.includes('maya')) {
+      return {
+        documentReadable: true,
+        overallConfidence: 0.95,
+        patientName: 'Maya Ghosh',
+        prescriberName: 'Dr. A. K. Banerjee (Reg. 45892)',
+        prescriptionDate: '2026-11-04',
+        items: [
+          {
+            rawMedicineName: 'Metformin 500 mg',
+            normalizedMedicineName: 'Metformin',
+            strength: '500 mg',
+            dosageForm: 'Tablet',
+            dosageInstructions: '1 tablet twice daily after food',
+            frequency: 'Twice daily',
+            duration: '30 days',
+            quantity: 30,
+            confidence: 0.96,
+            sourceText: 'Tab. Metformin 500mg 1 tab BD after food #30',
+            warnings: [],
+          },
+          {
+            rawMedicineName: 'Telmisartan 40 mg',
+            normalizedMedicineName: 'Telmisartan',
+            strength: '40 mg',
+            dosageForm: 'Tablet',
+            dosageInstructions: '1 tablet once daily in the morning',
+            frequency: 'Once daily',
+            duration: '30 days',
+            quantity: 30,
+            confidence: 0.94,
+            sourceText: 'Tab. Telma 40mg 1 tab OD morning #30',
+            warnings: [],
+          },
+        ],
+        unreadableSections: [],
+        generalWarnings: [],
+      };
+    }
+
     // 2. Readable prescription with multiple medicines
     if (hint.includes('multi') || hint.includes('multiple')) {
       return {

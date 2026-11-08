@@ -120,12 +120,42 @@ export class MedicineMatchingService {
     // Optional Generic Alternatives suggestion
     const genericAlternatives = this.findGenericAlternatives(item, selectedMedicineId, catalogue);
 
+    const chosenMed = selectedMedicineId
+      ? catalogue.find((m) => m.id === selectedMedicineId)
+      : candidatesWithScore.length > 0
+        ? candidatesWithScore[0].medicine
+        : null;
+
+    let comparisonNotes = '';
+    if (matchStatus === 'MATCHED' && chosenMed) {
+      comparisonNotes = `AI matched to catalogue: ${chosenMed.name} (${chosenMed.brandName ? `Brand: ${chosenMed.brandName}` : `Generic: ${chosenMed.genericName}`}) at ₹${Number(chosenMed.mrp).toFixed(2)}`;
+    } else if (matchStatus === 'AMBIGUOUS' && chosenMed) {
+      comparisonNotes = `Multiple candidate matches. Top candidate: ${chosenMed.name} (SKU: ${chosenMed.sku}, ₹${Number(chosenMed.mrp).toFixed(2)}) — pharmacist verification required.`;
+    } else {
+      comparisonNotes = `No exact catalogue match found for "${item.rawMedicineName || item.normalizedMedicineName}". Pharmacist manual mapping required.`;
+    }
+
+    const matchedMedicine = chosenMed
+      ? {
+          id: chosenMed.id,
+          sku: chosenMed.sku,
+          name: chosenMed.name,
+          brandName: chosenMed.brandName,
+          genericName: chosenMed.genericName,
+          strength: chosenMed.strength,
+          dosageForm: chosenMed.dosageForm,
+          mrp: Number(chosenMed.mrp).toFixed(2),
+        }
+      : undefined;
+
     return {
       extractedItemIndex,
       candidates,
       selectedMedicineId,
       matchStatus,
       genericAlternatives,
+      comparisonNotes,
+      matchedMedicine,
     };
   }
 

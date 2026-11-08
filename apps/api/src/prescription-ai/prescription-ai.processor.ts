@@ -89,13 +89,24 @@ export class PrescriptionAiProcessor extends WorkerHost {
         }
       }
 
-      // 5. Invoke configured AI Provider
+      // 5. Query active medicines summary to provide catalogue context to AI
+      const activeMedicines = await this.prisma.medicine.findMany({
+        where: { status: 'ACTIVE' },
+        select: { sku: true, name: true, brandName: true, genericName: true, strength: true, dosageForm: true, mrp: true },
+        take: 100,
+      });
+      const catalogueMedicinesSummary = activeMedicines
+        .map((m) => `${m.name} (${m.brandName || m.genericName || ''}) - ${m.strength || ''} [${m.sku}] MRP: ${m.mrp}`)
+        .join('\n');
+
+      // 6. Invoke configured AI Provider with catalogue awareness
       const extractionResult = await this.reader.extract({
         buffer,
         mimeType: prescription.mimeType,
         originalFileName: prescription.originalFileName,
         attemptNumber: job.attemptsMade + 1,
         fixtureHint,
+        catalogueMedicinesSummary,
       });
 
       // 6. Validate extraction contract

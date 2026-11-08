@@ -89,11 +89,15 @@ export class GeminiLangChainPrescriptionReader implements PrescriptionReader, On
     const base64Data = input.buffer.toString('base64');
     const dataUrl = `data:${input.mimeType};base64,${base64Data}`;
 
+    const promptText = input.catalogueMedicinesSummary
+      ? `${EXTRACTION_SYSTEM_PROMPT}\n\nActive Medicines in Pharmacy Catalogue (compare extracted items against these):\n${input.catalogueMedicinesSummary}`
+      : EXTRACTION_SYSTEM_PROMPT;
+
     const humanMessage = new HumanMessage({
       content: [
         {
           type: 'text',
-          text: EXTRACTION_SYSTEM_PROMPT,
+          text: promptText,
         },
         {
           type: 'image_url',

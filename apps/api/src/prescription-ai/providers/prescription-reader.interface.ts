@@ -6,6 +6,7 @@ export interface PrescriptionReaderInput {
   originalFileName: string;
   attemptNumber: number;
   fixtureHint?: string;
+  catalogueMedicinesSummary?: string;
 }
 
 export interface PrescriptionReader {
