@@ -14,7 +14,7 @@ import {
   Package,
   Repeat,
   LogOut,
-  Hash,
+  Phone,
 } from 'lucide-react';
 import {
   DropdownMenu,
@@ -99,25 +99,26 @@ export const CustomerNavbar: React.FC = () => {
           </nav>
         </div>
 
-        {/* Right Actions: Desk Number Squaricle, Notifications, Cart & Profile */}
+        {/* Right Actions: Helpline, Notifications, Cart & Profile */}
         <div className="flex items-center gap-2 sm:gap-3">
-          {/* Sample Customer Desk Number in Squaricle */}
-          <div
-            className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-[10px] bg-[#F0FDFA] border border-[#99F6E4] shadow-xs cursor-default select-none"
-            title="Assigned Customer Service Desk"
+          {/* Pharmacy Helpline / Care Desk Number */}
+          <a
+            href="tel:18002004567"
+            className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-[10px] bg-[#F0FDFA] border border-[#99F6E4] shadow-xs hover:bg-[#CCFBF1]/50 transition-colors group select-none text-left"
+            title="Helpline: 1800 200 4567"
           >
-            <div className="flex h-5 w-5 items-center justify-center rounded-[6px] bg-[#CCFBF1] text-[#0D5C5A]">
-              <Hash className="h-3 w-3 stroke-[2.5]" />
+            <div className="flex h-5 w-5 sm:h-6 sm:w-6 items-center justify-center rounded-[6px] bg-[#CCFBF1] text-[#0D5C5A] group-hover:bg-[#0D5C5A] group-hover:text-white transition-colors shrink-0">
+              <Phone className="h-3 w-3 sm:h-3.5 sm:w-3.5" />
             </div>
             <div className="flex flex-col">
               <span className="text-[9px] font-bold text-[#047857] uppercase tracking-wider leading-none hidden sm:block">
-                Assigned Desk
+                Help &amp; Support
               </span>
-              <span className="tabular-nums font-mono text-[12px] font-bold text-[#0D5C5A] leading-tight">
-                Desk #04
+              <span className="tabular-nums font-mono text-[11px] sm:text-[12px] font-bold text-[#0D5C5A] leading-tight">
+                1800 200 4567
               </span>
             </div>
-          </div>
+          </a>
 
           {/* Notifications */}
           <Link
