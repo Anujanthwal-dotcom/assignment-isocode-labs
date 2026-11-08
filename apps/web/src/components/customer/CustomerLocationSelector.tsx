@@ -14,7 +14,6 @@ import {
   Sheet,
   SheetTrigger,
   SheetContent,
-  SheetHeader,
   SheetTitle,
   SheetDescription,
 } from '@/components/ui/sheet';
@@ -193,15 +192,11 @@ export const CustomerLocationSelector: React.FC = () => {
         </button>
       </SheetTrigger>
 
-      <SheetContent side="right" className="overflow-y-auto">
-        <SheetHeader className="pb-3 border-b border-[#EBECEF]">
-          <SheetTitle>Delivery Location</SheetTitle>
-          <SheetDescription>
-            Choose your location for genuine medicine availability and express dispatch.
-          </SheetDescription>
-        </SheetHeader>
+      <SheetContent side="right" className="overflow-y-auto pt-12">
+        <SheetTitle className="sr-only">Delivery Location</SheetTitle>
+        <SheetDescription className="sr-only">Delivery location selector</SheetDescription>
 
-        <div className="space-y-4 pt-4">
+        <div className="space-y-4">
           {/* Option 1: Detect My Location Button */}
           <div className="space-y-1.5">
             <Button
