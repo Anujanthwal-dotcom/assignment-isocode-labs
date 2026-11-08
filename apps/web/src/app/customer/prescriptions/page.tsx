@@ -4,9 +4,10 @@ import * as React from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog';
 import { apiFetch } from '@/lib/api/client';
 import Link from 'next/link';
+import { Trash2, AlertCircle } from 'lucide-react';
 import { PrescriptionDTO, FamilyMemberDTO } from '@pharmacy/shared-types';
 import { MissingPrescriptionIllustration } from '@/components/customer/MissingPrescriptionIllustration';
 
@@ -31,6 +32,13 @@ export default function CustomerPrescriptionsPage() {
   const [previewFileName, setPreviewFileName] = React.useState('');
   const [previewMime, setPreviewMime] = React.useState('');
   const [previewImageError, setPreviewImageError] = React.useState(false);
+
+  // Delete Confirmation Modal State
+  const [deleteTarget, setDeleteTarget] = React.useState<{ id: string; fileName: string } | null>(
+    null,
+  );
+  const [deleteLoading, setDeleteLoading] = React.useState(false);
+  const [deleteError, setDeleteError] = React.useState<string | null>(null);
 
   const loadData = async () => {
     try {
@@ -133,15 +141,20 @@ export default function CustomerPrescriptionsPage() {
     }
   };
 
-  const handleDelete = async (id: string) => {
-    if (!confirm('Are you sure you want to delete this prescription?')) return;
+  const handleConfirmDelete = async () => {
+    if (!deleteTarget) return;
+    setDeleteLoading(true);
+    setDeleteError(null);
     try {
-      await apiFetch(`/customer/prescriptions/${id}`, {
+      await apiFetch(`/customer/prescriptions/${deleteTarget.id}`, {
         method: 'DELETE',
       });
-      setPrescriptions((prev) => prev.filter((p) => p.id !== id));
+      setPrescriptions((prev) => prev.filter((p) => p.id !== deleteTarget.id));
+      setDeleteTarget(null);
     } catch (err: unknown) {
-      alert((err as Error).message || 'Failed to delete prescription.');
+      setDeleteError((err as Error).message || 'Failed to delete prescription.');
+    } finally {
+      setDeleteLoading(false);
     }
   };
 
@@ -279,7 +292,10 @@ export default function CustomerPrescriptionsPage() {
                   <Button
                     variant="outline"
                     size="sm"
-                    onClick={() => handleDelete(rx.id)}
+                    onClick={() => {
+                      setDeleteTarget({ id: rx.id, fileName: rx.originalFileName });
+                      setDeleteError(null);
+                    }}
                     className="text-xs h-8 px-2.5 text-red-600 border-red-200 hover:bg-red-50"
                   >
                     Delete
@@ -428,6 +444,70 @@ export default function CustomerPrescriptionsPage() {
               />
             )}
           </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Design-Consistent Delete Confirmation Dialog */}
+      <Dialog
+        open={!!deleteTarget}
+        onOpenChange={(open) => {
+          if (!open && !deleteLoading) {
+            setDeleteTarget(null);
+            setDeleteError(null);
+          }
+        }}
+      >
+        <DialogContent className="sm:max-w-[460px]">
+          <div className="flex items-start gap-3.5 pt-1">
+            <div className="w-10 h-10 rounded-full bg-rose-50 border border-rose-200 flex items-center justify-center shrink-0 text-rose-600">
+              <Trash2 className="w-5 h-5" />
+            </div>
+            <div className="space-y-1.5 flex-1">
+              <DialogTitle className="text-base font-bold text-[#0F172A]">
+                Delete Prescription
+              </DialogTitle>
+              <DialogDescription className="text-xs text-slate-600 leading-relaxed">
+                Are you sure you want to delete{' '}
+                <strong className="text-slate-900 font-semibold">{deleteTarget?.fileName}</strong>?
+                This document will be permanently removed from your account.
+              </DialogDescription>
+            </div>
+          </div>
+
+          {deleteError && (
+            <div className="p-3 rounded-lg bg-rose-50 border border-rose-200 text-rose-700 text-xs flex items-start gap-2">
+              <AlertCircle className="w-4 h-4 text-rose-600 shrink-0 mt-0.5" />
+              <div className="flex-1">
+                <span className="font-bold block mb-0.5">Unable to Delete</span>
+                <span>{deleteError}</span>
+              </div>
+            </div>
+          )}
+
+          <DialogFooter className="gap-2 pt-3 sm:justify-end">
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              disabled={deleteLoading}
+              onClick={() => {
+                setDeleteTarget(null);
+                setDeleteError(null);
+              }}
+              className="text-xs h-9 px-3.5 border-slate-200 text-slate-700 hover:bg-slate-50"
+            >
+              Cancel
+            </Button>
+            <Button
+              type="button"
+              size="sm"
+              disabled={deleteLoading}
+              onClick={handleConfirmDelete}
+              className="text-xs h-9 px-4 bg-rose-600 hover:bg-rose-700 text-white font-semibold shadow-xs"
+            >
+              {deleteLoading ? 'Deleting...' : 'Delete Prescription'}
+            </Button>
+          </DialogFooter>
         </DialogContent>
       </Dialog>
     </div>
