@@ -7,7 +7,6 @@ import {
   UploadCloud,
   Users,
   Clock,
-  ShieldCheck,
   ArrowRight,
   FileText,
   Repeat,
@@ -105,20 +104,11 @@ export default function CustomerHomePage() {
           ========================================================================= */}
       <section className="relative overflow-hidden rounded-[16px] bg-[#0D5C5A] p-6 sm:p-8 lg:p-10 text-white shadow-xs">
         <div className="relative z-10 w-full space-y-4">
-          {/* Status Pill */}
-          <div className="inline-flex items-center gap-1.5 rounded-full bg-[#004341] px-3.5 py-1 text-xs font-semibold text-white/95 border border-[#14B8A6]/40">
-            <ShieldCheck className="h-4 w-4 text-[#5EEAD4] shrink-0" />
-            <span>Salt Lake Store (KOL-001) Connected &bull; Prescription-Led Dispensing</span>
-          </div>
-
           {/* Greeting & Headline */}
           <div>
             <h1 className="font-display text-2xl sm:text-3xl lg:text-4xl font-extrabold tracking-tight text-white leading-tight">
               Welcome back, {userName}
             </h1>
-            <p className="text-sm sm:text-base text-teal-100 mt-1.5 max-w-3xl font-normal leading-relaxed">
-              Send your doctor&apos;s prescription for certified registered pharmacist verification, batch-verified dispensing, and recurring chronic care refills.
-            </p>
           </div>
 
           {/* Responsive Action Row: Sleek, Full-Width, Compact Vertical Height (Horizontal on Desktop, Vertical on Mobile) */}
@@ -181,10 +171,10 @@ export default function CustomerHomePage() {
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5">
             <Link
               href="/customer/prescriptions"
-              className="p-5 sm:p-6 rounded-[16px] border border-[#EBECEF] bg-white hover:border-[#14B8A6] hover:shadow-[0_4px_16px_rgba(0,0,0,0.04)] transition-all group block shadow-[0_2px_10px_rgba(0,0,0,0.02)]"
+              className="p-4 sm:p-5 rounded-[16px] border border-[#EBECEF] bg-white hover:border-[#14B8A6] hover:shadow-[0_4px_16px_rgba(0,0,0,0.04)] transition-all group block shadow-[0_2px_10px_rgba(0,0,0,0.02)]"
             >
-              <div className="flex items-center justify-between mb-3.5">
-                <div className="h-11 w-11 rounded-[12px] bg-[#F0FDFA] flex items-center justify-center text-[#0D5C5A] group-hover:bg-[#0D5C5A] group-hover:text-white transition-colors">
+              <div className="flex items-center justify-between mb-3">
+                <div className="h-10 w-10 rounded-[10px] bg-[#F0FDFA] flex items-center justify-center text-[#0D5C5A] group-hover:bg-[#0D5C5A] group-hover:text-white transition-colors">
                   <UploadCloud className="h-5 w-5" />
                 </div>
                 <ArrowRight className="h-4 w-4 text-slate-400 group-hover:text-[#0D5C5A] group-hover:translate-x-0.5 transition-all" />
@@ -192,17 +182,14 @@ export default function CustomerHomePage() {
               <h2 className="font-display font-bold text-sm text-[#0F172A] group-hover:text-[#0D5C5A] transition-colors">
                 Send Prescription
               </h2>
-              <p className="text-xs text-[#64748B] mt-1.5 leading-relaxed line-clamp-2">
-                Upload new prescription slip or photo for immediate pharmacist evaluation &amp; order quote.
-              </p>
             </Link>
 
             <Link
               href="/customer/prescriptions"
-              className="p-5 sm:p-6 rounded-[16px] border border-[#EBECEF] bg-white hover:border-[#14B8A6] hover:shadow-[0_4px_16px_rgba(0,0,0,0.04)] transition-all group block shadow-[0_2px_10px_rgba(0,0,0,0.02)]"
+              className="p-4 sm:p-5 rounded-[16px] border border-[#EBECEF] bg-white hover:border-[#14B8A6] hover:shadow-[0_4px_16px_rgba(0,0,0,0.04)] transition-all group block shadow-[0_2px_10px_rgba(0,0,0,0.02)]"
             >
-              <div className="flex items-center justify-between mb-3.5">
-                <div className="h-11 w-11 rounded-[12px] bg-[#F0FDFA] flex items-center justify-center text-[#0D5C5A] group-hover:bg-[#0D5C5A] group-hover:text-white transition-colors">
+              <div className="flex items-center justify-between mb-3">
+                <div className="h-10 w-10 rounded-[10px] bg-[#F0FDFA] flex items-center justify-center text-[#0D5C5A] group-hover:bg-[#0D5C5A] group-hover:text-white transition-colors">
                   <FileText className="h-5 w-5" />
                 </div>
                 <ArrowRight className="h-4 w-4 text-slate-400 group-hover:text-[#0D5C5A] group-hover:translate-x-0.5 transition-all" />
@@ -210,17 +197,14 @@ export default function CustomerHomePage() {
               <h2 className="font-display font-bold text-sm text-[#0F172A] group-hover:text-[#0D5C5A] transition-colors">
                 Prescription Vault
               </h2>
-              <p className="text-xs text-[#64748B] mt-1.5 leading-relaxed line-clamp-2">
-                Digital repository of doctor advice, validated medicine drafts, and dosage history.
-              </p>
             </Link>
 
             <Link
               href="/customer/refills"
-              className="p-5 sm:p-6 rounded-[16px] border border-[#EBECEF] bg-white hover:border-[#14B8A6] hover:shadow-[0_4px_16px_rgba(0,0,0,0.04)] transition-all group block shadow-[0_2px_10px_rgba(0,0,0,0.02)]"
+              className="p-4 sm:p-5 rounded-[16px] border border-[#EBECEF] bg-white hover:border-[#14B8A6] hover:shadow-[0_4px_16px_rgba(0,0,0,0.04)] transition-all group block shadow-[0_2px_10px_rgba(0,0,0,0.02)]"
             >
-              <div className="flex items-center justify-between mb-3.5">
-                <div className="h-11 w-11 rounded-[12px] bg-[#F0FDFA] flex items-center justify-center text-[#0D5C5A] group-hover:bg-[#0D5C5A] group-hover:text-white transition-colors">
+              <div className="flex items-center justify-between mb-3">
+                <div className="h-10 w-10 rounded-[10px] bg-[#F0FDFA] flex items-center justify-center text-[#0D5C5A] group-hover:bg-[#0D5C5A] group-hover:text-white transition-colors">
                   <Repeat className="h-5 w-5" />
                 </div>
                 <ArrowRight className="h-4 w-4 text-slate-400 group-hover:text-[#0D5C5A] group-hover:translate-x-0.5 transition-all" />
@@ -228,9 +212,6 @@ export default function CustomerHomePage() {
               <h2 className="font-display font-bold text-sm text-[#0F172A] group-hover:text-[#0D5C5A] transition-colors">
                 Auto-Ship Refills
               </h2>
-              <p className="text-xs text-[#64748B] mt-1.5 leading-relaxed line-clamp-2">
-                Scheduled 30/60-day recurring deliveries for continuous diabetes &amp; BP management.
-              </p>
             </Link>
           </div>
 
@@ -243,7 +224,6 @@ export default function CustomerHomePage() {
                 </div>
                 <div>
                   <h2 className="font-display font-bold text-sm text-[#0F172A]">Recent Orders &amp; Live Tracking</h2>
-                  <p className="text-[11px] text-[#64748B]">Real-time dispensing status across stores</p>
                 </div>
               </div>
               <Link
@@ -387,9 +367,6 @@ export default function CustomerHomePage() {
                 + Add
               </Link>
             </div>
-            <p className="text-xs text-[#64748B] leading-relaxed">
-              Prescriptions and dosage records managed for family members:
-            </p>
             <div className="space-y-2 pt-1">
               <div className="flex items-center justify-between p-3 rounded-[12px] bg-[#F8F9FA] border border-[#EBECEF]">
                 <div className="flex items-center gap-2.5">
@@ -439,9 +416,6 @@ export default function CustomerHomePage() {
                 Manage
               </Link>
             </div>
-            <p className="text-xs text-[#64748B] leading-relaxed">
-              Continuous care subscriptions scheduled for recurring monthly dispatch:
-            </p>
             <div className="p-3.5 rounded-[12px] bg-[#F8F9FA] border border-[#EBECEF] space-y-2">
               <div className="flex items-start justify-between">
                 <div>
