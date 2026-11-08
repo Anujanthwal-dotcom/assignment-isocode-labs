@@ -1,6 +1,7 @@
 'use client';
 
 import * as React from 'react';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -95,8 +96,12 @@ export default function CustomerOrdersPage() {
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-2 border-b border-[#EBECEF]">
         <div>
           <h1 className="text-2xl font-bold tracking-tight text-[#0F172A]">My Orders</h1>
-          <p className="text-sm text-[#78879A] mt-1">
-            Track and view previous pharmacy orders. Total {totalCount} order(s).
+          <p className="text-xs text-[#78879A] mt-1">
+            Confirmed and fulfilled pharmacy orders (Total {totalCount}). Prescriptions awaiting pharmacist verification appear under{' '}
+            <Link href="/customer/prescriptions" className="text-[#0D5C5A] font-semibold hover:underline">
+              My Prescriptions
+            </Link>
+            .
           </p>
         </div>
         <Button
@@ -125,12 +130,11 @@ export default function CustomerOrdersPage() {
             setStatusFilter(e.target.value);
             setPage(1);
           }}
-          className="h-10 px-3 rounded-lg border border-slate-300 bg-white text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#0D5C5A]"
+          className="h-10 px-3 rounded-lg border border-[#EBECEF] bg-white text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#0D5C5A]"
         >
-          <option value="">All Statuses</option>
-          <option value="PENDING_VERIFICATION">Pending Verification</option>
-          <option value="UNDER_REVIEW">Under Review</option>
-          <option value="APPROVED">Approved</option>
+          <option value="">All Orders</option>
+          <option value="APPROVED">In Fulfilment (Approved)</option>
+          <option value="DELIVERED">Delivered</option>
           <option value="CANCELLED">Cancelled</option>
         </select>
       </div>
@@ -149,7 +153,7 @@ export default function CustomerOrdersPage() {
           <p className="text-xs text-slate-500 mt-1 max-w-sm mx-auto">
             {debouncedSearch || statusFilter
               ? 'No orders match your search criteria. Try resetting the filters.'
-              : 'You have not placed any orders yet. Browse our medicine catalogue to get started.'}
+              : 'You have no active orders. Once your prescription is verified by our pharmacist and quotation paid, your orders appear here for live fulfilment tracking.'}
           </p>
           {(debouncedSearch || statusFilter) && (
             <Button

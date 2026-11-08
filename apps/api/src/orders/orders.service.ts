@@ -269,10 +269,18 @@ export class OrdersService {
 
     const where: Prisma.OrderWhereInput = {
       customerUserId,
+      status: {
+        notIn: [OrderStatus.PENDING_VERIFICATION, OrderStatus.UNDER_REVIEW],
+      },
     };
 
     if (query.status) {
-      where.status = query.status;
+      if (
+        query.status !== OrderStatus.PENDING_VERIFICATION &&
+        query.status !== OrderStatus.UNDER_REVIEW
+      ) {
+        where.status = query.status;
+      }
     }
 
     if (query.search && query.search.trim()) {
