@@ -5,7 +5,6 @@ import { CustomerLayout as CustomerGuard } from '@/components/layouts/CustomerLa
 import { usePathname } from 'next/navigation';
 import { CustomerNavbar } from '@/components/customer/CustomerNavbar';
 import { CustomerBottomNav } from '@/components/customer/CustomerBottomNav';
-import { CustomerFooter } from '@/components/customer/CustomerFooter';
 
 export default function CustomerPortalLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
@@ -21,7 +20,6 @@ export default function CustomerPortalLayout({ children }: { children: React.Rea
           <main className="flex-1 mx-auto w-full max-w-[1200px] px-[16px] lg:px-[32px] py-[24px] pb-[88px] md:pb-[32px]">
             {children}
           </main>
-          <CustomerFooter />
           <CustomerBottomNav />
         </div>
       )}

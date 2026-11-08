@@ -195,7 +195,7 @@ export default function CustomerHomePage() {
                 <ArrowRight className="h-4 w-4 text-slate-400 group-hover:text-[#0D5C5A] group-hover:translate-x-0.5 transition-all" />
               </div>
               <h2 className="font-display font-bold text-sm text-[#0F172A] group-hover:text-[#0D5C5A] transition-colors">
-                Prescription Vault
+                Prescriptions
               </h2>
             </Link>
 

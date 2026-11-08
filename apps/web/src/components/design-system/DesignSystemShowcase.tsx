@@ -524,7 +524,7 @@ export const DesignSystemShowcase: React.FC = () => {
                 <span className="text-xs font-bold text-[#0D5C5A]">[Mobile / Web]</span>
               </div>
               <p className="text-[13px] text-[#64748B]">
-                Route: <code className="text-[#0D5C5A]">/customer</code> &bull; Atmospheric teal hero hub, prescription vault, auto-ship refills.
+                Route: <code className="text-[#0D5C5A]">/customer</code> &bull; Atmospheric teal hero hub, prescriptions, auto-ship refills.
               </p>
               <div className="flex items-center text-[12px] font-semibold text-[#0D5C5A] group-hover:underline">
                 Explore Customer Home &rarr;
