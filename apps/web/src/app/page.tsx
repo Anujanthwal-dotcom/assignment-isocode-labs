@@ -23,7 +23,7 @@ export default function HomePage() {
             </div>
             <div>
               <span className="font-display text-base font-bold text-[#0F172A] group-hover:text-[#0D5C5A] transition-colors block">
-                Customer Portal
+                Customer
               </span>
               <span className="text-xs text-[#64748B]">Personal &amp; family prescription care</span>
             </div>
@@ -45,7 +45,7 @@ export default function HomePage() {
             </div>
             <div>
               <span className="font-display text-base font-bold text-[#0F172A] group-hover:text-[#0D5C5A] transition-colors block">
-                Pharmacist Terminal
+                Pharmacist
               </span>
               <span className="text-xs text-[#64748B]">Prescription verification &amp; central review</span>
             </div>
@@ -67,7 +67,7 @@ export default function HomePage() {
             </div>
             <div>
               <span className="font-display text-base font-bold text-[#0F172A] group-hover:text-[#0D5C5A] transition-colors block">
-                Store Staff Portal
+                Store Staff
               </span>
               <span className="text-xs text-[#64748B]">Daily CSV inventory injection &amp; store fulfilment</span>
             </div>
@@ -89,7 +89,7 @@ export default function HomePage() {
             </div>
             <div>
               <span className="font-display text-base font-bold text-[#0F172A] group-hover:text-[#0D5C5A] transition-colors block">
-                Admin &amp; Operations
+                Admin
               </span>
               <span className="text-xs text-[#64748B]">Store networks &amp; compliance policy</span>
             </div>
