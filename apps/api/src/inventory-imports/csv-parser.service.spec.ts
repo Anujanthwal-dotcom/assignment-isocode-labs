@@ -46,4 +46,9 @@ describe('CsvParserService', () => {
     const csvContent = 'sku,quantity,reorderLevel\n"unclosed quote,10,5';
     expect(() => service.parseBuffer(Buffer.from(csvContent))).toThrow(BadRequestException);
   });
+
+  it('should reject data rows with wrong number of columns (schema violation)', () => {
+    const csvContent = 'sku,quantity,reorderLevel\nMED-MET-500-001,120\n';
+    expect(() => service.parseBuffer(Buffer.from(csvContent))).toThrow(BadRequestException);
+  });
 });

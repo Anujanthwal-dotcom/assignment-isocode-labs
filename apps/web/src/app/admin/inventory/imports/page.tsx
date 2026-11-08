@@ -41,6 +41,9 @@ export default function StockImportsPage() {
   const [isUploadOpen, setIsUploadOpen] = React.useState(false);
   const [selectedFile, setSelectedFile] = React.useState<File | null>(null);
   const [uploadLocation, setUploadLocation] = React.useState<string>(''); // 'STORE:id' | 'WAREHOUSE:id'
+  const [schemaChecking, setSchemaChecking] = React.useState(false);
+  const [schemaValid, setSchemaValid] = React.useState<boolean | null>(null);
+  const [schemaErrorMsg, setSchemaErrorMsg] = React.useState<string | null>(null);
   const [uploading, setUploading] = React.useState(false);
   const [uploadError, setUploadError] = React.useState<string | null>(null);
   const [uploadSuccess, setUploadSuccess] = React.useState<string | null>(null);
@@ -133,9 +136,54 @@ export default function StockImportsPage() {
   };
 
   // Submit CSV Upload
+  const checkAdminSchema = async (file: File, location: string) => {
+    setSelectedFile(file);
+    setUploadError(null);
+    setUploadSuccess(null);
+    setSchemaValid(null);
+    setSchemaErrorMsg(null);
+
+    const [locType, locId] = location.split(':');
+    if (!locType || !locId) return;
+
+    try {
+      setSchemaChecking(true);
+      const formData = new FormData();
+      formData.append('file', file);
+      formData.append('locationType', locType);
+      formData.append('locationId', locId);
+
+      const res = await apiFetch<any>('/inventory/imports/validate', {
+        method: 'POST',
+        body: formData,
+      });
+
+      if (res.valid) {
+        setSchemaValid(true);
+      } else {
+        setSchemaValid(false);
+        const firstErr = res.errors?.[0];
+        setSchemaErrorMsg(
+          firstErr
+            ? `Row ${firstErr.rowNumber}: ${firstErr.message}`
+            : 'CSV schema failed validation check.',
+        );
+      }
+    } catch (err: any) {
+      setSchemaValid(false);
+      setSchemaErrorMsg(err?.message || 'Failed to validate CSV schema.');
+    } finally {
+      setSchemaChecking(false);
+    }
+  };
+
   const handleUploadSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!selectedFile || !uploadLocation) return;
+    if (schemaValid !== true) {
+      setUploadError('CSV schema must be checked and pass validation before processing.');
+      return;
+    }
 
     if (!selectedFile.name.toLowerCase().endsWith('.csv')) {
       setUploadError('Only valid .csv files are supported.');
@@ -423,8 +471,7 @@ export default function StockImportsPage() {
                   required
                   onChange={(e) => {
                     if (e.target.files && e.target.files[0]) {
-                      setSelectedFile(e.target.files[0]);
-                      setUploadError(null);
+                      checkAdminSchema(e.target.files[0], uploadLocation);
                     }
                   }}
                   className="absolute inset-0 opacity-0 cursor-pointer"
@@ -448,6 +495,31 @@ export default function StockImportsPage() {
               </div>
             </div>
 
+            {/* Schema Check Status Badge */}
+            {schemaChecking && (
+              <div className="p-3 bg-amber-50 border border-amber-200 rounded-[8px] text-[12px] text-amber-900 flex items-center gap-2">
+                <span className="inline-block w-3.5 h-3.5 border-2 border-amber-700 border-t-transparent rounded-full animate-spin" />
+                <span>Checking CSV schema against 3-column format &amp; active catalogue...</span>
+              </div>
+            )}
+
+            {schemaValid === true && (
+              <div className="p-3 bg-emerald-50 border border-emerald-300 rounded-[8px] text-[12px] text-emerald-900 flex items-center gap-2">
+                <span className="font-bold text-emerald-700">✓</span>
+                <span>CSV Schema Verified: Headers and all rows are valid. Ready to process.</span>
+              </div>
+            )}
+
+            {schemaValid === false && schemaErrorMsg && (
+              <div className="p-3 bg-rose-50 border border-rose-300 rounded-[8px] text-[12px] text-rose-900 flex items-start gap-2">
+                <span className="font-bold text-rose-700 mt-0.5">✕</span>
+                <div className="space-y-0.5">
+                  <span className="font-bold block">CSV Schema Error:</span>
+                  <span>{schemaErrorMsg}</span>
+                </div>
+              </div>
+            )}
+
             <DialogFooter className="pt-2">
               <Button
                 type="button"
@@ -459,8 +531,8 @@ export default function StockImportsPage() {
               </Button>
               <Button
                 type="submit"
-                disabled={uploading || !selectedFile}
-                className="bg-[#0D5C5A] hover:bg-[#542F9B] text-white"
+                disabled={uploading || !selectedFile || schemaValid !== true}
+                className="bg-[#0D5C5A] hover:bg-[#542F9B] text-white disabled:bg-slate-300 disabled:cursor-not-allowed"
               >
                 {uploading && (
                   <span className="mr-2 inline-block w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin" />

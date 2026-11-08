@@ -88,11 +88,21 @@ export class CsvParserService {
       });
     }
 
-    return dataRows.map((cols, idx) => ({
-      rowNumber: idx + 2, // Header is row 1
-      sku: cols[0] || '',
-      quantity: cols[1] || '',
-      reorderLevel: cols[2] || '',
-    }));
+    return dataRows.map((cols, idx) => {
+      const rowNumber = idx + 2; // Header is row 1
+      if (cols.length !== 3) {
+        throw new BadRequestException({
+          statusCode: 400,
+          code: 'INVALID_CSV_ROW_SCHEMA',
+          message: `Row ${rowNumber}: Schema error - expected exactly 3 columns ('sku,quantity,reorderLevel'), but found ${cols.length} column(s).`,
+        });
+      }
+      return {
+        rowNumber,
+        sku: cols[0]?.trim() || '',
+        quantity: cols[1]?.trim() || '',
+        reorderLevel: cols[2]?.trim() || '',
+      };
+    });
   }
 }

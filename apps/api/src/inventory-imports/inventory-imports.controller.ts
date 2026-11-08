@@ -32,6 +32,31 @@ import { UserRole } from '@prisma/client';
 export class InventoryImportsController {
   constructor(private readonly importsService: InventoryImportsService) {}
 
+  @Post('validate')
+  @Roles(UserRole.ADMIN, UserRole.STORE_STAFF, UserRole.PHARMACIST)
+  @UseInterceptors(FileInterceptor('file'))
+  @ApiConsumes('multipart/form-data')
+  @ApiOperation({ summary: 'Validate CSV schema, headers, and rows before processing' })
+  @ApiBody({
+    schema: {
+      type: 'object',
+      required: ['file', 'locationType', 'locationId'],
+      properties: {
+        file: { type: 'string', format: 'binary' },
+        locationType: { type: 'string', enum: ['STORE', 'WAREHOUSE'] },
+        locationId: { type: 'string', format: 'uuid' },
+      },
+    },
+  })
+  @ApiResponse({ status: 200, description: 'CSV schema check outcome' })
+  async validateImport(
+    @UploadedFile() file: Express.Multer.File,
+    @Body() dto: CreateInventoryImportDto,
+    @CurrentUser() user: { id: string },
+  ) {
+    return this.importsService.validateCsvSchema(file, dto, user);
+  }
+
   @Post()
   @Roles(UserRole.ADMIN, UserRole.STORE_STAFF, UserRole.PHARMACIST)
   @UseInterceptors(FileInterceptor('file'))

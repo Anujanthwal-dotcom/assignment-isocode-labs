@@ -9,7 +9,7 @@ import {
 import { PrismaService } from '../prisma/prisma.service';
 import { StorageService } from '../storage/storage.service';
 import { AuditService } from '../audit/audit.service';
-import { CsvParserService } from './csv-parser.service';
+import { CsvParserService, RawParsedRow } from './csv-parser.service';
 import { CsvValidationService } from './csv-validation.service';
 import { CreateInventoryImportDto, ListInventoryImportsQueryDto } from './inventory-imports.dto';
 import {
@@ -535,5 +535,122 @@ export class InventoryImportsService {
     });
 
     return [header, ...rows].join('\n');
+  }
+
+  /**
+   * Pre-validates CSV schema, header structure, data types, duplicates, and catalogue SKUs
+   * WITHOUT creating database records or applying inventory movements.
+   */
+  async validateCsvSchema(
+    file: Express.Multer.File,
+    dto: CreateInventoryImportDto,
+    user: { id: string },
+  ) {
+    if (!file || !file.buffer) {
+      throw new BadRequestException({
+        code: 'EMPTY_FILE',
+        message: 'No CSV file was uploaded.',
+      });
+    }
+
+    // 1. Verify store staff boundary
+    const userRecord = await this.prisma.user.findUnique({
+      where: { id: user.id },
+      include: { staffProfile: true },
+    });
+
+    if (userRecord?.role === UserRole.STORE_STAFF) {
+      if (dto.locationType !== 'STORE' || userRecord.staffProfile?.storeId !== dto.locationId) {
+        throw new ForbiddenException({
+          code: 'STORE_BOUNDARY_VIOLATION',
+          message:
+            'Store staff members are strictly authorized to update inventory only for their assigned store.',
+        });
+      }
+    }
+
+    // 2. Verify target location
+    if (dto.locationType === 'STORE') {
+      const store = await this.prisma.store.findUnique({
+        where: { id: dto.locationId },
+      });
+      if (!store) {
+        throw new NotFoundException({
+          code: 'LOCATION_NOT_FOUND',
+          message: `Store with ID '${dto.locationId}' not found.`,
+        });
+      }
+      if (store.status !== StoreStatus.ACTIVE) {
+        throw new BadRequestException({
+          code: 'INACTIVE_LOCATION',
+          message: 'Cannot import inventory for an inactive store.',
+        });
+      }
+    } else {
+      const warehouse = await this.prisma.warehouse.findUnique({
+        where: { id: dto.locationId },
+      });
+      if (!warehouse) {
+        throw new NotFoundException({
+          code: 'LOCATION_NOT_FOUND',
+          message: `Warehouse with ID '${dto.locationId}' not found.`,
+        });
+      }
+      if (warehouse.status !== StoreStatus.ACTIVE) {
+        throw new BadRequestException({
+          code: 'INACTIVE_LOCATION',
+          message: 'Cannot import inventory for an inactive warehouse.',
+        });
+      }
+    }
+
+    // 3. Parse CSV rows & check structure
+    let rawRows: RawParsedRow[];
+    try {
+      rawRows = this.csvParser.parseBuffer(file.buffer);
+    } catch (err: any) {
+      return {
+        valid: false,
+        totalRows: 0,
+        validCount: 0,
+        errorCount: 1,
+        errors: [
+          {
+            rowNumber: 1,
+            sku: 'HEADER',
+            message: err?.response?.message || err.message || 'Invalid CSV syntax or headers.',
+          },
+        ],
+        rows: [],
+      };
+    }
+
+    // 4. Validate rows against schema rules & catalogue
+    const validationResult = await this.csvValidation.validateRows(rawRows);
+
+    const previewRows = rawRows.slice(0, 50).map((r) => {
+      const rejected = validationResult.rejectedRows.find((rej) => rej.rowNumber === r.rowNumber);
+      return {
+        rowNumber: r.rowNumber,
+        sku: r.sku,
+        quantity: r.quantity,
+        reorderLevel: r.reorderLevel,
+        status: rejected ? 'INVALID' : 'VALID',
+        message: rejected ? rejected.errorMessage : undefined,
+      };
+    });
+
+    return {
+      valid: validationResult.isValid,
+      totalRows: rawRows.length,
+      validCount: validationResult.validRows.length,
+      errorCount: validationResult.rejectedRows.length,
+      errors: validationResult.rejectedRows.map((rej) => ({
+        rowNumber: rej.rowNumber,
+        sku: rej.sku,
+        message: rej.errorMessage,
+      })),
+      rows: previewRows,
+    };
   }
 }
