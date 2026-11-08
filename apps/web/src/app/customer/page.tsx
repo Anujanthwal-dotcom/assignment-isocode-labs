@@ -104,7 +104,7 @@ export default function CustomerHomePage() {
           HERO HUB: Clinical Command Center Banner (Solid Therapeutic Teal)
           ========================================================================= */}
       <section className="relative overflow-hidden rounded-[16px] bg-[#0D5C5A] p-6 sm:p-8 lg:p-10 text-white shadow-xs">
-        <div className="relative z-10 max-w-3xl space-y-4">
+        <div className="relative z-10 max-w-5xl space-y-4">
           {/* Status Pill */}
           <div className="inline-flex items-center gap-1.5 rounded-full bg-[#004341] px-3.5 py-1 text-xs font-semibold text-white/95 border border-[#14B8A6]/40">
             <ShieldCheck className="h-4 w-4 text-[#5EEAD4] shrink-0" />
@@ -121,23 +121,24 @@ export default function CustomerHomePage() {
             </p>
           </div>
 
-          {/* Primary High-Impact Upload Action Button */}
-          <div className="pt-2">
+          {/* Responsive Action Row: Upload (Left) & Rx Lookup (Right) - Horizontal on Desktop, Vertical on Mobile */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-stretch pt-2">
+            {/* Primary High-Impact Upload Action Button */}
             <button
               type="button"
               onClick={() => router.push('/customer/prescriptions')}
-              className="w-full flex items-center justify-between p-4 sm:p-5 rounded-[14px] bg-white text-[#0D5C5A] hover:bg-[#F0FDFA] transition-all shadow-[0_4px_20px_rgba(0,0,0,0.12)] border border-white/90 group cursor-pointer"
+              className="w-full flex items-center justify-between p-4 sm:p-5 rounded-[14px] bg-white text-[#0D5C5A] hover:bg-[#F0FDFA] transition-all shadow-[0_4px_20px_rgba(0,0,0,0.12)] border border-white/90 group cursor-pointer text-left"
             >
               <div className="flex items-center gap-3.5 sm:gap-4">
                 <div className="flex h-12 w-12 sm:h-14 sm:w-14 items-center justify-center rounded-[12px] bg-[#F0FDFA] text-[#0D5C5A] group-hover:bg-[#0D5C5A] group-hover:text-white transition-colors shrink-0">
                   <UploadCloud className="h-6 w-6 sm:h-7 sm:w-7" />
                 </div>
-                <div className="text-left">
+                <div>
                   <span className="font-display font-bold text-base sm:text-lg text-[#0F172A] block group-hover:text-[#0D5C5A] transition-colors leading-snug">
                     Upload Doctor&apos;s Prescription (Rx)
                   </span>
                   <span className="text-xs sm:text-sm text-[#64748B] block mt-0.5 font-normal leading-tight">
-                    Upload camera photo or PDF &bull; 100% pharmacist verified &amp; dispatched
+                    Upload camera photo or PDF &bull; Pharmacist verified
                   </span>
                 </div>
               </div>
@@ -145,30 +146,38 @@ export default function CustomerHomePage() {
                 <ArrowRight className="h-5 w-5 group-hover:translate-x-0.5 transition-transform" />
               </div>
             </button>
-          </div>
 
-          {/* Integrated Prescription Number Lookup / Reorder Field */}
-          <div className="space-y-1.5 pt-1">
-            <span className="text-xs font-semibold text-teal-100 block">
-              Have an existing Prescription or Refill #?
-            </span>
-            <form onSubmit={handleRxLookupSubmit}>
-              <div className="relative flex items-center rounded-full overflow-hidden bg-white shadow-xs border border-white/80 transition-all focus-within:ring-2 focus-within:ring-[#5EEAD4]">
-                <FileText className="absolute left-4 sm:left-5 h-5 w-5 text-slate-400 pointer-events-none" />
+            {/* Integrated Prescription Number Lookup / Reorder Card */}
+            <div className="flex flex-col justify-between p-4 sm:p-5 rounded-[14px] bg-white shadow-[0_4px_20px_rgba(0,0,0,0.12)] border border-white/90">
+              <div className="flex items-center justify-between mb-2">
+                <div>
+                  <span className="font-display font-bold text-base sm:text-lg text-[#0F172A] block leading-snug">
+                    Reorder by Prescription #
+                  </span>
+                  <span className="text-xs sm:text-sm text-[#64748B] block mt-0.5 font-normal leading-tight">
+                    Enter Rx or Refill # to reorder or track
+                  </span>
+                </div>
+                <div className="hidden sm:flex h-9 w-9 items-center justify-center rounded-full bg-[#F0FDFA] text-[#0D5C5A] shrink-0">
+                  <FileText className="h-4 w-4 text-[#0D5C5A]" />
+                </div>
+              </div>
+              <form onSubmit={handleRxLookupSubmit} className="relative flex items-center mt-auto">
+                <FileText className="absolute left-3.5 h-4 w-4 text-slate-400 pointer-events-none" />
                 <Input
                   value={rxNumber}
                   onChange={(e) => setRxNumber(e.target.value)}
-                  placeholder="Enter Prescription # (e.g. RX-2026-...) to reorder or track..."
-                  className="h-12 pl-12 sm:pl-13 pr-32 border-0 bg-transparent text-[#0F172A] placeholder:text-slate-400 text-xs sm:text-sm focus-visible:ring-0 shadow-none rounded-full"
+                  placeholder="e.g. RX-2026-0042"
+                  className="h-11 pl-10 pr-28 border border-[#E2E8F0] bg-[#F8FAFC] text-[#0F172A] placeholder:text-slate-400 text-xs sm:text-sm focus-visible:ring-1 focus-visible:ring-[#0D5C5A] rounded-[10px]"
                 />
                 <Button
                   type="submit"
-                  className="absolute right-1.5 h-9 px-4 sm:px-5 rounded-full bg-[#004341] hover:bg-[#002D2C] text-white text-xs sm:text-sm font-semibold transition-all cursor-pointer shadow-xs"
+                  className="absolute right-1.5 h-8 px-3.5 rounded-[8px] bg-[#004341] hover:bg-[#002D2C] text-white text-xs font-semibold transition-all cursor-pointer shadow-xs"
                 >
                   Find &amp; Reorder
                 </Button>
-              </div>
-            </form>
+              </form>
+            </div>
           </div>
         </div>
       </section>
