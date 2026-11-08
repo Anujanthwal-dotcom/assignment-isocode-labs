@@ -253,7 +253,7 @@ export default function StockImportsPage() {
               setUploadSuccess(null);
               setIsUploadOpen(true);
             }}
-            className="inline-flex items-center gap-2 bg-[#0D5C5A] hover:bg-[#542F9B] text-white"
+            className="inline-flex items-center gap-2 bg-[#0D5C5A] hover:bg-[#093e3d] text-white"
           >
             <span>Upload CSV</span>
           </Button>
@@ -263,12 +263,12 @@ export default function StockImportsPage() {
       {error && <SemanticAlert type="error" title="Import Service Error" description={error} />}
 
       {/* CSV Policy Information Card */}
-      <div className="rounded-[12px] border border-[#B4EDFB] bg-[#EBF9FD] p-4 text-[13px] text-[#0088AA] flex flex-col md:flex-row items-start md:items-center justify-between gap-3">
+      <div className="rounded-[12px] border border-[#99F6E4] bg-[#F0FDFA] p-4 text-[13px] text-[#0D5C5A] flex flex-col md:flex-row items-start md:items-center justify-between gap-3">
         <div className="space-y-1">
-          <p className="font-semibold text-[#0088AA] flex items-center gap-1.5">
+          <p className="font-semibold text-[#0D5C5A] flex items-center gap-1.5">
             Daily Stock Snapshot Format &amp; Rules
           </p>
-          <p className="text-[12px] text-[#0088AA]/90">
+          <p className="text-[12px] text-[#0D5C5A]/90">
             Headers must be exact:{' '}
             <code className="font-mono bg-white/70 px-1.5 py-0.5 rounded font-bold">
               sku,quantity,reorderLevel
@@ -532,7 +532,7 @@ export default function StockImportsPage() {
               <Button
                 type="submit"
                 disabled={uploading || !selectedFile || schemaValid !== true}
-                className="bg-[#0D5C5A] hover:bg-[#542F9B] text-white disabled:bg-slate-300 disabled:cursor-not-allowed"
+                className="bg-[#0D5C5A] hover:bg-[#093e3d] text-white disabled:bg-slate-300 disabled:cursor-not-allowed"
               >
                 {uploading && (
                   <span className="mr-2 inline-block w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin" />

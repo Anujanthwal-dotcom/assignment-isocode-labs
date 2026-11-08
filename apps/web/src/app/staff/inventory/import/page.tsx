@@ -220,7 +220,7 @@ export default function DailyCsvInjectionPage() {
     <StaffShell pageContext="Daily CSV Inventory Injection">
       <div className="max-w-4xl mx-auto space-y-6">
         {/* Header Title */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-amber-200/60">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-[#EBECEF]">
           <div>
             <h1 className="text-xl font-bold tracking-tight text-slate-900">
               Daily CSV Inventory Injection
@@ -235,21 +235,21 @@ export default function DailyCsvInjectionPage() {
             variant="outline"
             size="sm"
             onClick={handleDownloadTemplate}
-            className="border-amber-300 text-amber-900 hover:bg-amber-50 h-9 text-xs font-semibold gap-1.5"
+            className="border-[#0D5C5A]/30 text-[#0D5C5A] hover:bg-[#F0FDFA] h-9 text-xs font-semibold gap-1.5"
           >
-            <Download className="w-3.5 h-3.5 text-amber-700" />
+            <Download className="w-3.5 h-3.5 text-[#0D5C5A]" />
             <span>Download Store Template (.csv)</span>
           </Button>
         </div>
 
         {/* Store Boundary Guard Notice */}
-        <div className="rounded-xl border border-amber-200 bg-amber-50/80 p-4 text-xs flex items-start gap-3 shadow-2xs">
-          <Store className="w-4 h-4 text-amber-700 shrink-0 mt-0.5" />
+        <div className="rounded-xl border border-[#99F6E4] bg-[#F0FDFA] p-4 text-xs flex items-start gap-3 shadow-2xs">
+          <Store className="w-4 h-4 text-[#0D5C5A] shrink-0 mt-0.5" />
           <div className="space-y-1">
-            <span className="font-bold text-amber-950 block">
+            <span className="font-bold text-[#0D5C5A] block">
               Target Store Locked: {store?.name || 'Retail Store'} ({store?.code || 'STORE'})
             </span>
-            <p className="text-amber-800 leading-relaxed">
+            <p className="text-slate-700 leading-relaxed">
               Store staff access is strictly scoped. All inventory batches and quantities injected here will update
               on-hand balances exclusively for <strong>{store?.name}</strong>.
             </p>
@@ -298,10 +298,10 @@ export default function DailyCsvInjectionPage() {
 
         {/* Upload Form */}
         <form onSubmit={handleSubmit} className="space-y-6">
-          <Card className="border-slate-200 bg-white shadow-2xs">
-            <CardHeader className="pb-3 border-b border-slate-100">
+          <Card className="border-[#EBECEF] bg-white shadow-2xs">
+            <CardHeader className="pb-3 border-b border-[#EBECEF]">
               <CardTitle className="text-sm font-bold text-slate-800 flex items-center gap-2">
-                <Upload className="w-4 h-4 text-amber-700" />
+                <Upload className="w-4 h-4 text-[#0D5C5A]" />
                 <span>Step 1: Select CSV File to Validate Schema</span>
               </CardTitle>
             </CardHeader>
@@ -311,8 +311,8 @@ export default function DailyCsvInjectionPage() {
                 onClick={() => fileInputRef.current?.click()}
                 className={`border-2 border-dashed rounded-xl p-8 text-center cursor-pointer transition-all ${
                   file
-                    ? 'border-amber-400 bg-amber-50/40'
-                    : 'border-slate-300 hover:border-amber-400 hover:bg-slate-50/60'
+                    ? 'border-[#0D5C5A] bg-[#F0FDFA]/40'
+                    : 'border-slate-300 hover:border-[#0D5C5A] hover:bg-[#F0FDFA]/20'
                 }`}
               >
                 <input
@@ -325,25 +325,25 @@ export default function DailyCsvInjectionPage() {
 
                 {file ? (
                   <div className="flex flex-col items-center gap-2">
-                    <FileCheck className="w-10 h-10 text-amber-600" />
+                    <FileCheck className="w-10 h-10 text-[#0D5C5A]" />
                     <p className="text-sm font-bold text-slate-800">{file.name}</p>
                     <p className="text-xs text-slate-500 font-mono">
                       {(file.size / 1024).toFixed(1)} KB &bull; {totalRowsCount > 0 ? `${totalRowsCount} rows` : 'Reading file...'}
                     </p>
-                    <span className="text-[11px] text-amber-700 font-semibold underline mt-1">
+                    <span className="text-[11px] text-[#0D5C5A] font-semibold underline mt-1">
                       Click to choose another file
                     </span>
                   </div>
                 ) : (
                   <div className="flex flex-col items-center gap-2">
-                    <div className="w-12 h-12 rounded-full bg-amber-50 flex items-center justify-center text-amber-700">
+                    <div className="w-12 h-12 rounded-full bg-[#F0FDFA] flex items-center justify-center text-[#0D5C5A]">
                       <FileSpreadsheet className="w-6 h-6" />
                     </div>
                     <p className="text-sm font-bold text-slate-800 mt-2">
                       Drop today&apos;s store CSV here, or click to browse
                     </p>
                     <p className="text-xs text-slate-500 max-w-sm">
-                      Expected 3-column schema: <code className="font-mono text-amber-800 font-semibold">sku,quantity,reorderLevel</code>
+                      Expected 3-column schema: <code className="font-mono text-[#0D5C5A] font-semibold">sku,quantity,reorderLevel</code>
                     </p>
                   </div>
                 )}
@@ -351,11 +351,11 @@ export default function DailyCsvInjectionPage() {
 
               {/* Schema Checking Indicator */}
               {checkingSchema && (
-                <div className="p-4 bg-amber-50 border border-amber-200 rounded-xl flex items-center gap-3 text-xs text-amber-900">
-                  <RefreshCw className="w-4 h-4 text-amber-700 animate-spin shrink-0" />
+                <div className="p-4 bg-[#F0FDFA] border border-[#99F6E4] rounded-xl flex items-center gap-3 text-xs text-[#0D5C5A]">
+                  <RefreshCw className="w-4 h-4 text-[#0D5C5A] animate-spin shrink-0" />
                   <div>
                     <span className="font-bold block">Validating CSV Schema...</span>
-                    <span className="text-amber-800 text-[11px]">
+                    <span className="text-slate-600 text-[11px]">
                       Checking column headers, integer formats, duplicates, and catalogue SKU existence before processing.
                     </span>
                   </div>
@@ -488,7 +488,7 @@ export default function DailyCsvInjectionPage() {
                       Schema check passed. Ready to process into inventory.
                     </span>
                   ) : file ? (
-                    <span className="text-amber-800 font-medium">
+                    <span className="text-slate-600 font-medium">
                       CSV schema must pass validation before processing.
                     </span>
                   ) : (
@@ -499,7 +499,7 @@ export default function DailyCsvInjectionPage() {
                 <Button
                   type="submit"
                   disabled={!file || !schemaState?.valid || checkingSchema || uploading}
-                  className="bg-amber-600 hover:bg-amber-700 disabled:bg-slate-300 disabled:cursor-not-allowed text-white font-bold h-10 px-6 text-xs gap-2 shadow-xs cursor-pointer"
+                  className="bg-[#0D5C5A] hover:bg-[#093e3d] disabled:bg-slate-300 disabled:cursor-not-allowed text-white font-bold h-10 px-6 text-xs gap-2 shadow-xs cursor-pointer"
                 >
                   {uploading ? (
                     <>

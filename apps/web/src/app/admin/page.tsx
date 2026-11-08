@@ -87,7 +87,7 @@ export default function AdminDashboardPage() {
             </div>
           </div>
 
-          <div className="p-3.5 bg-[#EFF4FF] rounded-lg border border-[#BAE6FD] text-xs text-[#0F172A] leading-relaxed">
+          <div className="p-3.5 bg-[#F0FDFA] rounded-lg border border-[#99F6E4] text-xs text-[#0D5C5A] leading-relaxed">
             <strong>Administrative &amp; Compliance Console:</strong> Administrator session verified
             with backend-enforced RBAC guards and append-only audit logging. Use the sidebar to
             manage cross-store inventory, CSV bulk imports, regulatory compliance rule sets, and

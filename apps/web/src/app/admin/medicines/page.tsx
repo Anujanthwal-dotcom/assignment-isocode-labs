@@ -222,7 +222,7 @@ export default function MedicineCataloguePage() {
         </div>
         <Button
           onClick={handleOpenAdd}
-          className="inline-flex items-center gap-2 bg-[#0D5C5A] hover:bg-[#542F9B] text-white"
+          className="inline-flex items-center gap-2 bg-[#0D5C5A] hover:bg-[#093e3d] text-white"
         >
           <span>Add Medicine</span>
         </Button>
@@ -573,7 +573,7 @@ export default function MedicineCataloguePage() {
               <Button
                 type="submit"
                 disabled={formSubmitting}
-                className="bg-[#0D5C5A] hover:bg-[#542F9B] text-white"
+                className="bg-[#0D5C5A] hover:bg-[#093e3d] text-white"
               >
                 {formSubmitting && (
                   <span className="mr-2 inline-block w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin" />

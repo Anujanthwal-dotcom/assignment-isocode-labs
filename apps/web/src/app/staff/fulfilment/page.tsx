@@ -64,13 +64,13 @@ export default function StaffFulfilmentPage() {
     <StaffShell pageContext="Store Order Fulfilment">
       <div className="max-w-6xl mx-auto space-y-6">
         {/* Top Header */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-amber-200/60">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-[#EBECEF]">
           <div>
             <div className="flex items-center gap-2">
               <h1 className="text-xl font-bold tracking-tight text-slate-900">
                 Store Order Fulfilment
               </h1>
-              <span className="text-xs px-2.5 py-0.5 rounded-full bg-amber-100 text-amber-900 font-semibold border border-amber-200">
+              <span className="text-xs px-2.5 py-0.5 rounded-full bg-[#F0FDFA] text-[#0D5C5A] font-semibold border border-[#99F6E4]">
                 {store?.name || 'Retail Store'}
               </span>
             </div>
@@ -118,7 +118,7 @@ export default function StaffFulfilmentPage() {
         )}
 
         {/* Orders Table */}
-        <Card className="border-slate-200 bg-white shadow-2xs overflow-hidden">
+        <Card className="border-[#EBECEF] bg-white shadow-2xs overflow-hidden">
           <CardContent className="p-0">
             {loading ? (
               <div className="p-12 text-center text-xs text-slate-400">Loading store shipments...</div>
@@ -143,7 +143,7 @@ export default function StaffFulfilmentPage() {
                   </thead>
                   <tbody className="divide-y divide-slate-100">
                     {filtered.map((o) => (
-                      <tr key={o.orderId} className="hover:bg-amber-50/30 transition-colors">
+                      <tr key={o.orderId} className="hover:bg-[#F0FDFA]/40 transition-colors">
                         <td className="py-3 px-4 font-mono font-bold text-slate-900">
                           {o.orderNumber}
                         </td>
@@ -173,7 +173,7 @@ export default function StaffFulfilmentPage() {
                         <td className="py-3 px-4 text-right">
                           <Link
                             href={`/pharmacist/fulfilment/${o.orderId}`}
-                            className="inline-flex items-center gap-1 text-xs font-bold text-amber-800 hover:underline"
+                            className="inline-flex items-center gap-1 text-xs font-bold text-[#0D5C5A] hover:underline"
                           >
                             <span>Pick &amp; Pack</span>
                             <ArrowRight className="w-3.5 h-3.5" />

@@ -427,7 +427,7 @@ export default function AdminInventoryPage() {
                         <div className="flex items-center justify-end gap-1.5">
                           <button
                             onClick={() => handleOpenHistory(item)}
-                            className="px-2 py-0.5 rounded text-xs font-semibold text-[#0088AA] hover:bg-[#EBF9FD]"
+                            className="px-2 py-0.5 rounded text-xs font-semibold text-[#0D5C5A] hover:bg-[#F0FDFA]"
                             title="Movement History"
                           >
                             History
@@ -583,7 +583,7 @@ export default function AdminInventoryPage() {
                 <Button
                   type="submit"
                   disabled={adjustSubmitting || !isValidNumber || isNegativeResult}
-                  className="bg-[#0D5C5A] hover:bg-[#542F9B] text-white"
+                  className="bg-[#0D5C5A] hover:bg-[#093e3d] text-white"
                 >
                   {adjustSubmitting && (
                     <span className="mr-2 inline-block w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin" />

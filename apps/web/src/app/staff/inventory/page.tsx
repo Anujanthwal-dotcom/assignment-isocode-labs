@@ -100,13 +100,13 @@ export default function StaffInventoryPage() {
     <StaffShell pageContext="Store Inventory Balances">
       <div className="max-w-6xl mx-auto space-y-6">
         {/* Top Header */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-amber-200/60">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-[#EBECEF]">
           <div>
             <div className="flex items-center gap-2">
               <h1 className="text-xl font-bold tracking-tight text-slate-900">
                 Live Store Inventory
               </h1>
-              <span className="text-xs px-2.5 py-0.5 rounded-full bg-amber-100 text-amber-900 font-semibold border border-amber-200">
+              <span className="text-xs px-2.5 py-0.5 rounded-full bg-[#F0FDFA] text-[#0D5C5A] font-semibold border border-[#99F6E4]">
                 {store?.name || 'Store'}
               </span>
             </div>
@@ -130,7 +130,7 @@ export default function StaffInventoryPage() {
 
             <Link
               href="/staff/inventory/import"
-              className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-amber-600 text-white font-bold text-xs hover:bg-amber-700 shadow-2xs transition-all"
+              className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-[#0D5C5A] text-white font-bold text-xs hover:bg-[#093e3d] shadow-2xs transition-all"
             >
               <FileSpreadsheet className="w-3.5 h-3.5" />
               <span>Inject Daily CSV</span>
@@ -164,7 +164,7 @@ export default function StaffInventoryPage() {
         )}
 
         {/* Balances Table */}
-        <Card className="border-slate-200 bg-white shadow-2xs overflow-hidden">
+        <Card className="border-[#EBECEF] bg-white shadow-2xs overflow-hidden">
           <CardContent className="p-0">
             {loading ? (
               <div className="p-12 text-center text-xs text-slate-400">Loading store stock balances...</div>
@@ -174,7 +174,7 @@ export default function StaffInventoryPage() {
                 <p className="text-xs text-slate-500 font-medium">No inventory balances found.</p>
                 <Link
                   href="/staff/inventory/import"
-                  className="text-xs font-bold text-amber-800 hover:underline"
+                  className="text-xs font-bold text-[#0D5C5A] hover:underline"
                 >
                   Upload your first store CSV &rarr;
                 </Link>
@@ -198,7 +198,7 @@ export default function StaffInventoryPage() {
                       const isOutOfStock = item.availableStock <= 0;
 
                       return (
-                        <tr key={item.id} className="hover:bg-amber-50/30 transition-colors">
+                        <tr key={item.id} className="hover:bg-[#F0FDFA]/40 transition-colors">
                           <td className="py-3 px-4">
                             <span className="font-bold text-slate-900 block text-xs">
                               {item.name}
