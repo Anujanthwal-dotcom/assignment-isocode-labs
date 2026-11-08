@@ -3,7 +3,7 @@
 import * as React from 'react';
 import Link from 'next/link';
 import { apiFetch } from '@/lib/api/client';
-import { FileText, ShoppingBag, Search, AlertCircle } from 'lucide-react';
+import { FileText, ShoppingBag, Search, AlertCircle, ShieldCheck } from 'lucide-react';
 
 interface QueueItem {
   orderId: string;
@@ -44,7 +44,6 @@ export default function PharmacistReviewQueuePage() {
   // Data states
   const [prescriptions, setPrescriptions] = React.useState<PrescriptionQueueItem[]>([]);
   const [orders, setOrders] = React.useState<QueueItem[]>([]);
-  const [storeInfo, setStoreInfo] = React.useState<{ name: string; code: string } | null>(null);
 
   // Filters
   const [orderStatusFilter, setOrderStatusFilter] = React.useState<string>('ALL');
@@ -58,11 +57,9 @@ export default function PharmacistReviewQueuePage() {
 
       if (activeTab === 'PRESCRIPTIONS') {
         const res = await apiFetch<{
-          store: { name: string; code: string };
           data: PrescriptionQueueItem[];
         }>('/pharmacist/prescription-queue');
         setPrescriptions(res.data || []);
-        setStoreInfo(res.store || null);
       } else {
         const params = new URLSearchParams();
         if (orderStatusFilter !== 'ALL') {
@@ -73,11 +70,9 @@ export default function PharmacistReviewQueuePage() {
         }
 
         const res = await apiFetch<{
-          store: { name: string; code: string };
           data: QueueItem[];
         }>(`/pharmacist/review-queue?${params.toString()}`);
         setOrders(res.data || []);
-        setStoreInfo(res.store || null);
       }
     } catch (err: any) {
       setError(err?.message || 'Failed to load verification queue.');
@@ -168,13 +163,10 @@ export default function PharmacistReviewQueuePage() {
           </p>
         </div>
 
-        {storeInfo && (
-          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-[#F0FDFA] border border-[#EBECEF] text-xs font-medium text-[#0F172A]">
-            <span>
-              Store: <strong className="font-semibold">{storeInfo.name}</strong> ({storeInfo.code})
-            </span>
-          </div>
-        )}
+        <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-teal-50 border border-teal-200 text-xs font-medium text-teal-800">
+          <ShieldCheck className="w-3.5 h-3.5 text-teal-600" />
+          <span>Central Clinical Verification Queue &bull; Platform-Wide</span>
+        </div>
       </div>
 
       {/* Main Queue Mode Switcher */}
@@ -360,7 +352,7 @@ export default function PharmacistReviewQueuePage() {
         <div className="bg-white rounded-xl border border-[#EBECEF] p-12 text-center shadow-2xs space-y-3">
           <h3 className="text-sm font-semibold text-[#14161A]">All caught up!</h3>
           <p className="text-xs text-[#78879A] max-w-sm mx-auto">
-            There are no pending orders currently assigned to your store queue.
+            There are no pending orders currently awaiting verification.
           </p>
         </div>
       ) : (

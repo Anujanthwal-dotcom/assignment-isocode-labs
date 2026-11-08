@@ -11,7 +11,7 @@ import {
   Package,
   BookOpenCheck,
   Boxes,
-  Store,
+  ShieldCheck,
 } from 'lucide-react';
 import { useAuth } from '@/lib/auth/auth-context';
 
@@ -73,15 +73,15 @@ export const PharmacistSidebar: React.FC<PharmacistSidebarProps> = ({
           </button>
         </div>
 
-        {/* Store Context Badge */}
+        {/* Central Clinical Platform Badge */}
         <div className="p-3">
           <div className="rounded-[8px] border border-[#99F6E4] bg-[#F0FDFA] p-2.5 text-[12px] text-[#047857]">
             <div className="flex items-center gap-1.5 font-semibold">
-              <Store className="h-3.5 w-3.5 shrink-0 text-[#059669]" />
-              <span className="truncate">{user?.store?.name || 'Salt Lake Store'}</span>
+              <ShieldCheck className="h-3.5 w-3.5 shrink-0 text-[#059669]" />
+              <span className="truncate">Central Verification</span>
             </div>
             <span className="text-[11px] text-[#047857]/80 block truncate mt-0.5">
-              {user?.store?.code || 'KOL-001'} (Assigned Fulfilment Store)
+              Platform-Wide Clinical Review
             </span>
           </div>
         </div>
@@ -116,7 +116,7 @@ export const PharmacistSidebar: React.FC<PharmacistSidebarProps> = ({
             <p className="font-semibold text-[#0F172A] truncate">
               {user?.profile?.fullName || 'Licensed Pharmacist'}
             </p>
-            <p className="text-[11px] text-[#64748B] truncate">Store Pharmacist On Duty</p>
+            <p className="text-[11px] text-[#64748B] truncate">Clinical Pharmacist On Duty</p>
           </div>
         </div>
       </aside>

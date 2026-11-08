@@ -4,7 +4,6 @@ import * as React from 'react';
 import { useRouter } from 'next/navigation';
 import {
   Menu,
-  Store,
   User,
   ChevronDown,
   ShieldCheck,
@@ -39,7 +38,6 @@ export const PharmacistHeader: React.FC<PharmacistHeaderProps> = ({
   };
 
   const pharmacistName = user?.profile?.fullName || 'Licensed Pharmacist';
-  const storeName = user?.store?.name || 'Salt Lake Store';
 
   return (
     <header className="sticky top-0 z-30 flex h-[64px] w-full items-center justify-between border-b border-[#E2E8F0] bg-white px-4 lg:px-8 shadow-xs">
@@ -63,13 +61,12 @@ export const PharmacistHeader: React.FC<PharmacistHeaderProps> = ({
         </div>
       </div>
 
-      {/* Right: Store Context & Pharmacist Profile Menu */}
+      {/* Right: Clinical Clearance Context & Pharmacist Profile Menu */}
       <div className="flex items-center gap-3">
-        {/* Store Indicator (Teal Accent) */}
+        {/* Central Clinical Clearance Badge */}
         <div className="hidden sm:flex items-center gap-1.5 rounded-full border border-[#99F6E4] bg-[#F0FDFA] px-3.5 py-1.5 text-[12px] font-semibold text-[#047857]">
-          <Store className="h-3.5 w-3.5 text-[#059669]" />
-          <span>Hub:</span>
-          <span className="font-bold text-[#0D5C5A]">{storeName}</span>
+          <ShieldCheck className="h-3.5 w-3.5 text-[#059669]" />
+          <span>Central Clinical Review</span>
         </div>
 
         {/* Profile Menu */}

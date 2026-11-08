@@ -1190,13 +1190,13 @@ async function main() {
       familyMemberId: mayaMember ? mayaMember.id : null,
       status: PrescriptionStatus.APPROVED,
       objectKey: 'prescriptions/seed/rx-maya-ghosh-chronic.jpg',
-      doctorName: 'Dr. A. K. Banerjee',
+      doctorName: 'Dr. A. K. Banerjee (Reg #45892)',
       patientName: 'Maya Ghosh',
       date: '2026-11-02',
       items: [
-        { sku: 'MED-TEL-40-001', name: 'Telmisartan 40 mg', dosage: '1 tab OD (morning)', duration: '30 days' },
-        { sku: 'MED-MET-500-001', name: 'Metformin 500 mg', dosage: '1 tab BD (after meals)', duration: '30 days' },
-        { sku: 'MED-LEV-50-001', name: 'Levothyroxine 50 mcg', dosage: '1 tab OD (empty stomach)', duration: '60 days' },
+        { sku: 'MED-TEL-40-001', name: 'Telmisartan 40 mg', dosage: '1 tab OD (morning)', duration: '30 days', quantity: 30 },
+        { sku: 'MED-MET-500-001', name: 'Metformin 500 mg', dosage: '1 tab BD (after meals)', duration: '30 days', quantity: 60 },
+        { sku: 'MED-LEV-50-001', name: 'Levothyroxine 50 mcg', dosage: '1 tab OD (empty stomach)', duration: '60 days', quantity: 60 },
       ],
     },
     {
@@ -1207,12 +1207,12 @@ async function main() {
       familyMemberId: null,
       status: PrescriptionStatus.UNDER_REVIEW,
       objectKey: 'prescriptions/seed/rx-debasish-amoxicillin-acute.jpg',
-      doctorName: 'Dr. S. Mukherjee',
+      doctorName: 'Dr. S. Mukherjee (Reg #MCI-48201)',
       patientName: 'Debasish Ghosh',
       date: '2026-11-05',
       items: [
-        { sku: 'MED-AMX-500-001', name: 'Amoxicillin 500 mg', dosage: '1 tab TDS x 5 days', duration: '5 days' },
-        { sku: 'MED-PAR-500-002', name: 'Paracetamol 500 mg (Dolo Demo)', dosage: '1 tab SOS (fever/pain)', duration: '5 days' },
+        { sku: 'MED-AMX-500-001', name: 'Amoxicillin 500 mg', dosage: '1 tab TDS x 5 days', duration: '5 days', quantity: 15 },
+        { sku: 'MED-PAR-500-002', name: 'Paracetamol 500 mg (Dolo Demo)', dosage: '1 tab SOS (fever/pain)', duration: '5 days', quantity: 10 },
       ],
     },
     {
@@ -1223,12 +1223,12 @@ async function main() {
       familyMemberId: null,
       status: PrescriptionStatus.UNDER_REVIEW,
       objectKey: 'prescriptions/seed/rx-rina-sen-alprazolam-h1.jpg',
-      doctorName: 'Dr. Debnath Roy',
+      doctorName: 'Dr. Debnath Roy (Reg #WB-32941)',
       patientName: 'Rina Sen',
       date: '2026-11-06',
       items: [
-        { sku: 'MED-ALP-05-001', name: 'Alprazolam 0.5 mg', dosage: '1 tab HS x 7 days', duration: '7 days' },
-        { sku: 'MED-PAR-500-002', name: 'Paracetamol 500 mg (Dolo Demo)', dosage: '1 tab SOS', duration: '5 days' },
+        { sku: 'MED-ALP-05-001', name: 'Alprazolam 0.5 mg', dosage: '1 tab HS x 7 days', duration: '7 days', quantity: 7 },
+        { sku: 'MED-PAR-500-002', name: 'Paracetamol 500 mg (Dolo Demo)', dosage: '1 tab SOS', duration: '5 days', quantity: 10 },
       ],
     },
     {
@@ -1239,12 +1239,12 @@ async function main() {
       familyMemberId: null,
       status: PrescriptionStatus.APPROVED,
       objectKey: 'prescriptions/seed/rx-debasish-omeprazole-gastric.jpg',
-      doctorName: 'Dr. P. Sengupta',
+      doctorName: 'Dr. P. Sengupta (Reg #WB-55102)',
       patientName: 'Debasish Ghosh',
       date: '2026-10-15',
       items: [
-        { sku: 'MED-AMX-500-001', name: 'Omeprazole 20 mg', dosage: '1 cap OD (morning) x 14 days', duration: '14 days' },
-        { sku: 'MED-PAR-500-002', name: 'Domperidone 10 mg', dosage: '1 tab TDS x 5 days', duration: '5 days' },
+        { sku: 'MED-OMP-20-001', name: 'Omeprazole 20 mg', dosage: '1 cap OD (morning) x 14 days', duration: '14 days', quantity: 14 },
+        { sku: 'MED-PAND-001', name: 'Domperidone + Pantoprazole', dosage: '1 tab TDS x 5 days', duration: '5 days', quantity: 15 },
       ],
     },
     {
@@ -1255,12 +1255,12 @@ async function main() {
       familyMemberId: null,
       status: PrescriptionStatus.APPROVED,
       objectKey: 'prescriptions/seed/rx-debasish-atorvastatin-cardio.jpg',
-      doctorName: 'Dr. R. Chakraborty',
+      doctorName: 'Dr. R. Chakraborty (Reg #MCI-22481)',
       patientName: 'Debasish Ghosh',
       date: '2026-09-28',
       items: [
-        { sku: 'MED-TEL-40-001', name: 'Atorvastatin 20 mg', dosage: '1 tab HS x 30 days', duration: '30 days' },
-        { sku: 'MED-MET-500-001', name: 'Aspirin 75 mg', dosage: '1 tab daily after food x 30 days', duration: '30 days' },
+        { sku: 'MED-ATV-20-001', name: 'Atorvastatin 20 mg', dosage: '1 tab HS x 30 days', duration: '30 days', quantity: 30 },
+        { sku: 'MED-TEL-40-001', name: 'Telmisartan 40 mg', dosage: '1 tab OD morning x 30 days', duration: '30 days', quantity: 30 },
       ],
     },
     {
@@ -1271,16 +1271,22 @@ async function main() {
       familyMemberId: null,
       status: PrescriptionStatus.APPROVED,
       objectKey: 'prescriptions/seed/rx-debasish-cetirizine-derm.jpg',
-      doctorName: 'Dr. K. Bose',
+      doctorName: 'Dr. K. Bose (Reg #WB-18932)',
       patientName: 'Debasish Ghosh',
       date: '2026-09-10',
       items: [
-        { sku: 'MED-PAR-500-001', name: 'Cetirizine 10 mg', dosage: '1 tab HS x 10 days', duration: '10 days' },
+        { sku: 'MED-CTZ-10-001', name: 'Cetirizine 10 mg', dosage: '1 tab HS x 10 days', duration: '10 days', quantity: 10 },
       ],
     },
   ];
 
   const seededPrescriptions: Record<string, string> = {};
+
+  // Query all active catalogue medicines for rich matchingResult generation
+  const activeMeds = await prisma.medicine.findMany({
+    where: { status: 'ACTIVE' },
+  });
+  const medMap = new Map(activeMeds.map((m) => [m.sku, m]));
 
   for (const item of prescriptionsToSeed) {
     const filePath = path.join(__dirname, 'seed-data/prescriptions', item.fileName);
@@ -1326,42 +1332,95 @@ async function main() {
 
     seededPrescriptions[item.refKey] = rxRecord.id;
 
-    // Seed structured AI extraction for realistic clinical assistance
-    const existingAi = await prisma.prescriptionAIExtraction.findFirst({
+    // Build structured, catalogue-aware AI matching array matching MedicineMatchingService contract
+    const matchingResults = item.items.map((m, idx) => {
+      const med = medMap.get(m.sku);
+      const comparisonNotes = med
+        ? `AI matched to catalogue: ${med.name} (${med.brandName || med.genericName || ''}) at ₹${Number(med.mrp).toFixed(2)}`
+        : `Catalogue match: ${m.name}`;
+
+      const matchedMedicine = med
+        ? {
+            id: med.id,
+            sku: med.sku,
+            name: med.name,
+            brandName: med.brandName,
+            genericName: med.genericName,
+            strength: med.strength,
+            dosageForm: med.dosageForm,
+            mrp: Number(med.mrp).toFixed(2),
+          }
+        : undefined;
+
+      return {
+        extractedItemIndex: idx,
+        selectedMedicineId: med?.id || seededMedicines[m.sku] || null,
+        matchStatus: 'MATCHED' as const,
+        genericAlternatives: [],
+        comparisonNotes,
+        candidates: med
+          ? [
+              {
+                medicine: {
+                  id: med.id,
+                  sku: med.sku,
+                  name: med.name,
+                  brandName: med.brandName,
+                  genericName: med.genericName,
+                  strength: med.strength,
+                  dosageForm: med.dosageForm,
+                  mrp: Number(med.mrp).toFixed(2),
+                },
+                score: 0.98,
+                matchReasons: ['Exact catalogue SKU match', 'Active verified formulation in catalogue'],
+              },
+            ]
+          : [],
+        matchedMedicine,
+      };
+    });
+
+    // Replace or insert structured AI extraction for realistic clinical assistance
+    await prisma.prescriptionAIExtraction.deleteMany({
       where: { prescriptionId: rxRecord.id },
     });
-    if (!existingAi) {
-      await prisma.prescriptionAIExtraction.create({
-        data: {
-          prescriptionId: rxRecord.id,
-          status: PrescriptionAIStatus.COMPLETED,
-          provider: 'GEMINI_LANGCHAIN',
-          model: 'gemini-1.5-flash',
+
+    await prisma.prescriptionAIExtraction.create({
+      data: {
+        prescriptionId: rxRecord.id,
+        status: PrescriptionAIStatus.COMPLETED,
+        provider: 'GEMINI_LANGCHAIN',
+        model: 'gemini-1.5-flash',
+        documentReadable: true,
+        overallConfidence: new Prisma.Decimal('0.96'),
+        extractionResult: {
+          prescriberName: item.doctorName,
+          patientName: item.patientName,
+          prescriptionDate: item.date,
           documentReadable: true,
-          overallConfidence: new Prisma.Decimal('0.95'),
-          extractionResult: {
-            prescriberName: item.doctorName,
-            patientName: item.patientName,
-            prescriptionDate: item.date,
-            items: item.items.map((m) => ({
+          overallConfidence: 0.96,
+          items: item.items.map((m) => {
+            const med = medMap.get(m.sku);
+            return {
               rawMedicineName: m.name,
-              normalizedMedicineName: m.name,
+              normalizedMedicineName: med?.name || m.name,
+              strength: med?.strength || '',
+              dosageForm: med?.dosageForm || 'Tablet',
               dosageInstructions: m.dosage,
+              frequency: 'As prescribed',
               duration: m.duration,
-              confidence: 0.96,
-            })),
-          },
-          matchingResult: {
-            matchedCount: item.items.length,
-            matches: item.items.map((m) => ({
-              medicineId: seededMedicines[m.sku],
-              sku: m.sku,
-              confidence: 0.98,
-            })),
-          },
+              quantity: m.quantity || 10,
+              confidence: 0.97,
+              sourceText: `${m.name} ${m.dosage}`,
+              warnings: [],
+            };
+          }),
+          unreadableSections: [],
+          generalWarnings: [],
         },
-      });
-    }
+        matchingResult: matchingResults,
+      },
+    });
   }
 
   // 8. Seed Clinical Demo Orders & Pharmacist Verification Queue

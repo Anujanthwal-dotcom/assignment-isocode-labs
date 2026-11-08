@@ -118,11 +118,28 @@ export default function PharmacistPrescriptionVerifyPage() {
       } else if (res.aiExtraction?.extractionResult?.items?.length > 0) {
         // Pre-fill from AI Extraction + Catalogue Matching Results
         const aiItems = res.aiExtraction.extractionResult.items;
-        const matchingResults = res.aiExtraction.matchingResult || [];
+        const matchingList = Array.isArray(res.aiExtraction.matchingResult)
+          ? res.aiExtraction.matchingResult
+          : Array.isArray(res.aiExtraction.matchingResult?.matches)
+            ? res.aiExtraction.matchingResult.matches
+            : [];
 
         const initialItems: QuotationItemState[] = aiItems.map((item: any, idx: number) => {
-          const match = matchingResults.find((m: any) => m.extractedItemIndex === idx);
-          const matchedMed = match?.matchedMedicine;
+          const match = matchingList.find((m: any) =>
+            m.extractedItemIndex === idx || m.sku === item.sku || m.medicineId === item.medicineId,
+          );
+          const matchedMed =
+            match?.matchedMedicine ||
+            (match?.medicineId
+              ? {
+                  id: match.medicineId,
+                  sku: match.sku,
+                  name: item.normalizedMedicineName || item.rawMedicineName,
+                  strength: item.strength || '',
+                  dosageForm: item.dosageForm || 'Tablet',
+                  mrp: match.mrp || 25,
+                }
+              : undefined);
 
           return {
             id: `line-${idx}-${Date.now()}`,
@@ -589,7 +606,7 @@ export default function PharmacistPrescriptionVerifyPage() {
                           onClick={() =>
                             handleUpdateItem(item.id, {
                               isAvailable: !item.isAvailable,
-                              unavailableReason: item.isAvailable ? 'Out of stock at store' : '',
+                              unavailableReason: item.isAvailable ? 'Temporarily unavailable / Out of stock' : '',
                             })
                           }
                           className={`px-2 py-0.5 rounded text-[10px] font-bold border transition-colors ${

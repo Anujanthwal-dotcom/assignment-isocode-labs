@@ -54,9 +54,9 @@ export const SAMPLE_CUSTOMER = {
 
 export const SAMPLE_PHARMACIST = {
   name: 'Dr. Arindam Sen',
-  role: 'Registered Pharmacist (Reg #WB-PH-84920)',
-  storeName: 'Salt Lake',
-  storeCode: 'WB-KOL-014',
+  role: 'Clinical Verification Pharmacist (Reg #WB-PH-84920)',
+  storeName: 'Central Clinical Hub',
+  storeCode: 'WB-KOL-CENTRAL',
   queueSummary: {
     pendingVerification: 14,
     escalatedCompliance: 3,

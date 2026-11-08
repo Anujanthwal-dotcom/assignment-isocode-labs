@@ -1105,11 +1105,29 @@ export class PharmacistVerificationService {
    * Retrieves all prescriptions awaiting pharmacist verification and quotation.
    */
   async getPrescriptionQueue(userId: string) {
-    const store = await this.getPharmacistStore(userId);
+    const profile = await this.prisma.pharmacistProfile.findUnique({
+      where: { userId },
+      include: { store: true },
+    });
+    const store = profile?.store || (await this.prisma.store.findFirst({ where: { status: 'ACTIVE' } }));
+
+    const dummyFiles = [
+      'test-rx.jpg',
+      'doctor-prescription.png',
+      'rx.png',
+      'e2e-refill-test.pdf',
+      'rx-b.jpg',
+      'blurry-rx.jpg',
+      'replacement-rx.jpg',
+      'rx-conc.png',
+      'rx-pay.png',
+      'rx-ho.png',
+    ];
 
     const prescriptions = await this.prisma.prescription.findMany({
       where: {
         status: { in: [PrescriptionStatus.UPLOADED, PrescriptionStatus.UNDER_REVIEW, PrescriptionStatus.APPROVED] },
+        originalFileName: { notIn: dummyFiles },
       },
       orderBy: { uploadedAt: 'desc' },
       include: {
@@ -1132,11 +1150,17 @@ export class PharmacistVerificationService {
     });
 
     return {
-      store: {
-        id: store.id,
-        code: store.code,
-        name: store.name,
-      },
+      store: store
+        ? {
+            id: store.id,
+            code: store.code,
+            name: store.name,
+          }
+        : {
+            id: 'central',
+            code: 'CENTRAL',
+            name: 'Central Platform Queue',
+          },
       data: prescriptions.map((p) => {
         const latestExtraction = p.aiExtractions[0];
         const latestQuote = p.quotes[0];
@@ -1166,7 +1190,12 @@ export class PharmacistVerificationService {
    * Document scan URL, customer info, latest AI extraction with catalogue comparisons, existing quote.
    */
   async getPrescriptionVerificationDetail(prescriptionId: string, userId: string) {
-    await this.getPharmacistStore(userId);
+    const profile = await this.prisma.pharmacistProfile.findUnique({
+      where: { userId },
+    });
+    if (!profile) {
+      throw new ForbiddenException('Pharmacist profile not found for authenticated user.');
+    }
 
     const prescription = await this.prisma.prescription.findUnique({
       where: { id: prescriptionId },
@@ -1283,7 +1312,18 @@ export class PharmacistVerificationService {
     dto: CreatePrescriptionQuoteDto,
     userId: string,
   ) {
-    const store = await this.getPharmacistStore(userId);
+    const profile = await this.prisma.pharmacistProfile.findUnique({
+      where: { userId },
+      include: { store: true },
+    });
+    if (!profile) {
+      throw new ForbiddenException('Pharmacist profile not found for authenticated user.');
+    }
+    const store =
+      profile.store || (await this.prisma.store.findFirst({ where: { status: 'ACTIVE' } }));
+    if (!store) {
+      throw new NotFoundException('No active pharmacy store found.');
+    }
 
     const prescription = await this.prisma.prescription.findUnique({
       where: { id: prescriptionId },
@@ -1402,7 +1442,15 @@ export class PharmacistVerificationService {
     dto: RejectPrescriptionDto,
     userId: string,
   ) {
-    const store = await this.getPharmacistStore(userId);
+    const profile = await this.prisma.pharmacistProfile.findUnique({
+      where: { userId },
+      include: { store: true },
+    });
+    if (!profile) {
+      throw new ForbiddenException('Pharmacist profile not found for authenticated user.');
+    }
+    const store =
+      profile.store || (await this.prisma.store.findFirst({ where: { status: 'ACTIVE' } }));
 
     const prescription = await this.prisma.prescription.findUnique({
       where: { id: prescriptionId },
@@ -1438,7 +1486,15 @@ export class PharmacistVerificationService {
     dto: RequestReuploadDto,
     userId: string,
   ) {
-    const store = await this.getPharmacistStore(userId);
+    const profile = await this.prisma.pharmacistProfile.findUnique({
+      where: { userId },
+      include: { store: true },
+    });
+    if (!profile) {
+      throw new ForbiddenException('Pharmacist profile not found for authenticated user.');
+    }
+    const store =
+      profile.store || (await this.prisma.store.findFirst({ where: { status: 'ACTIVE' } }));
 
     const prescription = await this.prisma.prescription.findUnique({
       where: { id: prescriptionId },

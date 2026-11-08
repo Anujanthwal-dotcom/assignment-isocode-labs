@@ -65,7 +65,9 @@ export const PharmacistWorkspacePreview: React.FC = () => {
             </span>
             <StatusBadge status="success" label="Passed Verification" />
           </div>
-          <span className="text-[11px] text-[#64748B] mt-1 block">Packing at Salt Lake hub</span>
+          <span className="text-[11px] text-[#64748B] mt-1 block">
+            Routed to nearest fulfillment store
+          </span>
         </Card>
       </div>
 
@@ -158,7 +160,7 @@ export const PharmacistWorkspacePreview: React.FC = () => {
                     <span className="text-[#64748B]">
                       Store Stock: {med.availableStock} units available
                     </span>
-                    <span className="font-bold text-[#059669]">In Stock (Salt Lake)</span>
+                    <span className="font-bold text-[#059669]">In Stock (Catalogue)</span>
                   </div>
 
                   {'warning' in med && med.warning && (
