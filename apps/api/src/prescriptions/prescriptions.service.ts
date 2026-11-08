@@ -20,8 +20,12 @@ import {
   OrderItemStatus,
   OrderPaymentMethod,
   OrderPaymentStatus,
+  OrderRoutingMethod,
+  OrderRoutingStatus,
+  StockReservationStatus,
   Prisma,
 } from '@prisma/client';
+import { StoreDistanceService, Coordinates } from '../order-routing/store-distance.service';
 
 @Injectable()
 export class PrescriptionsService {
@@ -30,6 +34,7 @@ export class PrescriptionsService {
     private readonly storageService: StorageService,
     private readonly auditService: AuditService,
     private readonly orderNumberService: OrderNumberService,
+    private readonly storeDistanceService: StoreDistanceService,
   ) {}
 
   async uploadPrescription(
@@ -192,7 +197,15 @@ export class PrescriptionsService {
             orderNumber: true,
             status: true,
             placedAt: true,
+            totalAmount: true,
+            fulfilmentStore: {
+              select: { id: true, code: true, name: true, city: true },
+            },
+            items: {
+              select: { id: true, medicineNameSnapshot: true, quantity: true, lineTotal: true },
+            },
           },
+          orderBy: { placedAt: 'asc' },
         },
       },
     });
@@ -346,6 +359,23 @@ export class PrescriptionsService {
       return null;
     }
 
+    const prescriptionOrders = await this.prisma.order.findMany({
+      where: { prescriptionId },
+      select: {
+        id: true,
+        orderNumber: true,
+        status: true,
+        totalAmount: true,
+        fulfilmentStore: {
+          select: { id: true, code: true, name: true, city: true },
+        },
+        items: {
+          select: { id: true, medicineNameSnapshot: true, quantity: true, lineTotal: true },
+        },
+      },
+      orderBy: { placedAt: 'asc' },
+    });
+
     return {
       id: quote.id,
       prescriptionId: quote.prescriptionId,
@@ -359,6 +389,17 @@ export class PrescriptionsService {
       quotedAt: quote.quotedAt.toISOString(),
       validUntil: quote.validUntil?.toISOString() || null,
       orderId: quote.orderId,
+      orders: prescriptionOrders.map((o) => ({
+        id: o.id,
+        orderNumber: o.orderNumber,
+        status: o.status,
+        totalAmount: Number(o.totalAmount),
+        fulfilmentStore: o.fulfilmentStore,
+        items: o.items.map((it) => ({
+          ...it,
+          lineTotal: Number(it.lineTotal),
+        })),
+      })),
       items: quote.items.map((item) => ({
         id: item.id,
         quoteId: item.quoteId,
@@ -467,82 +508,295 @@ export class PrescriptionsService {
       select: { id: true, sku: true },
     });
 
-    const createdOrder = await this.prisma.$transaction(async (tx) => {
-      const orderNumber = await this.orderNumberService.generateOrderNumber(tx);
+    // Calculate customer coordinates from delivery address
+    let customerCoords: Coordinates | null = null;
+    if (address.latitude && address.longitude) {
+      const lat = Number(address.latitude);
+      const lon = Number(address.longitude);
+      if (this.storeDistanceService.isValidCoordinates({ latitude: lat, longitude: lon })) {
+        customerCoords = { latitude: lat, longitude: lon };
+      }
+    }
 
-      const order = await tx.order.create({
-        data: {
-          orderNumber,
-          customerUserId,
-          familyMemberId: prescription.familyMemberId,
-          prescriptionId: prescription.id,
-          addressId: dto.addressId,
-          fulfilmentStoreId: quote.storeId,
-          status: OrderStatus.APPROVED,
-          paymentMethod: dto.paymentMethod,
-          paymentStatus: initialPaymentStatus,
-          subtotal: quote.subtotal,
-          deliveryFee: quote.deliveryFee,
-          discount: new Prisma.Decimal('0.00'),
-          totalAmount: quote.totalAmount,
-          addressSnapshot,
-          customerNote: dto.customerNote?.trim() || null,
-          items: {
-            create: availableItems.map((item) => ({
-              medicineId: item.medicineId || defaultMed?.id || '00000000-0000-0000-0000-000000000000',
-              medicineNameSnapshot: item.medicineNameSnapshot,
-              skuSnapshot: item.medicine?.sku || defaultMed?.sku || 'SKU-RX-CUSTOM',
-              unitPrice: item.unitPrice,
-              quantity: item.quantity,
-              lineTotal: item.lineTotal,
-              status: OrderItemStatus.APPROVED,
-            })),
-          },
-          payment: {
-            create: {
-              method: dto.paymentMethod,
-              status: initialPaymentStatus,
-              amount: quote.totalAmount,
-              provider: 'MOCK',
-              transactionReference: `TXN-QUOTE-${Date.now()}`,
+    // Retrieve active stores and rank by geographic distance to customer
+    const activeStores = await this.prisma.store.findMany({
+      where: { status: 'ACTIVE' },
+      select: { id: true, code: true, name: true, latitude: true, longitude: true },
+    }).catch(() => []);
+
+    const storesWithDistance = activeStores.map((store) => {
+      let distanceKm: number | null = null;
+      const storeLat = store.latitude ? Number(store.latitude) : null;
+      const storeLon = store.longitude ? Number(store.longitude) : null;
+      if (
+        customerCoords &&
+        storeLat !== null &&
+        storeLon !== null &&
+        this.storeDistanceService.isValidCoordinates({ latitude: storeLat, longitude: storeLon })
+      ) {
+        distanceKm = this.storeDistanceService.calculateDistanceKm(customerCoords, {
+          latitude: storeLat,
+          longitude: storeLon,
+        });
+      }
+      return { ...store, distanceKm };
+    });
+
+    storesWithDistance.sort((a, b) => {
+      if (a.distanceKm !== null && b.distanceKm !== null) {
+        return a.distanceKm - b.distanceKm;
+      }
+      if (a.distanceKm !== null) return -1;
+      if (b.distanceKm !== null) return 1;
+      return a.code.localeCompare(b.code);
+    });
+
+    // Retrieve live inventory balances and active reservations across candidate stores
+    const medIds = availableItems
+      .map((i) => i.medicineId)
+      .filter((id): id is string => Boolean(id));
+    const storeIds = storesWithDistance.map((s) => s.id);
+
+    const [balances, reservations] = await Promise.all([
+      storeIds.length > 0 && medIds.length > 0
+        ? this.prisma.inventoryBalance.findMany({
+            where: {
+              storeId: { in: storeIds },
+              medicineId: { in: medIds },
             },
-          },
-          statusHistory: {
-            create: {
-              previousStatus: null,
-              newStatus: OrderStatus.APPROVED,
-              changedByUserId: customerUserId,
-              note: `Order placed from verified quotation ${quote.id}. Payment: ${dto.paymentMethod}`,
+          }).catch(() => [])
+        : Promise.resolve([]),
+      storeIds.length > 0 && medIds.length > 0
+        ? this.prisma.stockReservation.groupBy({
+            by: ['storeId', 'medicineId'],
+            where: {
+              storeId: { in: storeIds },
+              medicineId: { in: medIds },
+              status: StockReservationStatus.ACTIVE,
             },
-          },
-        },
+            _sum: { quantity: true },
+          }).catch(() => [])
+        : Promise.resolve([]),
+    ]);
+
+    const resMap = new Map<string, number>();
+    for (const r of reservations) {
+      if (r.storeId && r.medicineId) {
+        resMap.set(`${r.storeId}_${r.medicineId}`, r._sum.quantity || 0);
+      }
+    }
+
+    const getStoreItemStock = (storeId: string, medicineId: string | null) => {
+      if (!medicineId) return 999;
+      const b = (balances as any[]).find((x) => x.storeId === storeId && x.medicineId === medicineId);
+      const onHand = b?.quantity || 0;
+      const reserved = resMap.get(`${storeId}_${medicineId}`) || 0;
+      return Math.max(0, onHand - reserved);
+    };
+
+    // Determine store assignments: Priority 1 = single nearest store; Priority 2 = split across nearest stores
+    interface StoreAllocation {
+      store: (typeof storesWithDistance)[0] | { id: string; code: string; name: string; distanceKm: number | null };
+      items: typeof availableItems;
+    }
+
+    const allocations: StoreAllocation[] = [];
+
+    if (storesWithDistance.length === 0) {
+      allocations.push({
+        store: { id: quote.storeId || '00000000-0000-0000-0000-000000000001', code: 'FALLBACK', name: 'Default Store', distanceKm: null },
+        items: availableItems,
+      });
+    } else {
+      // Priority 1: Check if any single store has 100% of all items
+      const singleStore = storesWithDistance.find((st) => {
+        return availableItems.every((item) => {
+          const avail = getStoreItemStock(st.id, item.medicineId);
+          return avail >= item.quantity;
+        });
       });
 
-      // Update quote to ACCEPTED and link orderId
+      if (singleStore) {
+        allocations.push({
+          store: singleStore,
+          items: availableItems,
+        });
+      } else {
+        // Priority 2: Greedy split across nearest stores holding stock
+        let remaining = [...availableItems];
+
+        for (const st of storesWithDistance) {
+          if (remaining.length === 0) break;
+          const fulfillableHere: typeof availableItems = [];
+          const stillRemaining: typeof availableItems = [];
+
+          for (const it of remaining) {
+            const avail = getStoreItemStock(st.id, it.medicineId);
+            if (avail >= it.quantity) {
+              fulfillableHere.push(it);
+            } else {
+              stillRemaining.push(it);
+            }
+          }
+
+          if (fulfillableHere.length > 0) {
+            allocations.push({
+              store: st,
+              items: fulfillableHere,
+            });
+            remaining = stillRemaining;
+          }
+        }
+
+        // Assign any remaining unallocated items to nearest store
+        if (remaining.length > 0) {
+          const targetStore = allocations[0]?.store || storesWithDistance[0];
+          const existingAlloc = allocations.find((a) => a.store.id === targetStore.id);
+          if (existingAlloc) {
+            existingAlloc.items.push(...remaining);
+          } else {
+            allocations.push({
+              store: targetStore,
+              items: remaining,
+            });
+          }
+        }
+      }
+    }
+
+    const bundleTxnRef = `TXN-BUNDLE-${Date.now()}`;
+    const isSplit = allocations.length > 1;
+
+    const createdOrders = await this.prisma.$transaction(async (tx) => {
+      const orders: any[] = [];
+
+      for (let idx = 0; idx < allocations.length; idx++) {
+        const alloc = allocations[idx];
+        const orderNumber = await this.orderNumberService.generateOrderNumber(tx);
+
+        const subtotal = alloc.items.reduce(
+          (acc, item) => acc.add(new Prisma.Decimal(item.lineTotal.toString())),
+          new Prisma.Decimal('0.00'),
+        );
+
+        // Bundle payment: Only the first order absorbs the delivery fee, split subsequent orders have deliveryFee = 0.00
+        const deliveryFee = idx === 0 ? quote.deliveryFee : new Prisma.Decimal('0.00');
+        const totalAmount = subtotal.add(deliveryFee);
+
+        const order = await tx.order.create({
+          data: {
+            orderNumber,
+            customerUserId,
+            familyMemberId: prescription.familyMemberId,
+            prescriptionId: prescription.id,
+            addressId: dto.addressId,
+            fulfilmentStoreId: alloc.store.id,
+            status: OrderStatus.APPROVED,
+            paymentMethod: dto.paymentMethod,
+            paymentStatus: initialPaymentStatus,
+            subtotal,
+            deliveryFee,
+            discount: new Prisma.Decimal('0.00'),
+            totalAmount,
+            addressSnapshot,
+            customerNote: dto.customerNote?.trim() || null,
+            items: {
+              create: alloc.items.map((item) => ({
+                medicineId: item.medicineId || defaultMed?.id || '00000000-0000-0000-0000-000000000000',
+                medicineNameSnapshot: item.medicineNameSnapshot,
+                skuSnapshot: item.medicine?.sku || defaultMed?.sku || 'SKU-RX-CUSTOM',
+                unitPrice: item.unitPrice,
+                quantity: item.quantity,
+                lineTotal: item.lineTotal,
+                status: OrderItemStatus.APPROVED,
+              })),
+            },
+            payment: {
+              create: {
+                method: dto.paymentMethod,
+                status: initialPaymentStatus,
+                amount: totalAmount,
+                provider: 'MOCK',
+                transactionReference: isSplit ? `${bundleTxnRef}-S${idx + 1}` : bundleTxnRef,
+              },
+            },
+            statusHistory: {
+              create: {
+                previousStatus: null,
+                newStatus: OrderStatus.APPROVED,
+                changedByUserId: customerUserId,
+                note: isSplit
+                  ? `Split order ${idx + 1} of ${allocations.length} auto-assigned to ${alloc.store.name} (${alloc.store.code}). Bundle Ref: ${bundleTxnRef}`
+                  : `Order placed from verified quotation. Auto-assigned to nearest store ${alloc.store.name} (${alloc.store.code}).`,
+              },
+            },
+            routingDecisions: {
+              create: {
+                storeId: alloc.store.id,
+                routingMethod: OrderRoutingMethod.AUTOMATIC,
+                status: OrderRoutingStatus.SUCCESS,
+                distanceKm: alloc.store.distanceKm !== null ? new Prisma.Decimal(alloc.store.distanceKm.toFixed(2)) : null,
+                candidateStoreIds: storesWithDistance.map((s) => s.id),
+              },
+            },
+          },
+          include: {
+            items: true,
+            fulfilmentStore: true,
+          },
+        });
+
+        // Create stock reservations for this order's items
+        if (Array.isArray(order.items)) {
+          for (const orderItem of order.items) {
+            await tx.stockReservation.create({
+              data: {
+                orderId: order.id,
+                orderItemId: orderItem.id,
+                storeId: alloc.store.id,
+                medicineId: orderItem.medicineId,
+                quantity: orderItem.quantity,
+                expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000),
+                status: StockReservationStatus.ACTIVE,
+              },
+            }).catch(() => null);
+          }
+        }
+
+        orders.push(order);
+      }
+
+      // Update quote to ACCEPTED and link orderId to primary order
       await tx.prescriptionQuote.update({
         where: { id: quote.id },
         data: {
           status: 'ACCEPTED',
-          orderId: order.id,
+          orderId: orders[0].id,
         },
       });
 
-      return order;
+      return orders;
     });
 
     await this.auditService.record({
       actorUserId: customerUserId,
       action: 'ORDER_PLACED_FROM_PRESCRIPTION_QUOTE',
       resourceType: 'Order',
-      resourceId: createdOrder.id,
+      resourceId: createdOrders[0].id,
       metadata: {
         prescriptionId,
         quoteId: quote.id,
-        orderNumber: createdOrder.orderNumber,
-        totalAmount: Number(createdOrder.totalAmount),
+        orderCount: createdOrders.length,
+        orderNumbers: createdOrders.map((o) => o.orderNumber),
+        totalAmount: Number(quote.totalAmount),
+        isSplit,
       },
     });
 
-    return createdOrder;
+    return {
+      ...createdOrders[0],
+      splitOrders: createdOrders,
+      isSplit,
+    };
   }
 }

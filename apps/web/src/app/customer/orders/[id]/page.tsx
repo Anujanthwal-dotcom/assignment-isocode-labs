@@ -339,6 +339,48 @@ export default function CustomerOrderDetailPage() {
         </div>
       )}
 
+      {/* Multi-Store Split Prescription Fulfilment Notice */}
+      {(order as any).siblingOrders && (order as any).siblingOrders.length > 0 && (
+        <Card className="p-4 border-[#0D5C5A]/30 bg-[#F0FDFA] shadow-xs space-y-3">
+          <div className="flex items-center gap-2">
+            <span className="font-bold text-xs uppercase px-2 py-0.5 rounded bg-[#0D5C5A] text-white">
+              Bundle Fulfilment
+            </span>
+            <span className="font-bold text-xs text-[#0F172A]">
+              Multi-Store Prescription Dispatch ({(order as any).siblingOrders.length + 1} Total Shipments)
+            </span>
+          </div>
+          <p className="text-xs text-slate-600">
+            To ensure complete medicine availability without delay, your prescription was automatically split across our nearest pharmacy stores under a single bundle payment.
+          </p>
+          <div className="flex flex-wrap gap-2 pt-1">
+            <span className="text-xs font-semibold text-[#0D5C5A] bg-white border border-[#0D5C5A]/40 px-3 py-1.5 rounded-lg flex items-center gap-1.5">
+              <span>Current: #{order.orderNumber}</span>
+              {(order as any).fulfilmentStore && (
+                <span className="text-[11px] text-slate-500 font-normal">
+                  ({(order as any).fulfilmentStore.name})
+                </span>
+              )}
+            </span>
+            {(order as any).siblingOrders.map((sib: any) => (
+              <button
+                key={sib.id}
+                onClick={() => router.push(`/customer/orders/${sib.id}`)}
+                className="text-xs font-semibold text-slate-700 bg-white border border-slate-200 hover:border-[#0D5C5A] px-3 py-1.5 rounded-lg hover:text-[#0D5C5A] flex items-center gap-1.5 cursor-pointer transition-colors"
+              >
+                <span>Shipment: #{sib.orderNumber}</span>
+                {sib.fulfilmentStore && (
+                  <span className="text-[11px] text-slate-400 font-normal">
+                    ({sib.fulfilmentStore.name})
+                  </span>
+                )}
+                <span className="text-[#0D5C5A] font-bold">&rarr;</span>
+              </button>
+            ))}
+          </div>
+        </Card>
+      )}
+
       {/* Re-upload Requested Banner */}
       {isReuploadRequested && (
         <div className="rounded-xl border border-amber-300 bg-amber-50 p-5 text-xs text-amber-900 shadow-xs">

@@ -20,6 +20,8 @@ import {
   CreditCard,
   Banknote,
   MapPin,
+  Store,
+  Package,
 } from 'lucide-react';
 
 interface PrescriptionQuoteItem {
@@ -51,6 +53,14 @@ interface PrescriptionQuote {
   quotedAt: string;
   validUntil?: string | null;
   orderId?: string | null;
+  orders?: Array<{
+    id: string;
+    orderNumber: string;
+    status: string;
+    totalAmount: number;
+    fulfilmentStore?: { id: string; code: string; name: string; city: string } | null;
+    items: Array<{ id: string; medicineNameSnapshot: string; quantity: number; lineTotal: number }>;
+  }>;
   items: PrescriptionQuoteItem[];
 }
 
@@ -642,17 +652,70 @@ export default function PrescriptionDetailPage() {
                 <CheckCircle2 className="w-6 h-6 text-emerald-600 shrink-0" />
                 <div>
                   <h3 className="font-bold text-sm text-emerald-950">
-                    Prescription Quotation Accepted &amp; Order Placed!
+                    Prescription Quotation Accepted &amp; Order Confirmed!
                   </h3>
                   <p className="text-xs text-emerald-800 mt-0.5">
-                    {createdOrder
-                      ? `Your order #${createdOrder.orderNumber} has been successfully created.`
-                      : 'Your prescription has been verified and your order is now in fulfilment.'}
+                    Your prescription bundle payment is complete. The system has automatically assigned fulfillment to our nearest pharmacies based on live stock.
                   </p>
                 </div>
               </div>
 
-              {(quote.orderId || createdOrder?.id) && (
+              {/* Display child shipments (supports single and multi-store split orders) */}
+              {quote.orders && quote.orders.length > 0 ? (
+                <div className="space-y-3 pt-2">
+                  <div className="text-xs font-semibold text-slate-700 flex items-center gap-2">
+                    <Package className="w-4 h-4 text-[#0D5C5A]" />
+                    <span>
+                      {quote.orders.length > 1
+                        ? `Multi-Store Split Fulfilment (${quote.orders.length} Shipments):`
+                        : 'Fulfilment Dispatch:'}
+                    </span>
+                  </div>
+
+                  <div className="grid gap-2 sm:grid-cols-2">
+                    {quote.orders.map((ord, idx) => (
+                      <div
+                        key={ord.id}
+                        className="p-3.5 bg-white border border-emerald-200 rounded-xl space-y-2 shadow-2xs"
+                      >
+                        <div className="flex items-center justify-between">
+                          <span className="font-bold text-xs text-[#0F172A]">
+                            Shipment #{idx + 1}: {ord.orderNumber}
+                          </span>
+                          <span className="text-[10px] uppercase font-bold px-2 py-0.5 bg-emerald-100 text-emerald-800 rounded-full">
+                            {ord.status}
+                          </span>
+                        </div>
+
+                        {ord.fulfilmentStore && (
+                          <div className="flex items-center gap-1.5 text-[11px] text-slate-600">
+                            <Store className="w-3.5 h-3.5 text-[#0D5C5A] shrink-0" />
+                            <span>
+                              {ord.fulfilmentStore.name} ({ord.fulfilmentStore.code})
+                            </span>
+                          </div>
+                        )}
+
+                        <div className="text-[11px] text-slate-500">
+                          {ord.items.length} item(s) &bull; ₹{ord.totalAmount.toFixed(2)}
+                        </div>
+
+                        <div className="pt-1">
+                          <Link href={`/customer/orders/${ord.id}`}>
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              className="w-full text-xs h-7 border-[#0D5C5A]/40 text-[#0D5C5A] hover:bg-[#F0FDFA]"
+                            >
+                              Track Shipment &rarr;
+                            </Button>
+                          </Link>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ) : (quote.orderId || createdOrder?.id) ? (
                 <div className="pt-2">
                   <Link href={`/customer/orders/${quote.orderId || createdOrder?.id}`}>
                     <Button className="bg-[#0D5C5A] hover:bg-[#093e3d] text-white text-xs h-9">
@@ -660,7 +723,7 @@ export default function PrescriptionDetailPage() {
                     </Button>
                   </Link>
                 </div>
-              )}
+              ) : null}
             </Card>
           )}
 

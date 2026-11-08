@@ -341,6 +341,9 @@ export class OrdersService {
         familyMember: {
           select: { id: true, fullName: true, relationship: true },
         },
+        fulfilmentStore: {
+          select: { id: true, code: true, name: true, city: true },
+        },
         prescription: {
           select: {
             id: true,
@@ -360,12 +363,45 @@ export class OrdersService {
       });
     }
 
+    // Retrieve any sibling orders attached to the same prescription (multi-store split fulfilment)
+    let siblingOrders: any[] = [];
+    if (order.prescriptionId) {
+      siblingOrders = await this.prisma.order.findMany({
+        where: {
+          customerUserId,
+          prescriptionId: order.prescriptionId,
+          id: { not: order.id },
+        },
+        select: {
+          id: true,
+          orderNumber: true,
+          status: true,
+          totalAmount: true,
+          fulfilmentStore: {
+            select: { id: true, code: true, name: true, city: true },
+          },
+          items: {
+            select: { id: true, medicineNameSnapshot: true, quantity: true, lineTotal: true },
+          },
+        },
+        orderBy: { placedAt: 'asc' },
+      });
+    }
+
     return {
       ...order,
       subtotal: Number(order.subtotal),
       deliveryFee: Number(order.deliveryFee),
       discount: Number(order.discount),
       totalAmount: Number(order.totalAmount),
+      siblingOrders: siblingOrders.map((so) => ({
+        ...so,
+        totalAmount: Number(so.totalAmount),
+        items: so.items.map((it: any) => ({
+          ...it,
+          lineTotal: Number(it.lineTotal),
+        })),
+      })),
       items: order.items.map((it) => ({
         ...it,
         unitPrice: Number(it.unitPrice),

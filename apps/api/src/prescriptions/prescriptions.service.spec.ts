@@ -1,5 +1,6 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { PrescriptionsService } from './prescriptions.service';
+import { StoreDistanceService } from '../order-routing/store-distance.service';
 import { OrderStatus, OrderPaymentMethod, OrderPaymentStatus, Prisma } from '@prisma/client';
 
 describe('PrescriptionsService', () => {
@@ -29,6 +30,18 @@ describe('PrescriptionsService', () => {
       },
       order: {
         create: vi.fn(),
+        findMany: vi.fn().mockResolvedValue([]),
+      },
+      store: {
+        findMany: vi.fn().mockResolvedValue([]),
+        findFirst: vi.fn().mockResolvedValue(null),
+      },
+      inventoryBalance: {
+        findMany: vi.fn().mockResolvedValue([]),
+      },
+      stockReservation: {
+        groupBy: vi.fn().mockResolvedValue([]),
+        create: vi.fn().mockResolvedValue({}),
       },
       $transaction: vi.fn().mockImplementation(async (callback) => {
         return callback(mockPrisma);
@@ -55,6 +68,7 @@ describe('PrescriptionsService', () => {
       mockStorage,
       mockAudit,
       mockOrderNumberService,
+      new StoreDistanceService(),
     );
   });
 
@@ -206,5 +220,127 @@ describe('PrescriptionsService', () => {
         orderId: 'order-created-1',
       },
     });
+  });
+
+  it('3. acceptQuoteAndPay splits orders across multiple stores when stock is divided, linking both to prescription', async () => {
+    mockPrisma.prescription.findFirst.mockResolvedValue({
+      id: 'rx-split-1',
+      customerUserId: 'user-1',
+      familyMemberId: null,
+    });
+
+    mockPrisma.prescriptionQuote.findFirst.mockResolvedValue({
+      id: 'quote-split-1',
+      prescriptionId: 'rx-split-1',
+      pharmacistId: 'pharm-1',
+      status: 'QUOTED',
+      subtotal: new Prisma.Decimal('500.00'),
+      deliveryFee: new Prisma.Decimal('40.00'),
+      totalAmount: new Prisma.Decimal('540.00'),
+      items: [
+        {
+          id: 'item-1',
+          medicineId: 'med-store-1-only',
+          medicineNameSnapshot: 'Medicine A',
+          unitPrice: new Prisma.Decimal('200.00'),
+          quantity: 1,
+          lineTotal: new Prisma.Decimal('200.00'),
+          isAvailable: true,
+          medicine: { sku: 'SKU-MED-A' },
+        },
+        {
+          id: 'item-2',
+          medicineId: 'med-store-2-only',
+          medicineNameSnapshot: 'Medicine B',
+          unitPrice: new Prisma.Decimal('300.00'),
+          quantity: 1,
+          lineTotal: new Prisma.Decimal('300.00'),
+          isAvailable: true,
+          medicine: { sku: 'SKU-MED-B' },
+        },
+      ],
+    });
+
+    mockPrisma.customerAddress.findFirst.mockResolvedValue({
+      id: 'addr-1',
+      label: 'Home',
+      recipientName: 'Debasish Ghosh',
+      phone: '9830098300',
+      addressLine1: 'Salt Lake Sector 1',
+      latitude: 22.5867,
+      longitude: 88.4178,
+      city: 'Kolkata',
+      state: 'West Bengal',
+      postalCode: '700064',
+    });
+
+    // 2 active stores
+    mockPrisma.store.findMany.mockResolvedValue([
+      { id: 'store-1', code: 'KOL-001', name: 'Salt Lake Store', latitude: 22.585, longitude: 88.415 },
+      { id: 'store-2', code: 'HOW-001', name: 'Howrah Store', latitude: 22.595, longitude: 88.35 },
+    ]);
+
+    // Store 1 has Medicine A only, Store 2 has Medicine B only
+    mockPrisma.inventoryBalance.findMany.mockResolvedValue([
+      { storeId: 'store-1', medicineId: 'med-store-1-only', quantity: 10 },
+      { storeId: 'store-1', medicineId: 'med-store-2-only', quantity: 0 },
+      { storeId: 'store-2', medicineId: 'med-store-1-only', quantity: 0 },
+      { storeId: 'store-2', medicineId: 'med-store-2-only', quantity: 10 },
+    ]);
+
+    mockPrisma.stockReservation.groupBy.mockResolvedValue([]);
+
+    let orderCount = 0;
+    mockPrisma.order.create.mockImplementation(async ({ data }: any) => {
+      orderCount++;
+      return {
+        id: `order-split-${orderCount}`,
+        orderNumber: `ORD-SPLIT-0${orderCount}`,
+        status: data.status,
+        fulfilmentStoreId: data.fulfilmentStoreId,
+        totalAmount: data.totalAmount,
+        subtotal: data.subtotal,
+        deliveryFee: data.deliveryFee,
+        items: data.items.create,
+      };
+    });
+
+    const result = await service.acceptQuoteAndPay('user-1', 'rx-split-1', {
+      quoteId: 'quote-split-1',
+      addressId: 'addr-1',
+      paymentMethod: OrderPaymentMethod.UPI,
+    });
+
+    // Expect split flag and 2 orders created
+    expect(result.isSplit).toBe(true);
+    expect(result.splitOrders.length).toBe(2);
+    expect(mockPrisma.order.create).toHaveBeenCalledTimes(2);
+
+    // Both orders must have prescriptionId = rx-split-1
+    expect(mockPrisma.order.create).toHaveBeenNthCalledWith(
+      1,
+      expect.objectContaining({
+        data: expect.objectContaining({
+          prescriptionId: 'rx-split-1',
+          fulfilmentStoreId: 'store-1',
+        }),
+      }),
+    );
+    expect(mockPrisma.order.create).toHaveBeenNthCalledWith(
+      2,
+      expect.objectContaining({
+        data: expect.objectContaining({
+          prescriptionId: 'rx-split-1',
+          fulfilmentStoreId: 'store-2',
+        }),
+      }),
+    );
+
+    // Sum of subtotal + deliveryFee matches the quote total
+    const totalCharged = result.splitOrders.reduce(
+      (sum: number, o: any) => sum + Number(o.totalAmount),
+      0,
+    );
+    expect(totalCharged).toBe(540);
   });
 });
