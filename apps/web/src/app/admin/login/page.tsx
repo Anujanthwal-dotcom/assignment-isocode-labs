@@ -8,13 +8,13 @@ export default function AdminLoginPage() {
   return (
     <AuthSplitLayout
       title="Operations &amp; Compliance Portal"
-      subtitle="Sign in with administrator or compliance officer credentials"
+      subtitle="Sign in with administrator credentials"
       backHref="/"
       backLabel="Back to Portals"
     >
       <StaffLoginForm
         portalTitle="Admin Portal"
-        expectedRoles={['ADMIN', 'COMPLIANCE_ADMIN']}
+        expectedRoles={['ADMIN']}
         redirectPath="/admin"
       />
     </AuthSplitLayout>

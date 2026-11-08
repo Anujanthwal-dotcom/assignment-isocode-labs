@@ -163,10 +163,7 @@ export default function PharmacistReviewQueuePage() {
           </p>
         </div>
 
-        <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-teal-50 border border-teal-200 text-xs font-medium text-teal-800">
-          <ShieldCheck className="w-3.5 h-3.5 text-teal-600" />
-          <span>Central Clinical Verification Queue &bull; Platform-Wide</span>
-        </div>
+
       </div>
 
       {/* Main Queue Mode Switcher */}

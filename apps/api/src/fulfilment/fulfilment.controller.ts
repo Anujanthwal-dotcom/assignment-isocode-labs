@@ -80,17 +80,19 @@ export class FulfilmentController {
   ) {}
 
   private async getPharmacistStoreId(userId: string): Promise<string> {
-    const profile = await this.prisma.pharmacistProfile.findUnique({
-      where: { userId },
+    const user = await this.prisma.user.findUnique({
+      where: { id: userId },
+      include: { pharmacistProfile: true, staffProfile: true },
     });
-    if (!profile || !profile.storeId) {
-      throw new ForbiddenException('Pharmacist user is not assigned to any physical store.');
+    const storeId = user?.pharmacistProfile?.storeId || user?.staffProfile?.storeId;
+    if (!storeId) {
+      throw new ForbiddenException('User is not assigned to any physical store.');
     }
-    return profile.storeId;
+    return storeId;
   }
 
   @Get()
-  @Roles(UserRole.PHARMACIST)
+  @Roles(UserRole.PHARMACIST, UserRole.STORE_STAFF)
   @ApiOperation({ summary: 'Store-scoped fulfilment orders queue' })
   async getQueue(
     @CurrentUser('id') userId: string,
@@ -109,7 +111,7 @@ export class FulfilmentController {
   }
 
   @Get(':orderId')
-  @Roles(UserRole.PHARMACIST)
+  @Roles(UserRole.PHARMACIST, UserRole.STORE_STAFF)
   @ApiOperation({ summary: 'Store fulfilment order detail' })
   async getOrderDetail(@Param('orderId') orderId: string, @CurrentUser('id') userId: string) {
     const storeId = await this.getPharmacistStoreId(userId);
@@ -117,7 +119,7 @@ export class FulfilmentController {
   }
 
   @Post(':orderId/picking/start')
-  @Roles(UserRole.PHARMACIST)
+  @Roles(UserRole.PHARMACIST, UserRole.STORE_STAFF)
   @ApiOperation({ summary: 'Start picking workflow for order' })
   async startPicking(@Param('orderId') orderId: string, @CurrentUser('id') userId: string) {
     const storeId = await this.getPharmacistStoreId(userId);
@@ -125,7 +127,7 @@ export class FulfilmentController {
   }
 
   @Get(':orderId/picking')
-  @Roles(UserRole.PHARMACIST)
+  @Roles(UserRole.PHARMACIST, UserRole.STORE_STAFF)
   @ApiOperation({ summary: 'Get order picking checklist' })
   async getPickingChecklist(@Param('orderId') orderId: string, @CurrentUser('id') userId: string) {
     const storeId = await this.getPharmacistStoreId(userId);
@@ -133,7 +135,7 @@ export class FulfilmentController {
   }
 
   @Post(':orderId/picking/items/:orderItemId/confirm')
-  @Roles(UserRole.PHARMACIST)
+  @Roles(UserRole.PHARMACIST, UserRole.STORE_STAFF)
   @ApiOperation({ summary: 'Confirm individual item picked' })
   async confirmItemPick(
     @Param('orderId') orderId: string,
@@ -152,7 +154,7 @@ export class FulfilmentController {
   }
 
   @Post(':orderId/picking/items/:orderItemId/exception')
-  @Roles(UserRole.PHARMACIST)
+  @Roles(UserRole.PHARMACIST, UserRole.STORE_STAFF)
   @ApiOperation({ summary: 'Report exception on individual item during picking' })
   async reportItemException(
     @Param('orderId') orderId: string,
@@ -171,7 +173,7 @@ export class FulfilmentController {
   }
 
   @Post(':orderId/packing/complete')
-  @Roles(UserRole.PHARMACIST)
+  @Roles(UserRole.PHARMACIST, UserRole.STORE_STAFF)
   @ApiOperation({ summary: 'Complete packing checklist and generate invoice' })
   async completePacking(
     @Param('orderId') orderId: string,
@@ -183,7 +185,7 @@ export class FulfilmentController {
   }
 
   @Get(':orderId/invoice')
-  @Roles(UserRole.PHARMACIST)
+  @Roles(UserRole.PHARMACIST, UserRole.STORE_STAFF)
   @ApiOperation({ summary: 'Get store invoice for order' })
   async getInvoice(@Param('orderId') orderId: string, @CurrentUser('id') userId: string) {
     await this.getPharmacistStoreId(userId);
@@ -191,7 +193,7 @@ export class FulfilmentController {
   }
 
   @Post(':orderId/handover')
-  @Roles(UserRole.PHARMACIST)
+  @Roles(UserRole.PHARMACIST, UserRole.STORE_STAFF)
   @ApiOperation({ summary: 'Record order handover to delivery partner or customer' })
   async recordHandover(
     @Param('orderId') orderId: string,
@@ -213,7 +215,7 @@ export class FulfilmentController {
   }
 
   @Post(':orderId/cod-collection')
-  @Roles(UserRole.PHARMACIST)
+  @Roles(UserRole.PHARMACIST, UserRole.STORE_STAFF)
   @ApiOperation({ summary: 'Record COD payment collection at handover' })
   async recordCodCollection(
     @Param('orderId') orderId: string,

@@ -142,17 +142,15 @@ export default function DailyCsvInjectionPage() {
 
   const handleDownloadTemplate = async () => {
     try {
-      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api/v1';
-      const token = localStorage.getItem('access_token');
+      const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
+      const apiUrl = baseUrl.endsWith('/api/v1') ? baseUrl : `${baseUrl}/api/v1`;
 
       const url = `${apiUrl}/inventory/imports/template/catalogue-csv${
         storeId ? `?storeId=${storeId}` : ''
       }`;
 
       const res = await fetch(url, {
-        headers: {
-          ...(token ? { Authorization: `Bearer ${token}` } : {}),
-        },
+        credentials: 'include',
       });
 
       if (!res.ok) {

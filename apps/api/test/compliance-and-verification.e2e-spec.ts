@@ -19,7 +19,6 @@ describe('Compliance Engine & Pharmacist Verification E2E Tests', () => {
   let customerCookie: string;
   let pharmacistCookie: string;
   let adminCookie: string;
-  let complianceAdminCookie: string;
 
   let testOrderId: string;
   let testPrescriptionId: string;
@@ -45,19 +44,13 @@ describe('Compliance Engine & Pharmacist Verification E2E Tests', () => {
 
     prisma = app.get<PrismaService>(PrismaService);
 
-    // 1. Authenticate COMPLIANCE_ADMIN
-    const compRes = await request(app.getHttpServer())
-      .post('/api/v1/auth/staff/login')
-      .send({ email: 'compliance@example.com', password: 'DemoPassword123!' });
-    complianceAdminCookie = compRes.headers['set-cookie'] ? compRes.headers['set-cookie'][0] : '';
-
-    // 2. Authenticate ADMIN
+    // 1. Authenticate ADMIN
     const adminRes = await request(app.getHttpServer())
       .post('/api/v1/auth/staff/login')
       .send({ email: 'admin@example.com', password: 'DemoPassword123!' });
     adminCookie = adminRes.headers['set-cookie'] ? adminRes.headers['set-cookie'][0] : '';
 
-    // 3. Authenticate PHARMACIST (assigned to KOL-001)
+    // 2. Authenticate PHARMACIST (assigned to KOL-001)
     const pharmRes = await request(app.getHttpServer())
       .post('/api/v1/auth/staff/login')
       .send({ email: 'pharmacist@example.com', password: 'DemoPassword123!' });
@@ -134,24 +127,24 @@ describe('Compliance Engine & Pharmacist Verification E2E Tests', () => {
     await app.close();
   });
 
-  it('1. Only COMPLIANCE_ADMIN can create compliance rule sets; ADMIN is forbidden', async () => {
+  it('1. ADMIN can create compliance rule sets; PHARMACIST is forbidden', async () => {
     const draftVersion = `2.0.${Math.floor(Date.now() / 1000)}`;
 
-    // Normal ADMIN attempts to create rule set -> 403 Forbidden
+    // PHARMACIST attempts to create rule set -> 403 Forbidden
+    const pharmAttempt = await request(app.getHttpServer())
+      .post('/api/v1/compliance/rule-sets')
+      .set('Cookie', pharmacistCookie)
+      .send({ version: draftVersion, name: 'Unauthorized Policy' });
+    expect(pharmAttempt.status).toBe(403);
+
+    // ADMIN creates draft rule set -> 201 Created
     const adminAttempt = await request(app.getHttpServer())
       .post('/api/v1/compliance/rule-sets')
       .set('Cookie', adminCookie)
-      .send({ version: draftVersion, name: 'Unauthorized Policy' });
-    expect(adminAttempt.status).toBe(403);
-
-    // COMPLIANCE_ADMIN creates draft rule set -> 201 Created
-    const compAttempt = await request(app.getHttpServer())
-      .post('/api/v1/compliance/rule-sets')
-      .set('Cookie', complianceAdminCookie)
       .send({ version: draftVersion, name: 'Compliant Draft Policy' });
-    expect(compAttempt.status).toBe(201);
-    expect(compAttempt.body.version).toBe(draftVersion);
-    expect(compAttempt.body.status).toBe('DRAFT');
+    expect(adminAttempt.status).toBe(201);
+    expect(adminAttempt.body.version).toBe(draftVersion);
+    expect(adminAttempt.body.status).toBe('DRAFT');
   });
 
   it('2. Active rule sets cannot be modified in place', async () => {
@@ -165,7 +158,7 @@ describe('Compliance Engine & Pharmacist Verification E2E Tests', () => {
 
     const patchRes = await request(app.getHttpServer())
       .patch(`/api/v1/compliance/rule-sets/${active!.id}/rules/${rule.id}`)
-      .set('Cookie', complianceAdminCookie)
+      .set('Cookie', adminCookie)
       .send({ hardBlocked: true });
 
     expect(patchRes.status).toBe(409); // ConflictException

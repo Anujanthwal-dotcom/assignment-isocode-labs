@@ -62,8 +62,6 @@ export default function ComplianceRuleSetsPage() {
     }
   };
 
-  const isComplianceAdmin = user?.role === 'COMPLIANCE_ADMIN';
-
   const getStatusBadge = (status: string) => {
     switch (status) {
       case 'ACTIVE':
@@ -110,18 +108,12 @@ export default function ComplianceRuleSetsPage() {
           </p>
         </div>
 
-        {isComplianceAdmin ? (
-          <button
-            onClick={() => setCreateModalOpen(true)}
-            className="inline-flex items-center gap-1.5 px-4 py-2 text-xs font-semibold rounded-lg bg-[#0D5C5A] text-white hover:bg-[#0A4846] transition-colors shadow-2xs"
-          >
-            <span>+ Create New Version</span>
-          </button>
-        ) : (
-          <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium bg-slate-100 text-[#78879A]">
-            [Read-Only Admin]
-          </span>
-        )}
+        <button
+          onClick={() => setCreateModalOpen(true)}
+          className="inline-flex items-center gap-1.5 px-4 py-2 text-xs font-semibold rounded-lg bg-[#0D5C5A] text-white hover:bg-[#0A4846] transition-colors shadow-2xs"
+        >
+          <span>+ Create New Version</span>
+        </button>
       </div>
 
       {error && (

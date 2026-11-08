@@ -289,17 +289,17 @@ async function main() {
     },
   });
 
-  // Compliance Admin: Demo Compliance Admin (compliance@example.com)
+  // Additional Admin: (compliance@example.com)
   const complianceAdminUser = await prisma.user.upsert({
     where: { email: 'compliance@example.com' },
     update: {
-      role: UserRole.COMPLIANCE_ADMIN,
+      role: UserRole.ADMIN,
       status: UserStatus.ACTIVE,
       passwordHash: passwordHash,
     },
     create: {
       email: 'compliance@example.com',
-      role: UserRole.COMPLIANCE_ADMIN,
+      role: UserRole.ADMIN,
       status: UserStatus.ACTIVE,
       passwordHash: passwordHash,
     },
@@ -1288,7 +1288,7 @@ async function main() {
       originalFileName: 'Dr-Sengupta-Rx-Debasish-Gastro.jpg',
       customerUserId: customerUser.id,
       familyMemberId: null,
-      status: PrescriptionStatus.APPROVED,
+      status: PrescriptionStatus.UNDER_REVIEW,
       objectKey: 'prescriptions/seed/rx-debasish-omeprazole-gastric.jpg',
       doctorName: 'Dr. P. Sengupta (Reg #WB-55102)',
       patientName: 'Debasish Ghosh',
@@ -1304,7 +1304,7 @@ async function main() {
       originalFileName: 'Dr-Chakraborty-Rx-Debasish-Cardio.jpg',
       customerUserId: customerUser.id,
       familyMemberId: null,
-      status: PrescriptionStatus.APPROVED,
+      status: PrescriptionStatus.UNDER_REVIEW,
       objectKey: 'prescriptions/seed/rx-debasish-atorvastatin-cardio.jpg',
       doctorName: 'Dr. R. Chakraborty (Reg #MCI-22481)',
       patientName: 'Debasish Ghosh',
@@ -1320,7 +1320,7 @@ async function main() {
       originalFileName: 'Dr-Bose-Rx-Debasish-Derm.jpg',
       customerUserId: customerUser.id,
       familyMemberId: null,
-      status: PrescriptionStatus.APPROVED,
+      status: PrescriptionStatus.UNDER_REVIEW,
       objectKey: 'prescriptions/seed/rx-debasish-cetirizine-derm.jpg',
       doctorName: 'Dr. K. Bose (Reg #WB-18932)',
       patientName: 'Debasish Ghosh',
@@ -1521,11 +1521,14 @@ async function main() {
     where: { orderNumber: order3Number },
   });
 
-  if (!existingOrder3) {
-    const medTel = seededMedicines['MED-TEL-40-001'];
-    const medMet = seededMedicines['MED-MET-500-001'];
+  let order3 = existingOrder3;
+  let itemTelId: string | undefined;
 
-    const order3 = await prisma.order.create({
+  const medTel = seededMedicines['MED-TEL-40-001'];
+  const medMet = seededMedicines['MED-MET-500-001'];
+
+  if (!order3) {
+    order3 = await prisma.order.create({
       data: {
         orderNumber: order3Number,
         customerUserId: customerUser.id,
@@ -1558,6 +1561,7 @@ async function main() {
         status: OrderItemStatus.APPROVED,
       },
     });
+    itemTelId = itemTel.id;
 
     await prisma.orderItem.create({
       data: {
@@ -1571,16 +1575,24 @@ async function main() {
         status: OrderItemStatus.APPROVED,
       },
     });
+  } else {
+    const existingItems = await prisma.orderItem.findMany({
+      where: { orderId: order3.id, medicineId: medTel },
+    });
+    itemTelId = existingItems[0]?.id;
+  }
 
-    // Seed Accepted Quotation linking prescription to order (Customer reviewed quote & paid)
+  // Seed Accepted Quotation linking prescription to order (Customer reviewed quote & paid)
+  const prescriptionIdForQuote = seededPrescriptions['rx-maya-ghosh-chronic'] || order3.prescriptionId;
+  if (prescriptionIdForQuote) {
     const existingQuote3 = await prisma.prescriptionQuote.findFirst({
-      where: { prescriptionId: seededPrescriptions['rx-maya-ghosh-chronic'] },
+      where: { prescriptionId: prescriptionIdForQuote },
     });
 
     if (!existingQuote3) {
       const quote3 = await prisma.prescriptionQuote.create({
         data: {
-          prescriptionId: seededPrescriptions['rx-maya-ghosh-chronic'],
+          prescriptionId: prescriptionIdForQuote,
           pharmacistId: pharmacistUser.id,
           storeId: seededStores['KOL-001'],
           status: PrescriptionQuoteStatus.ACCEPTED,
@@ -1625,8 +1637,10 @@ async function main() {
         ],
       });
     }
+  }
 
-    // Seed Refill Estimate & Active Refill Subscription for Maya Ghosh
+  // Seed Refill Estimate & Active Refill Subscription for Maya Ghosh
+  if (itemTelId) {
     const existingSub = await prisma.refillSubscription.findFirst({
       where: {
         customerId: customerUser.id,
@@ -1637,7 +1651,7 @@ async function main() {
     if (!existingSub) {
       const estimate = await prisma.refillEstimate.create({
         data: {
-          orderItemId: itemTel.id,
+          orderItemId: itemTelId,
           customerId: customerUser.id,
           familyMemberId: mayaMember ? mayaMember.id : null,
           medicineId: medTel,
@@ -1683,7 +1697,6 @@ async function main() {
     console.log('  - CUSTOMER:         Email: customer@example.com, Pass: DemoPassword123! (Phone: 9876543210, Mock OTP: 123456)');
     console.log('  - PHARMACIST:       Email: pharmacist@example.com, Pass: DemoPassword123!');
     console.log('  - ADMIN:            Email: admin@example.com, Pass: DemoPassword123!');
-    console.log('  - COMPLIANCE_ADMIN: Email: compliance@example.com, Pass: DemoPassword123!');
     console.log('--------------------------------------------------');
   }
 }

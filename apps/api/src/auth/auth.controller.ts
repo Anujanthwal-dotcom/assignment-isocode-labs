@@ -257,17 +257,17 @@ export class AuthController {
   }
 
   @Get('test/admin')
-  @Roles(UserRole.ADMIN, UserRole.COMPLIANCE_ADMIN)
+  @Roles(UserRole.ADMIN)
   @ApiBearerAuth()
-  @ApiOperation({ summary: 'Endpoint accessible by ADMIN and COMPLIANCE_ADMIN' })
+  @ApiOperation({ summary: 'Endpoint accessible by ADMIN' })
   async testAdmin() {
     return { access: 'granted', portal: 'admin' };
   }
 
   @Get('test/compliance')
-  @Roles(UserRole.COMPLIANCE_ADMIN)
+  @Roles(UserRole.ADMIN)
   @ApiBearerAuth()
-  @ApiOperation({ summary: 'Endpoint accessible strictly by COMPLIANCE_ADMIN only' })
+  @ApiOperation({ summary: 'Endpoint accessible by ADMIN' })
   async testCompliance() {
     return { access: 'granted', resource: 'compliance_settings' };
   }

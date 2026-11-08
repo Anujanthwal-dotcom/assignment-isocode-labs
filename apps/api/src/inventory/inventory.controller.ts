@@ -23,7 +23,7 @@ export class InventoryController {
   ) {}
 
   @Get()
-  @Roles(UserRole.ADMIN, UserRole.PHARMACIST, UserRole.COMPLIANCE_ADMIN)
+  @Roles(UserRole.ADMIN, UserRole.PHARMACIST, UserRole.STORE_STAFF)
   @ApiOperation({ summary: 'List inventory stock with role-based restrictions' })
   @ApiResponse({ status: 200, description: 'List of inventory records' })
   @ApiResponse({ status: 403, description: 'Forbidden location access' })
@@ -55,7 +55,7 @@ export class InventoryController {
   }
 
   @Get('movements')
-  @Roles(UserRole.ADMIN, UserRole.PHARMACIST, UserRole.COMPLIANCE_ADMIN)
+  @Roles(UserRole.ADMIN, UserRole.PHARMACIST)
   @ApiOperation({ summary: 'List inventory movement history' })
   @ApiResponse({ status: 200, description: 'Audit log of stock movements' })
   @ApiResponse({ status: 403, description: 'Forbidden location access' })

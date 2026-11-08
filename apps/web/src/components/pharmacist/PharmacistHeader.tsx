@@ -61,14 +61,8 @@ export const PharmacistHeader: React.FC<PharmacistHeaderProps> = ({
         </div>
       </div>
 
-      {/* Right: Clinical Clearance Context & Pharmacist Profile Menu */}
+      {/* Right: Pharmacist Profile Menu */}
       <div className="flex items-center gap-3">
-        {/* Central Clinical Clearance Badge */}
-        <div className="hidden sm:flex items-center gap-1.5 rounded-full border border-[#99F6E4] bg-[#F0FDFA] px-3.5 py-1.5 text-[12px] font-semibold text-[#047857]">
-          <ShieldCheck className="h-3.5 w-3.5 text-[#059669]" />
-          <span>Central Clinical Review</span>
-        </div>
-
         {/* Profile Menu */}
         <DropdownMenu>
           <DropdownMenuTrigger className="flex items-center gap-2 rounded-[8px] border border-[#E2E8F0] bg-white px-2.5 py-1.5 text-[13px] font-medium text-[#0F172A] hover:bg-[#F0FDFA] hover:text-[#0D5C5A] focus:outline-none focus:ring-2 focus:ring-[#14B8A6] cursor-pointer">

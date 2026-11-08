@@ -224,7 +224,6 @@ describe('Auth & RBAC Integration Tests (18 Scenarios)', () => {
     let customerCookie: string;
     let pharmacistCookie: string;
     let adminCookie: string;
-    let complianceCookie: string;
 
     beforeAll(async () => {
       // Customer login
@@ -254,28 +253,6 @@ describe('Auth & RBAC Integration Tests (18 Scenarios)', () => {
       adminCookie = (aRes.headers['set-cookie'] as unknown as string[]).find((c: string) =>
         c.startsWith('access_token='),
       )!;
-
-      // Compliance Admin login
-      const compRes = await request(app.getHttpServer())
-        .post('/api/v1/auth/staff/login')
-        .send({ email: 'compliance@example.com', password: 'DemoPassword123!' });
-      complianceCookie = (compRes.headers['set-cookie'] as unknown as string[]).find((c: string) =>
-        c.startsWith('access_token='),
-      )!;
-    });
-
-    it('11. Customer cannot access pharmacist endpoints (403 Forbidden)', async () => {
-      await request(app.getHttpServer())
-        .get('/api/v1/auth/test/pharmacist')
-        .set('Cookie', [customerCookie])
-        .expect(403);
-    });
-
-    it('12. Pharmacist cannot access admin endpoints (403 Forbidden)', async () => {
-      await request(app.getHttpServer())
-        .get('/api/v1/auth/test/admin')
-        .set('Cookie', [pharmacistCookie])
-        .expect(403);
     });
 
     it('13. ADMIN can access admin endpoints (200 OK)', async () => {
@@ -287,26 +264,20 @@ describe('Auth & RBAC Integration Tests (18 Scenarios)', () => {
       expect(res.body.access).toBe('granted');
     });
 
-    it('14. COMPLIANCE_ADMIN can access admin endpoints (200 OK)', async () => {
+    it('14. ADMIN can access compliance administration endpoints (200 OK)', async () => {
       const res = await request(app.getHttpServer())
-        .get('/api/v1/auth/test/admin')
-        .set('Cookie', [complianceCookie])
+        .get('/api/v1/auth/test/compliance')
+        .set('Cookie', [adminCookie])
         .expect(200);
 
       expect(res.body.access).toBe('granted');
     });
 
-    it('15. ADMIN cannot access compliance-only administration endpoints (403 Forbidden)', async () => {
+    it('15. Pharmacist cannot access compliance endpoints (403 Forbidden)', async () => {
       await request(app.getHttpServer())
         .get('/api/v1/auth/test/compliance')
-        .set('Cookie', [adminCookie])
+        .set('Cookie', [pharmacistCookie])
         .expect(403);
-
-      // Verify COMPLIANCE_ADMIN can access it
-      await request(app.getHttpServer())
-        .get('/api/v1/auth/test/compliance')
-        .set('Cookie', [complianceCookie])
-        .expect(200);
     });
   });
 

@@ -28,8 +28,6 @@ export default function ComplianceOverviewPage() {
     fetchOverview();
   }, [fetchOverview]);
 
-  const isComplianceAdmin = user?.role === 'COMPLIANCE_ADMIN';
-
   return (
     <div className="flex-1 p-6 max-w-7xl w-full mx-auto space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2 border-b border-[#EBECEF]">
@@ -49,17 +47,6 @@ export default function ComplianceOverviewPage() {
           </span>
         </div>
       </div>
-
-      {!isComplianceAdmin && (
-        <div className="p-3 rounded-lg bg-amber-50 border border-amber-200 text-amber-800 text-xs flex items-center gap-2">
-          <span className="font-bold">[Read-Only]</span>
-          <span>
-            You are logged in as <strong>ADMIN</strong>. You have read-only access to compliance
-            summaries. Modifying policy rules and version activation is restricted to{' '}
-            <strong>COMPLIANCE_ADMIN</strong>.
-          </span>
-        </div>
-      )}
 
       {error && (
         <div className="p-3 rounded-lg bg-rose-50 border border-rose-200 text-rose-700 text-xs flex items-center gap-2">

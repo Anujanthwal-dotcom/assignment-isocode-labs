@@ -21,42 +21,42 @@ export class ComplianceController {
   ) {}
 
   @Get('overview')
-  @Roles(UserRole.COMPLIANCE_ADMIN, UserRole.ADMIN)
+  @Roles(UserRole.ADMIN)
   @ApiOperation({ summary: 'Compliance policy dashboard metrics and blocked items summary' })
   async getOverview() {
     return this.complianceService.getOverview();
   }
 
   @Get('rule-sets/active')
-  @Roles(UserRole.COMPLIANCE_ADMIN, UserRole.ADMIN, UserRole.PHARMACIST)
+  @Roles(UserRole.ADMIN, UserRole.PHARMACIST)
   @ApiOperation({ summary: 'Get currently active compliance rule set' })
   async getActiveRuleSet() {
     return this.ruleService.getActiveRuleSet();
   }
 
   @Get('rule-sets')
-  @Roles(UserRole.COMPLIANCE_ADMIN, UserRole.ADMIN)
+  @Roles(UserRole.ADMIN)
   @ApiOperation({ summary: 'List all versioned compliance rule sets' })
   async getAllRuleSets() {
     return this.ruleService.getAllRuleSets();
   }
 
   @Get('rule-sets/:id')
-  @Roles(UserRole.COMPLIANCE_ADMIN, UserRole.ADMIN)
+  @Roles(UserRole.ADMIN)
   @ApiOperation({ summary: 'Get compliance rule set by ID' })
   async getRuleSetById(@Param('id', ParseUUIDPipe) id: string) {
     return this.ruleService.getRuleSetById(id);
   }
 
   @Post('rule-sets')
-  @Roles(UserRole.COMPLIANCE_ADMIN)
+  @Roles(UserRole.ADMIN)
   @ApiOperation({ summary: 'Create new draft compliance rule set version' })
   async createRuleSet(@Body() dto: CreateComplianceRuleSetDto, @CurrentUser('id') userId: string) {
     return this.ruleService.createRuleSet(dto, userId);
   }
 
   @Patch('rule-sets/:ruleSetId/rules/:ruleId')
-  @Roles(UserRole.COMPLIANCE_ADMIN)
+  @Roles(UserRole.ADMIN)
   @ApiOperation({ summary: 'Update rule in a DRAFT compliance rule set' })
   async updateDraftRule(
     @Param('ruleSetId', ParseUUIDPipe) ruleSetId: string,
@@ -68,7 +68,7 @@ export class ComplianceController {
   }
 
   @Post('rule-sets/:ruleSetId/activate')
-  @Roles(UserRole.COMPLIANCE_ADMIN)
+  @Roles(UserRole.ADMIN)
   @ApiOperation({ summary: 'Activate compliance rule set version with mandatory reason' })
   async activateRuleSet(
     @Param('ruleSetId', ParseUUIDPipe) ruleSetId: string,
@@ -79,7 +79,7 @@ export class ComplianceController {
   }
 
   @Get('decisions')
-  @Roles(UserRole.COMPLIANCE_ADMIN, UserRole.ADMIN)
+  @Roles(UserRole.ADMIN)
   @ApiOperation({ summary: 'Audit log of compliance decisions made on reviewed items' })
   async getDecisions(@Query('page') page?: string, @Query('limit') limit?: string) {
     return this.complianceService.getDecisionsHistory({
@@ -89,7 +89,7 @@ export class ComplianceController {
   }
 
   @Get('h1-register')
-  @Roles(UserRole.COMPLIANCE_ADMIN, UserRole.ADMIN)
+  @Roles(UserRole.ADMIN)
   @ApiOperation({ summary: 'Platform-wide Schedule H1 register entries' })
   async getH1Register(
     @Query('storeId') storeId?: string,

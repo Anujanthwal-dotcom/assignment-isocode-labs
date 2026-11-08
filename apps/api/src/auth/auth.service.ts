@@ -488,9 +488,9 @@ export class AuthService {
         };
       }
     } else {
-      // ADMIN or COMPLIANCE_ADMIN
+      // ADMIN
       profileData = {
-        fullName: user.role === UserRole.ADMIN ? 'Administrator' : 'Compliance Administrator',
+        fullName: 'Administrator',
       };
     }
 

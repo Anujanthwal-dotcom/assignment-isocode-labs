@@ -51,10 +51,10 @@ export default function StaffOverviewPage() {
 
         // Fetch store inventory balances count if storeId is known
         if (storeId) {
-          const balancesRes = await apiFetch<{ data: any[] }>(
-            `/inventory/balances?locationType=STORE&locationId=${storeId}`,
-          ).catch(() => ({ data: [] }));
-          setStoreStockCount(balancesRes.data?.length ?? null);
+          const balancesRes = await apiFetch<{ pagination?: { total?: number }; data?: any[] }>(
+            `/inventory?storeId=${storeId}&limit=1`,
+          ).catch(() => ({ pagination: undefined, data: [] }));
+          setStoreStockCount(balancesRes.pagination?.total ?? balancesRes.data?.length ?? null);
         }
       } catch (err) {
         console.error('Failed to load store dashboard data:', err);

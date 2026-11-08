@@ -8,10 +8,6 @@ import {
   X,
   LayoutDashboard,
   ClipboardCheck,
-  Package,
-  BookOpenCheck,
-  Boxes,
-  ShieldCheck,
 } from 'lucide-react';
 import { useAuth } from '@/lib/auth/auth-context';
 
@@ -23,9 +19,6 @@ interface PharmacistSidebarProps {
 const navItems = [
   { label: 'Overview', href: '/pharmacist', icon: LayoutDashboard, exact: true },
   { label: 'Verification Queue', href: '/pharmacist/review-queue', icon: ClipboardCheck },
-  { label: 'Store Fulfilment', href: '/pharmacist/fulfilment', icon: Package },
-  { label: 'H1 Register', href: '/pharmacist/h1-register', icon: BookOpenCheck },
-  { label: 'Store Inventory', href: '/pharmacist/inventory', icon: Boxes },
 ];
 
 export const PharmacistSidebar: React.FC<PharmacistSidebarProps> = ({
@@ -73,23 +66,20 @@ export const PharmacistSidebar: React.FC<PharmacistSidebarProps> = ({
           </button>
         </div>
 
-        {/* Central Clinical Platform Badge */}
-        <div className="p-3">
-          <div className="rounded-[8px] border border-[#99F6E4] bg-[#F0FDFA] p-2.5 text-[12px] text-[#047857]">
-            <div className="flex items-center gap-1.5 font-semibold">
-              <ShieldCheck className="h-3.5 w-3.5 shrink-0 text-[#059669]" />
-              <span className="truncate">Central Verification</span>
-            </div>
-            <span className="text-[11px] text-[#047857]/80 block truncate mt-0.5">
-              Platform-Wide Clinical Review
-            </span>
-          </div>
-        </div>
 
         {/* Navigation list */}
         <nav className="flex-1 space-y-[4px] px-3 py-2 overflow-y-auto">
           {navItems.map((item) => {
-            const isActive = item.exact ? pathname === item.href : pathname.startsWith(item.href);
+            const hasMoreSpecificMatch = navItems.some(
+              (other) =>
+                other.href !== item.href &&
+                other.href.startsWith(item.href) &&
+                (pathname === other.href || pathname.startsWith(other.href + '/')),
+            );
+            const isActive = item.exact
+              ? pathname === item.href
+              : !hasMoreSpecificMatch &&
+                (pathname === item.href || pathname.startsWith(item.href + '/'));
             const Icon = item.icon;
 
             return (

@@ -40,7 +40,7 @@ export const AdminHeader: React.FC<AdminHeaderProps> = ({
   };
 
   const adminName = user?.profile?.fullName || 'Administrator';
-  const roleName = user?.role === 'COMPLIANCE_ADMIN' ? 'Compliance Officer' : 'System Administrator';
+  const roleName = 'System Administrator';
 
   return (
     <header className="sticky top-0 z-30 flex h-[64px] w-full items-center justify-between border-b border-[#E2E8F0] bg-white px-4 lg:px-8 shadow-xs">

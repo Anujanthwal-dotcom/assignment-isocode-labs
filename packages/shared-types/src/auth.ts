@@ -1,4 +1,4 @@
-export type UserRole = 'CUSTOMER' | 'PHARMACIST' | 'ADMIN' | 'COMPLIANCE_ADMIN' | 'STORE_STAFF';
+export type UserRole = 'CUSTOMER' | 'PHARMACIST' | 'ADMIN' | 'STORE_STAFF';
 
 export type UserStatus = 'ACTIVE' | 'INACTIVE' | 'SUSPENDED';
 

@@ -376,6 +376,7 @@ export class InventoryImportsService {
         appliedRows: validationResult.validRows.length,
         rejectedRows: 0,
         completedAt: new Date().toISOString(),
+        locationName: locationDisplayName,
       };
     } catch (err: any) {
       this.logger.error(`Technical failure during import transaction: ${err.message}`, err.stack);

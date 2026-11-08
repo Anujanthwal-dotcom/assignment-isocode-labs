@@ -11,7 +11,7 @@ export class WarehousesController {
   constructor(private readonly warehousesService: WarehousesService) {}
 
   @Get()
-  @Roles(UserRole.ADMIN, UserRole.COMPLIANCE_ADMIN)
+  @Roles(UserRole.ADMIN)
   @ApiOperation({ summary: 'List all active warehouses' })
   @ApiResponse({ status: 200, description: 'List of active warehouses' })
   async listWarehouses() {

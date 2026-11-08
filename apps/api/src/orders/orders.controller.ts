@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Param, Query, Body } from '@nestjs/common';
+import { Controller, Get, Post, Delete, Param, Query, Body } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
 import { OrdersService } from './orders.service';
 import {
@@ -58,7 +58,7 @@ export class OrdersController {
     return this.ordersService.cancelOrder(customerUserId, id);
   }
 
-  @Get(':id/verification')
+  @Get([':id/verification', ':id/verification-status'])
   @ApiOperation({
     summary: 'Get prescription verification progress, review decisions, and alternative proposals',
   })
@@ -68,6 +68,7 @@ export class OrdersController {
   }
 
   @Post(':id/items/:orderItemId/remove')
+  @Delete(':id/items/:orderItemId')
   @ApiOperation({
     summary: 'Remove a rejected or blocked item from the order and recalculate total',
   })

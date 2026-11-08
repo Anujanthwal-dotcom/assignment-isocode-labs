@@ -39,25 +39,25 @@ describe('RolesGuard Unit Tests', () => {
   it('should throw ForbiddenException if user does not have the required role', () => {
     jest
       .spyOn(reflector, 'getAllAndOverride')
-      .mockReturnValue([UserRole.ADMIN, UserRole.COMPLIANCE_ADMIN]);
+      .mockReturnValue([UserRole.ADMIN]);
 
     const context = createMockContext({ role: UserRole.PHARMACIST });
     expect(() => guard.canActivate(context)).toThrow(ForbiddenException);
   });
 
-  it('should allow COMPLIANCE_ADMIN when ADMIN or COMPLIANCE_ADMIN is allowed', () => {
+  it('should allow ADMIN when ADMIN is allowed', () => {
     jest
       .spyOn(reflector, 'getAllAndOverride')
-      .mockReturnValue([UserRole.ADMIN, UserRole.COMPLIANCE_ADMIN]);
+      .mockReturnValue([UserRole.ADMIN]);
 
-    const context = createMockContext({ role: UserRole.COMPLIANCE_ADMIN });
+    const context = createMockContext({ role: UserRole.ADMIN });
     expect(guard.canActivate(context)).toBe(true);
   });
 
-  it('should forbid ADMIN when only COMPLIANCE_ADMIN is allowed', () => {
-    jest.spyOn(reflector, 'getAllAndOverride').mockReturnValue([UserRole.COMPLIANCE_ADMIN]);
+  it('should forbid CUSTOMER when only ADMIN is allowed', () => {
+    jest.spyOn(reflector, 'getAllAndOverride').mockReturnValue([UserRole.ADMIN]);
 
-    const context = createMockContext({ role: UserRole.ADMIN });
+    const context = createMockContext({ role: UserRole.CUSTOMER });
     expect(() => guard.canActivate(context)).toThrow(ForbiddenException);
   });
 });

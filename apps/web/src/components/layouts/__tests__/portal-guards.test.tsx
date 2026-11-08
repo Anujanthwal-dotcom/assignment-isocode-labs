@@ -152,12 +152,12 @@ describe('Portal Route Protection & Role Redirection', () => {
       });
     });
 
-    it('allows ADMIN and COMPLIANCE_ADMIN to access /admin', async () => {
+    it('allows ADMIN to access /admin', async () => {
       mockUser = {
         id: 'u1',
-        role: 'COMPLIANCE_ADMIN',
+        role: 'ADMIN',
         status: 'ACTIVE',
-        profile: { fullName: 'Compliance' },
+        profile: { fullName: 'Admin' },
       };
       mockLoading = false;
       mockPathname = '/admin';

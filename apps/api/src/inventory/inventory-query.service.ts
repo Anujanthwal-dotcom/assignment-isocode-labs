@@ -43,6 +43,34 @@ export class InventoryQueryService {
 
       effectiveStoreId = pharmacistProfile.storeId || undefined;
       effectiveWarehouseId = undefined;
+    } else if (user.role === UserRole.STORE_STAFF) {
+      const staffProfile = await this.prisma.staffProfile.findUnique({
+        where: { userId: user.id },
+      });
+
+      if (!staffProfile || !staffProfile.storeId) {
+        throw new ForbiddenException({
+          code: 'LOCATION_ACCESS_DENIED',
+          message: 'Store staff member is not assigned to any physical store.',
+        });
+      }
+
+      if (query.warehouseId) {
+        throw new ForbiddenException({
+          code: 'LOCATION_ACCESS_DENIED',
+          message: 'Store staff cannot view warehouse inventory.',
+        });
+      }
+
+      if (query.storeId && query.storeId !== staffProfile.storeId) {
+        throw new ForbiddenException({
+          code: 'LOCATION_ACCESS_DENIED',
+          message: 'You are not authorized to access another store inventory.',
+        });
+      }
+
+      effectiveStoreId = staffProfile.storeId;
+      effectiveWarehouseId = undefined;
     }
 
     const page = Number(query.page) || 1;

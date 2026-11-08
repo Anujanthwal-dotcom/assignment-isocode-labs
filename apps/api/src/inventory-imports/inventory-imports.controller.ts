@@ -97,7 +97,7 @@ export class InventoryImportsController {
   }
 
   @Get()
-  @Roles(UserRole.ADMIN, UserRole.COMPLIANCE_ADMIN, UserRole.STORE_STAFF, UserRole.PHARMACIST)
+  @Roles(UserRole.ADMIN, UserRole.STORE_STAFF, UserRole.PHARMACIST)
   @ApiOperation({ summary: 'List CSV import history batches' })
   @ApiResponse({ status: 200, description: 'Paginated import batches' })
   async listImports(@Query() query: ListInventoryImportsQueryDto) {
@@ -105,7 +105,7 @@ export class InventoryImportsController {
   }
 
   @Get(':id')
-  @Roles(UserRole.ADMIN, UserRole.COMPLIANCE_ADMIN, UserRole.STORE_STAFF, UserRole.PHARMACIST)
+  @Roles(UserRole.ADMIN, UserRole.STORE_STAFF, UserRole.PHARMACIST)
   @ApiOperation({ summary: 'Get details and row-level outcomes of an import batch' })
   @ApiResponse({ status: 200, description: 'Import batch details' })
   @ApiResponse({ status: 404, description: 'Import not found' })

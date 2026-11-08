@@ -40,7 +40,6 @@ export default function ComplianceRuleSetDetailPage() {
     }
   }, [ruleSetId, fetchRuleSet]);
 
-  const isComplianceAdmin = user?.role === 'COMPLIANCE_ADMIN';
   const isDraft = ruleSet?.status === 'DRAFT';
 
   const handleActivate = async () => {
@@ -91,7 +90,7 @@ export default function ComplianceRuleSetDetailPage() {
           </p>
         </div>
 
-        {isDraft && isComplianceAdmin && (
+        {isDraft && (
           <button
             onClick={() => setActivateModalOpen(true)}
             className="inline-flex items-center gap-2 px-4 py-2 text-xs font-semibold rounded-lg bg-emerald-600 text-white hover:bg-emerald-700 transition-colors shadow-2xs"

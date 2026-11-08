@@ -31,7 +31,7 @@ const navItems = [
   { label: 'Medicine Catalogue', href: '/admin/medicines', icon: Pill },
   { label: 'Inventory', href: '/admin/inventory', icon: Boxes, exact: true },
   { label: 'Stock Imports', href: '/admin/inventory/imports', icon: Upload },
-  { label: 'Compliance Policy', href: '/admin/compliance', icon: ShieldCheck },
+  { label: 'Compliance Policy', href: '/admin/compliance', icon: ShieldCheck, exact: true },
   { label: 'H1 Register', href: '/admin/compliance/h1-register', icon: BookOpenCheck },
 ];
 
@@ -80,7 +80,16 @@ export const AdminSidebar: React.FC<AdminSidebarProps> = ({ openMobile, onCloseM
         {/* Navigation Items */}
         <nav className="flex-1 space-y-[4px] px-3 py-4 overflow-y-auto">
           {navItems.map((item) => {
-            const isActive = item.exact ? pathname === item.href : pathname.startsWith(item.href);
+            const hasMoreSpecificMatch = navItems.some(
+              (other) =>
+                other.href !== item.href &&
+                other.href.startsWith(item.href) &&
+                (pathname === other.href || pathname.startsWith(other.href + '/')),
+            );
+            const isActive = item.exact
+              ? pathname === item.href
+              : !hasMoreSpecificMatch &&
+                (pathname === item.href || pathname.startsWith(item.href + '/'));
             const Icon = item.icon;
 
             return (

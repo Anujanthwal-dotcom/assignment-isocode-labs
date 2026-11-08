@@ -24,7 +24,7 @@ export const PharmacistLayout: React.FC<{ children: React.ReactNode }> = ({ chil
     // Role redirection
     if (user.role === 'CUSTOMER') {
       router.replace('/customer');
-    } else if (user.role === 'ADMIN' || user.role === 'COMPLIANCE_ADMIN') {
+    } else if (user.role === 'ADMIN') {
       router.replace('/admin');
     } else if (user.role === 'PHARMACIST' && isLoginPage) {
       router.replace('/pharmacist');

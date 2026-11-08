@@ -5,7 +5,7 @@ import { AdminAnalyticsService } from './admin-analytics.service';
 import { analyticsQuerySchema } from '@pharmacy/validation';
 
 @Controller('admin/analytics')
-@Roles(UserRole.ADMIN, UserRole.COMPLIANCE_ADMIN)
+@Roles(UserRole.ADMIN)
 export class AdminAnalyticsController {
   constructor(private readonly analyticsService: AdminAnalyticsService) {}
 

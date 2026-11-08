@@ -16,7 +16,7 @@ export class ReservationsController {
   ) {}
 
   @Get()
-  @Roles(UserRole.ADMIN, UserRole.COMPLIANCE_ADMIN)
+  @Roles(UserRole.ADMIN)
   @ApiOperation({ summary: 'List stock reservations across stores' })
   async listReservations(
     @Query('status') status?: StockReservationStatus,
@@ -78,7 +78,7 @@ export class ReservationsController {
   }
 
   @Get(':reservationId')
-  @Roles(UserRole.ADMIN, UserRole.COMPLIANCE_ADMIN)
+  @Roles(UserRole.ADMIN)
   @ApiOperation({ summary: 'Get stock reservation details' })
   async getReservation(@Param('reservationId') reservationId: string) {
     const r = await this.prisma.stockReservation.findUnique({

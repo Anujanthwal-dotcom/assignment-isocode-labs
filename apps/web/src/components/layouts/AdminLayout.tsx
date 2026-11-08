@@ -26,7 +26,7 @@ export const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children 
       router.replace('/customer');
     } else if (user.role === 'PHARMACIST') {
       router.replace('/pharmacist');
-    } else if ((user.role === 'ADMIN' || user.role === 'COMPLIANCE_ADMIN') && isLoginPage) {
+    } else if (user.role === 'ADMIN' && isLoginPage) {
       router.replace('/admin');
     }
   }, [user, loading, pathname, router]);

@@ -21,7 +21,7 @@ interface StaffSidebarProps {
 const navItems = [
   { label: 'Store Overview', href: '/staff', icon: LayoutDashboard, exact: true },
   { label: 'Daily CSV Injection', href: '/staff/inventory/import', icon: FileSpreadsheet },
-  { label: 'Live Store Inventory', href: '/staff/inventory', icon: Boxes },
+  { label: 'Live Store Inventory', href: '/staff/inventory', icon: Boxes, exact: true },
   { label: 'Order Fulfilment', href: '/staff/fulfilment', icon: Package },
 ];
 
@@ -97,7 +97,16 @@ export const StaffSidebar: React.FC<StaffSidebarProps> = ({
         {/* Navigation list */}
         <nav className="flex-1 space-y-[4px] px-3 py-2 overflow-y-auto">
           {navItems.map((item) => {
-            const isActive = item.exact ? pathname === item.href : pathname.startsWith(item.href);
+            const hasMoreSpecificMatch = navItems.some(
+              (other) =>
+                other.href !== item.href &&
+                other.href.startsWith(item.href) &&
+                (pathname === other.href || pathname.startsWith(other.href + '/')),
+            );
+            const isActive = item.exact
+              ? pathname === item.href
+              : !hasMoreSpecificMatch &&
+                (pathname === item.href || pathname.startsWith(item.href + '/'));
             const Icon = item.icon;
 
             return (

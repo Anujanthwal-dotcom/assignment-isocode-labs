@@ -46,12 +46,12 @@ export default function StaffInventoryPage() {
       setLoading(true);
       setError(null);
       const res = await apiFetch<{ data: any[] }>(
-        `/inventory/balances?locationType=STORE&locationId=${storeId}`,
+        `/inventory?storeId=${storeId}&limit=100`,
       );
 
       const mapped: InventoryItem[] = (res.data || []).map((b) => {
         const med = b.medicine || {};
-        const onHand = Number(b.quantityOnHand) || 0;
+        const onHand = Number(b.quantity ?? b.quantityOnHand) || 0;
         const reorder = Number(b.reorderLevel) || 0;
         const reserved = Number(b.reservedQuantity || b.activeReservations) || 0;
         const available = Math.max(0, onHand - reserved);

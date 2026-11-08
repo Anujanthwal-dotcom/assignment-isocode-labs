@@ -31,7 +31,7 @@ export class MedicinesController {
   }
 
   @Get()
-  @Roles(UserRole.ADMIN, UserRole.PHARMACIST, UserRole.COMPLIANCE_ADMIN)
+  @Roles(UserRole.ADMIN, UserRole.PHARMACIST)
   @ApiOperation({ summary: 'List and search medicines catalogue' })
   @ApiResponse({ status: 200, description: 'Paginated catalogue listing' })
   async listMedicines(@Query() query: ListMedicinesQueryDto) {
@@ -39,7 +39,7 @@ export class MedicinesController {
   }
 
   @Get(':id')
-  @Roles(UserRole.ADMIN, UserRole.PHARMACIST, UserRole.COMPLIANCE_ADMIN)
+  @Roles(UserRole.ADMIN, UserRole.PHARMACIST)
   @ApiOperation({ summary: 'Get medicine details with authorized inventory balances' })
   @ApiResponse({ status: 200, description: 'Medicine details with balances' })
   @ApiResponse({ status: 404, description: 'Medicine not found' })

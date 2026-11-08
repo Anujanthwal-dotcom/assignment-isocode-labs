@@ -3,6 +3,7 @@ import { describe, it, expect, vi } from 'vitest';
 import * as React from 'react';
 import { AdminSidebar } from '../AdminSidebar';
 import { PharmacistSidebar } from '../../pharmacist/PharmacistSidebar';
+import { StaffSidebar } from '../../staff/StaffSidebar';
 import MedicineCataloguePage from '@/app/admin/medicines/page';
 import AdminInventoryPage from '@/app/admin/inventory/page';
 import StockImportsPage from '@/app/admin/inventory/imports/page';
@@ -112,12 +113,25 @@ describe('Catalogue and Inventory UI Components & Pages', () => {
     expect(screen.getByText('Stock Imports')).toBeDefined();
   });
 
-  it('PharmacistSidebar renders Store Inventory link pointing to /pharmacist/inventory', () => {
+  it('PharmacistSidebar renders Verification Queue and omits Store Inventory, H1 Register, and Store Fulfilment', () => {
     render(<PharmacistSidebar openMobile={false} onCloseMobile={vi.fn()} />);
 
-    const inventoryLink = screen.getByText('Store Inventory').closest('a');
-    expect(inventoryLink).toBeDefined();
-    expect(inventoryLink?.getAttribute('href')).toBe('/pharmacist/inventory');
+    const queueLink = screen.getByText('Verification Queue').closest('a');
+    expect(queueLink).toBeDefined();
+    expect(queueLink?.getAttribute('href')).toBe('/pharmacist/review-queue');
+
+    expect(screen.queryByText('Store Inventory')).toBeNull();
+    expect(screen.queryByText('H1 Register')).toBeNull();
+    expect(screen.queryByText('Store Fulfilment')).toBeNull();
+  });
+
+  it('StaffSidebar renders nav links and highlights only the active route', () => {
+    render(<StaffSidebar openMobile={false} onCloseMobile={vi.fn()} />);
+
+    expect(screen.getByText('Store Overview')).toBeDefined();
+    expect(screen.getByText('Daily CSV Injection')).toBeDefined();
+    expect(screen.getByText('Live Store Inventory')).toBeDefined();
+    expect(screen.getByText('Order Fulfilment')).toBeDefined();
   });
 
   it('MedicineCataloguePage renders table and Add Medicine button', async () => {
