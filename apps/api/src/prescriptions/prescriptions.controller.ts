@@ -61,6 +61,14 @@ export class PrescriptionsController {
     return this.prescriptionsService.getPrescriptionFileUrl(customerUserId, id);
   }
 
+  @Get(':id/preview-url')
+  @ApiOperation({ summary: 'Get a temporary signed preview URL for prescription document (valid for 5 minutes)' })
+  @ApiResponse({ status: 200, description: 'Pre-signed preview URL with 5-minute expiry' })
+  @ApiResponse({ status: 404, description: 'Prescription not found' })
+  async getPreviewUrl(@CurrentUser('id') customerUserId: string, @Param('id') id: string) {
+    return this.prescriptionsService.getPrescriptionFileUrl(customerUserId, id);
+  }
+
   @Delete(':id')
   @ApiOperation({ summary: 'Delete prescription if not linked to an order' })
   @ApiResponse({ status: 200, description: 'Prescription deleted' })

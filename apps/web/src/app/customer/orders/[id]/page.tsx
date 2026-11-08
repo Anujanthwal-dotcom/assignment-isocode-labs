@@ -157,10 +157,10 @@ export default function CustomerOrderDetailPage() {
     setPreviewLoading(true);
     setPreviewOpen(true);
     try {
-      const res = await apiFetch<{ url: string }>(
+      const res = await apiFetch<{ url?: string; viewUrl?: string }>(
         `/customer/prescriptions/${prescriptionId}/preview-url`,
       );
-      setPreviewUrl(res.url);
+      setPreviewUrl(res.url || res.viewUrl || null);
     } catch (err: unknown) {
       alert((err as Error).message || 'Failed to load prescription document.');
       setPreviewOpen(false);

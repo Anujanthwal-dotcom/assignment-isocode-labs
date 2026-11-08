@@ -234,6 +234,7 @@ export class PrescriptionsService {
       fileName: rx.originalFileName,
       mimeType: rx.mimeType,
       viewUrl,
+      url: viewUrl,
       expiresInSeconds: 300,
     };
   }

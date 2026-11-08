@@ -112,8 +112,10 @@ export default function CustomerPrescriptionsPage() {
     setPreviewLoading(true);
     setPreviewOpen(true);
     try {
-      const res = await apiFetch<{ url: string }>(`/customer/prescriptions/${id}/preview-url`);
-      setPreviewUrl(res.url);
+      const res = await apiFetch<{ url?: string; viewUrl?: string }>(
+        `/customer/prescriptions/${id}/preview-url`,
+      );
+      setPreviewUrl(res.url || res.viewUrl || null);
     } catch (err: unknown) {
       alert((err as Error).message || 'Failed to generate preview URL.');
       setPreviewOpen(false);
