@@ -13,7 +13,6 @@ import {
   Pill,
   Boxes,
   ShieldCheck,
-  BookOpenCheck,
   ShoppingBag,
   Building2,
 } from 'lucide-react';
@@ -33,8 +32,7 @@ const navItems = [
   { label: 'Review Assignments', href: '/admin/review-assignments', icon: UserCheck },
   { label: 'Medicine Catalogue', href: '/admin/medicines', icon: Pill },
   { label: 'Inventory', href: '/admin/inventory', icon: Boxes, exact: true },
-  { label: 'Compliance Policy', href: '/admin/compliance', icon: ShieldCheck, exact: true },
-  { label: 'H1 Register', href: '/admin/compliance/h1-register', icon: BookOpenCheck },
+  { label: 'Compliance Policy', href: '/admin/compliance', icon: ShieldCheck },
 ];
 
 export const AdminSidebar: React.FC<AdminSidebarProps> = ({ openMobile, onCloseMobile }) => {

@@ -4,7 +4,6 @@ import * as React from 'react';
 import { useRouter } from 'next/navigation';
 import {
   Menu,
-  Search,
   Bell,
   User,
   ChevronDown,
@@ -24,13 +23,9 @@ import { useAuth } from '@/lib/auth/auth-context';
 
 interface AdminHeaderProps {
   onToggleSidebar: () => void;
-  pageContext?: string;
 }
 
-export const AdminHeader: React.FC<AdminHeaderProps> = ({
-  onToggleSidebar,
-  pageContext = 'Operations Overview',
-}) => {
+export const AdminHeader: React.FC<AdminHeaderProps> = ({ onToggleSidebar }) => {
   const { user, logout } = useAuth();
   const router = useRouter();
 
@@ -44,7 +39,7 @@ export const AdminHeader: React.FC<AdminHeaderProps> = ({
 
   return (
     <header className="sticky top-0 z-30 flex h-[64px] w-full items-center justify-between border-b border-[#E2E8F0] bg-white px-4 lg:px-8 shadow-xs">
-      {/* Left: Mobile Toggle & Page Context */}
+      {/* Left: Mobile Toggle */}
       <div className="flex items-center gap-3">
         <button
           onClick={onToggleSidebar}
@@ -53,22 +48,6 @@ export const AdminHeader: React.FC<AdminHeaderProps> = ({
         >
           <Menu className="h-4 w-4" />
         </button>
-        <span className="font-display text-[16px] sm:text-[18px] font-bold text-[#0F172A]">
-          {pageContext}
-        </span>
-      </div>
-
-      {/* Center: Global Search Placeholder (Desktop) */}
-      <div className="hidden md:flex items-center flex-1 max-w-md mx-6">
-        <div className="relative w-full">
-          <Search className="absolute left-3.5 top-3 h-4 w-4 text-[#94A3B8] pointer-events-none" />
-          <input
-            type="text"
-            readOnly
-            placeholder="Search stores, orders, staff, compliance logs..."
-            className="h-[40px] w-full rounded-[8px] border border-[#CBD5E1] bg-[#F8FAFC] pl-10 pr-3.5 text-[13px] text-[#0F172A] placeholder:text-[#94A3B8] focus:outline-none focus:border-[#0D5C5A] cursor-pointer"
-          />
-        </div>
       </div>
 
       {/* Right: Notifications & Profile Menu */}
