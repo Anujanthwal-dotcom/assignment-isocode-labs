@@ -59,6 +59,26 @@ export class RedisService implements OnApplicationShutdown {
     return this.client.incr(key);
   }
 
+  /**
+   * Atomically gets a value and deletes its key.
+   * Used to consume single-use refresh tokens (Redis 6.2+ GETDEL).
+   */
+  async getdel(key: string): Promise<string | null> {
+    return this.client.getdel(key);
+  }
+
+  async sadd(key: string, ...members: string[]): Promise<number> {
+    return this.client.sadd(key, ...members);
+  }
+
+  async srem(key: string, ...members: string[]): Promise<number> {
+    return this.client.srem(key, ...members);
+  }
+
+  async smembers(key: string): Promise<string[]> {
+    return this.client.smembers(key);
+  }
+
   async expire(key: string, ttlSeconds: number): Promise<boolean> {
     const res = await this.client.expire(key, ttlSeconds);
     return res === 1;

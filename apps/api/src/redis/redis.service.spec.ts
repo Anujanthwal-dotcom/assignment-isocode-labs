@@ -26,6 +26,10 @@ describe('RedisService Unit Tests', () => {
       persist: vi.fn(),
       ttl: vi.fn(),
       exists: vi.fn(),
+      getdel: vi.fn(),
+      sadd: vi.fn(),
+      srem: vi.fn(),
+      smembers: vi.fn(),
       quit: vi.fn(),
       status: 'ready',
     };
@@ -64,5 +68,29 @@ describe('RedisService Unit Tests', () => {
     mockRedisClient.incr.mockResolvedValue(2);
     const res = await redisService.incr('rate:key');
     expect(res).toBe(2);
+  });
+
+  it('atomically gets and deletes a key', async () => {
+    mockRedisClient.getdel.mockResolvedValue('session-1');
+    const res = await redisService.getdel('session:refresh:hash');
+    expect(mockRedisClient.getdel).toHaveBeenCalledWith('session:refresh:hash');
+    expect(res).toBe('session-1');
+  });
+
+  it('adds, removes, and lists set members', async () => {
+    mockRedisClient.sadd.mockResolvedValue(1);
+    mockRedisClient.srem.mockResolvedValue(1);
+    mockRedisClient.smembers.mockResolvedValue(['session-1', 'session-2']);
+
+    await expect(redisService.sadd('session:user:user-1', 'session-1')).resolves.toBe(1);
+    await expect(redisService.srem('session:user:user-1', 'session-1')).resolves.toBe(1);
+    await expect(redisService.smembers('session:user:user-1')).resolves.toEqual([
+      'session-1',
+      'session-2',
+    ]);
+
+    expect(mockRedisClient.sadd).toHaveBeenCalledWith('session:user:user-1', 'session-1');
+    expect(mockRedisClient.srem).toHaveBeenCalledWith('session:user:user-1', 'session-1');
+    expect(mockRedisClient.smembers).toHaveBeenCalledWith('session:user:user-1');
   });
 });

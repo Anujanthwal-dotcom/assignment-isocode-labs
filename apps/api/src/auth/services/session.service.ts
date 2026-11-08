@@ -1,42 +1,93 @@
 import { Injectable, UnauthorizedException, ForbiddenException } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
+import * as crypto from 'crypto';
 import { PrismaService } from '../../prisma/prisma.service';
 import { TokenService } from './token.service';
-import { SessionStatus, UserStatus, AuthSession, User } from '@prisma/client';
+import { SessionStatus, UserStatus, User } from '@prisma/client';
+import { RedisService } from '../../redis/redis.service';
+
+/**
+ * Redis-backed session record.
+ *
+ * Sessions live in Redis (not Postgres):
+ *   session:{id}               -> JSON SessionRecord (TTL = refresh token lifetime)
+ *   session:refresh:{hash}     -> session id            (TTL = refresh token lifetime)
+ *   session:user:{userId}      -> Set of session ids    (TTL = refresh token lifetime)
+ *
+ * Expiry is enforced by Redis key TTLs; revoked sessions have their keys deleted.
+ */
+export interface SessionRecord {
+  id: string;
+  userId: string;
+  refreshTokenHash: string;
+  status: SessionStatus;
+  createdAt: string;
+  expiresAt: string;
+}
 
 export interface CreateSessionResult {
-  session: AuthSession;
+  session: SessionRecord;
   refreshToken: string;
 }
 
 export interface RotateSessionResult {
-  session: AuthSession;
+  session: SessionRecord;
   refreshToken: string;
   user: User;
 }
+
+const DEFAULT_REFRESH_TTL_SECONDS = 7 * 24 * 60 * 60; // 7 days
 
 @Injectable()
 export class SessionService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly tokenService: TokenService,
+    private readonly redisService: RedisService,
+    private readonly configService: ConfigService,
   ) {}
 
+  private get refreshTtlSeconds(): number {
+    return (
+      this.configService.get<number>('auth.refreshTokenTtlSeconds') || DEFAULT_REFRESH_TTL_SECONDS
+    );
+  }
+
+  private sessionKey(sessionId: string): string {
+    return `session:${sessionId}`;
+  }
+
+  private refreshKey(refreshTokenHash: string): string {
+    return `session:refresh:${refreshTokenHash}`;
+  }
+
+  private userSessionsKey(userId: string): string {
+    return `session:user:${userId}`;
+  }
+
   /**
-   * Creates a new active session for a user.
+   * Creates a new active session for a user, stored entirely in Redis.
    */
   async createSession(userId: string): Promise<CreateSessionResult> {
     const rawRefreshToken = this.tokenService.generateRefreshToken();
     const refreshTokenHash = this.tokenService.hashRefreshToken(rawRefreshToken);
-    const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000); // 7 days
+    const now = Date.now();
+    const ttl = this.refreshTtlSeconds;
 
-    const session = await this.prisma.authSession.create({
-      data: {
-        userId,
-        refreshTokenHash,
-        status: SessionStatus.ACTIVE,
-        expiresAt,
-      },
-    });
+    const session: SessionRecord = {
+      id: crypto.randomUUID(),
+      userId,
+      refreshTokenHash,
+      status: SessionStatus.ACTIVE,
+      createdAt: new Date(now).toISOString(),
+      expiresAt: new Date(now + ttl * 1000).toISOString(),
+    };
+
+    const serialized = JSON.stringify(session);
+    await this.redisService.set(this.sessionKey(session.id), serialized, ttl);
+    await this.redisService.set(this.refreshKey(refreshTokenHash), session.id, ttl);
+    await this.redisService.sadd(this.userSessionsKey(userId), session.id);
+    await this.redisService.expire(this.userSessionsKey(userId), ttl);
 
     return {
       session,
@@ -46,11 +97,11 @@ export class SessionService {
 
   /**
    * Rotates a refresh token session:
-   * 1. Hashes incoming refresh token.
-   * 2. Finds active session. If revoked or expired, rejects.
-   * 3. Checks that the user is ACTIVE.
-   * 4. Revokes old session.
-   * 5. Creates a new session and returns new raw refresh token.
+   * 1. Atomically consumes the incoming refresh token (GETDEL) to prevent replay.
+   * 2. Loads and validates the session record from Redis.
+   * 3. Checks that the user exists and is ACTIVE.
+   * 4. Revokes the old session.
+   * 5. Creates a new session and returns a new raw refresh token.
    */
   async rotateSession(rawRefreshToken: string): Promise<RotateSessionResult> {
     if (!rawRefreshToken) {
@@ -59,38 +110,54 @@ export class SessionService {
 
     const refreshTokenHash = this.tokenService.hashRefreshToken(rawRefreshToken);
 
-    const session = await this.prisma.authSession.findUnique({
-      where: { refreshTokenHash },
-      include: { user: true },
-    });
-
-    // Check if session exists and is ACTIVE
-    if (!session || session.status !== SessionStatus.ACTIVE) {
+    // Consume the refresh token first so it cannot be replayed, even concurrently.
+    const sessionId = await this.redisService.getdel(this.refreshKey(refreshTokenHash));
+    if (!sessionId) {
       throw new UnauthorizedException('Invalid or revoked refresh token.');
     }
 
-    // Check expiration
-    if (new Date() > session.expiresAt) {
-      await this.prisma.authSession.update({
-        where: { id: session.id },
-        data: { status: SessionStatus.EXPIRED },
-      });
+    const rawSession = await this.redisService.get(this.sessionKey(sessionId));
+    if (!rawSession) {
+      throw new UnauthorizedException('Invalid or revoked refresh token.');
+    }
+
+    let session: SessionRecord;
+    try {
+      session = JSON.parse(rawSession) as SessionRecord;
+    } catch {
+      await this.redisService.del(this.sessionKey(sessionId));
+      throw new UnauthorizedException('Invalid or revoked refresh token.');
+    }
+
+    // Check if the session is still ACTIVE
+    if (session.status !== SessionStatus.ACTIVE) {
+      await this.deleteSessionKeys(session);
+      throw new UnauthorizedException('Invalid or revoked refresh token.');
+    }
+
+    // Check expiration (Redis TTL normally handles this, but validate defensively)
+    if (new Date() > new Date(session.expiresAt)) {
+      await this.deleteSessionKeys(session);
       throw new UnauthorizedException('Refresh token has expired.');
     }
 
-    // Check user status
-    if (session.user.status !== UserStatus.ACTIVE) {
+    // Verify the user still exists and is active
+    const user = await this.prisma.user.findUnique({
+      where: { id: session.userId },
+    });
+
+    if (!user) {
+      await this.deleteSessionKeys(session);
+      throw new UnauthorizedException('Invalid or revoked refresh token.');
+    }
+
+    if (user.status !== UserStatus.ACTIVE) {
+      await this.deleteSessionKeys(session);
       throw new ForbiddenException('Account is not active.');
     }
 
-    // Revoke current session
-    await this.prisma.authSession.update({
-      where: { id: session.id },
-      data: {
-        status: SessionStatus.REVOKED,
-        revokedAt: new Date(),
-      },
-    });
+    // Revoke the old session before issuing the rotated one
+    await this.deleteSessionKeys(session);
 
     // Create a new session
     const { session: newSession, refreshToken: newRefreshToken } = await this.createSession(
@@ -100,7 +167,7 @@ export class SessionService {
     return {
       session: newSession,
       refreshToken: newRefreshToken,
-      user: session.user,
+      user,
     };
   }
 
@@ -110,13 +177,19 @@ export class SessionService {
   async revokeSession(sessionId: string): Promise<void> {
     if (!sessionId) return;
     try {
-      await this.prisma.authSession.update({
-        where: { id: sessionId },
-        data: {
-          status: SessionStatus.REVOKED,
-          revokedAt: new Date(),
-        },
-      });
+      const rawSession = await this.redisService.get(this.sessionKey(sessionId));
+      if (!rawSession) {
+        await this.redisService.del(this.sessionKey(sessionId));
+        return;
+      }
+
+      try {
+        const session = JSON.parse(rawSession) as SessionRecord;
+        await this.deleteSessionKeys(session);
+      } catch {
+        // Malformed session record: remove the key anyway
+        await this.redisService.del(this.sessionKey(sessionId));
+      }
     } catch {
       // Session already revoked or does not exist
     }
@@ -126,25 +199,50 @@ export class SessionService {
    * Revokes all sessions for a user (e.g. account suspension).
    */
   async revokeAllUserSessions(userId: string): Promise<void> {
-    await this.prisma.authSession.updateMany({
-      where: {
-        userId,
-        status: SessionStatus.ACTIVE,
-      },
-      data: {
-        status: SessionStatus.REVOKED,
-        revokedAt: new Date(),
-      },
-    });
+    const userSessionsKey = this.userSessionsKey(userId);
+    const sessionIds = await this.redisService.smembers(userSessionsKey);
+
+    for (const sessionId of sessionIds) {
+      const rawSession = await this.redisService.get(this.sessionKey(sessionId));
+      if (!rawSession) {
+        await this.redisService.del(this.sessionKey(sessionId));
+        continue;
+      }
+
+      try {
+        const session = JSON.parse(rawSession) as SessionRecord;
+        await this.deleteSessionKeys(session);
+      } catch {
+        await this.redisService.del(this.sessionKey(sessionId));
+      }
+    }
+
+    await this.redisService.del(userSessionsKey);
   }
 
   /**
    * Validates if a session is currently active and not expired.
    */
   async isSessionActive(sessionId: string): Promise<boolean> {
-    const session = await this.prisma.authSession.findUnique({
-      where: { id: sessionId },
-    });
-    return !!session && session.status === SessionStatus.ACTIVE && new Date() <= session.expiresAt;
+    const rawSession = await this.redisService.get(this.sessionKey(sessionId));
+    if (!rawSession) {
+      return false;
+    }
+
+    try {
+      const session = JSON.parse(rawSession) as SessionRecord;
+      return session.status === SessionStatus.ACTIVE && new Date() <= new Date(session.expiresAt);
+    } catch {
+      return false;
+    }
+  }
+
+  /**
+   * Removes all Redis keys belonging to a session.
+   */
+  private async deleteSessionKeys(session: SessionRecord): Promise<void> {
+    await this.redisService.del(this.sessionKey(session.id));
+    await this.redisService.del(this.refreshKey(session.refreshTokenHash));
+    await this.redisService.srem(this.userSessionsKey(session.userId), session.id);
   }
 }

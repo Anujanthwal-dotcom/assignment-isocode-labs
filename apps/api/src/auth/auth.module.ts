@@ -11,9 +11,17 @@ import { RolesGuard } from './guards/roles.guard';
 import { PrismaModule } from '../prisma/prisma.module';
 import { UsersModule } from '../users/users.module';
 import { AuditModule } from '../audit/audit.module';
+import { RedisModule } from '../redis/redis.module';
 
 @Module({
-  imports: [ConfigModule, PrismaModule, UsersModule, AuditModule, JwtModule.register({})],
+  imports: [
+    ConfigModule,
+    PrismaModule,
+    UsersModule,
+    AuditModule,
+    RedisModule,
+    JwtModule.register({}),
+  ],
   controllers: [AuthController],
   providers: [
     AuthService,

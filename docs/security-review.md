@@ -21,7 +21,7 @@ The platform supports 5 distinct user roles:
 - **JWT Auth Guard**: All API endpoints (except `@Public()`) require a valid bearer JWT or `access_token` HttpOnly cookie.
 - **Roles Guard**: Verifies that the user role matches `@Roles(...)` metadata.
 - **Store Boundary Isolation (`STORE_STAFF`)**: Store staff are cryptographically and relationally locked to their assigned store ID (`userRecord.staffProfile.storeId`). Any attempt to validate CSVs, inject inventory, or query stock balances for other physical stores or central warehouses returns HTTP `403 Forbidden` (`STORE_BOUNDARY_VIOLATION` / `LOCATION_ACCESS_DENIED`).
-- **Token Security**: Tokens are signed with `JWT_SECRET`, expire in 15 minutes, and refresh tokens are stored hashed in the `Session` table.
+- **Token Security**: Access tokens are signed JWTs that expire in 15 minutes. Refresh tokens are opaque, stored SHA-256-hashed in Redis as revocable sessions with a 7-day TTL and single-use rotation (`GETDEL`).
 
 ---
 

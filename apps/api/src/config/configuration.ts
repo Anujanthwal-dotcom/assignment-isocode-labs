@@ -34,6 +34,8 @@ export default () => {
       jwtAudience: process.env.JWT_AUDIENCE || 'pharmacy-app',
       accessTokenTtl: process.env.ACCESS_TOKEN_TTL || '15m',
       refreshTokenTtl: process.env.REFRESH_TOKEN_TTL || '7d',
+      // Refresh-token/session lifetime in seconds (Redis TTL). Defaults to 7 days.
+      refreshTokenTtlSeconds: parseInt(process.env.REFRESH_TOKEN_TTL_SECONDS || '604800', 10),
     },
     database: {
       url: process.env.DATABASE_URL,
