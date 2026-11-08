@@ -54,9 +54,22 @@ export default () => {
       bucketInventoryImports: process.env.MINIO_BUCKET_INVENTORY_IMPORTS || 'inventory-imports',
     },
     mail: {
+      provider: process.env.MAIL_PROVIDER || (process.env.BREVO_API_KEY ? 'brevo' : 'mailpit'),
+      apiKey: process.env.BREVO_API_KEY || '',
+      smtpKey: process.env.BREVO_SMTP_KEY || '',
+      smtpUser: process.env.BREVO_SMTP_USER || '',
+      fromEmail: process.env.MAIL_FROM_EMAIL || 'no-reply@kolkatapharmacy.com',
+      fromName: process.env.MAIL_FROM_NAME || 'Kolkata Pharmacy',
       host: process.env.MAIL_HOST || 'localhost',
       smtpPort: parseInt(process.env.MAIL_SMTP_PORT || '1025', 10),
       webPort: parseInt(process.env.MAIL_WEB_PORT || '8025', 10),
+    },
+    demoOtp: {
+      enabled: process.env.DEMO_OTP_ENABLED !== 'false',
+      code: process.env.DEMO_OTP_CODE || '123456',
+      emails: (process.env.DEMO_OTP_EMAILS || 'customer@example.com,customer2@example.com')
+        .split(',')
+        .map((e) => e.trim().toLowerCase()),
     },
     prescriptionAi: {
       provider: process.env.PRESCRIPTION_AI_PROVIDER || 'mock',
