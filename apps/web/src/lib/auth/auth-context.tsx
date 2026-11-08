@@ -8,6 +8,10 @@ interface AuthContextType {
   user: CurrentUser | null;
   loading: boolean;
   loginCustomer: (email: string, pass: string) => Promise<CurrentUser>;
+  initiateCustomerLogin: (email: string, pass: string) => Promise<{ success: boolean; message: string; developmentOtp?: string }>;
+  requestCustomerOtp: (email: string) => Promise<{ success: boolean; message: string; developmentOtp?: string }>;
+  verifyCustomerOtp: (email: string, otp: string) => Promise<CurrentUser>;
+  registerCustomer: (email: string, fullName: string, password?: string) => Promise<CurrentUser>;
   loginStaff: (email: string, pass: string) => Promise<CurrentUser>;
   logout: () => Promise<void>;
   refreshUser: () => Promise<CurrentUser | null>;
@@ -45,6 +49,53 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     return data;
   };
 
+  const initiateCustomerLogin = async (
+    email: string,
+    password: string,
+  ): Promise<{ success: boolean; message: string; developmentOtp?: string }> => {
+    return apiFetch<{ success: boolean; message: string; developmentOtp?: string }>(
+      '/auth/customer/initiate-login',
+      {
+        method: 'POST',
+        body: JSON.stringify({ email, password }),
+      },
+    );
+  };
+
+  const requestCustomerOtp = async (
+    email: string,
+  ): Promise<{ success: boolean; message: string; developmentOtp?: string }> => {
+    return apiFetch<{ success: boolean; message: string; developmentOtp?: string }>(
+      '/auth/customer/request-otp',
+      {
+        method: 'POST',
+        body: JSON.stringify({ email }),
+      },
+    );
+  };
+
+  const verifyCustomerOtp = async (email: string, otp: string): Promise<CurrentUser> => {
+    const data = await apiFetch<CurrentUser>('/auth/customer/verify-otp', {
+      method: 'POST',
+      body: JSON.stringify({ email, otp }),
+    });
+    setUser(data);
+    return data;
+  };
+
+  const registerCustomer = async (
+    email: string,
+    fullName: string,
+    password?: string,
+  ): Promise<CurrentUser> => {
+    const data = await apiFetch<CurrentUser>('/auth/customer/register', {
+      method: 'POST',
+      body: JSON.stringify({ email, fullName, password }),
+    });
+    setUser(data);
+    return data;
+  };
+
   const loginStaff = async (email: string, password: string): Promise<CurrentUser> => {
     const data = await apiFetch<CurrentUser>('/auth/staff/login', {
       method: 'POST',
@@ -70,6 +121,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         user,
         loading,
         loginCustomer,
+        initiateCustomerLogin,
+        requestCustomerOtp,
+        verifyCustomerOtp,
+        registerCustomer,
         loginStaff,
         logout,
         refreshUser,

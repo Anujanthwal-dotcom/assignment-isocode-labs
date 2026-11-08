@@ -15,7 +15,7 @@ export default function CustomerLoginPage() {
   return (
     <AuthSplitLayout
       title="Customer Portal"
-      subtitle="Sign in with your email and password"
+      subtitle="Sign in with your email verification code or password"
       backHref="/"
       backLabel="Back to Portals"
     >

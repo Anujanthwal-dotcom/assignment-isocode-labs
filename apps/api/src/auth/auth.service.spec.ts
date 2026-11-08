@@ -36,6 +36,10 @@ describe('AuthService Unit Tests', () => {
     mockAuditService = {
       record: jest.fn().mockResolvedValue(undefined),
     };
+    const mockMailService = {
+      sendWelcomeEmail: jest.fn().mockResolvedValue({ messageId: 'm-1', provider: 'mock' }),
+      sendLoginOtpEmail: jest.fn().mockResolvedValue({ messageId: 'm-2', provider: 'mock' }),
+    };
 
     authService = new AuthService(
       mockUsersService,
@@ -43,6 +47,7 @@ describe('AuthService Unit Tests', () => {
       mockTokenService,
       mockSessionService,
       mockAuditService,
+      mockMailService as any,
     );
   });
 
@@ -210,6 +215,72 @@ describe('AuthService Unit Tests', () => {
       await expect(
         authService.customerLogin('customer@example.com', plainPassword),
       ).rejects.toThrow(ForbiddenException);
+    });
+  });
+
+  describe('Customer Registration & Email OTP', () => {
+    it('registers new customer with email and full name', async () => {
+      mockUsersService.findByEmail.mockResolvedValue(null);
+      mockUsersService.createCustomerWithEmail = jest.fn().mockResolvedValue({
+        id: 'new-cust-1',
+        email: 'newuser@example.com',
+        role: UserRole.CUSTOMER,
+        status: UserStatus.ACTIVE,
+        customerProfile: { fullName: 'Siddhartha Roy', preferredLanguage: 'en' },
+      });
+
+      const res = await authService.registerCustomer({
+        email: 'newuser@example.com',
+        fullName: 'Siddhartha Roy',
+        password: 'SecurePassword123!',
+      });
+
+      expect(res.user.id).toBe('new-cust-1');
+      expect(res.user.profile.fullName).toBe('Siddhartha Roy');
+      expect(res.accessToken).toBe('jwt_token');
+      expect(mockUsersService.createCustomerWithEmail).toHaveBeenCalledWith(
+        expect.objectContaining({ email: 'newuser@example.com', fullName: 'Siddhartha Roy' }),
+      );
+    });
+
+    it('authenticates customer via email OTP', async () => {
+      mockOtpService.verifyOtp.mockResolvedValue(true);
+      mockUsersService.findByEmail.mockResolvedValue({
+        id: 'user-cust-1',
+        email: 'customer@example.com',
+        role: UserRole.CUSTOMER,
+        status: UserStatus.ACTIVE,
+        customerProfile: { fullName: 'Debasish Ghosh', preferredLanguage: 'en' },
+      });
+
+      const res = await authService.verifyCustomerOtp('customer@example.com', '123456');
+      expect(res.user.id).toBe('user-cust-1');
+      expect(res.accessToken).toBe('jwt_token');
+      expect(mockOtpService.verifyOtp).toHaveBeenCalledWith('customer@example.com', '123456');
+    });
+
+    it('verifies customer email & password and initiates OTP in 2FA login flow', async () => {
+      const plainPassword = 'DemoPassword123!';
+      const hash = await argon2.hash(plainPassword, { type: argon2.argon2id });
+
+      mockUsersService.findByEmail.mockResolvedValue({
+        id: 'user-cust-1',
+        email: 'customer@example.com',
+        role: UserRole.CUSTOMER,
+        status: UserStatus.ACTIVE,
+        passwordHash: hash,
+      });
+
+      mockOtpService.requestOtp.mockResolvedValue({
+        success: true,
+        message: 'OTP sent',
+        developmentOtp: '123456',
+      });
+
+      const res = await authService.initiateCustomerLogin('customer@example.com', plainPassword);
+      expect(res.success).toBe(true);
+      expect(res.developmentOtp).toBe('123456');
+      expect(mockOtpService.requestOtp).toHaveBeenCalledWith('customer@example.com');
     });
   });
 });

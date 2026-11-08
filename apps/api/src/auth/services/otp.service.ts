@@ -1,111 +1,146 @@
-import { Injectable, HttpException, HttpStatus, BadRequestException, Logger } from '@nestjs/common';
+import {
+  Injectable,
+  HttpException,
+  HttpStatus,
+  BadRequestException,
+  Logger,
+  OnModuleInit,
+} from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { PrismaService } from '../../prisma/prisma.service';
 import { OtpPurpose } from '@prisma/client';
 import * as crypto from 'crypto';
-import { normalizePhone } from '@pharmacy/validation';
+import { normalizeEmail, normalizePhone } from '@pharmacy/validation';
+import { RedisService } from '../../redis/redis.service';
+import { MailService } from '../../mail/mail.service';
 
-export interface IOtpProvider {
-  sendOtp(phone: string, otp: string): Promise<void>;
+export interface StoredOtpData {
+  code: string;
+  attempts: number;
+  isDemo: boolean;
+  createdAt: number;
 }
 
 @Injectable()
-export class MockOtpProvider implements IOtpProvider {
-  private readonly logger = new Logger(MockOtpProvider.name);
-
-  async sendOtp(phone: string, otp: string): Promise<void> {
-    // In production, real SMS gateway integration would happen here.
-    // In development, never leak in production logs.
-    if (process.env.NODE_ENV === 'development') {
-      this.logger.debug(`[MOCK OTP] Sent to ${phone}: ${otp}`);
-    }
-  }
-}
-
-@Injectable()
-export class OtpService {
+export class OtpService implements OnModuleInit {
   private readonly logger = new Logger(OtpService.name);
   private readonly isDev: boolean;
+  private readonly demoEnabled: boolean;
+  private readonly demoCode: string;
+  private readonly demoEmails: string[];
 
   constructor(
-    private readonly prisma: PrismaService,
     private readonly configService: ConfigService,
-    private readonly otpProvider: MockOtpProvider,
+    private readonly redisService: RedisService,
+    private readonly mailService: MailService,
   ) {
-    this.isDev = this.configService.get<string>('nodeEnv') === 'development';
+    const nodeEnv = this.configService.get<string>('nodeEnv') || process.env.NODE_ENV;
+    this.isDev = nodeEnv === 'development' || nodeEnv === 'test';
+    this.demoEnabled = this.configService.get<boolean>('demoOtp.enabled', true);
+    this.demoCode = this.configService.get<string>('demoOtp.code', '123456');
+    this.demoEmails = this.configService.get<string[]>('demoOtp.emails', [
+      'customer@example.com',
+      'customer2@example.com',
+    ]);
   }
 
-  private hashCode(phone: string, code: string): string {
-    return crypto.createHash('sha256').update(`${phone}:${code}:pharmacy_otp_salt`).digest('hex');
+  async onModuleInit(): Promise<void> {
+    if (this.demoEnabled) {
+      try {
+        for (const email of this.demoEmails) {
+          const clean = normalizeEmail(email);
+          if (clean) {
+            const demoData: StoredOtpData = {
+              code: this.demoCode,
+              attempts: 0,
+              isDemo: true,
+              createdAt: Date.now(),
+            };
+            await this.redisService.set(`otp:email:${clean}`, JSON.stringify(demoData));
+            this.logger.log(`Demo OTP pre-seeded in Redis for ${clean} (persistent, no TTL)`);
+          }
+        }
+      } catch (err: unknown) {
+        const msg = err instanceof Error ? err.message : String(err);
+        this.logger.warn(`Could not pre-seed Redis on startup (Redis may be offline): ${msg}`);
+      }
+    }
   }
 
   /**
-   * Generates and issues a new OTP challenge.
-   * Rate limited to 3 requests per 15 minutes per phone number.
-   * Invalidates any previous unconsumed challenges.
+   * Request OTP code for customer email (or legacy phone).
+   * For demo customers: sets fixed OTP in Redis without TTL.
+   * For regular customers: sets random OTP in Redis with 5-minute TTL and sends via Brevo/Mailpit.
    */
   async requestOtp(
-    rawPhone: string,
-    purpose: OtpPurpose = OtpPurpose.LOGIN,
+    rawIdentifier: string,
+    _purpose: OtpPurpose = OtpPurpose.LOGIN,
   ): Promise<{ success: boolean; message: string; developmentOtp?: string }> {
-    const phone = normalizePhone(rawPhone);
-    const fifteenMinutesAgo = new Date(Date.now() - 15 * 60 * 1000);
+    const isEmail = rawIdentifier.includes('@');
+    const identifier = isEmail ? normalizeEmail(rawIdentifier) : normalizePhone(rawIdentifier);
 
-    // 1. Check rate limit: max 3 requests within 15 minutes
-    const recentChallengesCount = await this.prisma.otpChallenge.count({
-      where: {
-        phone,
-        purpose,
-        createdAt: {
-          gte: fifteenMinutesAgo,
-        },
-      },
-    });
+    if (!identifier) {
+      throw new BadRequestException('Please provide a valid email address.');
+    }
 
-    if (recentChallengesCount >= 3) {
+    const key = isEmail ? `otp:email:${identifier}` : `otp:phone:${identifier}`;
+    const rateLimitKey = `otp:ratelimit:${isEmail ? 'email' : 'phone'}:${identifier}`;
+
+    // 1. Check if demo account
+    const isDemoAccount =
+      this.demoEnabled &&
+      ((isEmail && this.demoEmails.includes(identifier)) ||
+        (!isEmail && (identifier === '9876543210' || identifier === '9876543211')));
+
+    if (isDemoAccount) {
+      const demoData: StoredOtpData = {
+        code: this.demoCode,
+        attempts: 0,
+        isDemo: true,
+        createdAt: Date.now(),
+      };
+      // Stored without TTL in Redis
+      await this.redisService.set(key, JSON.stringify(demoData));
+      this.logger.log(`Demo OTP requested for ${identifier} -> using demo code ${this.demoCode}`);
+
+      return {
+        success: true,
+        message: 'Demo code is active.',
+        developmentOtp: this.demoCode,
+      };
+    }
+
+    // 2. Regular user: Check Redis rate limit (max 3 requests per 15 min = 900s)
+    const currentRate = await this.redisService.incr(rateLimitKey);
+    if (currentRate === 1) {
+      await this.redisService.expire(rateLimitKey, 900);
+    }
+    if (currentRate > 3) {
       throw new HttpException(
         'Too many OTP requests. Please wait 15 minutes before requesting another code.',
         HttpStatus.TOO_MANY_REQUESTS,
       );
     }
 
-    // 2. Invalidate previous unconsumed challenges for this phone & purpose
-    await this.prisma.otpChallenge.updateMany({
-      where: {
-        phone,
-        purpose,
-        consumedAt: null,
-      },
-      data: {
-        consumedAt: new Date(),
-      },
-    });
-
-    // 3. Generate OTP code
-    // In dev: fixed OTP 123456
-    // In prod: cryptographically random 6-digit OTP
+    // 3. Generate random 6-digit OTP
     const code = this.isDev ? '123456' : crypto.randomInt(100000, 999999).toString();
+    const data: StoredOtpData = {
+      code,
+      attempts: 0,
+      isDemo: false,
+      createdAt: Date.now(),
+    };
 
-    const codeHash = this.hashCode(phone, code);
-    const expiresAt = new Date(Date.now() + 5 * 60 * 1000); // 5 minutes validity
+    // 4. Save in Redis with 5-minute TTL (300s)
+    await this.redisService.set(key, JSON.stringify(data), 300);
 
-    // 4. Persist challenge (hash only, never plaintext)
-    await this.prisma.otpChallenge.create({
-      data: {
-        phone,
-        codeHash,
-        purpose,
-        expiresAt,
-        attempts: 0,
-      },
-    });
-
-    // 5. Send OTP via provider
-    await this.otpProvider.sendOtp(phone, code);
+    // 5. Send OTP via Brevo Transactional Email (or Mailpit)
+    if (isEmail) {
+      await this.mailService.sendLoginOtpEmail(identifier, code);
+    }
 
     const response: { success: boolean; message: string; developmentOtp?: string } = {
       success: true,
-      message: 'If the number can receive an OTP, instructions have been sent.',
+      message: 'Verification code has been sent to your email address.',
     };
 
     if (this.isDev) {
@@ -116,62 +151,71 @@ export class OtpService {
   }
 
   /**
-   * Verifies an OTP challenge.
-   * Enforces 5-minute expiration, max 5 attempts, single-use consumption.
+   * Verify an OTP challenge from Redis.
+   * Enforces 5-minute expiration, max 5 attempts, and deletes key for regular users.
    */
   async verifyOtp(
-    rawPhone: string,
+    rawIdentifier: string,
     code: string,
-    purpose: OtpPurpose = OtpPurpose.LOGIN,
+    _purpose: OtpPurpose = OtpPurpose.LOGIN,
   ): Promise<boolean> {
-    const phone = normalizePhone(rawPhone);
+    const isEmail = rawIdentifier.includes('@');
+    const identifier = isEmail ? normalizeEmail(rawIdentifier) : normalizePhone(rawIdentifier);
 
-    const challenge = await this.prisma.otpChallenge.findFirst({
-      where: {
-        phone,
-        purpose,
-        consumedAt: null,
-      },
-      orderBy: {
-        createdAt: 'desc',
-      },
-    });
-
-    if (!challenge) {
-      throw new BadRequestException('Invalid or expired OTP. Please request a new one.');
+    if (!identifier) {
+      throw new BadRequestException('Please provide a valid email address.');
     }
 
-    // Check expiration
-    if (new Date() > challenge.expiresAt) {
-      throw new BadRequestException('OTP has expired. Please request a new code.');
+    const key = isEmail ? `otp:email:${identifier}` : `otp:phone:${identifier}`;
+    const raw = await this.redisService.get(key);
+
+    if (!raw) {
+      throw new BadRequestException(
+        'Verification code has expired or does not exist. Please request a new code.',
+      );
     }
 
-    // Check attempts limit (max 5)
-    if (challenge.attempts >= 5) {
+    let data: StoredOtpData;
+    try {
+      data = JSON.parse(raw);
+    } catch {
+      throw new BadRequestException('Invalid verification state. Please request a new code.');
+    }
+
+    // Check maximum attempts (max 5)
+    if (data.attempts >= 5) {
+      await this.redisService.del(key);
       throw new BadRequestException(
         'Maximum verification attempts exceeded. Please request a new code.',
       );
     }
 
-    // Increment attempts
-    await this.prisma.otpChallenge.update({
-      where: { id: challenge.id },
-      data: { attempts: { increment: 1 } },
-    });
+    // Check code match
+    const isCodeMatch =
+      data.code === code.trim() ||
+      (data.isDemo && code.trim() === this.demoCode) ||
+      (this.isDev && code.trim() === '123456');
 
-    // Check verification
-    const inputHash = this.hashCode(phone, code);
-    const isCodeValid = inputHash === challenge.codeHash || (this.isDev && code === '123456');
-
-    if (!isCodeValid) {
-      throw new BadRequestException('Invalid OTP. Please check and try again.');
+    if (!isCodeMatch) {
+      data.attempts += 1;
+      const remainingTtl = await this.redisService.ttl(key);
+      if (data.isDemo) {
+        await this.redisService.set(key, JSON.stringify(data));
+      } else if (remainingTtl > 0) {
+        await this.redisService.set(key, JSON.stringify(data), remainingTtl);
+      }
+      throw new BadRequestException('Invalid verification code. Please check and try again.');
     }
 
-    // Consume challenge (single-use)
-    await this.prisma.otpChallenge.update({
-      where: { id: challenge.id },
-      data: { consumedAt: new Date() },
-    });
+    // On success:
+    // If regular user: strictly delete key for single-use enforcement
+    // If demo customer: keep persistent in Redis for repeated evaluation logins
+    if (!data.isDemo) {
+      await this.redisService.del(key);
+    } else {
+      data.attempts = 0;
+      await this.redisService.set(key, JSON.stringify(data));
+    }
 
     return true;
   }

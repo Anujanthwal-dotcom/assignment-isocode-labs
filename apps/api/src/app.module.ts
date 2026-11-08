@@ -31,6 +31,8 @@ import { FulfilmentModule } from './fulfilment/fulfilment.module';
 import { NotificationsModule } from './notifications/notifications.module';
 import { RefillsModule } from './refills/refills.module';
 import { AdminAnalyticsModule } from './admin-analytics/admin-analytics.module';
+import { RedisModule } from './redis/redis.module';
+import { MailModule } from './mail/mail.module';
 import { JwtAuthGuard } from './auth/guards/jwt-auth.guard';
 import { RolesGuard } from './auth/guards/roles.guard';
 
@@ -90,6 +92,8 @@ import { RolesGuard } from './auth/guards/roles.guard';
     NotificationsModule,
     RefillsModule,
     AdminAnalyticsModule,
+    RedisModule,
+    MailModule,
   ],
   providers: [
     {

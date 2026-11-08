@@ -1,125 +1,146 @@
 import { OtpService } from './otp.service';
 import { BadRequestException, HttpException } from '@nestjs/common';
-import { OtpPurpose } from '@prisma/client';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-describe('OtpService Unit Tests', () => {
+describe('OtpService Unit Tests (Redis-Backed)', () => {
   let otpService: OtpService;
-  let mockPrisma: any;
   let mockConfigService: any;
-  let mockOtpProvider: any;
+  let mockRedisService: any;
+  let mockMailService: any;
 
   beforeEach(() => {
-    mockPrisma = {
-      otpChallenge: {
-        count: jest.fn(),
-        updateMany: jest.fn(),
-        create: jest.fn(),
-        findFirst: jest.fn(),
-        update: jest.fn(),
-      },
-    };
-
     mockConfigService = {
-      get: jest.fn().mockImplementation((key: string) => {
-        if (key === 'nodeEnv') return 'development';
-        return null;
+      get: vi.fn().mockImplementation((key: string, defaultValue?: any) => {
+        if (key === 'nodeEnv') return 'test';
+        if (key === 'demoOtp.enabled') return true;
+        if (key === 'demoOtp.code') return '123456';
+        if (key === 'demoOtp.emails') return ['customer@example.com', 'customer2@example.com'];
+        return defaultValue ?? null;
       }),
     };
 
-    mockOtpProvider = {
-      sendOtp: jest.fn().mockResolvedValue(undefined),
+    mockRedisService = {
+      get: vi.fn(),
+      set: vi.fn().mockResolvedValue(undefined),
+      del: vi.fn().mockResolvedValue(1),
+      incr: vi.fn(),
+      expire: vi.fn().mockResolvedValue(true),
+      ttl: vi.fn().mockResolvedValue(250),
     };
 
-    otpService = new OtpService(mockPrisma, mockConfigService, mockOtpProvider);
+    mockMailService = {
+      sendLoginOtpEmail: vi.fn().mockResolvedValue({ messageId: 'test-msg-id', provider: 'mock' }),
+    };
+
+    otpService = new OtpService(mockConfigService, mockRedisService, mockMailService);
   });
 
-  describe('Rate Limiting', () => {
-    it('should throw 429 when phone requests more than 3 OTPs in 15 minutes', async () => {
-      mockPrisma.otpChallenge.count.mockResolvedValue(3);
-
-      await expect(otpService.requestOtp('9876543210')).rejects.toThrow(HttpException);
-      expect(mockPrisma.otpChallenge.create).not.toHaveBeenCalled();
+  describe('Demo Customer OTP', () => {
+    it('pre-seeds demo accounts in Redis during onModuleInit without TTL', async () => {
+      await otpService.onModuleInit();
+      expect(mockRedisService.set).toHaveBeenCalledWith(
+        'otp:email:customer@example.com',
+        expect.stringContaining('"code":"123456"'),
+      );
+      expect(mockRedisService.set).toHaveBeenCalledWith(
+        'otp:email:customer2@example.com',
+        expect.stringContaining('"isDemo":true'),
+      );
     });
 
-    it('should allow OTP request when rate limit is not exceeded (<3)', async () => {
-      mockPrisma.otpChallenge.count.mockResolvedValue(2);
-      mockPrisma.otpChallenge.updateMany.mockResolvedValue({ count: 1 });
-      mockPrisma.otpChallenge.create.mockResolvedValue({ id: 'test-uuid' });
-
-      const res = await otpService.requestOtp('9876543210');
+    it('returns demo code without sending email when demo customer requests OTP', async () => {
+      const res = await otpService.requestOtp('customer@example.com');
       expect(res.success).toBe(true);
       expect(res.developmentOtp).toBe('123456');
-      expect(mockPrisma.otpChallenge.create).toHaveBeenCalled();
+      expect(mockMailService.sendLoginOtpEmail).not.toHaveBeenCalled();
+      expect(mockRedisService.set).toHaveBeenCalledWith(
+        'otp:email:customer@example.com',
+        expect.stringContaining('"code":"123456"'),
+      );
+    });
+
+    it('preserves key in Redis on successful verification for demo customer', async () => {
+      mockRedisService.get.mockResolvedValue(
+        JSON.stringify({ code: '123456', attempts: 0, isDemo: true, createdAt: Date.now() }),
+      );
+
+      const verified = await otpService.verifyOtp('customer@example.com', '123456');
+      expect(verified).toBe(true);
+      // Key is preserved (not deleted)
+      expect(mockRedisService.del).not.toHaveBeenCalled();
+      expect(mockRedisService.set).toHaveBeenCalledWith(
+        'otp:email:customer@example.com',
+        expect.stringContaining('"attempts":0'),
+      );
     });
   });
 
-  describe('OTP Expiration & Single Use', () => {
-    it('should reject OTP if expired', async () => {
-      const expiredChallenge = {
-        id: 'challenge-1',
-        phone: '9876543210',
-        codeHash: 'somehash',
-        purpose: OtpPurpose.LOGIN,
-        expiresAt: new Date(Date.now() - 1000), // expired 1 sec ago
-        consumedAt: null,
-        attempts: 0,
-      };
+  describe('Regular Customer OTP', () => {
+    it('sets 5-minute TTL and sends email via MailService on requestOtp', async () => {
+      mockRedisService.incr.mockResolvedValue(1);
 
-      mockPrisma.otpChallenge.findFirst.mockResolvedValue(expiredChallenge);
-
-      await expect(otpService.verifyOtp('9876543210', '123456')).rejects.toThrow(
-        BadRequestException,
+      const res = await otpService.requestOtp('newuser@example.com');
+      expect(res.success).toBe(true);
+      expect(mockRedisService.set).toHaveBeenCalledWith(
+        'otp:email:newuser@example.com',
+        expect.any(String),
+        300, // 5 minutes TTL
       );
-      await expect(otpService.verifyOtp('9876543210', '123456')).rejects.toThrow(/expired/i);
-    });
-
-    it('should reject OTP if already consumed', async () => {
-      // findFirst returns null if looking for consumedAt: null
-      mockPrisma.otpChallenge.findFirst.mockResolvedValue(null);
-
-      await expect(otpService.verifyOtp('9876543210', '123456')).rejects.toThrow(
-        BadRequestException,
+      expect(mockMailService.sendLoginOtpEmail).toHaveBeenCalledWith(
+        'newuser@example.com',
+        expect.any(String),
       );
     });
 
-    it('should reject OTP if maximum attempts (>=5) are exceeded', async () => {
-      const maxAttemptsChallenge = {
-        id: 'challenge-2',
-        phone: '9876543210',
-        codeHash: 'somehash',
-        purpose: OtpPurpose.LOGIN,
-        expiresAt: new Date(Date.now() + 60000),
-        consumedAt: null,
-        attempts: 5,
-      };
+    it('enforces rate limit: throws 429 when more than 3 requests in 15 minutes', async () => {
+      mockRedisService.incr.mockResolvedValue(4);
 
-      mockPrisma.otpChallenge.findFirst.mockResolvedValue(maxAttemptsChallenge);
+      await expect(otpService.requestOtp('regular@example.com')).rejects.toThrow(HttpException);
+      expect(mockMailService.sendLoginOtpEmail).not.toHaveBeenCalled();
+    });
 
-      await expect(otpService.verifyOtp('9876543210', '123456')).rejects.toThrow(
+    it('verifies valid code and strictly deletes key from Redis for single use', async () => {
+      mockRedisService.get.mockResolvedValue(
+        JSON.stringify({ code: '948201', attempts: 0, isDemo: false, createdAt: Date.now() }),
+      );
+
+      const verified = await otpService.verifyOtp('regular@example.com', '948201');
+      expect(verified).toBe(true);
+      expect(mockRedisService.del).toHaveBeenCalledWith('otp:email:regular@example.com');
+    });
+
+    it('rejects if OTP has expired or does not exist in Redis', async () => {
+      mockRedisService.get.mockResolvedValue(null);
+
+      await expect(otpService.verifyOtp('regular@example.com', '948201')).rejects.toThrow(
+        BadRequestException,
+      );
+      await expect(otpService.verifyOtp('regular@example.com', '948201')).rejects.toThrow(/expired/i);
+    });
+
+    it('rejects if maximum attempts (>= 5) exceeded and deletes key', async () => {
+      mockRedisService.get.mockResolvedValue(
+        JSON.stringify({ code: '948201', attempts: 5, isDemo: false, createdAt: Date.now() }),
+      );
+
+      await expect(otpService.verifyOtp('regular@example.com', '948201')).rejects.toThrow(
         /attempts exceeded/i,
       );
+      expect(mockRedisService.del).toHaveBeenCalledWith('otp:email:regular@example.com');
     });
 
-    it('should verify OTP and mark challenge consumed on valid input', async () => {
-      const validChallenge = {
-        id: 'challenge-3',
-        phone: '9876543210',
-        codeHash: (otpService as any).hashCode('9876543210', '123456'),
-        purpose: OtpPurpose.LOGIN,
-        expiresAt: new Date(Date.now() + 60000),
-        consumedAt: null,
-        attempts: 0,
-      };
+    it('increments attempts on invalid code mismatch', async () => {
+      mockRedisService.get.mockResolvedValue(
+        JSON.stringify({ code: '948201', attempts: 1, isDemo: false, createdAt: Date.now() }),
+      );
 
-      mockPrisma.otpChallenge.findFirst.mockResolvedValue(validChallenge);
-      mockPrisma.otpChallenge.update.mockResolvedValue({});
-
-      const verified = await otpService.verifyOtp('9876543210', '123456');
-      expect(verified).toBe(true);
-      expect(mockPrisma.otpChallenge.update).toHaveBeenCalledWith(
-        expect.objectContaining({
-          data: expect.objectContaining({ consumedAt: expect.any(Date) }),
-        }),
+      await expect(otpService.verifyOtp('regular@example.com', '000000')).rejects.toThrow(
+        /Invalid verification code/i,
+      );
+      expect(mockRedisService.set).toHaveBeenCalledWith(
+        'otp:email:regular@example.com',
+        expect.stringContaining('"attempts":2'),
+        250,
       );
     });
   });

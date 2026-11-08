@@ -3,7 +3,7 @@ import { JwtModule } from '@nestjs/jwt';
 import { ConfigModule } from '@nestjs/config';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
-import { OtpService, MockOtpProvider } from './services/otp.service';
+import { OtpService } from './services/otp.service';
 import { TokenService } from './services/token.service';
 import { SessionService } from './services/session.service';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
@@ -18,7 +18,6 @@ import { AuditModule } from '../audit/audit.module';
   providers: [
     AuthService,
     OtpService,
-    MockOtpProvider,
     TokenService,
     SessionService,
     JwtAuthGuard,
