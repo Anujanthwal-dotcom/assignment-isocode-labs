@@ -106,16 +106,12 @@ export default function HandoverWorkspacePage() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-3 border-b border-[#EBECEF]">
         <div>
-          <div className="flex items-center gap-3">
+          <div className="flex flex-col items-start gap-3">
             <BackButton href="/pharmacist/fulfilment" label="Fulfilment Queue" />
             <h1 className="text-2xl font-bold text-[#14161A] tracking-tight">
               Order Handover: {orderDetail?.orderNumber || ''}
             </h1>
           </div>
-          <p className="text-xs text-[#78879A] mt-1">
-            Record physical parcel transfer to logistics delivery partner or direct customer counter
-            pickup.
-          </p>
         </div>
 
         {orderDetail?.hasInvoice && (

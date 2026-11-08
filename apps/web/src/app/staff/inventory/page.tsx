@@ -110,9 +110,6 @@ export default function StaffInventoryPage() {
                 {store?.name || 'Store'}
               </span>
             </div>
-            <p className="text-xs text-slate-500 mt-1">
-              Real-time on-hand stock and active reservations for this store.
-            </p>
           </div>
 
           <div className="flex items-center gap-2.5">

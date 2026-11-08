@@ -110,10 +110,6 @@ export default function StaffOverviewPage() {
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-3">
-              <p className="text-xs text-[#475569] leading-relaxed">
-                Upload today&apos;s physical stock counts for <strong>{store?.name}</strong>. The system routing engine
-                instantly uses this CSV to allocate customer orders.
-              </p>
               <Link
                 href="/staff/inventory/import"
                 className="inline-flex items-center gap-1.5 text-xs font-bold text-[#0D5C5A] hover:underline"
@@ -134,9 +130,6 @@ export default function StaffOverviewPage() {
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-3">
-              <p className="text-xs text-[#475569] leading-relaxed">
-                Review real-time on-hand quantities, batches, and active reservations reserved for customer shipments.
-              </p>
               <div className="flex items-center justify-between pt-1">
                 <span className="text-[11px] text-[#78879A] font-mono">
                   {storeStockCount !== null ? `${storeStockCount} SKUs Tracked` : 'Live Tracking'}
@@ -162,9 +155,6 @@ export default function StaffOverviewPage() {
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-3">
-              <p className="text-xs text-[#475569] leading-relaxed">
-                Pick, pack, generate invoices, and hand over approved child orders automatically routed to your store.
-              </p>
               <Link
                 href="/staff/fulfilment"
                 className="inline-flex items-center gap-1.5 text-xs font-bold text-[#0D5C5A] hover:underline"

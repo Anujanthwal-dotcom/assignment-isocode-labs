@@ -74,9 +74,6 @@ export default function StaffFulfilmentPage() {
                 {store?.name || 'Retail Store'}
               </span>
             </div>
-            <p className="text-xs text-slate-500 mt-1">
-              Pick, pack, invoice, and hand over approved child shipments routed to this store.
-            </p>
           </div>
 
           <Button

@@ -39,9 +39,6 @@ export default function PharmacistH1RegisterPage() {
         <h1 className="text-2xl font-bold text-[#14161A] tracking-tight">
           Schedule H1 Drug Register
         </h1>
-        <p className="text-sm text-[#78879A] mt-1">
-          Statutory register of Schedule H1 dispensed substances recorded by registered pharmacists.
-        </p>
       </div>
 
       {loading ? (

@@ -228,9 +228,6 @@ export default function DailyCsvInjectionPage() {
             <h1 className="text-xl font-bold tracking-tight text-slate-900">
               Daily CSV Inventory Injection
             </h1>
-            <p className="text-xs text-slate-500 mt-1">
-              Upload daily physical store stock counts. The system checks CSV schema first, then processes inventory.
-            </p>
           </div>
 
           <Button

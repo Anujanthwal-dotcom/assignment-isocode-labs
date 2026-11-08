@@ -367,14 +367,16 @@ export default function PharmacistPrescriptionVerifyPage() {
     <div className="flex-1 p-6 max-w-[1500px] w-full mx-auto space-y-5">
       {/* Top Header Navigation */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-[#EBECEF]">
-        <div className="flex items-center gap-3">
+        <div className="flex flex-col items-start gap-3">
           <BackButton href="/pharmacist/review-queue" label="Review Queue" />
-          <h1 className="text-lg font-bold text-[#0F172A] tracking-tight">
-            Prescription Verification &amp; Cost Quotation
-          </h1>
-          <Badge variant="neutral" className="text-[10px] font-mono">
-            {prescription.status}
-          </Badge>
+          <div className="flex items-center gap-3">
+            <h1 className="text-lg font-bold text-[#0F172A] tracking-tight">
+              Prescription Verification &amp; Cost Quotation
+            </h1>
+            <Badge variant="neutral" className="text-[10px] font-mono">
+              {prescription.status}
+            </Badge>
+          </div>
         </div>
 
         <div className="flex items-center gap-2 text-xs text-slate-500">
@@ -541,9 +543,6 @@ export default function PharmacistPrescriptionVerifyPage() {
                 <h2 className="text-sm font-bold text-slate-800">
                   Verified Medicines &amp; Quotation Items ({items.length})
                 </h2>
-                <p className="text-[11px] text-slate-500">
-                  Confirm prices, mapped SKUs, and specify availability for customer purchase.
-                </p>
               </div>
 
               <Button

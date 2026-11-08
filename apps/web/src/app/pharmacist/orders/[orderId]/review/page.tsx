@@ -337,7 +337,7 @@ export default function PharmacistOrderReviewPage() {
     <div className="flex flex-col space-y-4">
       {/* Top Sticky Bar */}
       <div className="sticky top-[64px] z-30 bg-white border-b border-[#EBECEF] px-6 py-3 flex flex-wrap items-center justify-between gap-4 shadow-2xs">
-        <div className="flex items-center gap-3">
+        <div className="flex flex-col items-start gap-3">
           <BackButton href="/pharmacist/review-queue" label="Review Queue" />
           <div>
             <div className="flex items-center gap-2">

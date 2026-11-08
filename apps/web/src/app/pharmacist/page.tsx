@@ -23,9 +23,6 @@ export default function PharmacistDashboardPage() {
       <div className="flex items-center justify-between pb-4 border-b border-slate-200">
         <div>
           <h1 className="text-2xl font-bold tracking-tight text-slate-900">Pharmacist Workspace</h1>
-          <p className="text-sm text-slate-500 mt-1">
-            Central Clinical Prescription Verification &amp; Dispensing Clearance
-          </p>
         </div>
         <Button
           variant="outline"
@@ -53,9 +50,6 @@ export default function PharmacistDashboardPage() {
           <h3 className="text-base font-bold text-slate-900 group-hover:text-teal-700 transition-colors">
             Prescription Verification Queue
           </h3>
-          <p className="text-xs text-slate-500 mt-1">
-            Review incoming doctor prescriptions, verify extracted medications, check live inventory, and prepare cost quotations.
-          </p>
         </Link>
       </div>
 

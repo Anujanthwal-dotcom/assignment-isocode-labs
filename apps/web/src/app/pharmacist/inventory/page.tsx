@@ -95,9 +95,6 @@ export default function PharmacistInventoryPage() {
           <h1 className="text-[24px] font-bold text-[#0F172A] tracking-tight">
             Store Stock Inventory
           </h1>
-          <p className="text-[13px] text-[#78879A]">
-            Current on-hand balances, reserved orders, and available stock for clinical dispensing.
-          </p>
         </div>
       </div>
 

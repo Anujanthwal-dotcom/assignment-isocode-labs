@@ -124,9 +124,6 @@ export default function PharmacistFulfilmentQueuePage() {
           <h1 className="text-2xl font-bold text-[#14161A] tracking-tight">
             Store Fulfilment Queue
           </h1>
-          <p className="text-sm text-[#78879A] mt-1">
-            Pick, pack, invoice, and hand over approved orders routed to your store.
-          </p>
         </div>
       </div>
 

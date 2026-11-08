@@ -158,9 +158,6 @@ export default function PharmacistReviewQueuePage() {
           <h1 className="text-2xl font-bold text-[#14161A] tracking-tight">
             Pharmacist Verification &amp; Review Queue
           </h1>
-          <p className="text-xs text-[#78879A] mt-1">
-            Review doctor prescriptions, verify AI extracted medicines against catalogue, mark availability, and provide customer quotations.
-          </p>
         </div>
 
 
