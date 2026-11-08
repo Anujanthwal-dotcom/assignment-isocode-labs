@@ -28,10 +28,12 @@ This document outlines architectural assumptions, simulated integrations, and te
 
 ---
 
-## 2. Fulfilment and Store Routing Assumptions
+## 2. Fulfilment and Store Routing Considerations
 
-- **Single Store Fulfilment**: The routing engine routes the complete order to the nearest eligible store with complete stock. It does **not** split an order across multiple stores to prevent partial deliveries and fractured regulatory chain of custody.
-- **Fixed Radius**: Store proximity is calculated via the Haversine formula based on geocoded coordinates. Production systems would incorporate live road distance matrix APIs (e.g. Google Distance Matrix) and store delivery polygons.
+- **Multi-Store Split Fulfilment with Bundle Payment**: The routing engine implements a two-tier priority:
+  - **Priority 1 (Single Nearest Store)**: If any single store has 100% of items, the order is fulfilled completely from that store.
+  - **Priority 2 (Multi-Store Split Fulfilment)**: If stock is divided, items are greedily allocated across nearest stores with a single unified bundle payment and linked child orders.
+- **Distance Matrix**: Store proximity is calculated via the Haversine formula based on geocoded coordinates. Production systems would incorporate live road distance matrix APIs (e.g. Google Distance Matrix) and dynamic traffic / delivery partner polygons.
 
 ---
 

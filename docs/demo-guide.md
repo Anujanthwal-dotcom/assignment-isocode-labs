@@ -1,133 +1,151 @@
 # Demonstration and Operational Guide
 
-This guide walks through the 5 core end-to-end scenarios to demonstrate the complete Pharmacy Management Platform.
+This operational guide details the complete end-to-end scenarios for demonstrating the multi-store pharmacy platform across all four user portals.
 
 ---
 
-## 1. Demo Credentials & Stores
+## 1. Demo Credentials & Store Network
 
-### User Accounts
+### Seed User Accounts
 
-| Role                 | Identifier                      | Credential         | Notes                               |
-| -------------------- | ------------------------------- | ------------------ | ----------------------------------- |
-| **Customer 1**       | Email: `customer@example.com`   | `DemoPassword123!` | Debasish Ghosh (Salt Lake, Kolkata) |
-| **Customer 2**       | Email: `customer2@example.com`  | `DemoPassword123!` | Rina Sen (Howrah Maidan)            |
-| **Pharmacist**       | Email: `pharmacist@example.com` | `DemoPassword123!` | Licensed Pharmacist (Store KOL-001) |
-| **Admin**            | Email: `admin@example.com`      | `DemoPassword123!` | Platform Operations Administrator   |
-| **Compliance Admin** | Email: `compliance@example.com` | `DemoPassword123!` | Regulatory Compliance Officer       |
+| Portal | Role | Email | Password | Assigned Scope / Store |
+| :--- | :--- | :--- | :--- | :--- |
+| **Customer 1** | `CUSTOMER` | `customer@example.com` | `DemoPassword123!` (OTP: `123456`) | Debasish Ghosh (Salt Lake Sector 1, Kolkata) |
+| **Customer 2** | `CUSTOMER` | `customer2@example.com` | `DemoPassword123!` (OTP: `123456`) | Rina Sen (Howrah Maidan, Howrah) |
+| **Pharmacist** | `PHARMACIST` | `pharmacist@example.com` | `DemoPassword123!` | Global Clinical Reviewer (Platform-Wide) |
+| **Store Staff (Salt Lake)** | `STORE_STAFF` | `staff.saltlake@example.com` | `DemoPassword123!` | Salt Lake Store (`KOL-001`) |
+| **Store Staff (Howrah)** | `STORE_STAFF` | `staff.howrah@example.com` | `DemoPassword123!` | Howrah Maidan Store (`HOW-001`) |
+| **Store Staff (South Kolkata)** | `STORE_STAFF` | `staff.southkolkata@example.com` | `DemoPassword123!` | South Kolkata Store (`SOU-001`) |
+| **Admin** | `ADMIN` | `admin@example.com` | `DemoPassword123!` | Platform Operations Administrator |
+| **Compliance Admin** | `COMPLIANCE_ADMIN` | `compliance@example.com` | `DemoPassword123!` | Statutory Compliance Officer |
 
-### Demo Stores
+### Kolkata Retail Store Network
 
-- **`KOL-001`**: Salt Lake Store, Kolkata (Lat: 22.5867, Lng: 88.4178)
-- **`HOW-001`**: Howrah Maidan Store, Howrah (Lat: 22.5958, Lng: 88.3248)
-- **`SOU-001`**: Jadavpur Store, Kolkata South (Lat: 22.4988, Lng: 88.3712)
-
----
-
-## 2. Demonstration Scenarios
-
-### Scenario 1: Customer Medicine Order & Prescription AI Extraction
-
-1. **Customer Login**:
-   - Navigate to `http://localhost:3000/customer/login`.
-   - Enter email `customer@example.com` and password `DemoPassword123!`.
-2. **Browse & Add to Cart**:
-   - Navigate to `http://localhost:3000/customer/medicines`.
-   - Search for `Metformin 500 mg` (Schedule H item).
-   - Click "Add to Cart".
-3. **Upload Prescription & Select Profile**:
-   - Go to `http://localhost:3000/customer/cart`.
-   - Select family member profile: "Debasish Ghosh (Self)" or "Maya Ghosh (Mother)".
-   - Upload prescription image (`tests/fixtures/sample-prescription.png` or any PDF/JPG).
-   - Observe upload progress and asynchronous AI extraction draft.
-4. **Checkout & Mock Payment**:
-   - Proceed to Checkout (`/customer/checkout`).
-   - Select address: "Block CA, Sector 1, Salt Lake".
-   - Select "Mock UPI Payment" and click Place Order.
-   - On the mock payment simulator page (`/customer/payment/mock/[orderId]`), click **"Simulate Success"**.
-5. **Expected Outcome**:
-   - Order transitions to `UNDER_REVIEW`.
-   - Stock is **NOT** yet deducted (compliance verification gate active).
-   - Customer can view order status timeline on `/customer/orders/[id]`.
+| Store Code | Name | Address & Region | Latitude | Longitude |
+| :--- | :--- | :--- | :--- | :--- |
+| **`KOL-001`** | Salt Lake Store | Block CA, Sector I, Salt Lake, Kolkata | 22.5867 | 88.4178 |
+| **`HOW-001`** | Howrah Maidan Store | 42, GT Road, Howrah Maidan, Howrah | 22.5958 | 88.3248 |
+| **`SOU-001`** | Jadavpur Store | Central Road, Jadavpur, Kolkata South | 22.4988 | 88.3712 |
 
 ---
 
-### Scenario 2: Pharmacist Compliance Review, Verification & Substitution
+## 2. Core Demonstration Scenarios
 
-1. **Pharmacist Login**:
-   - Navigate to `http://localhost:3000/pharmacist/login`.
-   - Log in with `pharmacist@example.com` / `DemoPassword123!`.
+### Scenario 1: Prescription Upload & Asynchronous AI Extraction (Prescription-First Flow)
+
+1. **Sign In as Customer**:
+   - Navigate to `http://localhost:3000`.
+   - Click **Customer** portal card -> sign in with `customer@example.com` / `DemoPassword123!`.
+2. **Upload Scanned Prescription**:
+   - Go to **Prescriptions** (`/customer/prescriptions`).
+   - Click **"Upload Prescription"**.
+   - Select patient profile: "Debasish Ghosh (Self)" or "Maya Ghosh (Mother)".
+   - Attach prescription scan (`Dr-Mukherjee-Rx-Debasish.jpg` or any image/PDF).
+   - Click **"Upload & Analyze Prescription"**.
+3. **Observe AI Vision Extraction**:
+   - Status transitions to `UNDER_REVIEW`.
+   - Background BullMQ job dispatches the image to Gemini 1.5 Flash.
+   - Prescriber name, date, and medicines (`Amoxicillin 500 mg`, `Paracetamol 500 mg`) are extracted into structured candidate items.
+4. **Invariant Check**:
+   - Open **My Orders** (`/customer/orders`).
+   - Notice that **zero orders exist** for this prescription.
+   - The prescription is safely queued for clinical review without phantom order generation.
+
+---
+
+### Scenario 2: Central Pharmacist Clinical Review & Quotation Generation
+
+1. **Sign In as Pharmacist**:
+   - Navigate to `http://localhost:3000`.
+   - Click **Pharmacist** card -> log in with `pharmacist@example.com` / `DemoPassword123!`.
 2. **Review Queue**:
    - Open `/pharmacist/review-queue`.
-   - Click "Review" on the newly placed order.
-3. **Prescription Verification**:
-   - Inspect the private prescription image using the secure signed viewer.
-   - Review AI-extracted draft matches and compare against catalogue.
-   - Confirm structured dosage (e.g. 1 tablet, 2 times daily, 30 days supply).
-   - Approve the line item.
-4. **Generic Substitution (Optional Branch)**:
-   - If an equivalent cheaper generic is available, pharmacist can click "Propose Alternative".
-   - System prompts customer for acceptance before substituting.
-5. **Expected Outcome**:
-   - Order transitions to `APPROVED`.
-   - Audit trail records pharmacist review action with timestamp.
-   - Order is automatically queued for store routing and stock reservation.
+   - Under the primary tab **"Prescriptions Awaiting Review"**, locate Debasish's newly uploaded prescription.
+   - Click **"Verify & Quote →"**.
+3. **Side-by-Side Document & Catalogue Verification**:
+   - View the secure scanned image in the document viewer.
+   - Review AI detections side-by-side with matched active catalogue medicines and live store availability.
+   - Adjust dosage instructions or substitute items if necessary.
+4. **Generate & Send Quotation**:
+   - Click **"Generate & Send Quotation to Customer"**.
+   - The prescription status transitions to `QUOTED`.
+   - Total amount is calculated based on standard retail pricing.
+   - Still, **no order exists yet** until customer review and payment.
 
 ---
 
-### Scenario 3: Store Routing, Picking, Packing & Handover
+### Scenario 3: Customer Quotation Review, Delivery Address Selection & Multi-Store Split Ordering
 
-1. **Routing & Stock Reservation**:
-   - System automatically calculates the nearest eligible store with complete stock (`KOL-001` for Salt Lake customer).
-   - 60 units of Metformin are placed into `StockReservation` with `status: ACTIVE`.
-   - Order transitions to `STOCK_RESERVED`.
-2. **Store Fulfilment Workflow**:
-   - Open `/pharmacist/fulfilment`.
-   - Locate order and click **"Start Picking"** -> transitions to `PICKING`.
-   - Verify SKU barcode and batch number -> click **"Confirm Pick"**.
-   - Click **"Pack Order"** -> enter package box count and seal number -> click **"Complete Packing"** -> transitions to `PACKED`.
-   - Move order to dispatch shelf -> transitions to `READY_FOR_HANDOVER`.
-3. **Physical Handover**:
-   - Click **"Handover"** on `/pharmacist/fulfilment/[orderId]/handover`.
-   - Select Handover Type: `DELIVERY_PARTNER`.
-   - Enter partner name: `Shadowfax Express`, tracking: `SWIFT-100293`.
-   - Click **"Confirm Handover"**.
-4. **Expected Outcome**:
-   - Order transitions to `HANDED_OVER`.
-   - Stock is deducted from `InventoryBalance` at `KOL-001`.
-   - If medicine is Schedule H1, an entry is automatically written to `H1RegisterEntry`.
-   - Customer invoice is generated and accessible via `/customer/orders/[id]/invoice`.
+1. **Customer Views Verified Quotation**:
+   - Switch back to customer session at `http://localhost:3000/customer/prescriptions`.
+   - Open the quoted prescription.
+   - Observe the green badge: **"Verified Quotation Ready"**.
+   - Review exact medicines, quantities, and line totals approved by the pharmacist.
+2. **Select Delivery & Complete Bundle Payment**:
+   - Select Delivery Address: `Plot 45, Sector I, Salt Lake, Kolkata (700064)`.
+   - Select Payment Method: `UPI` or `Cash on Delivery (COD)`.
+   - Click **"Accept Quotation & Pay Now (₹98.00)"**.
+3. **Nearest-Store Dynamic Auto-Routing & Order Creation**:
+   - The backend computes the Haversine distance from the Salt Lake delivery address to nearby stores:
+     - `KOL-001` (Salt Lake): ~0.8 km (Nearest)
+     - `HOW-001` (Howrah): ~11.2 km
+     - `SOU-001` (Jadavpur): ~12.5 km
+   - **Case A (Single Store Complete Stock)**: If `KOL-001` has all items, a single order is created assigned to `KOL-001`.
+   - **Case B (Multi-Store Split Fulfilment)**: If stock is divided (e.g. Amoxicillin at `KOL-001`, Paracetamol only at `HOW-001`), the engine automatically creates **two child orders** sharing the single bundle payment.
+4. **Customer Confirmation**:
+   - Customer sees order summary with split shipment packages, store attribution badges, and shipment tracking links.
 
 ---
 
-### Scenario 4: Refill Reminder Opt-In & One-Tap Reorder
+### Scenario 4: Store Staff Daily CSV Inventory Injection with 2-Step Schema Verification
 
-1. **Refill Estimate Generation**:
-   - Handover of verified tablet order triggers deterministic calculation:
-     - 60 tablets / (1 tablet * 2/day) = **30 days supply**.
-     - Estimated run-out date is set to 30 days from handover.
-2. **Customer Opt-In**:
-   - Customer navigates to `/customer/refills`.
-   - Sees Metformin refill estimate with status `ELIGIBLE`.
-   - Clicks **"Set Up Refill Reminder"** (remind 5 days before run-out).
-   - Refill subscription is now `ACTIVE`.
-3. **One-Tap Reorder**:
-   - When customer clicks **"Reorder Now"**, the exact dosage and quantity (60 tablets) are added back to the customer's cart.
-   - Customer proceeds to checkout without bypassing payment or prescription validation.
+1. **Sign In as Store Staff**:
+   - Navigate to `http://localhost:3000`.
+   - Click **Store Staff** card -> log in with `staff.saltlake@example.com` / `DemoPassword123!`.
+   - Observe store lock badge in header: `Target Store: Salt Lake Store (KOL-001)`.
+2. **Download Daily Store Template**:
+   - Navigate to **Daily CSV Injection** (`/staff/inventory/import`).
+   - Click **"Download Store Template (.csv)"** to retrieve the exact 3-column format:
+     ```csv
+     sku,quantity,reorderLevel
+     MED-AMX-500-001,150,20
+     MED-PAR-500-002,250,30
+     MED-TEL-40-001,80,15
+     ```
+3. **Step 1: Schema-First Validation**:
+   - Drag and drop or browse the CSV file.
+   - The UI automatically calls `POST /inventory/imports/validate` **before** any database mutation.
+   - If invalid headers or negative quantities are injected, exact row errors are displayed and processing is blocked.
+   - When valid, a green checkmark appears: `✓ CSV Schema Check Passed`.
+4. **Step 2: Process & Apply**:
+   - Click **"Process & Inject into Salt Lake Store"**.
+   - Inventory balances for `KOL-001` are updated atomically in PostgreSQL.
+   - Navigate to **Live Store Inventory** (`/staff/inventory`) to see the updated on-hand counts.
 
 ---
 
-### Scenario 5: Admin Analytics & Compliance Governance
+### Scenario 5: Store Staff Local Fulfilment (Pick, Pack & Handover)
 
-1. **Admin Login**:
-   - Navigate to `http://localhost:3000/admin/login`.
-   - Log in with `admin@example.com` / `DemoPassword123!`.
-2. **Operational Analytics**:
-   - View `/admin/analytics`: Real-time order volume, active subscriptions, revenue.
-   - View `/admin/analytics/verification`: Median pharmacist review time, rejection breakdown.
-   - View `/admin/inventory`: Live stock balances across all 3 stores.
-3. **Compliance Governance**:
-   - Log in as `compliance@example.com` / `DemoPassword123!`.
-   - Open `/admin/compliance/rules`.
-   - View active Rule Set `1.2.0` enforcing Schedule H and H1 mandates.
-   - Verify that Schedule X and Narcotic items are permanently blocked from cart/checkout.
+1. **Staff Fulfilment Queue**:
+   - As `staff.saltlake@example.com`, open **Store Fulfilment** (`/staff/fulfilment`).
+   - Locate the order package assigned to Salt Lake Store.
+   - Click **"Pick & Pack"**.
+2. **Picking**:
+   - Verify physical item on shelf against catalogue SKU.
+   - Confirm quantity picked.
+3. **Packing & Invoicing**:
+   - Enter package box count and security seal tag.
+   - Download generated tax invoice.
+4. **Handover**:
+   - Select courier partner (e.g. `Shadowfax Express`, Tracking: `SWIFT-77821`).
+   - Complete handover.
+   - Status updates to `HANDED_OVER`; physical on-hand stock is deducted.
+
+---
+
+## 3. Statutory Drug Compliance Verification
+
+1. **Schedule H / H1 Restrictions**:
+   - Any order containing Schedule H1 medicines (e.g. `Alprazolam 0.5 mg`, SKU: `MED-ALP-05-001`) automatically requires mandatory prescriber registration and generates an immutable record in `H1RegisterEntry`.
+2. **Prohibited Categories**:
+   - Schedule X items and Narcotics are permanently blocked from cart addition and quotation generation under platform compliance policy.
