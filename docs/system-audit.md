@@ -66,6 +66,10 @@ The architecture adheres strictly to the offline-first, compliant pharmacy model
 | **BUG-02** | `AllExceptionsFilter`    | Potential leak of SQL/Prisma error messages in 500 internal server error responses.                                | High     | Updated filter to sanitize 500 messages to `"Internal server error. Please try again later."` while logging full stack trace server-side. |
 | **BUG-03** | `AppModule`              | Missing global rate limiting protection on HTTP endpoints.                                                         | Medium   | Configured `@nestjs/throttler` with `ThrottlerGuard` across all API routes with test-friendly limits.                                     |
 | **BUG-04** | `MockPrescriptionReader` | Missing deterministic mock fixtures for provider timeout, malformed payload, missing dosage, and missing quantity. | Low      | Added all 12 fixtures and verified with dedicated test suite.                                                                             |
+| **BUG-05** | `DailyCsvInjectionPage`  | Template download used unauthenticated fetch without cookies and omitted `/api/v1` prefix.                          | Medium   | Added credentials: 'include' and standardized apiUrl prefix. Verified template generation.                                                |
+| **BUG-06** | `InventoryController`    | `STORE_STAFF` excluded from `GET /inventory` (403), frontend called non-existent `/inventory/balances`.              | High     | Added `STORE_STAFF` to `@Roles`, enforced store isolation in query service, and aligned frontend endpoint.                               |
+| **BUG-07** | `FulfilmentController`   | Store fulfilment queue restricted to `PHARMACIST` and crashed on missing `pharmacistProfile`.                      | High     | Permitted `STORE_STAFF` on store queue/dispatch and added `staffProfile` store ID resolution.                                             |
+| **BUG-08** | `InventoryImportsService`| Return payload of `processImport` omitted `locationName`, causing target hub label to render blank on UI.          | Low      | Included `locationName: locationDisplayName` in the completion response payload.                                                         |
 
 ---
 
@@ -75,8 +79,8 @@ The architecture adheres strictly to the offline-first, compliant pharmacy model
    - Every customer endpoint (`/customer/cart`, `/customer/orders`, `/customer/prescriptions`, `/customer/addresses`, `/customer/family-members`) extracts `user.id` from the verified JWT session rather than trusting client-supplied customer IDs in request bodies or paths.
 2. **Staff Store Isolation**:
    - Pharmacists can only review and fulfill orders assigned to their designated store (`order.fulfilmentStoreId === pharmacist.storeId`). Cross-store review attempts return HTTP `403 Forbidden`.
-3. **COMPLIANCE_ADMIN vs ADMIN Separation**:
-   - Standard `ADMIN` users are forbidden from creating or activating compliance rule sets. Only `COMPLIANCE_ADMIN` possesses this permission. Conversely, `COMPLIANCE_ADMIN` cannot perform pharmacist approvals or fulfilment.
+3. **Compliance Administration by ADMIN**:
+   - `ADMIN` users possess permission to create and activate compliance rule sets, while pharmacists and customers cannot modify compliance rules. Conversely, `ADMIN` cannot perform pharmacist approvals or clinical prescription fulfillment.
 4. **Hard-Blocked Classifications**:
    - Schedule X substances and Narcotics are strictly blocked by the deterministic compliance evaluator and cannot be approved, routed, or dispensed.
 5. **Storage Privacy**:

@@ -16,8 +16,7 @@ This operational guide details the complete end-to-end scenarios for demonstrati
 | **Store Staff (Salt Lake)** | `STORE_STAFF` | `staff.saltlake@example.com` | `DemoPassword123!` | Salt Lake Store (`KOL-001`) |
 | **Store Staff (Howrah)** | `STORE_STAFF` | `staff.howrah@example.com` | `DemoPassword123!` | Howrah Maidan Store (`HOW-001`) |
 | **Store Staff (South Kolkata)** | `STORE_STAFF` | `staff.southkolkata@example.com` | `DemoPassword123!` | South Kolkata Store (`SOU-001`) |
-| **Admin** | `ADMIN` | `admin@example.com` | `DemoPassword123!` | Platform Operations Administrator |
-| **Compliance Admin** | `COMPLIANCE_ADMIN` | `compliance@example.com` | `DemoPassword123!` | Statutory Compliance Officer |
+| **Admin** | `ADMIN` | `admin@example.com` | `DemoPassword123!` | Platform Operations & Compliance Administrator |
 
 ### Kolkata Retail Store Network
 

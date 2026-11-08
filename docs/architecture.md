@@ -125,7 +125,7 @@ graph TD
 | `CUSTOMER` | `/customer/*` | Upload prescriptions, view verified quotations, select payment & delivery address, track orders, refill reminders. | Strictly scoped to own profile and associated `FamilyMember` records. |
 | `PHARMACIST` | `/pharmacist/*` | Platform-wide clinical verification of uploaded doctor prescriptions, AI candidate validation, stock availability assessment across all hubs, customer quotation generation. | **Decoupled from store bindings.** Acts as a central clinical reviewer with global inventory visibility. |
 | `STORE_STAFF` | `/staff/*` | Physical retail store daily CSV stock injections, live store stock monitoring, pick/pack/invoicing and physical handover of store-assigned order packages. | **Strictly locked to assigned store** (`StaffProfile.storeId`). Any attempt to read or modify other store inventory is denied with `STORE_BOUNDARY_VIOLATION`. |
-| `ADMIN` / `COMPLIANCE_ADMIN` | `/admin/*` | Platform governance, catalogue medicine CRUD, multi-store stock oversight, statutory rule set activation (Schedule H/H1/X policies), operations analytics. | Multi-store administrative access across all 46 Kolkata retail stores and central warehouses. |
+| `ADMIN` | `/admin/*` | Platform governance, catalogue medicine CRUD, multi-store stock oversight, statutory compliance rule set activation (Schedule H/H1/X policies), operations analytics. | Multi-store administrative access across all 46 Kolkata retail stores and central warehouses. |
 
 ---
 

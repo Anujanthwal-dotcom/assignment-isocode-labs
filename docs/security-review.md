@@ -8,18 +8,19 @@ This document provides a comprehensive security review of the Pharmacy Managemen
 
 The platform supports 5 distinct user roles:
 
-| Role               | Permitted Portals & Endpoints                                  | Prohibitions                                                                             |
-| ------------------ | -------------------------------------------------------------- | ---------------------------------------------------------------------------------------- |
-| `CUSTOMER`         | `/customer/*`, `/api/v1/customer/*`, `/api/v1/prescriptions/*` | Cannot access pharmacist review queues, fulfilment, inventory, or compliance             |
-| `PHARMACIST`       | `/pharmacist/*`, `/api/v1/pharmacist/*`                        | Cannot edit compliance rules, import inventory, or access other stores' fulfilment       |
-| `STORE_STAFF`      | `/pharmacist/fulfilment/*`, `/api/v1/pharmacist/fulfilment/*`  | Cannot perform clinical pharmacist verification or modify prescription status            |
-| `ADMIN`            | `/admin/*`, `/api/v1/admin/*`, `/api/v1/inventory/*`           | Cannot approve prescriptions; cannot modify compliance rules (requires COMPLIANCE_ADMIN) |
-| `COMPLIANCE_ADMIN` | `/admin/compliance/*`, `/api/v1/compliance/*`                  | Cannot perform clinical pharmacist approvals or fulfil orders                            |
+| Role               | Permitted Portals & Endpoints                                                                                              | Prohibitions                                                                                                  |
+| ------------------ | -------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------- |
+| `CUSTOMER`         | `/customer/*`, `/api/v1/customer/*`, `/api/v1/prescriptions/*`                                                             | Cannot access pharmacist review queues, fulfilment, inventory, or compliance                                 |
+| `PHARMACIST`       | `/pharmacist/*`, `/api/v1/pharmacist/*`, `/api/v1/inventory?storeId=*`, `/api/v1/inventory/imports/*`                      | Cannot edit compliance rules, view warehouse stock, or access other stores' fulfilment                        |
+| `STORE_STAFF`      | `/staff/*`, `/api/v1/inventory/imports/*`, `/api/v1/inventory?storeId=*`, `/api/v1/pharmacist/fulfilment/*`               | Cannot perform clinical pharmacist verification, access central warehouses or other store stock, or edit rules |
+| `ADMIN`            | `/admin/*`, `/api/v1/admin/*`, `/api/v1/inventory/*`, `/api/v1/compliance/*`                                             | Cannot perform clinical pharmacist approvals or clinical dispensing                                          |
+| `COMPLIANCE_ADMIN` | `/admin/compliance/*`, `/api/v1/compliance/*`, `/api/v1/pharmacist/h1-register`                                            | Cannot dispense medicines, modify inventory balances, or alter active patient prescriptions                  |
 
-### Authentication Guard Architecture
+### Authentication & Store Boundary Guard Architecture
 
-- **JWT Auth Guard**: All API endpoints (except `@Public()`) require a valid bearer JWT or `access_token` cookie.
+- **JWT Auth Guard**: All API endpoints (except `@Public()`) require a valid bearer JWT or `access_token` HttpOnly cookie.
 - **Roles Guard**: Verifies that the user role matches `@Roles(...)` metadata.
+- **Store Boundary Isolation (`STORE_STAFF`)**: Store staff are cryptographically and relationally locked to their assigned store ID (`userRecord.staffProfile.storeId`). Any attempt to validate CSVs, inject inventory, or query stock balances for other physical stores or central warehouses returns HTTP `403 Forbidden` (`STORE_BOUNDARY_VIOLATION` / `LOCATION_ACCESS_DENIED`).
 - **Token Security**: Tokens are signed with `JWT_SECRET`, expire in 15 minutes, and refresh tokens are stored hashed in the `Session` table.
 
 ---
@@ -52,7 +53,7 @@ Prescriptions contain Protected Health Information (PHI) and are stored privatel
    - Signed URL generation verifies that the requesting user is either:
      - The customer who owns the prescription.
      - An authorized `PHARMACIST` reviewing the order.
-     - An authorized `ADMIN` / `COMPLIANCE_ADMIN`.
+     - An authorized `ADMIN`.
 3. **Audit Trail**:
    - Every prescription view, extraction, and replacement event is logged in the append-only `AuditLog` table.
 
