@@ -79,7 +79,7 @@ describe('Data Integrity and Concurrency E2E Tests', () => {
     const profile = await prisma.pharmacistProfile.findFirst({
       where: { user: { email: 'pharmacist@example.com' } },
     });
-    testStoreId = profile!.storeId;
+    testStoreId = profile!.storeId!;
 
     // Create a medicine with limited stock (exact quantity = 1) for concurrency test
     const med = await prisma.medicine.create({

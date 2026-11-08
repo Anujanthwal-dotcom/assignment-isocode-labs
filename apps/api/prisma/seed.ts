@@ -305,6 +305,60 @@ async function main() {
     },
   });
 
+  // 3b. Store Staff Members (Bound to Physical Retail Stores)
+  const storeStaffToSeed = [
+    {
+      email: 'staff.saltlake@example.com',
+      fullName: 'Debopriyo Roy',
+      designation: 'Inventory Lead & Dispatch',
+      storeCode: 'KOL-001',
+    },
+    {
+      email: 'staff.howrah@example.com',
+      fullName: 'Sagnik Banerjee',
+      designation: 'Store Stock Associate',
+      storeCode: 'HOW-001',
+    },
+    {
+      email: 'staff.southkolkata@example.com',
+      fullName: 'Poulomi Das',
+      designation: 'Store Stock Associate',
+      storeCode: 'SOU-001',
+    },
+  ];
+
+  for (const staff of storeStaffToSeed) {
+    const staffUser = await prisma.user.upsert({
+      where: { email: staff.email },
+      update: {
+        role: UserRole.STORE_STAFF,
+        status: UserStatus.ACTIVE,
+        passwordHash: passwordHash,
+      },
+      create: {
+        email: staff.email,
+        role: UserRole.STORE_STAFF,
+        status: UserStatus.ACTIVE,
+        passwordHash: passwordHash,
+      },
+    });
+
+    await prisma.staffProfile.upsert({
+      where: { userId: staffUser.id },
+      update: {
+        fullName: staff.fullName,
+        designation: staff.designation,
+        storeId: seededStores[staff.storeCode],
+      },
+      create: {
+        userId: staffUser.id,
+        fullName: staff.fullName,
+        designation: staff.designation,
+        storeId: seededStores[staff.storeCode],
+      },
+    });
+  }
+
   // 4b. Seed Initial Versioned Compliance Rule Set (v1.0.0)
   const activeRuleSet = await prisma.complianceRuleSet.upsert({
     where: { version: '1.0.0' },

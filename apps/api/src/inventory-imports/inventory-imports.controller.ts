@@ -8,7 +8,9 @@ import {
   UseInterceptors,
   UploadedFile,
   ParseUUIDPipe,
+  Res,
 } from '@nestjs/common';
+import { Response } from 'express';
 import { FileInterceptor } from '@nestjs/platform-express';
 import {
   ApiTags,
@@ -31,10 +33,10 @@ export class InventoryImportsController {
   constructor(private readonly importsService: InventoryImportsService) {}
 
   @Post()
-  @Roles(UserRole.ADMIN)
+  @Roles(UserRole.ADMIN, UserRole.STORE_STAFF, UserRole.PHARMACIST)
   @UseInterceptors(FileInterceptor('file'))
   @ApiConsumes('multipart/form-data')
-  @ApiOperation({ summary: 'Import daily inventory CSV for a store or warehouse (Admin only)' })
+  @ApiOperation({ summary: 'Import daily inventory CSV for a store or warehouse' })
   @ApiBody({
     schema: {
       type: 'object',
@@ -56,8 +58,21 @@ export class InventoryImportsController {
     return this.importsService.processImport(file, dto, user);
   }
 
+  @Get('template/catalogue-csv')
+  @Roles(UserRole.ADMIN, UserRole.STORE_STAFF, UserRole.PHARMACIST)
+  @ApiOperation({ summary: 'Download pre-filled CSV template with active catalogue SKUs' })
+  async downloadCatalogueCsvTemplate(
+    @Query('storeId') storeId: string | undefined,
+    @Res() res: Response,
+  ) {
+    const csvContent = await this.importsService.generateCatalogueCsvTemplate(storeId);
+    res.setHeader('Content-Type', 'text/csv');
+    res.setHeader('Content-Disposition', 'attachment; filename="daily-inventory-template.csv"');
+    return res.send(csvContent);
+  }
+
   @Get()
-  @Roles(UserRole.ADMIN, UserRole.COMPLIANCE_ADMIN)
+  @Roles(UserRole.ADMIN, UserRole.COMPLIANCE_ADMIN, UserRole.STORE_STAFF, UserRole.PHARMACIST)
   @ApiOperation({ summary: 'List CSV import history batches' })
   @ApiResponse({ status: 200, description: 'Paginated import batches' })
   async listImports(@Query() query: ListInventoryImportsQueryDto) {
@@ -65,7 +80,7 @@ export class InventoryImportsController {
   }
 
   @Get(':id')
-  @Roles(UserRole.ADMIN, UserRole.COMPLIANCE_ADMIN)
+  @Roles(UserRole.ADMIN, UserRole.COMPLIANCE_ADMIN, UserRole.STORE_STAFF, UserRole.PHARMACIST)
   @ApiOperation({ summary: 'Get details and row-level outcomes of an import batch' })
   @ApiResponse({ status: 200, description: 'Import batch details' })
   @ApiResponse({ status: 404, description: 'Import not found' })

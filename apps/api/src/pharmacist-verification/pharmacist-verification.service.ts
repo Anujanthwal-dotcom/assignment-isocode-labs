@@ -53,7 +53,7 @@ export class PharmacistVerificationService {
       include: { store: true },
     });
 
-    if (!profile || !profile.storeId) {
+    if (!profile || !profile.store) {
       throw new ForbiddenException(
         'Pharmacist profile or store assignment not found for authenticated user.',
       );
@@ -74,7 +74,7 @@ export class PharmacistVerificationService {
     const where: any = {
       reviewAssignments: {
         some: {
-          storeId: store.id,
+          storeId: store?.id || null,
           unassignedAt: null,
         },
       },
@@ -84,7 +84,7 @@ export class PharmacistVerificationService {
       where.prescriptionReviews = {
         some: {
           status: query.status,
-          storeId: store.id,
+          storeId: store?.id || null,
         },
       };
     }
@@ -298,7 +298,7 @@ export class PharmacistVerificationService {
       resourceId: order.prescription.id,
       metadata: {
         orderId: order.id,
-        storeId: store.id,
+        storeId: store?.id || null,
       },
     });
 
@@ -1278,6 +1278,78 @@ export class PharmacistVerificationService {
         }
       : null;
 
+    // Overall store-level availability calculation across all active retail stores
+    const activeStores = await this.prisma.store.findMany({
+      where: { status: 'ACTIVE' },
+      select: { id: true, code: true, name: true, city: true },
+    });
+
+    const medicineIds = new Set<string>();
+    const aiItems = (prescription.aiExtractions[0]?.matchingResult as any[]) || [];
+    for (const match of aiItems) {
+      if (match?.selectedMedicineId) medicineIds.add(match.selectedMedicineId);
+      if (match?.matchedMedicine?.id) medicineIds.add(match.matchedMedicine.id);
+    }
+    if (latestQuote?.items) {
+      for (const qi of latestQuote.items) {
+        if (qi.medicineId) medicineIds.add(qi.medicineId);
+      }
+    }
+
+    const medIdArray = Array.from(medicineIds);
+    const storeBalances = await this.prisma.inventoryBalance.findMany({
+      where: {
+        medicineId: { in: medIdArray },
+        storeId: { in: activeStores.map((s) => s.id) },
+      },
+    });
+
+    const activeReservations = await this.prisma.stockReservation.groupBy({
+      by: ['storeId', 'medicineId'],
+      where: {
+        medicineId: { in: medIdArray },
+        status: 'ACTIVE',
+      },
+      _sum: { quantity: true },
+    });
+
+    const resMap = new Map<string, number>();
+    for (const r of activeReservations) {
+      if (r.storeId && r.medicineId) {
+        resMap.set(`${r.storeId}_${r.medicineId}`, r._sum.quantity || 0);
+      }
+    }
+
+    const networkInventory: Record<
+      string,
+      {
+        totalAvailable: number;
+        stores: Array<{ storeId: string; storeCode: string; storeName: string; available: number }>;
+      }
+    > = {};
+
+    for (const medId of medIdArray) {
+      let totalAvailable = 0;
+      const storesBreakdown = activeStores.map((st) => {
+        const bal = storeBalances.find((b) => b.storeId === st.id && b.medicineId === medId);
+        const onHand = bal?.quantity || 0;
+        const resCount = resMap.get(`${st.id}_${medId}`) || 0;
+        const netAvail = Math.max(0, onHand - resCount);
+        totalAvailable += netAvail;
+        return {
+          storeId: st.id,
+          storeCode: st.code,
+          storeName: st.name,
+          available: netAvail,
+        };
+      });
+
+      networkInventory[medId] = {
+        totalAvailable,
+        stores: storesBreakdown,
+      };
+    }
+
     return {
       prescription: {
         id: prescription.id,
@@ -1301,6 +1373,7 @@ export class PharmacistVerificationService {
       },
       aiExtraction: prescription.aiExtractions[0] || null,
       activeQuote: formattedQuote,
+      networkInventory,
     };
   }
 
@@ -1382,7 +1455,7 @@ export class PharmacistVerificationService {
         data: {
           prescriptionId,
           pharmacistId: userId,
-          storeId: store.id,
+          storeId: store?.id || null,
           status: 'QUOTED',
           subtotal,
           deliveryFee,
@@ -1413,7 +1486,7 @@ export class PharmacistVerificationService {
       resourceId: result.id,
       metadata: {
         prescriptionId,
-        storeId: store.id,
+        storeId: store?.id || null,
         totalAmount: Number(result.totalAmount),
         itemCount: result.items.length,
       },
@@ -1470,7 +1543,7 @@ export class PharmacistVerificationService {
       resourceType: 'Prescription',
       resourceId: prescriptionId,
       metadata: {
-        storeId: store.id,
+        storeId: store?.id || null,
         reason: dto.reason,
       },
     });
@@ -1514,7 +1587,7 @@ export class PharmacistVerificationService {
       resourceType: 'Prescription',
       resourceId: prescriptionId,
       metadata: {
-        storeId: store.id,
+        storeId: store?.id || null,
         reason: dto.reason,
       },
     });

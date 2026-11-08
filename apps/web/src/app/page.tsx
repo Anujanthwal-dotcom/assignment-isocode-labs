@@ -2,7 +2,7 @@
 
 import React from 'react';
 import Link from 'next/link';
-import { User, Pill, Shield, ArrowRight } from 'lucide-react';
+import { User, Pill, Shield, Store, ArrowRight } from 'lucide-react';
 import { AuthSplitLayout } from '@/components/layouts/AuthSplitLayout';
 
 export default function HomePage() {
@@ -56,7 +56,29 @@ export default function HomePage() {
           </span>
         </Link>
 
-        {/* 3. Admin Card */}
+        {/* 3. Store Staff Card */}
+        <Link
+          href="/staff/login"
+          className="w-full text-left group p-4 rounded-[12px] border border-[#CBD5E1] bg-white hover:border-[#D97706] hover:bg-[#FFFBEB]/60 hover:shadow-sm focus:outline-none focus:ring-3 focus:ring-[#D97706]/20 transition-all flex items-center justify-between gap-4 cursor-pointer block"
+        >
+          <div className="flex items-center gap-3">
+            <div className="flex h-10 w-10 items-center justify-center rounded-[8px] bg-[#FEF3C7] text-[#B45309] group-hover:bg-[#D97706] group-hover:text-white transition-colors">
+              <Store className="h-5 w-5" />
+            </div>
+            <div>
+              <span className="font-display text-base font-bold text-[#0F172A] group-hover:text-[#B45309] transition-colors block">
+                Store Staff Portal
+              </span>
+              <span className="text-xs text-[#64748B]">Daily CSV inventory updates &amp; store fulfilment</span>
+            </div>
+          </div>
+          <span className="shrink-0 text-[#64748B] group-hover:text-[#B45309] font-semibold text-xs transition-colors flex items-center gap-1">
+            <span>Sign In</span>
+            <ArrowRight className="h-3.5 w-3.5" />
+          </span>
+        </Link>
+
+        {/* 4. Admin Card */}
         <Link
           href="/admin/login"
           className="w-full text-left group p-4 rounded-[12px] border border-[#CBD5E1] bg-white hover:border-[#0284C7] hover:bg-[#F0F9FF]/60 hover:shadow-sm focus:outline-none focus:ring-3 focus:ring-[#0284C7]/20 transition-all flex items-center justify-between gap-4 cursor-pointer block"

@@ -14,6 +14,7 @@ enum UserRole {
   PHARMACIST
   ADMIN
   COMPLIANCE_ADMIN
+  STORE_STAFF
 }
 
 enum UserStatus {
@@ -62,6 +63,7 @@ model Store {
   fulfilmentOrders  Order[]               @relation("FulfilmentStoreOrders")
   handovers         OrderHandover[]
   prescriptionQuotes PrescriptionQuote[] @relation("StorePrescriptionQuotes")
+  staffProfiles     StaffProfile[]        @relation("StoreStaffProfiles")
 
   @@map("stores")
 }
@@ -78,6 +80,7 @@ model User {
 
   customerProfile    CustomerProfile?
   pharmacistProfile  PharmacistProfile?
+  staffProfile       StaffProfile?
   sessions           AuthSession[]
   auditLogs          AuditLog[]
   inventoryMovements InventoryMovement[]
@@ -125,16 +128,31 @@ model CustomerProfile {
 model PharmacistProfile {
   id                 String   @id @default(uuid()) @db.Uuid
   userId             String   @unique @db.Uuid
-  storeId            String   @db.Uuid
+  storeId            String?  @db.Uuid
   fullName           String
   registrationNumber String?
   createdAt          DateTime @default(now()) @db.Timestamptz(6)
   updatedAt          DateTime @updatedAt @db.Timestamptz(6)
 
-  user  User  @relation(fields: [userId], references: [id], onDelete: Restrict)
-  store Store @relation(fields: [storeId], references: [id], onDelete: Restrict)
+  user  User   @relation(fields: [userId], references: [id], onDelete: Restrict)
+  store Store? @relation(fields: [storeId], references: [id], onDelete: SetNull)
 
   @@map("pharmacist_profiles")
+}
+
+model StaffProfile {
+  id          String   @id @default(uuid()) @db.Uuid
+  userId      String   @unique @db.Uuid
+  storeId     String   @db.Uuid
+  fullName    String
+  designation String?  @default("Store Staff")
+  createdAt   DateTime @default(now()) @db.Timestamptz(6)
+  updatedAt   DateTime @updatedAt @db.Timestamptz(6)
+
+  user  User  @relation(fields: [userId], references: [id], onDelete: Restrict)
+  store Store @relation("StoreStaffProfiles", fields: [storeId], references: [id], onDelete: Restrict)
+
+  @@map("staff_profiles")
 }
 
 model OtpChallenge {
@@ -1268,7 +1286,7 @@ model PrescriptionQuote {
   id              String                  @id @default(uuid()) @db.Uuid
   prescriptionId  String                  @db.Uuid
   pharmacistId    String                  @db.Uuid
-  storeId         String                  @db.Uuid
+  storeId         String?                 @db.Uuid
   status          PrescriptionQuoteStatus @default(QUOTED)
   subtotal        Decimal                 @db.Decimal(10, 2)
   deliveryFee     Decimal                 @default(0) @db.Decimal(10, 2)
@@ -1282,7 +1300,7 @@ model PrescriptionQuote {
 
   prescription    Prescription            @relation(fields: [prescriptionId], references: [id], onDelete: Cascade)
   pharmacist      User                    @relation("PharmacistPrescriptionQuotes", fields: [pharmacistId], references: [id], onDelete: Restrict)
-  store           Store                   @relation("StorePrescriptionQuotes", fields: [storeId], references: [id], onDelete: Restrict)
+  store           Store?                  @relation("StorePrescriptionQuotes", fields: [storeId], references: [id], onDelete: SetNull)
   order           Order?                  @relation("OrderPrescriptionQuote", fields: [orderId], references: [id], onDelete: SetNull)
   items           PrescriptionQuoteItem[]
 

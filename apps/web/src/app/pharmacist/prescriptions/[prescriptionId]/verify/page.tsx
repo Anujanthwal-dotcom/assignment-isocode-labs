@@ -596,6 +596,27 @@ export default function PharmacistPrescriptionVerifyPage() {
                               Detected: {item.detectedMedicineName}
                             </span>
                           )}
+
+                          {detail?.networkInventory?.[item.medicineId] && (
+                            <div className="flex flex-wrap items-center gap-1.5 mt-1 text-[11px]">
+                              <span
+                                className={`font-semibold px-2 py-0.5 rounded-full text-[10px] ${
+                                  detail.networkInventory[item.medicineId].totalAvailable > 0
+                                    ? 'bg-emerald-50 text-emerald-800 border border-emerald-200'
+                                    : 'bg-rose-50 text-rose-800 border border-rose-200'
+                                }`}
+                              >
+                                {detail.networkInventory[item.medicineId].totalAvailable > 0
+                                  ? `✓ Network Stock: ${detail.networkInventory[item.medicineId].totalAvailable} units available`
+                                  : '⚠ Out of Stock Across Network'}
+                              </span>
+                              <span className="text-[10px] text-slate-500">
+                                ({detail.networkInventory[item.medicineId].stores
+                                  .map((s: any) => `${s.storeName}: ${s.available}`)
+                                  .join(' | ')})
+                              </span>
+                            </div>
+                          )}
                         </div>
                       </div>
 

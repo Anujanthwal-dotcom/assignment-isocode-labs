@@ -11,6 +11,11 @@ export type UserWithProfiles = Prisma.UserGetPayload<{
         store: true;
       };
     };
+    staffProfile: {
+      include: {
+        store: true;
+      };
+    };
   };
 }>;
 
@@ -24,6 +29,11 @@ export class UsersService {
       include: {
         customerProfile: true,
         pharmacistProfile: {
+          include: {
+            store: true,
+          },
+        },
+        staffProfile: {
           include: {
             store: true,
           },
@@ -45,6 +55,11 @@ export class UsersService {
             store: true,
           },
         },
+        staffProfile: {
+          include: {
+            store: true,
+          },
+        },
       },
     });
   }
@@ -58,6 +73,11 @@ export class UsersService {
       include: {
         customerProfile: true,
         pharmacistProfile: {
+          include: {
+            store: true,
+          },
+        },
+        staffProfile: {
           include: {
             store: true,
           },
@@ -105,6 +125,11 @@ export class UsersService {
         include: {
           customerProfile: true,
           pharmacistProfile: {
+            include: {
+              store: true,
+            },
+          },
+          staffProfile: {
             include: {
               store: true,
             },
@@ -157,6 +182,11 @@ export class UsersService {
         include: {
           customerProfile: true,
           pharmacistProfile: {
+            include: {
+              store: true,
+            },
+          },
+          staffProfile: {
             include: {
               store: true,
             },

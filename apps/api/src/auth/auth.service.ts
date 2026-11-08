@@ -24,6 +24,7 @@ export interface FormattedUserResponse {
     fullName: string;
     preferredLanguage?: string;
     registrationNumber?: string | null;
+    designation?: string | null;
   };
   store?: {
     id: string;
@@ -450,6 +451,7 @@ export class AuthService {
       fullName: string;
       preferredLanguage?: string;
       registrationNumber?: string | null;
+      designation?: string | null;
     };
 
     let storeData: { id: string; code: string; name: string; city?: string } | undefined;
@@ -470,6 +472,19 @@ export class AuthService {
           code: user.pharmacistProfile.store.code,
           name: user.pharmacistProfile.store.name,
           city: user.pharmacistProfile.store.city,
+        };
+      }
+    } else if (user.role === UserRole.STORE_STAFF && user.staffProfile) {
+      profileData = {
+        fullName: user.staffProfile.fullName,
+        designation: user.staffProfile.designation || 'Store Staff',
+      };
+      if (user.staffProfile.store) {
+        storeData = {
+          id: user.staffProfile.store.id,
+          code: user.staffProfile.store.code,
+          name: user.staffProfile.store.name,
+          city: user.staffProfile.store.city,
         };
       }
     } else {

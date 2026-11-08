@@ -1,4 +1,4 @@
-export type UserRole = 'CUSTOMER' | 'PHARMACIST' | 'ADMIN' | 'COMPLIANCE_ADMIN';
+export type UserRole = 'CUSTOMER' | 'PHARMACIST' | 'ADMIN' | 'COMPLIANCE_ADMIN' | 'STORE_STAFF';
 
 export type UserStatus = 'ACTIVE' | 'INACTIVE' | 'SUSPENDED';
 
@@ -35,6 +35,7 @@ export interface CurrentUser {
     fullName: string;
     preferredLanguage?: string;
     registrationNumber?: string | null;
+    designation?: string | null;
   };
   store?: StoreSummaryDto;
 }
@@ -67,6 +68,7 @@ export interface AuthSuccessResponse {
     fullName: string;
     preferredLanguage?: string;
     registrationNumber?: string | null;
+    designation?: string | null;
   };
   store?: StoreSummaryDto;
 }

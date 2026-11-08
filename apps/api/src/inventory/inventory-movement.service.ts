@@ -41,7 +41,7 @@ export class InventoryMovementService {
         });
       }
 
-      effectiveStoreId = pharmacistProfile.storeId;
+      effectiveStoreId = pharmacistProfile.storeId || undefined;
       effectiveWarehouseId = undefined;
     }
 

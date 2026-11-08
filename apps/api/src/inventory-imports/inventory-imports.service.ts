@@ -2,6 +2,7 @@ import {
   Injectable,
   NotFoundException,
   BadRequestException,
+  ForbiddenException,
   InternalServerErrorException,
   Logger,
 } from '@nestjs/common';
@@ -16,6 +17,7 @@ import {
   InventoryImportRowStatus,
   InventoryMovementType,
   StoreStatus,
+  UserRole,
   Prisma,
 } from '@prisma/client';
 
@@ -42,6 +44,27 @@ export class InventoryImportsService {
         code: 'FILE_REQUIRED',
         message: 'CSV file is required for stock import.',
       });
+    }
+
+    // Verify user role & enforce store-level restriction for STORE_STAFF
+    const userRecord = await this.prisma.user.findUnique({
+      where: { id: user.id },
+      include: { staffProfile: true },
+    });
+
+    if (userRecord?.role === UserRole.STORE_STAFF) {
+      if (dto.locationType !== 'STORE') {
+        throw new ForbiddenException({
+          code: 'STORE_BOUNDARY_VIOLATION',
+          message: 'Store staff can only import inventory for physical retail stores.',
+        });
+      }
+      if (!userRecord.staffProfile || userRecord.staffProfile.storeId !== dto.locationId) {
+        throw new ForbiddenException({
+          code: 'STORE_BOUNDARY_VIOLATION',
+          message: 'Store staff are strictly restricted to updating inventory for their assigned store only.',
+        });
+      }
     }
 
     // 1. Verify target location
@@ -474,5 +497,43 @@ export class InventoryImportsService {
         errorMessage: r.errorMessage,
       })),
     };
+  }
+
+  /**
+   * Generates a pre-filled CSV template of active medicines for store staff daily injection.
+   */
+  async generateCatalogueCsvTemplate(storeId?: string): Promise<string> {
+    const medicines = await this.prisma.medicine.findMany({
+      where: { status: 'ACTIVE' },
+      select: {
+        sku: true,
+        name: true,
+      },
+      orderBy: { name: 'asc' },
+    });
+
+    const storeBalancesMap = new Map<string, { quantityOnHand: number; reorderLevel: number }>();
+    if (storeId) {
+      const balances = await this.prisma.inventoryBalance.findMany({
+        where: { storeId },
+        include: { medicine: { select: { sku: true } } },
+      });
+      for (const b of balances) {
+        storeBalancesMap.set(b.medicine.sku, {
+          quantityOnHand: b.quantity,
+          reorderLevel: b.reorderLevel,
+        });
+      }
+    }
+
+    const header = 'sku,quantity,reorderLevel';
+    const rows = medicines.map((m) => {
+      const existing = storeBalancesMap.get(m.sku);
+      const qty = existing !== undefined ? existing.quantityOnHand : 100;
+      const reorder = existing !== undefined ? existing.reorderLevel : 20;
+      return `${m.sku},${qty},${reorder}`;
+    });
+
+    return [header, ...rows].join('\n');
   }
 }
