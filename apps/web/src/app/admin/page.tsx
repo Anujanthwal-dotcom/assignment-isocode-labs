@@ -2,19 +2,44 @@
 
 import * as React from 'react';
 import Link from 'next/link';
-import { useAuth } from '@/lib/auth/auth-context';
-import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
+import { useRouter } from 'next/navigation';
+import {
+  ArrowRight,
+  Boxes,
+  Building2,
+  CheckCircle2,
+  IndianRupee,
+  LogOut,
+  Pill,
+  ShieldCheck,
+  ShoppingBag,
+  Store,
+  Truck,
+  UserCog,
+  Users,
+} from 'lucide-react';
+import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { StatusBadge } from '@/components/shared/StatusBadge';
-import { useRouter } from 'next/navigation';
+import { useAuth } from '@/lib/auth/auth-context';
 import { apiFetch } from '@/lib/api/client';
-import { BarChart3, Truck, Pill, Boxes, ShieldCheck } from 'lucide-react';
+
+interface OverviewDto {
+  totalRevenue?: number;
+  totalOrders?: number;
+  fulfilmentOrders?: number;
+  activeStoresCount?: number;
+  customersCount?: number;
+  pharmacistsCount?: number;
+  staffCount?: number;
+}
 
 export default function AdminDashboardPage() {
   const { user, logout } = useAuth();
   const router = useRouter();
   const [storeCount, setStoreCount] = React.useState<number | null>(null);
-  const [overview, setOverview] = React.useState<any | null>(null);
+  const [overview, setOverview] = React.useState<OverviewDto | null>(null);
+  const [loadingOverview, setLoadingOverview] = React.useState(true);
 
   React.useEffect(() => {
     let isMounted = true;
@@ -27,7 +52,7 @@ export default function AdminDashboardPage() {
       })
       .catch(() => {});
 
-    apiFetch<any>('/admin/analytics/overview?period=30D')
+    apiFetch<OverviewDto>('/admin/analytics/overview?period=30D')
       .then((res) => {
         if (isMounted && res) {
           setOverview(res);
@@ -36,7 +61,12 @@ export default function AdminDashboardPage() {
           }
         }
       })
-      .catch(() => {});
+      .catch(() => {})
+      .finally(() => {
+        if (isMounted) {
+          setLoadingOverview(false);
+        }
+      });
 
     return () => {
       isMounted = false;
@@ -48,191 +78,264 @@ export default function AdminDashboardPage() {
     router.replace('/admin/login');
   };
 
+  const adminName = user?.profile?.fullName || 'System Administrator';
+  const roleName = user?.role || 'ADMIN';
+
+  const metrics = overview
+    ? [
+        {
+          label: 'Total Sales (GMV)',
+          value: `₹${Number(overview.totalRevenue ?? 0).toLocaleString('en-IN', {
+            maximumFractionDigits: 0,
+          })}`,
+          hint: 'Recorded orders',
+          icon: IndianRupee,
+          chip: 'bg-[#F0FDFA] text-[#0D5C5A]',
+          valueClass: 'text-[#0F172A]',
+        },
+        {
+          label: 'Total Orders',
+          value: String(overview.totalOrders ?? 0),
+          hint: `${overview.fulfilmentOrders ?? 0} in progress`,
+          icon: ShoppingBag,
+          chip: 'bg-blue-50 text-blue-600',
+          valueClass: 'text-blue-600',
+        },
+        {
+          label: 'Active Stores',
+          value: String(overview.activeStoresCount ?? 0),
+          hint: 'Retail pharmacy hubs',
+          icon: Store,
+          chip: 'bg-[#F0FDFA] text-[#0D5C5A]',
+          valueClass: 'text-[#0D5C5A]',
+        },
+        {
+          label: 'Customers',
+          value: String(overview.customersCount ?? 0),
+          hint: 'Registered accounts',
+          icon: Users,
+          chip: 'bg-purple-50 text-purple-600',
+          valueClass: 'text-purple-600',
+        },
+        {
+          label: 'Pharmacists',
+          value: String(overview.pharmacistsCount ?? 0),
+          hint: 'Licensed verifiers',
+          icon: Pill,
+          chip: 'bg-emerald-50 text-emerald-600',
+          valueClass: 'text-emerald-600',
+        },
+        {
+          label: 'Store Staff',
+          value: String(overview.staffCount ?? 0),
+          hint: 'Dispensing staff',
+          icon: UserCog,
+          chip: 'bg-amber-50 text-amber-600',
+          valueClass: 'text-slate-800',
+        },
+      ]
+    : [];
+
+  const identityItems = [
+    {
+      label: 'Administrator Name',
+      icon: UserCog,
+      content: <span className="text-[15px] font-semibold text-[#0F172A]">{adminName}</span>,
+    },
+    {
+      label: 'Assigned Role',
+      icon: ShieldCheck,
+      content: <StatusBadge status="information" label={roleName} />,
+    },
+    {
+      label: 'Account Status',
+      icon: CheckCircle2,
+      content: <StatusBadge status="success" label={user?.status || 'ACTIVE'} />,
+    },
+    {
+      label: 'Access Scope',
+      icon: Building2,
+      content: (
+        <span className="text-[13px] font-medium leading-[20px] text-[#0F172A]">
+          {storeCount !== null
+            ? `Full Chain Operations (${storeCount} Active ${
+                storeCount === 1 ? 'Store' : 'Stores'
+              }) & Regulatory Compliance`
+            : 'Full Chain Operations & Regulatory Compliance'}
+        </span>
+      ),
+    },
+  ];
+
+  const quickLinks = [
+    {
+      href: '/admin/orders',
+      title: 'Sales & Orders',
+      icon: IndianRupee,
+    },
+    {
+      href: '/admin/stores',
+      title: 'Store Directory',
+      icon: Boxes,
+    },
+    {
+      href: '/admin/compliance',
+      title: 'Compliance Setup',
+      icon: ShieldCheck,
+    },
+    {
+      href: '/admin/fulfilment',
+      title: 'Fulfilment Operations',
+      icon: Truck,
+    },
+  ];
+
   return (
-    <div className="max-w-4xl mx-auto py-8 space-y-6">
-      <div className="flex items-center justify-between pb-4 border-b border-slate-200">
-        <div>
-          <h1 className="text-2xl font-bold tracking-tight text-slate-900">
+    <div className="mx-auto w-full max-w-7xl space-y-8 py-2">
+      {/* Page Header */}
+      <div className="flex flex-col gap-4 border-b border-slate-200 pb-6 sm:flex-row sm:items-center sm:justify-between">
+        <div className="space-y-1.5">
+          <h1 className="font-display text-2xl font-bold tracking-tight text-[#0F172A] sm:text-[28px] sm:leading-[36px]">
             Operations &amp; Compliance Administration
           </h1>
-          <p className="text-sm text-slate-500 mt-1">
-            Multi-Store Platform Governance, Statutory Compliance &amp; Security
-          </p>
         </div>
         <Button
           variant="outline"
+          size="sm"
           onClick={handleLogout}
-          className="flex items-center gap-2 border-slate-300 text-slate-700 hover:bg-slate-100"
+          className="w-full shrink-0 gap-2 sm:w-auto"
         >
+          <LogOut className="h-4 w-4" />
           <span>Sign Out</span>
         </Button>
       </div>
 
-      <Card className="border-slate-200 shadow-sm">
-        <CardHeader className="pb-3">
-          <CardTitle className="text-lg font-semibold text-slate-800">
+      {/* Administrator Identity & Authorization */}
+      <Card className="border-[#E2E8F0] p-6 sm:p-7">
+        <div className="flex flex-col gap-1 border-b border-slate-100 pb-5">
+          <h2 className="font-display text-[18px] font-bold tracking-tight text-[#0F172A]">
             Administrator Identity &amp; Authorization Level
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
-            <div className="p-3 bg-slate-50 rounded-lg border border-slate-100">
-              <span className="text-xs text-slate-500 block uppercase font-medium">
-                Administrator Name
-              </span>
-              <span className="font-semibold text-slate-900 text-base">
-                {user?.profile?.fullName || 'System Administrator'}
-              </span>
-            </div>
+          </h2>
+        </div>
 
-            <div className="p-3 bg-slate-50 rounded-lg border border-slate-100">
-              <span className="text-xs text-slate-500 block uppercase font-medium">
-                Assigned Role
-              </span>
-              <div className="mt-1">
-                <StatusBadge status="information" label={user?.role || 'ADMIN'} />
+        <div className="mt-5 grid grid-cols-1 gap-4 sm:grid-cols-2">
+          {identityItems.map((item) => {
+            const Icon = item.icon;
+            return (
+              <div
+                key={item.label}
+                className="flex items-start gap-3 rounded-xl border border-slate-100 bg-slate-50/70 p-4"
+              >
+                <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-white text-[#0D5C5A] border border-slate-200">
+                  <Icon className="h-4 w-4" />
+                </span>
+                <div className="min-w-0 space-y-1.5">
+                  <span className="block text-[11px] font-semibold uppercase tracking-wider text-[#64748B]">
+                    {item.label}
+                  </span>
+                  {item.content}
+                </div>
               </div>
-            </div>
-
-            <div className="p-3 bg-slate-50 rounded-lg border border-slate-100">
-              <span className="text-xs text-slate-500 block uppercase font-medium">
-                Account Status
-              </span>
-              <span className="font-medium text-emerald-700 flex items-center gap-1 mt-1">
-                <span>✓</span>
-                {user?.status || 'ACTIVE'}
-              </span>
-            </div>
-
-            <div className="p-3 bg-slate-50 rounded-lg border border-slate-100">
-              <span className="text-xs text-slate-500 block uppercase font-medium">
-                Access Scope
-              </span>
-              <span className="font-semibold text-[#0F172A] text-sm mt-1 block">
-                {storeCount !== null
-                  ? `Full Chain Operations (${storeCount} Active ${storeCount === 1 ? 'Store' : 'Stores'}) & Regulatory Compliance`
-                  : 'Full Chain Operations & Regulatory Compliance'}
-              </span>
-            </div>
-          </div>
-
-          <div className="p-3.5 bg-[#F0FDFA] rounded-lg border border-[#99F6E4] text-xs text-[#0D5C5A] leading-relaxed">
-            <strong>Administrative &amp; Compliance Console:</strong> Administrator session verified
-            with backend-enforced RBAC guards and append-only audit logging. Live operational statistics
-            below are calculated dynamically from current database records.
-          </div>
-        </CardContent>
+            );
+          })}
+        </div>
       </Card>
 
       {/* Live Operational Metrics Summary */}
-      {overview && (
-        <div className="space-y-4">
-          <div className="flex items-center justify-between">
-            <h2 className="text-base font-bold text-slate-900">Live Chain Operations &amp; Sales (30-Day Window)</h2>
-            <Link
-              href="/admin/orders"
-              className="text-xs font-semibold text-[#0D5C5A] hover:underline"
-            >
-              View Sales &amp; Orders &rarr;
-            </Link>
+      <section className="space-y-5">
+        <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
+          <div className="space-y-1">
+            <h2 className="font-display text-[18px] font-bold tracking-tight text-[#0F172A]">
+              Live Chain Operations &amp; Sales
+            </h2>
           </div>
-
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
-            <div className="p-3.5 bg-white rounded-xl border border-slate-200 shadow-xs space-y-1">
-              <span className="text-[11px] text-slate-500 font-medium block">Total Sales (GMV)</span>
-              <div className="text-xl font-extrabold text-[#14161A]">
-                ₹{(overview.totalRevenue ?? 0).toLocaleString('en-IN', { minimumFractionDigits: 0 })}
-              </div>
-              <span className="text-[10px] text-emerald-700 font-medium">Recorded orders</span>
-            </div>
-
-            <div className="p-3.5 bg-white rounded-xl border border-slate-200 shadow-xs space-y-1">
-              <span className="text-[11px] text-slate-500 font-medium block">Total Orders</span>
-              <div className="text-xl font-extrabold text-blue-600">{overview.totalOrders}</div>
-              <span className="text-[10px] text-slate-400">{overview.fulfilmentOrders ?? 0} in progress</span>
-            </div>
-
-            <div className="p-3.5 bg-white rounded-xl border border-slate-200 shadow-xs space-y-1">
-              <span className="text-[11px] text-slate-500 font-medium block">Active Stores</span>
-              <div className="text-xl font-extrabold text-[#0D5C5A]">{overview.activeStoresCount}</div>
-              <span className="text-[10px] text-slate-400">Retail pharmacy hubs</span>
-            </div>
-
-            <div className="p-3.5 bg-white rounded-xl border border-slate-200 shadow-xs space-y-1">
-              <span className="text-[11px] text-slate-500 font-medium block">Customers</span>
-              <div className="text-xl font-extrabold text-purple-600">{overview.customersCount ?? 0}</div>
-              <span className="text-[10px] text-slate-400">Registered accounts</span>
-            </div>
-
-            <div className="p-3.5 bg-white rounded-xl border border-slate-200 shadow-xs space-y-1">
-              <span className="text-[11px] text-slate-500 font-medium block">Pharmacists</span>
-              <div className="text-xl font-extrabold text-emerald-600">{overview.pharmacistsCount ?? 0}</div>
-              <span className="text-[10px] text-slate-400">Licensed verifiers</span>
-            </div>
-
-            <div className="p-3.5 bg-white rounded-xl border border-slate-200 shadow-xs space-y-1">
-              <span className="text-[11px] text-slate-500 font-medium block">Store Staff</span>
-              <div className="text-xl font-extrabold text-slate-800">{overview.staffCount ?? 0}</div>
-              <span className="text-[10px] text-slate-400">Dispensing staff</span>
-            </div>
-          </div>
+          <Link
+            href="/admin/orders"
+            className="inline-flex items-center gap-1 text-[13px] font-semibold text-[#0D5C5A] hover:underline"
+          >
+            View Sales &amp; Orders
+            <ArrowRight className="h-3.5 w-3.5" />
+          </Link>
         </div>
-      )}
+
+        {loadingOverview ? (
+          <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
+            {Array.from({ length: 6 }).map((_, idx) => (
+              <div
+                key={idx}
+                className="h-[132px] animate-pulse rounded-[16px] border border-slate-200 bg-white"
+              />
+            ))}
+          </div>
+        ) : overview ? (
+          <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
+            {metrics.map((metric) => {
+              const Icon = metric.icon;
+              return (
+                <Card
+                  key={metric.label}
+                  className="border-[#E2E8F0] p-5 transition-shadow hover:shadow-md"
+                >
+                  <div className="flex items-center justify-between gap-3">
+                    <span className="text-[12px] font-semibold uppercase tracking-wider text-[#64748B]">
+                      {metric.label}
+                    </span>
+                    <span
+                      className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-lg ${metric.chip}`}
+                    >
+                      <Icon className="h-4 w-4" />
+                    </span>
+                  </div>
+                  <div className="mt-4">
+                    <div
+                      className={`font-display text-[26px] font-bold leading-[32px] tabular-nums ${metric.valueClass}`}
+                    >
+                      {metric.value}
+                    </div>
+                    <p className="mt-1 text-[12px] text-[#64748B]">{metric.hint}</p>
+                  </div>
+                </Card>
+              );
+            })}
+          </div>
+        ) : (
+          <div className="rounded-xl border border-slate-200 bg-white p-6 text-center text-[13px] text-[#64748B]">
+            Live metrics are currently unavailable. Please refresh to try again.
+          </div>
+        )}
+      </section>
 
       {/* Quick Navigation Panels */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 pt-2">
-        <Link
-          href="/admin/orders"
-          className="p-4 bg-white rounded-xl border border-slate-200 hover:border-[#0D5C5A] transition-colors shadow-xs flex items-center gap-3"
-        >
-          <div className="h-9 w-9 rounded-lg bg-[#F0FDFA] text-[#0D5C5A] flex items-center justify-center shrink-0 font-bold">
-            ₹
-          </div>
-          <div>
-            <div className="text-xs font-bold text-slate-900">Sales &amp; Orders</div>
-            <div className="text-[11px] text-slate-500">Live GMV &amp; orders table</div>
-          </div>
-        </Link>
+      <section className="space-y-5">
+        <div className="space-y-1">
+          <h2 className="font-display text-[18px] font-bold tracking-tight text-[#0F172A]">
+            Quick Actions
+          </h2>
+        </div>
 
-        <Link
-          href="/admin/stores"
-          className="p-4 bg-white rounded-xl border border-slate-200 hover:border-[#0D5C5A] transition-colors shadow-xs flex items-center gap-3"
-        >
-          <div className="h-9 w-9 rounded-lg bg-[#F0FDFA] text-[#0D5C5A] flex items-center justify-center shrink-0">
-            <Boxes className="h-4.5 w-4.5" />
-          </div>
-          <div>
-            <div className="text-xs font-bold text-slate-900">Store Directory</div>
-            <div className="text-[11px] text-slate-500">Register stores, staff &amp; pharmacists</div>
-          </div>
-        </Link>
-
-        <Link
-          href="/admin/compliance"
-          className="p-4 bg-white rounded-xl border border-slate-200 hover:border-[#0D5C5A] transition-colors shadow-xs flex items-center gap-3"
-        >
-          <div className="h-9 w-9 rounded-lg bg-[#F0FDFA] text-[#0D5C5A] flex items-center justify-center shrink-0">
-            <ShieldCheck className="h-4.5 w-4.5" />
-          </div>
-          <div>
-            <div className="text-xs font-bold text-slate-900">Compliance Setup</div>
-            <div className="text-[11px] text-slate-500">Rule sets &amp; H1 register</div>
-          </div>
-        </Link>
-
-        <Link
-          href="/admin/fulfilment"
-          className="p-4 bg-white rounded-xl border border-slate-200 hover:border-[#0D5C5A] transition-colors shadow-xs flex items-center gap-3"
-        >
-          <div className="h-9 w-9 rounded-lg bg-[#F0FDFA] text-[#0D5C5A] flex items-center justify-center shrink-0">
-            <Truck className="h-4.5 w-4.5" />
-          </div>
-          <div>
-            <div className="text-xs font-bold text-slate-900">Fulfilment Operations</div>
-            <div className="text-[11px] text-slate-500">Store routing &amp; stock holds</div>
-          </div>
-        </Link>
-      </div>
+        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
+          {quickLinks.map((link) => {
+            const Icon = link.icon;
+            return (
+              <Link
+                key={link.href}
+                href={link.href}
+                className="group flex items-start gap-4 rounded-[16px] border border-[#E2E8F0] bg-white p-5 shadow-xs transition-all duration-200 hover:border-[#0D5C5A] hover:shadow-md"
+              >
+                <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-[#F0FDFA] text-[#0D5C5A]">
+                  <Icon className="h-5 w-5" />
+                </span>
+                <div className="min-w-0 flex-1 space-y-1">
+                  <div className="flex items-center justify-between gap-2">
+                    <span className="text-[14px] font-semibold text-[#0F172A]">{link.title}</span>
+                    <ArrowRight className="h-4 w-4 shrink-0 text-slate-300 transition-transform duration-200 group-hover:translate-x-0.5 group-hover:text-[#0D5C5A]" />
+                  </div>
+                </div>
+              </Link>
+            );
+          })}
+        </div>
+      </section>
     </div>
   );
 }
