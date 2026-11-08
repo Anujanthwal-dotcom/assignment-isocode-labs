@@ -105,11 +105,11 @@ export default function CustomerOrdersPage() {
           </p>
         </div>
         <Button
-          onClick={() => router.push('/customer/medicines')}
+          onClick={() => router.push('/customer/prescriptions')}
           size="sm"
           className="text-xs bg-[#0D5C5A] text-white hover:bg-[#0A4846]"
         >
-          Order Medicines
+          Upload Prescription
         </Button>
       </div>
 

@@ -121,12 +121,11 @@ export default function CustomerMedicinesPage() {
           </p>
         </div>
         <Button
-          variant="outline"
           size="sm"
-          onClick={() => router.push('/customer/cart')}
-          className="text-xs border-[#0D5C5A]/30 text-[#0D5C5A] hover:bg-[#F0FDFA]"
+          onClick={() => router.push('/customer/prescriptions')}
+          className="text-xs bg-[#0D5C5A] text-white hover:bg-[#0A4846]"
         >
-          View Cart &rarr;
+          Upload Prescription &rarr;
         </Button>
       </div>
 

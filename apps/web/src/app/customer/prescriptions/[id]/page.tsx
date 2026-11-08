@@ -6,11 +6,10 @@ import { useParams, useRouter } from 'next/navigation';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { apiFetch, ApiError } from '@/lib/api/client';
+import { apiFetch } from '@/lib/api/client';
 import Link from 'next/link';
 import {
   PrescriptionDTO,
-  PrescriptionAIExtractionDTO,
   CustomerAddressDTO,
 } from '@pharmacy/shared-types';
 import { MissingPrescriptionIllustration } from '@/components/customer/MissingPrescriptionIllustration';
@@ -22,6 +21,7 @@ import {
   MapPin,
   Store,
   Package,
+  Clock,
 } from 'lucide-react';
 
 interface PrescriptionQuoteItem {
@@ -72,8 +72,6 @@ export default function PrescriptionDetailPage() {
   const [prescription, setPrescription] = React.useState<PrescriptionDTO | null>(null);
   const [viewUrl, setViewUrl] = React.useState<string | null>(null);
   const [previewImageError, setPreviewImageError] = React.useState(false);
-  const [extraction, setExtraction] = React.useState<PrescriptionAIExtractionDTO | null>(null);
-
   // Quote & Ordering state
   const [quote, setQuote] = React.useState<PrescriptionQuote | null>(null);
   const [addresses, setAddresses] = React.useState<CustomerAddressDTO[]>([]);
@@ -85,7 +83,6 @@ export default function PrescriptionDetailPage() {
   const [createdOrder, setCreatedOrder] = React.useState<any | null>(null);
 
   const [loading, setLoading] = React.useState(true);
-  const [requesting, setRequesting] = React.useState(false);
   const [error, setError] = React.useState<string | null>(null);
 
   // Load prescription metadata and preview URL
@@ -111,20 +108,6 @@ export default function PrescriptionDetailPage() {
       }
     } catch (err: unknown) {
       setError((err as Error).message || 'Failed to load prescription.');
-    }
-  }, [prescriptionId]);
-
-  // Load latest AI extraction
-  const loadLatestExtraction = React.useCallback(async () => {
-    try {
-      const res = await apiFetch<PrescriptionAIExtractionDTO>(
-        `/prescriptions/${prescriptionId}/extractions/latest`,
-      );
-      setExtraction(res);
-    } catch (err: unknown) {
-      if ((err as ApiError).status === 404) {
-        setExtraction(null);
-      }
     }
   }, [prescriptionId]);
 
@@ -157,62 +140,11 @@ export default function PrescriptionDetailPage() {
   React.useEffect(() => {
     const init = async () => {
       setLoading(true);
-      await Promise.all([loadPrescription(), loadLatestExtraction(), loadQuote(), loadAddresses()]);
+      await Promise.all([loadPrescription(), loadQuote(), loadAddresses()]);
       setLoading(false);
     };
     init();
-  }, [loadPrescription, loadLatestExtraction, loadQuote, loadAddresses]);
-
-  // Polling for extraction completion if in QUEUED or PROCESSING
-  React.useEffect(() => {
-    if (!extraction) return;
-    if (extraction.status !== 'QUEUED' && extraction.status !== 'PROCESSING') return;
-
-    const interval = setInterval(async () => {
-      await loadLatestExtraction();
-    }, 2500);
-
-    return () => clearInterval(interval);
-  }, [extraction, loadLatestExtraction]);
-
-  // Trigger manual extraction
-  const handleStartExtraction = async () => {
-    setRequesting(true);
-    setError(null);
-    try {
-      const res = await apiFetch<PrescriptionAIExtractionDTO>(
-        `/prescriptions/${prescriptionId}/extractions`,
-        {
-          method: 'POST',
-        },
-      );
-      setExtraction(res);
-    } catch (err: unknown) {
-      setError((err as Error).message || 'Failed to start AI extraction.');
-    } finally {
-      setRequesting(false);
-    }
-  };
-
-  // Retry extraction
-  const handleRetryExtraction = async () => {
-    if (!extraction) return;
-    setRequesting(true);
-    setError(null);
-    try {
-      const res = await apiFetch<PrescriptionAIExtractionDTO>(
-        `/prescriptions/${prescriptionId}/extractions/${extraction.id}/retry`,
-        {
-          method: 'POST',
-        },
-      );
-      setExtraction(res);
-    } catch (err: unknown) {
-      setError((err as Error).message || 'Failed to retry AI extraction.');
-    } finally {
-      setRequesting(false);
-    }
-  };
+  }, [loadPrescription, loadQuote, loadAddresses]);
 
   // Accept Quotation and Place Order
   const handleAcceptQuoteAndPay = async () => {
@@ -284,8 +216,9 @@ export default function PrescriptionDetailPage() {
     );
   }
 
-  const availableQuoteItems = quote?.items.filter((i) => i.isAvailable) || [];
-  const unavailableQuoteItems = quote?.items.filter((i) => !i.isAvailable) || [];
+  const quoteItems = Array.isArray(quote?.items) ? quote.items : [];
+  const availableQuoteItems = quoteItems.filter((i) => i.isAvailable);
+  const unavailableQuoteItems = quoteItems.filter((i) => !i.isAvailable);
 
   return (
     <div className="max-w-[1100px] mx-auto space-y-6 pb-16">
@@ -390,21 +323,21 @@ export default function PrescriptionDetailPage() {
           {quote && quote.status === 'QUOTED' && (
             <Card className="p-6 border-[#0D5C5A]/30 bg-white shadow-sm space-y-5">
               {/* Quotation Header */}
-              <div className="flex items-start justify-between pb-3 border-b border-slate-100">
-                <div className="space-y-1">
-                  <div className="flex items-center gap-2">
-                    <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
-                    <h2 className="text-base font-bold text-[#0F172A]">
+              <div className="pb-3 border-b border-slate-100 space-y-1.5">
+                <div className="flex items-center justify-between gap-3">
+                  <div className="flex items-center gap-2 min-w-0">
+                    <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse shrink-0"></span>
+                    <h2 className="text-base font-bold text-[#0F172A] truncate">
                       Prescription Verified — Quotation Ready
                     </h2>
                   </div>
-                  <p className="text-xs text-slate-500">
-                    A registered pharmacist has verified your prescription, matched medications to our catalogue, and prepared this cost quotation.
-                  </p>
+                  <Badge className="shrink-0 whitespace-nowrap h-7 px-3 rounded-[8px] bg-[#CCFBF1] text-[#0D5C5A] border-[#99F6E4] font-semibold text-xs inline-flex items-center justify-center leading-none">
+                    Quote Ready
+                  </Badge>
                 </div>
-                <Badge className="bg-[#CCFBF1] text-[#0D5C5A] border-[#99F6E4] font-semibold text-xs">
-                  Quote Ready
-                </Badge>
+                <p className="text-xs text-slate-500">
+                  A registered pharmacist has verified your prescription, matched medications to our catalogue, and prepared this cost quotation.
+                </p>
               </div>
 
               {/* Pharmacist Advice / Notes */}
@@ -696,9 +629,23 @@ export default function PrescriptionDetailPage() {
                           </div>
                         )}
 
-                        <div className="text-[11px] text-slate-500">
+                        <div className="text-[11px] text-slate-500 font-medium">
                           {ord.items.length} item(s) &bull; ₹{ord.totalAmount.toFixed(2)}
                         </div>
+
+                        {/* List items fulfilled by this specific store */}
+                        {ord.items && ord.items.length > 0 && (
+                          <div className="space-y-1 py-1.5 border-t border-emerald-100/60 text-[11px] text-slate-700">
+                            {ord.items.map((it) => (
+                              <div key={it.id} className="flex justify-between items-center">
+                                <span className="truncate max-w-[190px] font-medium text-slate-800">
+                                  &bull; {it.medicineNameSnapshot} &times; {it.quantity}
+                                </span>
+                                <span className="text-slate-500 font-mono">₹{it.lineTotal.toFixed(2)}</span>
+                              </div>
+                            ))}
+                          </div>
+                        )}
 
                         <div className="pt-1">
                           <Link href={`/customer/orders/${ord.id}`}>
@@ -727,124 +674,104 @@ export default function PrescriptionDetailPage() {
             </Card>
           )}
 
-          {/* STAGE C: AI EXTRACTION READINGS (If no quote yet, or as reference below quote) */}
-          <div className="space-y-4">
-            {error && (
-              <div className="p-3 bg-red-50 border border-red-200 text-red-700 rounded-lg text-xs">
-                {error}
-              </div>
-            )}
-            {/* Legal Notice */}
-            <div className="p-3.5 bg-[#F0FDFA] border border-[#EBECEF] rounded-xl text-[#0F172A] text-xs flex items-start gap-3">
-              <span className="font-bold text-[11px] uppercase px-1.5 py-0.5 rounded bg-[#99F6E4] text-[#0F172A]">
-                LEGAL NOTICE
-              </span>
-              <div>
-                <p className="font-bold text-[#0F172A]">Prescription Verification Process</p>
-                <p className="text-[#0D5C5A] mt-0.5 leading-relaxed">
-                  Every uploaded prescription is reviewed by a registered pharmacist. Our AI assistant reads the doctor handwriting,
-                  compares it with catalogue inventory, and provides an itemized cost quotation for your approval.
-                </p>
-              </div>
-            </div>
+          {/* Under Review / Rejected / Awaiting Verification States (Only when not quoted and not yet ordered) */}
+          {(!quote || (quote.status !== 'QUOTED' && quote.status !== 'ACCEPTED')) && (
+            <div className="space-y-4">
+              {error && (
+                <div className="p-3 bg-red-50 border border-red-200 text-red-700 rounded-lg text-xs">
+                  {error}
+                </div>
+              )}
 
-            {/* AI Extraction Status Card (if no quote yet) */}
-            {!quote && (
-              <>
-                {!extraction && (
-                  <Card className="p-8 text-center space-y-4 border-slate-200 bg-white">
-                    <div className="max-w-md mx-auto space-y-1">
-                      <h3 className="text-base font-bold text-slate-800">
-                        Prescription Under Review
-                      </h3>
-                      <p className="text-xs text-slate-500 leading-relaxed">
-                        Your prescription is queued for pharmacist verification. You can also run our AI reading assistant to immediately view detected medicines.
+              {prescription?.status === 'REJECTED' ? (
+                <Card className="p-6 border-red-200 bg-red-50/40 space-y-4">
+                  <div className="flex items-start gap-3">
+                    <AlertCircle className="w-5 h-5 text-red-600 shrink-0 mt-0.5" />
+                    <div className="space-y-1">
+                      <h3 className="font-bold text-sm text-red-950">Prescription Cannot Be Fulfilled</h3>
+                      <p className="text-xs text-red-800 leading-relaxed">
+                        Our pharmacist could not approve this prescription for dispensing. Please upload a valid prescription from a licensed practitioner to proceed.
                       </p>
                     </div>
-                    <Button
-                      onClick={handleStartExtraction}
-                      disabled={requesting}
-                      className="bg-[#0D5C5A] hover:bg-[#093e3d] text-white text-xs h-9 px-5 shadow-xs"
-                    >
-                      {requesting ? 'Reading...' : 'Run AI Reading Assistant'}
-                    </Button>
-                  </Card>
-                )}
-
-                {extraction && (extraction.status === 'QUEUED' || extraction.status === 'PROCESSING') && (
-                  <Card className="p-8 text-center space-y-4 border-slate-200 bg-white">
-                    <div className="max-w-md mx-auto space-y-1.5">
-                      <h3 className="text-base font-bold text-slate-800">Reading your prescription...</h3>
-                      <p className="text-xs text-slate-500 leading-relaxed">
-                        Our AI assistant is analyzing handwriting and comparing medications against our inventory catalogue.
-                      </p>
-                      <div className="w-48 h-1.5 bg-slate-100 rounded-full mx-auto overflow-hidden mt-3">
-                        <div className="h-full bg-[#0D5C5A] rounded-full animate-pulse w-3/4"></div>
-                      </div>
-                    </div>
-                  </Card>
-                )}
-
-                {extraction && extraction.status === 'FAILED' && (
-                  <Card className="p-6 border-red-200 bg-red-50/40 text-center space-y-3">
-                    <p className="text-xs text-red-700">{extraction.errorMessage || 'Reading failed.'}</p>
-                    <Button size="sm" onClick={handleRetryExtraction} disabled={requesting} className="text-xs">
-                      {requesting ? 'Retrying...' : 'Retry AI Reading'}
-                    </Button>
-                  </Card>
-                )}
-
-                {/* AI Extracted Draft Results */}
-                {extraction && extraction.status === 'COMPLETED' && (
-                  <div className="space-y-4">
-                    <Card className="p-4 border-slate-200 bg-white space-y-3">
-                      <div className="flex items-center justify-between pb-2 border-b border-slate-100">
-                        <span className="font-bold text-xs text-slate-800">
-                          AI Detected Medications ({extraction.extractionResult?.items.length || 0})
-                        </span>
-                        <Badge className="bg-[#CCFBF1] text-[#0D5C5A] border-none text-[10px]">
-                          {Math.round((extraction.overallConfidence || 0) * 100)}% Match Confidence
-                        </Badge>
-                      </div>
-
-                      <div className="space-y-2">
-                        {extraction.extractionResult?.items.map((item, idx) => {
-                          const match = extraction.matchingResult?.find((m: any) => m.extractedItemIndex === idx);
-                          return (
-                            <div
-                              key={idx}
-                              className="p-3 rounded-lg border border-slate-200 bg-slate-50/50 text-xs space-y-1"
-                            >
-                              <div className="flex justify-between items-start">
-                                <span className="font-bold text-slate-800 text-sm">
-                                  {item.rawMedicineName || item.normalizedMedicineName}
-                                </span>
-                                <Badge variant="neutral" className="text-[10px]">
-                                  {item.strength || 'Standard'}
-                                </Badge>
-                              </div>
-                              <p className="text-slate-500 text-[11px]">
-                                {item.dosageInstructions || item.frequency || 'As prescribed'}
-                              </p>
-                              {match?.comparisonNotes && (
-                                <p className="text-[#0D5C5A] text-[11px] font-medium pt-1">
-                                  &bull; {match.comparisonNotes}
-                                </p>
-                              )}
-                            </div>
-                          );
-                        })}
-                      </div>
-
-                      <div className="p-3 bg-[#F0FDFA] rounded-lg text-[11px] text-[#0D5C5A] text-center font-medium">
-                        Our registered pharmacist is currently preparing the verified price quotation for dispensing.
-                      </div>
-                    </Card>
                   </div>
-                )}
-              </>
-            )}
-          </div>
+                  <Link href="/customer/prescriptions">
+                    <Button size="sm" variant="outline" className="text-xs border-red-300 text-red-700 hover:bg-red-100/50">
+                      &larr; Back to Prescriptions
+                    </Button>
+                  </Link>
+                </Card>
+              ) : prescription?.status === 'REUPLOAD_REQUIRED' ? (
+                <Card className="p-6 border-amber-200 bg-amber-50/40 space-y-4">
+                  <div className="flex items-start gap-3">
+                    <AlertCircle className="w-5 h-5 text-amber-600 shrink-0 mt-0.5" />
+                    <div className="space-y-1">
+                      <h3 className="font-bold text-sm text-amber-950">Prescription Re-upload Requested</h3>
+                      <p className="text-xs text-amber-800 leading-relaxed">
+                        The pharmacist requested a clearer document or image of your prescription (e.g. illegible doctor handwriting or blurred camera scan). Please upload a clearer copy.
+                      </p>
+                    </div>
+                  </div>
+                  <Link href="/customer/prescriptions">
+                    <Button size="sm" className="text-xs bg-[#0D5C5A] hover:bg-[#093e3d] text-white">
+                      Upload New Scan
+                    </Button>
+                  </Link>
+                </Card>
+              ) : (
+                <Card className="p-6 border-slate-200 bg-white shadow-xs space-y-5">
+                  <div className="flex items-start gap-3.5">
+                    <div className="w-10 h-10 rounded-xl bg-amber-50 border border-amber-200 flex items-center justify-center shrink-0">
+                      <Clock className="w-5 h-5 text-amber-600 animate-pulse" />
+                    </div>
+                    <div className="space-y-1">
+                      <div className="flex items-center gap-2">
+                        <span className="w-2.5 h-2.5 rounded-full bg-amber-500 animate-pulse" />
+                        <h3 className="font-bold text-sm text-[#0F172A]">
+                          Prescription Under Pharmacist Review
+                        </h3>
+                      </div>
+                      <p className="text-xs text-slate-500 leading-relaxed">
+                        A registered pharmacist is currently verifying your prescription and checking live medicine inventory across our pharmacy stores. As soon as verification is complete, your itemized cost quotation will appear here for payment and ordering.
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Visual 4-Step Fulfilment Tracker */}
+                  <div className="p-4 bg-slate-50 rounded-xl border border-slate-100 space-y-3">
+                    <div className="text-[11px] font-bold uppercase tracking-wider text-slate-400">
+                      Prescription Fulfilment Steps
+                    </div>
+                    <div className="space-y-2.5 text-xs">
+                      <div className="flex items-center gap-2.5 text-emerald-700">
+                        <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+                        <span className="font-semibold">1. Prescription Uploaded Successfully</span>
+                      </div>
+                      <div className="flex items-center gap-2.5 text-[#0D5C5A]">
+                        <span className="w-4 h-4 rounded-full border-2 border-[#0D5C5A] border-t-transparent animate-spin shrink-0" />
+                        <span className="font-bold">2. Pharmacist Clinical Review &amp; Quotation (In Progress)</span>
+                      </div>
+                      <div className="flex items-center gap-2.5 text-slate-400">
+                        <span className="w-4 h-4 rounded-full border border-slate-300 shrink-0" />
+                        <span>3. Quotation Approval &amp; Order Payment</span>
+                      </div>
+                      <div className="flex items-center gap-2.5 text-slate-400">
+                        <span className="w-4 h-4 rounded-full border border-slate-300 shrink-0" />
+                        <span>4. Multi-Store Split Fulfilment &amp; Delivery Tracking</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Multi-Store Split Fulfilment Note */}
+                  <div className="p-3.5 bg-[#F0FDFA] rounded-xl border border-[#CCFBF1] text-xs text-[#0D5C5A] flex items-start gap-2.5">
+                    <Store className="w-4 h-4 shrink-0 mt-0.5 text-[#0D5C5A]" />
+                    <p className="leading-relaxed text-[11px]">
+                      <strong>Multi-Store Order Fulfilment:</strong> If no single pharmacy store has all of your prescribed medicines in stock, our platform automatically splits the fulfilment across our nearest stores so you receive your full treatment course on time.
+                    </p>
+                  </div>
+                </Card>
+              )}
+            </div>
+          )}
         </div>
       </div>
     </div>

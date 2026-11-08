@@ -8,6 +8,8 @@ import CustomerAddressesPage from '@/app/customer/addresses/page';
 import CustomerPrescriptionsPage from '@/app/customer/prescriptions/page';
 import CustomerMockPaymentPage from '@/app/customer/payment/mock/[orderId]/page';
 import CustomerOrdersPage from '@/app/customer/orders/page';
+import { CustomerNavbar } from '@/components/customer/CustomerNavbar';
+import { CustomerBottomNav } from '@/components/customer/CustomerBottomNav';
 
 vi.mock('@/lib/auth/auth-context', () => ({
   useAuth: () => ({
@@ -254,7 +256,7 @@ describe('Customer Ordering UI Tests', () => {
     expect(screen.getByText('Prescriptions')).toBeDefined();
     await waitFor(() => {
       expect(screen.getByText('dr-prescription.jpg')).toBeDefined();
-      expect(screen.getByText('Awaiting Review')).toBeDefined();
+      expect(screen.getByText('Under Review')).toBeDefined();
       expect(screen.getByText('Upload Prescription')).toBeDefined();
     });
   });
@@ -278,5 +280,19 @@ describe('Customer Ordering UI Tests', () => {
       expect(screen.getByText('PH-20261105-000001')).toBeDefined();
       expect(screen.getByText('PENDING VERIFICATION')).toBeDefined();
     });
+  });
+
+  it('8. Renders CustomerNavbar without cart option', async () => {
+    render(<CustomerNavbar />);
+    await waitFor(() => {
+      expect(screen.queryByText('Cart')).toBeNull();
+      expect(screen.queryByRole('link', { name: /cart/i })).toBeNull();
+    });
+  });
+
+  it('9. Renders CustomerBottomNav without cart option', () => {
+    render(<CustomerBottomNav />);
+    expect(screen.queryByText('Cart')).toBeNull();
+    expect(screen.queryByRole('link', { name: /cart/i })).toBeNull();
   });
 });

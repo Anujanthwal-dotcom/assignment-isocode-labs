@@ -238,9 +238,13 @@ export default function CustomerPrescriptionsPage() {
                     </span>
                   </div>
 
-                  {rx.status === 'APPROVED' ? (
-                    <Badge variant="success" className="text-[10px] font-semibold">
-                      Approved
+                  {rx.quoteStatus === 'ACCEPTED' || rx.orderId ? (
+                    <Badge variant="success" className="text-[10px] font-semibold bg-emerald-100 text-emerald-800 border-emerald-300">
+                      Order Placed
+                    </Badge>
+                  ) : rx.quoteStatus === 'QUOTED' ? (
+                    <Badge variant="success" className="shrink-0 whitespace-nowrap text-[10px] font-semibold bg-[#CCFBF1] text-[#0D5C5A] border-[#99F6E4]">
+                      Quote Ready
                     </Badge>
                   ) : rx.status === 'REJECTED' ? (
                     <Badge variant="danger" className="text-[10px] font-semibold">
@@ -252,7 +256,7 @@ export default function CustomerPrescriptionsPage() {
                     </Badge>
                   ) : (
                     <Badge variant="warning" className="text-[10px] font-semibold">
-                      Awaiting Review
+                      Under Review
                     </Badge>
                   )}
                 </div>
@@ -278,6 +282,14 @@ export default function CustomerPrescriptionsPage() {
                       })}
                     </span>
                   </div>
+                  {rx.totalAmount !== null && rx.totalAmount !== undefined && (
+                    <div className="flex justify-between items-center pt-0.5">
+                      <span className="text-slate-400">Quote Amount:</span>
+                      <span className="font-bold text-[#0D5C5A]">
+                        ₹{Number(rx.totalAmount).toFixed(2)}
+                      </span>
+                    </div>
+                  )}
                 </div>
               </div>
 
@@ -288,7 +300,11 @@ export default function CustomerPrescriptionsPage() {
                     size="sm"
                     className="text-xs h-8 px-2.5 text-[#0D5C5A] bg-[#F0FDFA] border-[#EBECEF] hover:bg-[#CCFBF1] font-semibold"
                   >
-                    {rx.status === 'APPROVED' ? 'View Quote & Order' : 'Review & AI'}
+                    {rx.quoteStatus === 'QUOTED'
+                      ? 'View Quote & Order'
+                      : rx.quoteStatus === 'ACCEPTED' || rx.orderId
+                      ? 'View Order & Rx'
+                      : 'View Details'}
                   </Button>
                 </Link>
                 <div className="flex items-center gap-1.5">

@@ -83,7 +83,7 @@ export default function CustomerOrderDetailPage() {
       const [orderRes, historyRes, verifRes] = await Promise.all([
         apiFetch<OrderDTO>(`/customer/orders/${orderId}`),
         apiFetch<OrderStatusHistoryDTO[]>(`/customer/orders/${orderId}/history`),
-        apiFetch<VerificationStatusData>(`/customer/orders/${orderId}/verification-status`).catch(
+        apiFetch<VerificationStatusData>(`/customer/orders/${orderId}/verification`).catch(
           () => null,
         ),
       ]);
@@ -120,7 +120,7 @@ export default function CustomerOrderDetailPage() {
       try {
         const [updatedOrder, verifRes] = await Promise.all([
           apiFetch<OrderDTO>(`/customer/orders/${orderId}`),
-          apiFetch<VerificationStatusData>(`/customer/orders/${orderId}/verification-status`).catch(
+          apiFetch<VerificationStatusData>(`/customer/orders/${orderId}/verification`).catch(
             () => null,
           ),
         ]);
@@ -469,7 +469,7 @@ export default function CustomerOrderDetailPage() {
             <CardContent className="p-0">
               <div className="divide-y divide-slate-100">
                 {order.items.map((item) => {
-                  const verifItem = verification?.items.find((v) => v.orderItemId === item.id);
+                  const verifItem = verification?.items?.find((v) => v.orderItemId === item.id);
                   const isApproved = verifItem?.reviewStatus === 'APPROVED';
                   const isRejected =
                     verifItem?.reviewStatus === 'REJECTED' || item.status === 'REJECTED';

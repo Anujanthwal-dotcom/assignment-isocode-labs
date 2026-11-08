@@ -152,13 +152,48 @@ export class PrescriptionsService {
               relationship: true,
             },
           },
+          quotes: {
+            where: { status: { in: ['QUOTED', 'ACCEPTED'] } },
+            orderBy: { createdAt: 'desc' },
+            take: 1,
+            select: {
+              id: true,
+              status: true,
+              totalAmount: true,
+              orderId: true,
+            },
+          },
+          orders: {
+            take: 1,
+            select: {
+              id: true,
+            },
+          },
         },
       }),
       this.prisma.prescription.count({ where }),
     ]);
 
     return {
-      data: items,
+      data: items.map((p) => {
+        const latestQuote = p.quotes?.[0] || null;
+        const linkedOrder = p.orders?.[0] || null;
+        return {
+          id: p.id,
+          customerUserId: p.customerUserId,
+          familyMemberId: p.familyMemberId,
+          originalFileName: p.originalFileName,
+          mimeType: p.mimeType,
+          fileSizeBytes: p.fileSizeBytes,
+          status: p.status,
+          uploadedAt: p.uploadedAt,
+          updatedAt: p.updatedAt,
+          familyMember: p.familyMember,
+          quoteStatus: latestQuote?.status || null,
+          totalAmount: latestQuote ? Number(latestQuote.totalAmount) : null,
+          orderId: latestQuote?.orderId || linkedOrder?.id || null,
+        };
+      }),
       meta: {
         page,
         limit,
@@ -356,6 +391,53 @@ export class PrescriptionsService {
     });
 
     if (!quote) {
+      const fallbackOrders = await this.prisma.order.findMany({
+        where: { prescriptionId },
+        select: {
+          id: true,
+          orderNumber: true,
+          status: true,
+          totalAmount: true,
+          fulfilmentStore: {
+            select: { id: true, code: true, name: true, city: true },
+          },
+          items: {
+            select: { id: true, medicineNameSnapshot: true, quantity: true, lineTotal: true },
+          },
+        },
+        orderBy: { placedAt: 'asc' },
+      });
+
+      if (fallbackOrders.length > 0) {
+        const subtotal = fallbackOrders.reduce((sum, o) => sum + Number(o.totalAmount), 0);
+        return {
+          id: `order-fallback-${prescriptionId}`,
+          prescriptionId,
+          pharmacistId: '',
+          storeId: fallbackOrders[0]?.fulfilmentStore?.id || null,
+          status: 'ACCEPTED',
+          subtotal,
+          deliveryFee: 0,
+          totalAmount: subtotal,
+          pharmacistNotes: 'Order fulfilled.',
+          quotedAt: new Date().toISOString(),
+          validUntil: null,
+          orderId: fallbackOrders[0].id,
+          orders: fallbackOrders.map((o) => ({
+            id: o.id,
+            orderNumber: o.orderNumber,
+            status: o.status,
+            totalAmount: Number(o.totalAmount),
+            fulfilmentStore: o.fulfilmentStore,
+            items: o.items.map((it) => ({
+              ...it,
+              lineTotal: Number(it.lineTotal),
+            })),
+          })),
+          items: [],
+        };
+      }
+
       return null;
     }
 

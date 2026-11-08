@@ -21,7 +21,42 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { StatusBadge } from '@/components/shared/StatusBadge';
 import { apiFetch } from '@/lib/api/client';
-import { OrderDTO } from '@pharmacy/shared-types';
+import { OrderDTO, FamilyMemberDTO, PrescriptionDTO } from '@pharmacy/shared-types';
+
+const AVATAR_COLORS = [
+  'bg-[#E0F2FE] text-[#0284C7]',
+  'bg-[#FEF3C7] text-[#D97706]',
+  'bg-[#F3E8FF] text-[#7E22CE]',
+  'bg-[#FCE7F3] text-[#DB2777]',
+  'bg-[#DCFCE7] text-[#16A34A]',
+];
+
+function getInitials(name?: string | null): string {
+  if (!name) return 'U';
+  const parts = name.trim().split(/\s+/).filter(Boolean);
+  if (parts.length === 1) return parts[0].slice(0, 2).toUpperCase();
+  return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+}
+
+function formatRelationship(rel?: string | null): string {
+  if (!rel) return 'Family';
+  switch (rel) {
+    case 'MOTHER':
+      return 'Mother (Senior Care)';
+    case 'FATHER':
+      return 'Father (Senior Care)';
+    case 'SPOUSE':
+      return 'Spouse / Partner';
+    case 'CHILD':
+      return 'Child / Dependent';
+    case 'SIBLING':
+      return 'Sibling';
+    case 'SELF':
+      return 'Self (Primary Account)';
+    default:
+      return rel.charAt(0).toUpperCase() + rel.slice(1).toLowerCase();
+  }
+}
 
 export default function CustomerHomePage() {
   const { user } = useAuth();
@@ -29,27 +64,56 @@ export default function CustomerHomePage() {
   const [rxNumber, setRxNumber] = React.useState('');
   const [recentOrders, setRecentOrders] = React.useState<OrderDTO[]>([]);
   const [loadingOrders, setLoadingOrders] = React.useState(true);
+  const [familyMembers, setFamilyMembers] = React.useState<FamilyMemberDTO[]>([]);
+  const [prescriptions, setPrescriptions] = React.useState<PrescriptionDTO[]>([]);
+  const [loadingCircle, setLoadingCircle] = React.useState(true);
 
   React.useEffect(() => {
     let isMounted = true;
-    const fetchRecentOrders = async () => {
+    const fetchDashboardData = async () => {
       try {
-        const res = await apiFetch<{ data: OrderDTO[] }>('/customer/orders?limit=3');
-        if (isMounted && res?.data) {
-          setRecentOrders(res.data);
+        const [ordersRes, familyRes, rxRes] = await Promise.allSettled([
+          apiFetch<{ data: OrderDTO[] }>('/customer/orders?limit=3'),
+          apiFetch<FamilyMemberDTO[]>('/customer/family-members'),
+          apiFetch<{ data: PrescriptionDTO[] }>('/customer/prescriptions'),
+        ]);
+
+        if (isMounted) {
+          if (ordersRes.status === 'fulfilled' && ordersRes.value?.data) {
+            setRecentOrders(ordersRes.value.data);
+          }
+          if (familyRes.status === 'fulfilled' && Array.isArray(familyRes.value)) {
+            setFamilyMembers(familyRes.value);
+          }
+          if (rxRes.status === 'fulfilled' && rxRes.value?.data) {
+            setPrescriptions(rxRes.value.data);
+          }
         }
       } catch {
         // Silently handle
       } finally {
-        if (isMounted) setLoadingOrders(false);
+        if (isMounted) {
+          setLoadingOrders(false);
+          setLoadingCircle(false);
+        }
       }
     };
 
-    fetchRecentOrders();
+    fetchDashboardData();
     return () => {
       isMounted = false;
     };
   }, []);
+
+  const getActiveRxCount = (memberId?: string | null) => {
+    return prescriptions.filter((rx) => {
+      const isMemberMatch = memberId
+        ? rx.familyMemberId === memberId || rx.familyMember?.id === memberId
+        : !rx.familyMemberId && !rx.familyMember?.id;
+      const isActive = rx.status !== 'REJECTED' && rx.status !== 'REUPLOAD_REQUIRED';
+      return isMemberMatch && isActive;
+    }).length;
+  };
 
   const handleRxLookupSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -368,35 +432,77 @@ export default function CustomerHomePage() {
               </Link>
             </div>
             <div className="space-y-2 pt-1">
-              <div className="flex items-center justify-between p-3 rounded-[12px] bg-[#F8F9FA] border border-[#EBECEF]">
-                <div className="flex items-center gap-2.5">
-                  <div className="h-7 w-7 rounded-full bg-[#CCFBF1] text-[#047857] font-bold text-xs flex items-center justify-center">
-                    DG
-                  </div>
-                  <div>
-                    <span className="font-semibold text-xs text-[#0F172A] block">Debasish Ghosh</span>
-                    <span className="text-[10px] text-[#64748B]">Self (Primary Account)</span>
-                  </div>
+              {loadingCircle ? (
+                <div className="py-4 text-center text-xs text-[#64748B] space-y-2">
+                  <div className="h-5 w-5 animate-spin rounded-full border-2 border-[#0D5C5A] border-t-transparent mx-auto" />
+                  <p>Loading family circle...</p>
                 </div>
-                <span className="text-[10px] font-semibold text-[#047857] bg-[#CCFBF1] px-2.5 py-0.5 rounded-full">
-                  Active
-                </span>
-              </div>
+              ) : (
+                <>
+                  {/* Primary Account Owner (Self) */}
+                  <div className="flex items-center justify-between p-3 rounded-[12px] bg-[#F8F9FA] border border-[#EBECEF]">
+                    <div className="flex items-center gap-2.5">
+                      <div className="h-7 w-7 rounded-full bg-[#CCFBF1] text-[#047857] font-bold text-xs flex items-center justify-center">
+                        {getInitials(userName)}
+                      </div>
+                      <div>
+                        <span className="font-semibold text-xs text-[#0F172A] block">{userName}</span>
+                        <span className="text-[10px] text-[#64748B]">Self (Primary Account)</span>
+                      </div>
+                    </div>
+                    <span
+                      className={`text-[10px] font-semibold px-2.5 py-0.5 rounded-full ${
+                        getActiveRxCount(null) > 0
+                          ? 'text-[#0D5C5A] bg-[#F0FDFA] border border-[#99F6E4]'
+                          : 'text-[#047857] bg-[#CCFBF1]'
+                      }`}
+                    >
+                      {getActiveRxCount(null) > 0
+                        ? `${getActiveRxCount(null)} Active Rx`
+                        : 'Active'}
+                    </span>
+                  </div>
 
-              <div className="flex items-center justify-between p-3 rounded-[12px] bg-[#F8F9FA] border border-[#EBECEF]">
-                <div className="flex items-center gap-2.5">
-                  <div className="h-7 w-7 rounded-full bg-[#E0F2FE] text-[#0284C7] font-bold text-xs flex items-center justify-center">
-                    MG
-                  </div>
-                  <div>
-                    <span className="font-semibold text-xs text-[#0F172A] block">Maya Ghosh</span>
-                    <span className="text-[10px] text-[#64748B]">Mother (Senior Care)</span>
-                  </div>
-                </div>
-                <span className="text-[10px] font-semibold text-[#0D5C5A] bg-[#F0FDFA] border border-[#99F6E4] px-2.5 py-0.5 rounded-full">
-                  2 Active Rx
-                </span>
-              </div>
+                  {/* Registered Family Members */}
+                  {familyMembers
+                    .filter((m) => m.relationship !== 'SELF')
+                    .map((member, idx) => {
+                      const count = getActiveRxCount(member.id);
+                      const colorClass = AVATAR_COLORS[idx % AVATAR_COLORS.length];
+                      return (
+                        <div
+                          key={member.id}
+                          className="flex items-center justify-between p-3 rounded-[12px] bg-[#F8F9FA] border border-[#EBECEF]"
+                        >
+                          <div className="flex items-center gap-2.5">
+                            <div
+                              className={`h-7 w-7 rounded-full ${colorClass} font-bold text-xs flex items-center justify-center`}
+                            >
+                              {getInitials(member.fullName)}
+                            </div>
+                            <div>
+                              <span className="font-semibold text-xs text-[#0F172A] block">
+                                {member.fullName}
+                              </span>
+                              <span className="text-[10px] text-[#64748B]">
+                                {formatRelationship(member.relationship)}
+                              </span>
+                            </div>
+                          </div>
+                          <span
+                            className={`text-[10px] font-semibold px-2.5 py-0.5 rounded-full ${
+                              count > 0
+                                ? 'text-[#0D5C5A] bg-[#F0FDFA] border border-[#99F6E4]'
+                                : 'text-slate-500 bg-slate-100'
+                            }`}
+                          >
+                            {count > 0 ? `${count} Active Rx` : 'No Active Rx'}
+                          </span>
+                        </div>
+                      );
+                    })}
+                </>
+              )}
             </div>
           </div>
 

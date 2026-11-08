@@ -84,6 +84,9 @@ export interface PrescriptionDTO {
   status: PrescriptionStatus;
   uploadedAt: string;
   updatedAt: string;
+  quoteStatus?: 'QUOTED' | 'ACCEPTED' | 'EXPIRED' | null;
+  orderId?: string | null;
+  totalAmount?: number | null;
 }
 
 export interface PrescriptionFileAccessDTO {

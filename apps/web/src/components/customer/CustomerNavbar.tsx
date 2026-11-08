@@ -5,7 +5,6 @@ import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import {
   Bell,
-  ShoppingCart,
   User,
   ChevronDown,
   Users,
@@ -32,28 +31,6 @@ export const CustomerNavbar: React.FC = () => {
   const pathname = usePathname();
   const router = useRouter();
   const { user, logout } = useAuth();
-  const [cartCount, setCartCount] = React.useState<number>(0);
-
-  React.useEffect(() => {
-    let isMounted = true;
-    const fetchCart = async () => {
-      try {
-        const res = await apiFetch<{ itemCount: number }>('/customer/cart');
-        if (isMounted && res) {
-          setCartCount(res.itemCount || 0);
-        }
-      } catch {
-        // Unauthenticated or network error ignored in navbar
-      }
-    };
-
-    fetchCart();
-    const interval = setInterval(fetchCart, 10000);
-    return () => {
-      isMounted = false;
-      clearInterval(interval);
-    };
-  }, [pathname]);
 
   const handleLogout = async () => {
     await logout();
@@ -131,21 +108,6 @@ export const CustomerNavbar: React.FC = () => {
             <span className="absolute top-2 right-2 h-1.5 w-1.5 rounded-full bg-[#14B8A6]" />
           </Link>
 
-          {/* Cart */}
-          <Link
-            href="/customer/cart"
-            className="relative flex h-9 items-center justify-center px-3 rounded-[10px] border border-[#EBECEF] bg-white text-xs font-semibold text-[#0F172A] hover:bg-[#F0FDFA] hover:text-[#0D5C5A] transition-colors gap-1.5"
-            title="Shopping Cart"
-            aria-label="View shopping cart"
-          >
-            <ShoppingCart className="h-4 w-4" />
-            <span className="hidden sm:inline">Cart</span>
-            {cartCount > 0 && (
-              <span className="flex h-4 min-w-4 items-center justify-center rounded-full bg-[#0D5C5A] px-1 text-[10px] font-bold text-white shadow-xs">
-                {cartCount > 99 ? '99+' : cartCount}
-              </span>
-            )}
-          </Link>
 
           {/* Profile Dropdown */}
           <DropdownMenu>
