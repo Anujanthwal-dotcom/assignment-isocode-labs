@@ -108,6 +108,10 @@ export async function apiFetch<T = unknown>(
       }
     }
 
+    if (response.status === 204 || response.headers.get('content-length') === '0') {
+      return null as T;
+    }
+
     const contentType = response.headers.get('content-type');
     const isJson = contentType && contentType.includes('application/json');
     const data = isJson ? await response.json() : await response.text();
@@ -120,6 +124,10 @@ export async function apiFetch<T = unknown>(
             : String((data as { message: unknown }).message)
           : `Request failed with status ${response.status}`;
       throw new ApiError(response.status, message, data);
+    }
+
+    if (typeof data === 'string' && data.trim() === '') {
+      return null as T;
     }
 
     return data as T;

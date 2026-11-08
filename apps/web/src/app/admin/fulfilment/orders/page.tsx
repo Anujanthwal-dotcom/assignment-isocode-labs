@@ -20,7 +20,7 @@ export default function AdminFulfilmentOrdersPage() {
 
   const fetchStores = React.useCallback(async () => {
     try {
-      const res = await apiFetch<any[]>('/admin/stores');
+      const res = await apiFetch<any[]>('/stores');
       setStores(res || []);
       if (res && res.length > 0) setTargetStoreId(res[0].id);
     } catch {

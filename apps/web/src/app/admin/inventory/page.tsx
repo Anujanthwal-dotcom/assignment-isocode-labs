@@ -212,7 +212,7 @@ export default function AdminInventoryPage() {
         <h1 className="text-[24px] font-bold tracking-tight text-[#0F172A]">Chain Inventory</h1>
         <p className="text-[14px] text-[#78879A]">
           Track physical inventory quantities, reorder thresholds, and historical stock movements
-          across all 46 stores and the Kolkata central warehouse.
+          across active pharmacy stores and the central distribution warehouse.
         </p>
       </div>
 

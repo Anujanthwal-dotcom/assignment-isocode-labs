@@ -19,7 +19,7 @@ export default function AdminH1RegisterPage() {
 
   const fetchStores = React.useCallback(async () => {
     try {
-      const res = await apiFetch<StoreDTO[]>('/admin/stores');
+      const res = await apiFetch<StoreDTO[]>('/stores');
       setStores(res || []);
     } catch {
       // Non-critical if stores endpoint fails

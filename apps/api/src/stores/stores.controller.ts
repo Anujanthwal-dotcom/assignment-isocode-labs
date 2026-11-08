@@ -6,12 +6,12 @@ import { UserRole } from '@prisma/client';
 
 @ApiTags('Stores')
 @ApiBearerAuth()
-@Controller('stores')
+@Controller(['stores', 'admin/stores'])
 export class StoresController {
   constructor(private readonly storesService: StoresService) {}
 
   @Get()
-  @Roles(UserRole.ADMIN, UserRole.PHARMACIST, UserRole.COMPLIANCE_ADMIN)
+  @Roles(UserRole.ADMIN, UserRole.PHARMACIST)
   @ApiOperation({ summary: 'List all active stores' })
   @ApiResponse({ status: 200, description: 'List of active pharmacy stores' })
   async listStores() {
