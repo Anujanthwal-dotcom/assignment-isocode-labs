@@ -62,7 +62,6 @@ export const CustomerNavbar: React.FC = () => {
 
   const navLinks = [
     { href: '/customer', label: 'Home' },
-    { href: '/customer/medicines', label: 'Medicines' },
     { href: '/customer/prescriptions', label: 'Prescriptions' },
     { href: '/customer/family', label: 'Family' },
     { href: '/customer/refills', label: 'Refills' },

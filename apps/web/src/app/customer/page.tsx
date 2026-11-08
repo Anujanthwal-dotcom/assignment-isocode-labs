@@ -4,9 +4,7 @@ import * as React from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import {
-  Search,
   UploadCloud,
-  Pill,
   Users,
   Clock,
   ShieldCheck,
@@ -14,7 +12,6 @@ import {
   FileText,
   Repeat,
   Calendar,
-  Sparkles,
   CheckCircle2,
   Package,
   Truck,
@@ -27,18 +24,10 @@ import { StatusBadge } from '@/components/shared/StatusBadge';
 import { apiFetch } from '@/lib/api/client';
 import { OrderDTO } from '@pharmacy/shared-types';
 
-const POPULAR_MEDICINES = [
-  'Metformin 500mg',
-  'Atorvastatin 10mg',
-  'Paracetamol 650mg',
-  'Pantoprazole 40mg',
-  'Amoxicillin 500mg',
-];
-
 export default function CustomerHomePage() {
   const { user } = useAuth();
   const router = useRouter();
-  const [searchQuery, setSearchQuery] = React.useState('');
+  const [rxNumber, setRxNumber] = React.useState('');
   const [recentOrders, setRecentOrders] = React.useState<OrderDTO[]>([]);
   const [loadingOrders, setLoadingOrders] = React.useState(true);
 
@@ -63,18 +52,13 @@ export default function CustomerHomePage() {
     };
   }, []);
 
-  const handleSearchSubmit = (e: React.FormEvent) => {
+  const handleRxLookupSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (searchQuery.trim()) {
-      router.push(`/customer/medicines?search=${encodeURIComponent(searchQuery.trim())}`);
+    if (rxNumber.trim()) {
+      router.push(`/customer/prescriptions?search=${encodeURIComponent(rxNumber.trim())}`);
     } else {
-      router.push('/customer/medicines');
+      router.push('/customer/prescriptions');
     }
-  };
-
-  const handleQuickChipClick = (medName: string) => {
-    const clean = medName.split(' ')[0];
-    router.push(`/customer/medicines?search=${encodeURIComponent(clean)}`);
   };
 
   const getStatusColor = (
@@ -124,7 +108,7 @@ export default function CustomerHomePage() {
           {/* Status Pill */}
           <div className="inline-flex items-center gap-1.5 rounded-full bg-[#004341] px-3.5 py-1 text-xs font-semibold text-white/95 border border-[#14B8A6]/40">
             <ShieldCheck className="h-4 w-4 text-[#5EEAD4] shrink-0" />
-            <span>Salt Lake Store (KOL-001) Connected</span>
+            <span>Salt Lake Store (KOL-001) Connected &bull; Prescription-Led Dispensing</span>
           </div>
 
           {/* Greeting & Headline */}
@@ -133,64 +117,58 @@ export default function CustomerHomePage() {
               Welcome back, {userName}
             </h1>
             <p className="text-sm sm:text-base text-teal-100 mt-1.5 max-w-2xl font-normal leading-relaxed">
-              Order 100% genuine verified medicines and manage clinical prescription refills for your household.
+              Send your doctor&apos;s prescription for certified registered pharmacist verification, batch-verified dispensing, and recurring chronic care refills.
             </p>
           </div>
 
-          {/* Integrated Search Command Bar (Floating Pill) */}
-          <form onSubmit={handleSearchSubmit} className="pt-2">
-            <div className="relative flex items-center rounded-full overflow-hidden bg-white shadow-[0_4px_20px_rgba(0,0,0,0.08)] border border-white/80 transition-all focus-within:ring-2 focus-within:ring-[#5EEAD4]">
-              <Search className="absolute left-4 sm:left-5 h-5 w-5 text-slate-400 pointer-events-none" />
-              <Input
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Search by brand name, generic formulation, or active ingredient..."
-                className="h-13 pl-12 sm:pl-13 pr-32 border-0 bg-transparent text-[#0F172A] placeholder:text-slate-400 text-sm sm:text-base focus-visible:ring-0 shadow-none rounded-full"
-              />
-              <Button
-                type="submit"
-                className="absolute right-1.5 h-10 px-5 sm:px-6 rounded-full bg-[#004341] hover:bg-[#002D2C] text-white text-xs sm:text-sm font-semibold transition-all cursor-pointer shadow-xs"
-              >
-                Search
-              </Button>
-            </div>
-          </form>
-
-          {/* Quick-Tap Medicine Suggestion Chips */}
-          <div className="flex flex-wrap items-center gap-1.5 pt-1 text-xs text-teal-100">
-            <span className="flex items-center gap-1 text-[11px] font-semibold uppercase tracking-wider text-teal-200 mr-1">
-              <Sparkles className="h-3 w-3 text-[#5EEAD4]" />
-              Popular:
-            </span>
-            {POPULAR_MEDICINES.map((med) => (
-              <button
-                key={med}
-                type="button"
-                onClick={() => handleQuickChipClick(med)}
-                className="rounded-full bg-[#004341]/80 hover:bg-[#004341] border border-[#14B8A6]/30 px-3.5 py-1 text-xs font-medium text-white transition-all cursor-pointer hover:border-[#14B8A6]/60"
-              >
-                {med}
-              </button>
-            ))}
+          {/* Primary High-Impact Upload Action Button */}
+          <div className="pt-2">
+            <button
+              type="button"
+              onClick={() => router.push('/customer/prescriptions')}
+              className="w-full flex items-center justify-between p-4 sm:p-5 rounded-[14px] bg-white text-[#0D5C5A] hover:bg-[#F0FDFA] transition-all shadow-[0_4px_20px_rgba(0,0,0,0.12)] border border-white/90 group cursor-pointer"
+            >
+              <div className="flex items-center gap-3.5 sm:gap-4">
+                <div className="flex h-12 w-12 sm:h-14 sm:w-14 items-center justify-center rounded-[12px] bg-[#F0FDFA] text-[#0D5C5A] group-hover:bg-[#0D5C5A] group-hover:text-white transition-colors shrink-0">
+                  <UploadCloud className="h-6 w-6 sm:h-7 sm:w-7" />
+                </div>
+                <div className="text-left">
+                  <span className="font-display font-bold text-base sm:text-lg text-[#0F172A] block group-hover:text-[#0D5C5A] transition-colors leading-snug">
+                    Upload Doctor&apos;s Prescription (Rx)
+                  </span>
+                  <span className="text-xs sm:text-sm text-[#64748B] block mt-0.5 font-normal leading-tight">
+                    Upload camera photo or PDF &bull; 100% pharmacist verified &amp; dispatched
+                  </span>
+                </div>
+              </div>
+              <div className="hidden sm:flex h-9 w-9 items-center justify-center rounded-full bg-[#F0FDFA] text-[#0D5C5A] group-hover:bg-[#0D5C5A] group-hover:text-white transition-colors shrink-0">
+                <ArrowRight className="h-5 w-5 group-hover:translate-x-0.5 transition-transform" />
+              </div>
+            </button>
           </div>
 
-          {/* Quick Primary Actions */}
-          <div className="flex flex-wrap items-center gap-3 pt-2">
-            <Button
-              onClick={() => router.push('/customer/prescriptions')}
-              className="bg-white text-[#0D5C5A] hover:bg-[#F0FDFA] text-xs sm:text-sm font-bold h-10 px-5 rounded-full shadow-xs cursor-pointer flex items-center"
-            >
-              <UploadCloud className="h-4 w-4 mr-1.5 text-[#0D5C5A]" />
-              Upload Prescription (Rx)
-            </Button>
-            <Button
-              variant="outline"
-              onClick={() => router.push('/customer/medicines')}
-              className="border-white/40 text-white hover:bg-[#004341] text-xs sm:text-sm font-semibold h-10 px-5 rounded-full cursor-pointer flex items-center"
-            >
-              <Pill className="h-4 w-4 mr-1.5 text-teal-200" />
-              Browse Catalogue
-            </Button>
+          {/* Integrated Prescription Number Lookup / Reorder Field */}
+          <div className="space-y-1.5 pt-1">
+            <span className="text-xs font-semibold text-teal-100 block">
+              Have an existing Prescription or Refill #?
+            </span>
+            <form onSubmit={handleRxLookupSubmit}>
+              <div className="relative flex items-center rounded-full overflow-hidden bg-white shadow-xs border border-white/80 transition-all focus-within:ring-2 focus-within:ring-[#5EEAD4]">
+                <FileText className="absolute left-4 sm:left-5 h-5 w-5 text-slate-400 pointer-events-none" />
+                <Input
+                  value={rxNumber}
+                  onChange={(e) => setRxNumber(e.target.value)}
+                  placeholder="Enter Prescription # (e.g. RX-2026-...) to reorder or track..."
+                  className="h-12 pl-12 sm:pl-13 pr-32 border-0 bg-transparent text-[#0F172A] placeholder:text-slate-400 text-xs sm:text-sm focus-visible:ring-0 shadow-none rounded-full"
+                />
+                <Button
+                  type="submit"
+                  className="absolute right-1.5 h-9 px-4 sm:px-5 rounded-full bg-[#004341] hover:bg-[#002D2C] text-white text-xs sm:text-sm font-semibold transition-all cursor-pointer shadow-xs"
+                >
+                  Find &amp; Reorder
+                </Button>
+              </div>
+            </form>
           </div>
         </div>
       </section>
@@ -206,20 +184,20 @@ export default function CustomerHomePage() {
           {/* Three Tactile Core Service Cards */}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5">
             <Link
-              href="/customer/medicines"
+              href="/customer/prescriptions"
               className="p-5 sm:p-6 rounded-[16px] border border-[#EBECEF] bg-white hover:border-[#14B8A6] hover:shadow-[0_4px_16px_rgba(0,0,0,0.04)] transition-all group block shadow-[0_2px_10px_rgba(0,0,0,0.02)]"
             >
               <div className="flex items-center justify-between mb-3.5">
                 <div className="h-11 w-11 rounded-[12px] bg-[#F0FDFA] flex items-center justify-center text-[#0D5C5A] group-hover:bg-[#0D5C5A] group-hover:text-white transition-colors">
-                  <Pill className="h-5 w-5" />
+                  <UploadCloud className="h-5 w-5" />
                 </div>
                 <ArrowRight className="h-4 w-4 text-slate-400 group-hover:text-[#0D5C5A] group-hover:translate-x-0.5 transition-all" />
               </div>
               <h2 className="font-display font-bold text-sm text-[#0F172A] group-hover:text-[#0D5C5A] transition-colors">
-                Browse Medicines
+                Send Prescription
               </h2>
               <p className="text-xs text-[#64748B] mt-1.5 leading-relaxed line-clamp-2">
-                100% genuine batch-verified inventory with live stock in Salt Lake &amp; Howrah.
+                Upload new prescription slip or photo for immediate pharmacist evaluation &amp; order quote.
               </p>
             </Link>
 
@@ -237,7 +215,7 @@ export default function CustomerHomePage() {
                 Prescription Vault
               </h2>
               <p className="text-xs text-[#64748B] mt-1.5 leading-relaxed line-clamp-2">
-                Upload doctor&apos;s prescription for AI draft extraction and pharmacist review.
+                Digital repository of doctor advice, validated medicine drafts, and dosage history.
               </p>
             </Link>
 
@@ -255,7 +233,7 @@ export default function CustomerHomePage() {
                 Auto-Ship Refills
               </h2>
               <p className="text-xs text-[#64748B] mt-1.5 leading-relaxed line-clamp-2">
-                Scheduled 30/60-day cycle deliveries for continuous diabetes &amp; BP management.
+                Scheduled 30/60-day recurring deliveries for continuous diabetes &amp; BP management.
               </p>
             </Link>
           </div>
@@ -293,23 +271,15 @@ export default function CustomerHomePage() {
                 </div>
                 <h3 className="font-display font-bold text-[#0F172A] text-sm">No Active Orders</h3>
                 <p className="text-xs text-[#64748B] mt-1 max-w-md mx-auto leading-relaxed">
-                  Browse our catalogue or upload your doctor&apos;s prescription to place your first genuine medicine order.
+                  Upload your doctor&apos;s prescription to request medicines or set up recurring chronic care refills.
                 </p>
                 <div className="mt-4 flex justify-center gap-2">
                   <Button
                     size="sm"
-                    onClick={() => router.push('/customer/medicines')}
-                    className="bg-[#0D5C5A] hover:bg-[#0A4846] text-white text-xs font-semibold"
-                  >
-                    Browse Medicines
-                  </Button>
-                  <Button
-                    size="sm"
-                    variant="outline"
                     onClick={() => router.push('/customer/prescriptions')}
-                    className="border-[#CBD5E1] text-[#0F172A] text-xs font-semibold"
+                    className="bg-[#0D5C5A] hover:bg-[#0A4846] text-white text-xs font-semibold rounded-[8px]"
                   >
-                    Upload Rx
+                    Upload Prescription (Rx)
                   </Button>
                 </div>
               </div>

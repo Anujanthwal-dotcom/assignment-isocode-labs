@@ -3,7 +3,7 @@
 import * as React from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Home, Pill, Repeat, ShoppingCart, Package } from 'lucide-react';
+import { Home, FileText, Repeat, ShoppingCart, Package } from 'lucide-react';
 import { apiFetch } from '@/lib/api/client';
 
 export const CustomerBottomNav: React.FC = () => {
@@ -33,7 +33,7 @@ export const CustomerBottomNav: React.FC = () => {
 
   const items = [
     { href: '/customer', label: 'Home', icon: Home, exact: true },
-    { href: '/customer/medicines', label: 'Medicines', icon: Pill },
+    { href: '/customer/prescriptions', label: 'Prescriptions', icon: FileText },
     { href: '/customer/refills', label: 'Refills', icon: Repeat },
     { href: '/customer/cart', label: 'Cart', icon: ShoppingCart, badge: cartCount },
     { href: '/customer/orders', label: 'Orders', icon: Package },
