@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
-import { OrderStatus, PrescriptionReviewStatus, Prisma } from '@prisma/client';
+import { OrderStatus, PrescriptionReviewStatus, Prisma, UserRole } from '@prisma/client';
 
 export interface AnalyticsDateFilter {
   from?: Date;
@@ -71,6 +71,12 @@ export class AdminAnalyticsService {
       stockUnavailableOrders,
       activeStoresCount,
       activeRefillSubscriptionsCount,
+      totalRevenueAgg,
+      deliveredRevenueAgg,
+      customersCount,
+      pharmacistsCount,
+      staffCount,
+      totalStoresCount,
     ] = await Promise.all([
       this.prisma.order.count({ where: whereOrder }),
       this.prisma.order.count({
@@ -110,7 +116,29 @@ export class AdminAnalyticsService {
       }),
       this.prisma.store.count({ where: { status: 'ACTIVE' } }),
       this.prisma.refillSubscription.count({ where: { status: 'ACTIVE' } }),
+      this.prisma.order.aggregate({
+        where: {
+          ...whereOrder,
+          status: { notIn: [OrderStatus.CANCELLED, OrderStatus.REJECTED] },
+        },
+        _sum: { totalAmount: true },
+      }),
+      this.prisma.order.aggregate({
+        where: {
+          ...whereOrder,
+          status: { in: [OrderStatus.DELIVERED, OrderStatus.HANDED_OVER] },
+        },
+        _sum: { totalAmount: true },
+      }),
+      this.prisma.user.count({ where: { role: UserRole.CUSTOMER } }),
+      this.prisma.user.count({ where: { role: UserRole.PHARMACIST } }),
+      this.prisma.user.count({ where: { role: UserRole.STORE_STAFF } }),
+      this.prisma.store.count(),
     ]);
+
+    const totalRevenue = Number(totalRevenueAgg._sum.totalAmount || 0);
+    const deliveredRevenue = Number(deliveredRevenueAgg._sum.totalAmount || 0);
+    const averageOrderValue = totalOrders > 0 ? Number((totalRevenue / totalOrders).toFixed(2)) : 0;
 
     return {
       totalOrders,
@@ -122,6 +150,13 @@ export class AdminAnalyticsService {
       stockUnavailableOrders,
       activeStoresCount,
       activeRefillSubscriptionsCount,
+      totalRevenue,
+      deliveredRevenue,
+      averageOrderValue,
+      customersCount,
+      pharmacistsCount,
+      staffCount,
+      totalStoresCount,
       dateRange: {
         from: from.toISOString(),
         to: to.toISOString(),

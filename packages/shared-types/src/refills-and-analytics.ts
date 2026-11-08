@@ -104,6 +104,13 @@ export interface AdminAnalyticsOverviewDto {
   stockUnavailableOrders: number;
   activeStoresCount: number;
   activeRefillSubscriptionsCount: number;
+  totalRevenue?: number;
+  deliveredRevenue?: number;
+  averageOrderValue?: number;
+  customersCount?: number;
+  pharmacistsCount?: number;
+  staffCount?: number;
+  totalStoresCount?: number;
   dateRange: {
     from: string;
     to: string;
