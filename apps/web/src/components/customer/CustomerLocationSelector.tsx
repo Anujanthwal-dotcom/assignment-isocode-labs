@@ -192,7 +192,7 @@ export const CustomerLocationSelector: React.FC = () => {
         </button>
       </SheetTrigger>
 
-      <SheetContent side="right" className="overflow-y-auto pt-12">
+      <SheetContent side="right" className="overflow-y-auto pt-16 sm:pt-20">
         <SheetTitle className="sr-only">Delivery Location</SheetTitle>
         <SheetDescription className="sr-only">Delivery location selector</SheetDescription>
 
