@@ -13,7 +13,7 @@ import {
   OrderStatus,
   OrderPaymentMethod,
   OrderPaymentStatus,
-  PrescriptionReviewStatus,
+  PrescriptionQuoteStatus,
   OrderItemStatus,
   RefillSubscriptionStatus,
   RefillEligibilityStatus,
@@ -1231,9 +1231,6 @@ async function main() {
   const debasishAddress = await prisma.customerAddress.findFirst({
     where: { customerUserId: customerUser.id },
   });
-  const rinaAddress = await prisma.customerAddress.findFirst({
-    where: { customerUserId: customer2.id },
-  });
 
   const prescriptionsToSeed = [
     {
@@ -1498,177 +1495,24 @@ async function main() {
         postalCode: '700064',
       };
 
-  const addressSnapshotRina = rinaAddress
-    ? {
-        label: rinaAddress.label,
-        recipientName: rinaAddress.recipientName,
-        phone: rinaAddress.phone,
-        addressLine1: rinaAddress.addressLine1,
-        city: rinaAddress.city,
-        state: rinaAddress.state,
-        postalCode: rinaAddress.postalCode,
-      }
-    : {
-        label: 'Home (Howrah)',
-        recipientName: 'Rina Sen',
-        phone: '9876543211',
-        addressLine1: '42, GT Road, Howrah Maidan',
-        city: 'Howrah',
-        state: 'West Bengal',
-        postalCode: '711101',
-      };
-
-  // Demo Order 1: Acute Care Order (Debasish Ghosh) -> PENDING_VERIFICATION assigned to KOL-001
-  const order1Number = 'ORD-2026-DEMO-01';
-  const existingOrder1 = await prisma.order.findUnique({
-    where: { orderNumber: order1Number },
+  // 8. Clinical Demo Orders Lifecycle Policy:
+  // An unreviewed prescription MUST NOT have any order related to it.
+  // Prescriptions 'rx-debasish-amoxicillin-acute' and 'rx-rina-sen-alprazolam-h1'
+  // are seeded as UNDER_REVIEW with AI extractions completed, awaiting clinical pharmacist
+  // verification and quotation in /pharmacist/review-queue.
+  // After reviewing, the customer reviews the quotation, chooses payment, and the order is created then.
+  //
+  // Clean up any legacy demo orders attached to unreviewed prescriptions:
+  const ordersToClean = await prisma.order.findMany({
+    where: { orderNumber: { in: ['ORD-2026-DEMO-01', 'ORD-2026-DEMO-02'] } },
+    select: { id: true },
   });
-
-  if (!existingOrder1) {
-    const medAmx = seededMedicines['MED-AMX-500-001'];
-    const medPar = seededMedicines['MED-PAR-500-002'];
-
-    const order1 = await prisma.order.create({
-      data: {
-        orderNumber: order1Number,
-        customerUserId: customerUser.id,
-        familyMemberId: null,
-        prescriptionId: seededPrescriptions['rx-debasish-amoxicillin-acute'],
-        addressId: debasishAddress?.id || null,
-        status: OrderStatus.PENDING_VERIFICATION,
-        fulfilmentStoreId: seededStores['KOL-001'],
-        paymentMethod: OrderPaymentMethod.COD,
-        paymentStatus: OrderPaymentStatus.PENDING,
-        subtotal: new Prisma.Decimal('98.00'),
-        deliveryFee: new Prisma.Decimal('0.00'),
-        discount: new Prisma.Decimal('0.00'),
-        totalAmount: new Prisma.Decimal('98.00'),
-        addressSnapshot: addressSnapshotDebasish,
-        customerNote: 'Please verify with doctor prescription attached.',
-        placedAt: new Date(Date.now() - 45 * 60 * 1000), // 45 mins ago
-      },
-    });
-
-    await prisma.orderItem.createMany({
-      data: [
-        {
-          orderId: order1.id,
-          medicineId: medAmx,
-          medicineNameSnapshot: 'Amoxicillin 500 mg',
-          skuSnapshot: 'MED-AMX-500-001',
-          unitPrice: new Prisma.Decimal('80.00'),
-          quantity: 1,
-          lineTotal: new Prisma.Decimal('80.00'),
-          status: OrderItemStatus.PENDING_VERIFICATION,
-        },
-        {
-          orderId: order1.id,
-          medicineId: medPar,
-          medicineNameSnapshot: 'Paracetamol 500 mg (Dolo Demo)',
-          skuSnapshot: 'MED-PAR-500-002',
-          unitPrice: new Prisma.Decimal('18.00'),
-          quantity: 1,
-          lineTotal: new Prisma.Decimal('18.00'),
-          status: OrderItemStatus.PENDING_VERIFICATION,
-        },
-      ],
-    });
-
-    // Assign to KOL-001 store for Pharmacist Verification Queue
-    await prisma.orderReviewAssignment.create({
-      data: {
-        orderId: order1.id,
-        storeId: seededStores['KOL-001'],
-        assignedByUserId: adminUser.id,
-        reason: 'Automated clinical routing to nearest fulfillment store',
-      },
-    });
-
-    await prisma.prescriptionReview.create({
-      data: {
-        prescriptionId: seededPrescriptions['rx-debasish-amoxicillin-acute'],
-        orderId: order1.id,
-        pharmacistId: pharmacistUser.id,
-        storeId: seededStores['KOL-001'],
-        status: PrescriptionReviewStatus.PENDING,
-      },
-    });
-  }
-
-  // Demo Order 2: Schedule H1 Restricted Order (Rina Sen) -> PENDING_VERIFICATION assigned to HOW-001
-  const order2Number = 'ORD-2026-DEMO-02';
-  const existingOrder2 = await prisma.order.findUnique({
-    where: { orderNumber: order2Number },
-  });
-
-  if (!existingOrder2) {
-    const medAlp = seededMedicines['MED-ALP-05-001'];
-    const medPar = seededMedicines['MED-PAR-500-002'];
-
-    const order2 = await prisma.order.create({
-      data: {
-        orderNumber: order2Number,
-        customerUserId: customer2.id,
-        familyMemberId: null,
-        prescriptionId: seededPrescriptions['rx-rina-sen-alprazolam-h1'],
-        addressId: rinaAddress?.id || null,
-        status: OrderStatus.PENDING_VERIFICATION,
-        fulfilmentStoreId: seededStores['HOW-001'],
-        paymentMethod: OrderPaymentMethod.COD,
-        paymentStatus: OrderPaymentStatus.PENDING,
-        subtotal: new Prisma.Decimal('63.00'),
-        deliveryFee: new Prisma.Decimal('0.00'),
-        discount: new Prisma.Decimal('0.00'),
-        totalAmount: new Prisma.Decimal('63.00'),
-        addressSnapshot: addressSnapshotRina,
-        customerNote: 'Schedule H1 medicine requested as per doctor slip.',
-        placedAt: new Date(Date.now() - 20 * 60 * 1000), // 20 mins ago
-      },
-    });
-
-    await prisma.orderItem.createMany({
-      data: [
-        {
-          orderId: order2.id,
-          medicineId: medAlp,
-          medicineNameSnapshot: 'Alprazolam 0.5 mg',
-          skuSnapshot: 'MED-ALP-05-001',
-          unitPrice: new Prisma.Decimal('45.00'),
-          quantity: 1,
-          lineTotal: new Prisma.Decimal('45.00'),
-          status: OrderItemStatus.PENDING_VERIFICATION,
-        },
-        {
-          orderId: order2.id,
-          medicineId: medPar,
-          medicineNameSnapshot: 'Paracetamol 500 mg (Dolo Demo)',
-          skuSnapshot: 'MED-PAR-500-002',
-          unitPrice: new Prisma.Decimal('18.00'),
-          quantity: 1,
-          lineTotal: new Prisma.Decimal('18.00'),
-          status: OrderItemStatus.PENDING_VERIFICATION,
-        },
-      ],
-    });
-
-    await prisma.orderReviewAssignment.create({
-      data: {
-        orderId: order2.id,
-        storeId: seededStores['HOW-001'],
-        assignedByUserId: adminUser.id,
-        reason: 'Howrah region fulfillment routing',
-      },
-    });
-
-    await prisma.prescriptionReview.create({
-      data: {
-        prescriptionId: seededPrescriptions['rx-rina-sen-alprazolam-h1'],
-        orderId: order2.id,
-        pharmacistId: pharmacistUser.id,
-        storeId: seededStores['HOW-001'],
-        status: PrescriptionReviewStatus.PENDING,
-      },
-    });
+  if (ordersToClean.length > 0) {
+    const orderIds = ordersToClean.map((o) => o.id);
+    await prisma.prescriptionReview.deleteMany({ where: { orderId: { in: orderIds } } });
+    await prisma.orderReviewAssignment.deleteMany({ where: { orderId: { in: orderIds } } });
+    await prisma.orderItem.deleteMany({ where: { orderId: { in: orderIds } } });
+    await prisma.order.deleteMany({ where: { id: { in: orderIds } } });
   }
 
   // Demo Order 3: Delivered Chronic Refill (Debasish for Maya Ghosh)
@@ -1728,6 +1572,60 @@ async function main() {
       },
     });
 
+    // Seed Accepted Quotation linking prescription to order (Customer reviewed quote & paid)
+    const existingQuote3 = await prisma.prescriptionQuote.findFirst({
+      where: { prescriptionId: seededPrescriptions['rx-maya-ghosh-chronic'] },
+    });
+
+    if (!existingQuote3) {
+      const quote3 = await prisma.prescriptionQuote.create({
+        data: {
+          prescriptionId: seededPrescriptions['rx-maya-ghosh-chronic'],
+          pharmacistId: pharmacistUser.id,
+          storeId: seededStores['KOL-001'],
+          status: PrescriptionQuoteStatus.ACCEPTED,
+          subtotal: new Prisma.Decimal('125.00'),
+          deliveryFee: new Prisma.Decimal('0.00'),
+          totalAmount: new Prisma.Decimal('125.00'),
+          pharmacistNotes:
+            'Prescription verified with Dr. A. K. Banerjee. All medicines approved for chronic care management.',
+          quotedAt: new Date(Date.now() - 25 * 24 * 60 * 60 * 1000),
+          orderId: order3.id,
+        },
+      });
+
+      await prisma.prescriptionQuoteItem.createMany({
+        data: [
+          {
+            quoteId: quote3.id,
+            medicineId: medTel,
+            detectedMedicineName: 'Telmisartan 40 mg',
+            medicineNameSnapshot: 'Telmisartan 40 mg',
+            strengthSnapshot: '40 mg',
+            dosageFormSnapshot: 'Tablet',
+            dosageInstructions: '1 tab OD (morning)',
+            unitPrice: new Prisma.Decimal('95.00'),
+            quantity: 1,
+            lineTotal: new Prisma.Decimal('95.00'),
+            isAvailable: true,
+          },
+          {
+            quoteId: quote3.id,
+            medicineId: medMet,
+            detectedMedicineName: 'Metformin 500 mg',
+            medicineNameSnapshot: 'Metformin 500 mg',
+            strengthSnapshot: '500 mg',
+            dosageFormSnapshot: 'Tablet',
+            dosageInstructions: '1 tab BD (after meals)',
+            unitPrice: new Prisma.Decimal('30.00'),
+            quantity: 1,
+            lineTotal: new Prisma.Decimal('30.00'),
+            isAvailable: true,
+          },
+        ],
+      });
+    }
+
     // Seed Refill Estimate & Active Refill Subscription for Maya Ghosh
     const existingSub = await prisma.refillSubscription.findFirst({
       where: {
@@ -1777,10 +1675,10 @@ async function main() {
     console.log('Medicines: 11 demo medicines catalogue seeded.');
     console.log('Inventory: Balances & Opening stock movements verified.');
     console.log('Prescriptions: 3 authentic handwritten doctor prescriptions uploaded to MinIO & database.');
-    console.log('Orders & Reviews:');
-    console.log('  - ORD-2026-DEMO-01: Debasish Ghosh (Acute Care) -> Assigned to KOL-001 Pharmacist Review Queue');
-    console.log('  - ORD-2026-DEMO-02: Rina Sen (Schedule H1 Care) -> Assigned to HOW-001 Pharmacist Review Queue');
-    console.log('  - ORD-2026-DEMO-03: Maya Ghosh (Delivered Chronic Refill) -> Active Refill Subscription');
+    console.log('Orders & Reviews (Strict Lifecycle Architecture):');
+    console.log('  - Incoming Rx: Debasish Ghosh (Amoxicillin Acute) -> UNDER_REVIEW (Awaiting Pharmacist Quote; NO order created yet)');
+    console.log('  - Incoming Rx: Rina Sen (Alprazolam H1) -> UNDER_REVIEW (Awaiting Pharmacist Quote; NO order created yet)');
+    console.log('  - ORD-2026-DEMO-03: Maya Ghosh (Chronic Refill) -> Reviewed, Quoted, Customer Paid & Delivered');
     console.log('Demo Accounts:');
     console.log('  - CUSTOMER:         Email: customer@example.com, Pass: DemoPassword123! (Phone: 9876543210, Mock OTP: 123456)');
     console.log('  - PHARMACIST:       Email: pharmacist@example.com, Pass: DemoPassword123!');
