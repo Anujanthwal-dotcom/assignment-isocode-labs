@@ -164,9 +164,6 @@ export default function CustomerPrescriptionsPage() {
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-2 border-b border-[#EBECEF]">
         <div>
           <h1 className="text-2xl font-bold tracking-tight text-[#0F172A]">Prescriptions</h1>
-          <p className="text-sm text-[#78879A] mt-1">
-            Securely uploaded medical prescriptions stored privately for you and your family.
-          </p>
         </div>
         <Button
           onClick={() => {

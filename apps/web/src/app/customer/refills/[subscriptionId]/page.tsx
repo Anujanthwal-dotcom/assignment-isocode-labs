@@ -136,10 +136,6 @@ export default function CustomerRefillSubscriptionPage() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-[#EBECEF]">
         <div>
           <h1 className="text-2xl font-bold tracking-tight text-[#0F172A]">{sub.medicineName}</h1>
-          <p className="text-xs text-[#78879A] mt-1">
-            {sub.familyMemberName ? `Patient: ${sub.familyMemberName} • ` : ''}Refill Reminder
-            Settings
-          </p>
         </div>
         <div className="flex items-center gap-2">
           <Badge

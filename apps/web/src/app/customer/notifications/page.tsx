@@ -55,9 +55,6 @@ export default function CustomerNotificationsPage() {
       <div className="flex items-center justify-between pb-4 border-b border-[#EBECEF]">
         <div>
           <h1 className="text-2xl font-bold tracking-tight text-[#0F172A]">Your Notifications</h1>
-          <p className="text-xs text-[#78879A] mt-1">
-            Refill reminders, prescription approvals, and order delivery alerts.
-          </p>
         </div>
         {unreadCount > 0 && (
           <Button

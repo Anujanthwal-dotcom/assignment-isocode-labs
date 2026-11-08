@@ -1,7 +1,6 @@
 'use client';
 
 import * as React from 'react';
-import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -21,7 +20,7 @@ export default function CustomerOrdersPage() {
   const [statusFilter, setStatusFilter] = React.useState<string>('');
   const [page, setPage] = React.useState(1);
   const [totalPages, setTotalPages] = React.useState(1);
-  const [totalCount, setTotalCount] = React.useState(0);
+  const [, setTotalCount] = React.useState(0);
 
   React.useEffect(() => {
     const timer = setTimeout(() => {
@@ -96,13 +95,6 @@ export default function CustomerOrdersPage() {
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-2 border-b border-[#EBECEF]">
         <div>
           <h1 className="text-2xl font-bold tracking-tight text-[#0F172A]">My Orders</h1>
-          <p className="text-xs text-[#78879A] mt-1">
-            Confirmed and fulfilled pharmacy orders (Total {totalCount}). Prescriptions awaiting pharmacist verification appear under{' '}
-            <Link href="/customer/prescriptions" className="text-[#0D5C5A] font-semibold hover:underline">
-              My Prescriptions
-            </Link>
-            .
-          </p>
         </div>
         <Button
           onClick={() => router.push('/customer/prescriptions')}

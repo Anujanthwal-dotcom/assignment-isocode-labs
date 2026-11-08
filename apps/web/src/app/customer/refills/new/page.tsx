@@ -54,9 +54,6 @@ export default function NewRefillSubscriptionPage() {
           <CardTitle className="text-xl font-bold text-[#0F172A]">
             Opt In to Medicine Refill Reminders
           </CardTitle>
-          <p className="text-xs text-[#78879A] mt-1">
-            Receive automated alerts before your medicine runs out so you never miss a dose.
-          </p>
         </CardHeader>
         <CardContent>
           {error && (

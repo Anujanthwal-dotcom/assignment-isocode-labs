@@ -134,10 +134,6 @@ export default function CustomerFamilyPage() {
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-2 border-b border-[#EBECEF]">
         <div>
           <h1 className="text-2xl font-bold tracking-tight text-[#0F172A]">Family Profiles</h1>
-          <p className="text-sm text-[#78879A] mt-1">
-            Maintain profiles for relatives and dependents to easily associate prescriptions and
-            orders.
-          </p>
         </div>
         <Button
           onClick={openAddDialog}

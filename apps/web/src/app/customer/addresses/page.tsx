@@ -190,9 +190,6 @@ export default function CustomerAddressesPage() {
           <h1 className="text-2xl font-bold tracking-tight text-[#0F172A]">
             Saved Delivery Addresses
           </h1>
-          <p className="text-sm text-[#78879A] mt-1">
-            Manage your Kolkata &amp; Howrah home or work delivery locations.
-          </p>
         </div>
         <Button
           onClick={openAddDialog}

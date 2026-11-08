@@ -186,9 +186,6 @@ export default function CustomerCheckoutPage() {
       {/* Header */}
       <div className="pb-2 border-b border-[#EBECEF]">
         <h1 className="text-2xl font-bold tracking-tight text-[#0F172A]">Order Checkout</h1>
-        <p className="text-sm text-[#78879A] mt-1">
-          Complete the required verification details to submit your pharmacy order.
-        </p>
       </div>
 
       {/* Mandatory Pharmacist Review Notice */}

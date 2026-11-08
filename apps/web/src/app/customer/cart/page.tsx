@@ -81,9 +81,6 @@ export default function CustomerCartPage() {
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-2 border-b border-[#EBECEF]">
         <div>
           <h1 className="text-2xl font-bold tracking-tight text-[#0F172A]">Shopping Cart</h1>
-          <p className="text-sm text-[#78879A] mt-1">
-            Review your selected medicines before prescription verification and checkout.
-          </p>
         </div>
         {cart && cart.items.length > 0 && (
           <Button

@@ -57,9 +57,6 @@ export default function CustomerRefillsPage() {
           <h1 className="text-2xl font-bold tracking-tight text-[#0F172A]">
             Medicine Refills &amp; Supply Estimates
           </h1>
-          <p className="text-sm text-[#78879A] mt-1">
-            Calculated from your verified dosage and dispensed quantities.
-          </p>
         </div>
         <Link href="/customer/notifications">
           <Button

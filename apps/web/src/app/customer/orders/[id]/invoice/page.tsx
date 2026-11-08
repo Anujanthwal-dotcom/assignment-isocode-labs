@@ -39,7 +39,7 @@ export default function CustomerOrderInvoicePage() {
     <div className="space-y-6 max-w-3xl mx-auto">
       {/* Header */}
       <div className="flex items-center justify-between gap-4 pb-3 border-b border-[#EBECEF] print:hidden">
-        <div className="flex items-center gap-3">
+        <div className="flex flex-col items-start gap-3">
           <BackButton href={`/customer/orders/${orderId}`} label="Order Tracking" />
           <h1 className="text-xl font-bold text-[#14161A] tracking-tight">Order Invoice</h1>
         </div>

@@ -116,9 +116,6 @@ export default function CustomerMedicinesPage() {
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-2 border-b border-[#EBECEF]">
         <div>
           <h1 className="text-2xl font-bold tracking-tight text-[#0F172A]">Medicine Catalogue</h1>
-          <p className="text-sm text-[#78879A] mt-1">
-            Browse genuine verified medicines. Showing {totalCount} active catalogued medicines.
-          </p>
         </div>
         <Button
           size="sm"
