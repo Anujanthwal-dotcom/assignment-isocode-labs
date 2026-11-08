@@ -189,10 +189,8 @@ export default function CustomerPrescriptionsPage() {
           <span className="font-semibold block text-[#0D5C5A] mb-0.5">
             Prescription Verification Process
           </span>
-          Uploaded prescriptions remain in status{' '}
-          <strong className="text-amber-700">Uploaded — awaiting pharmacist review</strong> until
-          attached to an order and reviewed by a registered pharmacist at our Kolkata/Howrah
-          fulfillment hubs.
+          Uploaded prescriptions are reviewed by registered pharmacists when attached to an order.
+          Once approved, prescriptions can be reordered or enrolled into auto-ship refills.
         </div>
       </div>
 
@@ -241,9 +239,23 @@ export default function CustomerPrescriptionsPage() {
                     </span>
                   </div>
 
-                  <Badge variant="warning" className="text-[10px] font-semibold">
-                    Awaiting Review
-                  </Badge>
+                  {rx.status === 'APPROVED' ? (
+                    <Badge variant="success" className="text-[10px] font-semibold">
+                      Approved
+                    </Badge>
+                  ) : rx.status === 'REJECTED' ? (
+                    <Badge variant="danger" className="text-[10px] font-semibold">
+                      Rejected
+                    </Badge>
+                  ) : rx.status === 'REUPLOAD_REQUIRED' ? (
+                    <Badge variant="warning" className="text-[10px] font-semibold">
+                      Reupload Required
+                    </Badge>
+                  ) : (
+                    <Badge variant="warning" className="text-[10px] font-semibold">
+                      Awaiting Review
+                    </Badge>
+                  )}
                 </div>
 
                 <div className="text-xs text-slate-600 space-y-1.5 pt-2 border-t border-slate-100">
