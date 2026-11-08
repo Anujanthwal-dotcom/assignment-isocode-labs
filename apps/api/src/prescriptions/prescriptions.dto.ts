@@ -1,7 +1,7 @@
-import { IsOptional, IsUUID, IsEnum, IsInt, Min, Max } from 'class-validator';
+import { IsOptional, IsUUID, IsEnum, IsInt, Min, Max, IsString } from 'class-validator';
 import { Type } from 'class-transformer';
-import { ApiPropertyOptional } from '@nestjs/swagger';
-import { PrescriptionStatus } from '@prisma/client';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { PrescriptionStatus, OrderPaymentMethod } from '@prisma/client';
 
 export class UploadPrescriptionDto {
   @ApiPropertyOptional({
@@ -38,3 +38,23 @@ export class ListPrescriptionsQueryDto {
   @Max(50)
   limit?: number = 20;
 }
+
+export class AcceptPrescriptionQuoteAndPayDto {
+  @ApiProperty({ description: 'Quotation UUID' })
+  @IsUUID()
+  quoteId!: string;
+
+  @ApiProperty({ description: 'Customer delivery address UUID' })
+  @IsUUID()
+  addressId!: string;
+
+  @ApiProperty({ enum: OrderPaymentMethod, description: 'Payment method' })
+  @IsEnum(OrderPaymentMethod)
+  paymentMethod!: OrderPaymentMethod;
+
+  @ApiPropertyOptional({ description: 'Optional instructions or note' })
+  @IsOptional()
+  @IsString()
+  customerNote?: string;
+}
+

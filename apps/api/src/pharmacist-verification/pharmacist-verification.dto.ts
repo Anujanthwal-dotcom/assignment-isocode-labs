@@ -7,6 +7,10 @@ import {
   MaxLength,
   Min,
   IsEnum,
+  IsBoolean,
+  IsNumber,
+  IsArray,
+  ValidateNested,
 } from 'class-validator';
 import { Type } from 'class-transformer';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
@@ -172,3 +176,67 @@ export class PharmacistQueueQueryDto {
   @Min(1)
   limit?: number = 20;
 }
+
+export class PrescriptionQuoteItemInputDto {
+  @ApiPropertyOptional({ description: 'Catalogue medicine ID' })
+  @IsOptional()
+  @IsUUID()
+  medicineId?: string;
+
+  @ApiPropertyOptional({ description: 'AI detected medicine name' })
+  @IsOptional()
+  @IsString()
+  detectedMedicineName?: string;
+
+  @ApiProperty({ description: 'Verified medicine name' })
+  @IsString()
+  medicineNameSnapshot!: string;
+
+  @ApiPropertyOptional({ description: 'Medicine strength' })
+  @IsOptional()
+  @IsString()
+  strengthSnapshot?: string;
+
+  @ApiPropertyOptional({ description: 'Dosage form' })
+  @IsOptional()
+  @IsString()
+  dosageFormSnapshot?: string;
+
+  @ApiPropertyOptional({ description: 'Instructions/dosage' })
+  @IsOptional()
+  @IsString()
+  dosageInstructions?: string;
+
+  @ApiProperty({ description: 'Unit price (MRP)' })
+  @IsNumber()
+  @Min(0)
+  unitPrice!: number;
+
+  @ApiProperty({ description: 'Quantity to dispense' })
+  @IsInt()
+  @Min(1)
+  quantity!: number;
+
+  @ApiProperty({ description: 'Whether the item is available in stock', default: true })
+  @IsBoolean()
+  isAvailable!: boolean;
+
+  @ApiPropertyOptional({ description: 'Reason if marked unavailable' })
+  @IsOptional()
+  @IsString()
+  unavailableReason?: string;
+}
+
+export class CreatePrescriptionQuoteDto {
+  @ApiProperty({ type: [PrescriptionQuoteItemInputDto], description: 'List of medicines in quotation' })
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => PrescriptionQuoteItemInputDto)
+  items!: PrescriptionQuoteItemInputDto[];
+
+  @ApiPropertyOptional({ description: 'Pharmacist advice/notes for customer' })
+  @IsOptional()
+  @IsString()
+  pharmacistNotes?: string;
+}
+

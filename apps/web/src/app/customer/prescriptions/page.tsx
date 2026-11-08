@@ -187,10 +187,9 @@ export default function CustomerPrescriptionsPage() {
         </span>
         <div className="text-xs text-[#0F172A] leading-relaxed">
           <span className="font-semibold block text-[#0D5C5A] mb-0.5">
-            Prescription Verification Process
+            Prescription Verification &amp; Ordering Process
           </span>
-          Uploaded prescriptions are reviewed by registered pharmacists when attached to an order.
-          Once approved, prescriptions can be reordered or enrolled into auto-ship refills.
+          Upload your prescription to begin. Our registered pharmacists verify your prescription, match medicines with our catalogue, and calculate an itemized cost quotation. Once quoted, you can review and pay directly.
         </div>
       </div>
 
@@ -287,9 +286,9 @@ export default function CustomerPrescriptionsPage() {
                   <Button
                     variant="outline"
                     size="sm"
-                    className="text-xs h-8 px-2.5 text-[#0D5C5A] bg-[#F0FDFA] border-[#EBECEF] hover:bg-[#CCFBF1]"
+                    className="text-xs h-8 px-2.5 text-[#0D5C5A] bg-[#F0FDFA] border-[#EBECEF] hover:bg-[#CCFBF1] font-semibold"
                   >
-                    AI Draft
+                    {rx.status === 'APPROVED' ? 'View Quote & Order' : 'Review & AI'}
                   </Button>
                 </Link>
                 <div className="flex items-center gap-1.5">

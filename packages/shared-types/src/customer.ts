@@ -330,6 +330,17 @@ export interface MedicineMatchResultDTO {
   selectedMedicineId: string | null;
   matchStatus: 'MATCHED' | 'AMBIGUOUS' | 'NOT_FOUND';
   genericAlternatives?: GenericAlternativeDTO[];
+  comparisonNotes?: string;
+  matchedMedicine?: {
+    id: string;
+    sku: string;
+    name: string;
+    brandName?: string | null;
+    genericName?: string | null;
+    strength?: string | null;
+    dosageForm?: string | null;
+    mrp: string;
+  };
 }
 
 export interface PrescriptionAIExtractionDTO {

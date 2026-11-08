@@ -12,7 +12,11 @@ import {
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth, ApiConsumes } from '@nestjs/swagger';
 import { PrescriptionsService } from './prescriptions.service';
-import { UploadPrescriptionDto, ListPrescriptionsQueryDto } from './prescriptions.dto';
+import {
+  UploadPrescriptionDto,
+  ListPrescriptionsQueryDto,
+  AcceptPrescriptionQuoteAndPayDto,
+} from './prescriptions.dto';
 import { Roles } from '../auth/decorators/roles.decorator';
 import { CurrentUser } from '../auth/decorators/current-user.decorator';
 import { UserRole } from '@prisma/client';
@@ -67,6 +71,26 @@ export class PrescriptionsController {
   @ApiResponse({ status: 404, description: 'Prescription not found' })
   async getPreviewUrl(@CurrentUser('id') customerUserId: string, @Param('id') id: string) {
     return this.prescriptionsService.getPrescriptionFileUrl(customerUserId, id);
+  }
+
+  @Get(':id/quote')
+  @ApiOperation({ summary: 'Get active verified price quotation for prescription' })
+  @ApiResponse({ status: 200, description: 'Prescription quotation details' })
+  @ApiResponse({ status: 404, description: 'Prescription not found' })
+  async getQuote(@CurrentUser('id') customerUserId: string, @Param('id') id: string) {
+    return this.prescriptionsService.getPrescriptionQuote(customerUserId, id);
+  }
+
+  @Post(':id/accept-and-pay')
+  @ApiOperation({ summary: 'Accept verified quotation, select address & payment, and create order' })
+  @ApiResponse({ status: 201, description: 'Order created successfully from quotation' })
+  @ApiResponse({ status: 400, description: 'Invalid quotation, expired quote, or missing address' })
+  async acceptQuote(
+    @CurrentUser('id') customerUserId: string,
+    @Param('id') id: string,
+    @Body() dto: AcceptPrescriptionQuoteAndPayDto,
+  ) {
+    return this.prescriptionsService.acceptQuoteAndPay(customerUserId, id, dto);
   }
 
   @Delete(':id')

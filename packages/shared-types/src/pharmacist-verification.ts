@@ -186,3 +186,80 @@ export interface PharmacistReviewDetailDTO {
   }>;
   review: PrescriptionReviewDTO | null;
 }
+
+export type PrescriptionQuoteStatus = 'QUOTED' | 'ACCEPTED' | 'REJECTED' | 'EXPIRED';
+
+export interface PrescriptionQuoteItemDTO {
+  id: string;
+  quoteId: string;
+  medicineId: string | null;
+  detectedMedicineName?: string | null;
+  medicineNameSnapshot: string;
+  strengthSnapshot?: string | null;
+  dosageFormSnapshot?: string | null;
+  dosageInstructions?: string | null;
+  unitPrice: number;
+  quantity: number;
+  lineTotal: number;
+  isAvailable: boolean;
+  unavailableReason?: string | null;
+  createdAt: string;
+}
+
+export interface PrescriptionQuoteDTO {
+  id: string;
+  prescriptionId: string;
+  pharmacistId: string;
+  storeId: string;
+  status: PrescriptionQuoteStatus;
+  subtotal: number;
+  deliveryFee: number;
+  totalAmount: number;
+  pharmacistNotes?: string | null;
+  quotedAt: string;
+  validUntil?: string | null;
+  orderId?: string | null;
+  items: PrescriptionQuoteItemDTO[];
+}
+
+export interface PrescriptionQueueItemDTO {
+  id: string;
+  originalFileName: string;
+  mimeType: string;
+  fileSizeBytes: number;
+  status: string;
+  uploadedAt: string;
+  customerUserId: string;
+  customerName: string;
+  patientName: string;
+  relationship: string;
+  aiStatus: string;
+  detectedCount: number;
+  quoteStatus?: PrescriptionQuoteStatus | null;
+}
+
+export interface PrescriptionVerificationDetailDTO {
+  prescription: {
+    id: string;
+    originalFileName: string;
+    mimeType: string;
+    fileSizeBytes: number;
+    status: string;
+    uploadedAt: string;
+    viewUrl?: string | null;
+  };
+  customer: {
+    id: string;
+    fullName: string;
+    phone?: string | null;
+    email?: string | null;
+  };
+  patient: {
+    name: string;
+    relationship: string;
+    dateOfBirth?: string | null;
+  };
+  aiExtraction: any | null;
+  activeQuote: PrescriptionQuoteDTO | null;
+}
+

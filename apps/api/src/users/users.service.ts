@@ -115,6 +115,58 @@ export class UsersService {
   }
 
   /**
+   * Create customer user and profile by email atomically.
+   */
+  async createCustomerWithEmail(params: {
+    email: string;
+    fullName: string;
+    passwordHash?: string;
+    phone?: string;
+    preferredLanguage?: string;
+  }): Promise<UserWithProfiles> {
+    const normalizedEmail = normalizeEmail(params.email);
+    if (!normalizedEmail) {
+      throw new BadRequestException('Invalid email address.');
+    }
+
+    const preferredLang = ['en', 'hi', 'bn'].includes(params.preferredLanguage || '')
+      ? (params.preferredLanguage as string)
+      : 'en';
+
+    return this.prisma.$transaction(async (tx) => {
+      const user = await tx.user.create({
+        data: {
+          email: normalizedEmail,
+          phone: params.phone ? normalizePhone(params.phone) : null,
+          passwordHash: params.passwordHash || null,
+          role: UserRole.CUSTOMER,
+          status: UserStatus.ACTIVE,
+        },
+      });
+
+      await tx.customerProfile.create({
+        data: {
+          userId: user.id,
+          fullName: params.fullName.trim(),
+          preferredLanguage: preferredLang,
+        },
+      });
+
+      return tx.user.findUniqueOrThrow({
+        where: { id: user.id },
+        include: {
+          customerProfile: true,
+          pharmacistProfile: {
+            include: {
+              store: true,
+            },
+          },
+        },
+      });
+    });
+  }
+
+  /**
    * Update user status (e.g., ACTIVE, INACTIVE, SUSPENDED).
    */
   async updateStatus(userId: string, status: UserStatus): Promise<User> {

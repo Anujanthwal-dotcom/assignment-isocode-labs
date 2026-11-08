@@ -447,4 +447,81 @@ describe('PharmacistVerificationService', () => {
       ),
     ).rejects.toThrow(BadRequestException);
   });
+
+  it('12. createPrescriptionQuote calculates correct subtotal and delivery fee, excluding unavailable items', async () => {
+    mockPrisma.prescription = {
+      findUnique: vi.fn().mockResolvedValue({
+        id: 'rx-test-1',
+        status: PrescriptionStatus.UPLOADED,
+      }),
+      update: vi.fn().mockResolvedValue({
+        id: 'rx-test-1',
+        status: PrescriptionStatus.APPROVED,
+      }),
+    };
+
+    mockPrisma.prescriptionQuote = {
+      updateMany: vi.fn(),
+      create: vi.fn().mockImplementation(({ data }) => ({
+        id: 'quote-1',
+        ...data,
+      })),
+    };
+
+    const quoteResult = await service.createPrescriptionQuote(
+      'rx-test-1',
+      {
+        items: [
+          {
+            medicineNameSnapshot: 'Omeprazole 20 mg',
+            unitPrice: 65,
+            quantity: 2,
+            isAvailable: true,
+          },
+          {
+            medicineNameSnapshot: 'Atorvastatin 20 mg',
+            unitPrice: 185,
+            quantity: 1,
+            isAvailable: true,
+          },
+          {
+            medicineNameSnapshot: 'Rare Specimen 100 mg',
+            unitPrice: 500,
+            quantity: 1,
+            isAvailable: false,
+            unavailableReason: 'Out of stock at store',
+          },
+        ],
+        pharmacistNotes: 'Take Omeprazole on empty stomach.',
+      },
+      'user-pharm-1',
+    );
+
+    // subtotal = (65*2) + (185*1) = 130 + 185 = 315 (unavailable 500 excluded!)
+    expect(quoteResult.subtotal).toBe(315);
+    // subtotal < 500 => deliveryFee = 50
+    expect(quoteResult.deliveryFee).toBe(50);
+    // totalAmount = 315 + 50 = 365
+    expect(quoteResult.totalAmount).toBe(365);
+    expect(mockPrisma.prescription.update).toHaveBeenCalledWith({
+      where: { id: 'rx-test-1' },
+      data: { status: PrescriptionStatus.APPROVED },
+    });
+  });
+
+  it('13. rejectPrescriptionDirectly updates prescription status to REJECTED', async () => {
+    mockPrisma.prescription = {
+      findUnique: vi.fn().mockResolvedValue({ id: 'rx-test-2' }),
+      update: vi.fn().mockResolvedValue({ id: 'rx-test-2', status: PrescriptionStatus.REJECTED }),
+    };
+
+    const result = await service.rejectPrescriptionDirectly(
+      'rx-test-2',
+      { reason: 'Expired doctor prescription' },
+      'user-pharm-1',
+    );
+
+    expect(result.success).toBe(true);
+    expect(result.status).toBe(PrescriptionStatus.REJECTED);
+  });
 });

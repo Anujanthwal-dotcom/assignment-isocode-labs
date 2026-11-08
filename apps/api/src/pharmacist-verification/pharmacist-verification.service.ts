@@ -30,6 +30,7 @@ import {
   RejectPrescriptionDto,
   RequestReuploadDto,
   PharmacistQueueQueryDto,
+  CreatePrescriptionQuoteDto,
 } from './pharmacist-verification.dto';
 
 @Injectable()
@@ -1098,5 +1099,370 @@ export class PharmacistVerificationService {
     }
 
     return review;
+  }
+
+  /**
+   * Retrieves all prescriptions awaiting pharmacist verification and quotation.
+   */
+  async getPrescriptionQueue(userId: string) {
+    const store = await this.getPharmacistStore(userId);
+
+    const prescriptions = await this.prisma.prescription.findMany({
+      where: {
+        status: { in: [PrescriptionStatus.UPLOADED, PrescriptionStatus.UNDER_REVIEW, PrescriptionStatus.APPROVED] },
+      },
+      orderBy: { uploadedAt: 'desc' },
+      include: {
+        customerUser: {
+          select: {
+            id: true,
+            customerProfile: true,
+          },
+        },
+        familyMember: true,
+        aiExtractions: {
+          orderBy: { createdAt: 'desc' },
+          take: 1,
+        },
+        quotes: {
+          orderBy: { createdAt: 'desc' },
+          take: 1,
+        },
+      },
+    });
+
+    return {
+      store: {
+        id: store.id,
+        code: store.code,
+        name: store.name,
+      },
+      data: prescriptions.map((p) => {
+        const latestExtraction = p.aiExtractions[0];
+        const latestQuote = p.quotes[0];
+        const extractionItems = (latestExtraction?.extractionResult as any)?.items || [];
+
+        return {
+          id: p.id,
+          originalFileName: p.originalFileName,
+          mimeType: p.mimeType,
+          fileSizeBytes: p.fileSizeBytes,
+          status: p.status,
+          uploadedAt: p.uploadedAt,
+          customerUserId: p.customerUserId,
+          customerName: p.customerUser.customerProfile?.fullName || 'Customer',
+          patientName: p.familyMember?.fullName || p.customerUser.customerProfile?.fullName || 'Self',
+          relationship: p.familyMember?.relationship || 'SELF',
+          aiStatus: latestExtraction?.status || 'NOT_STARTED',
+          detectedCount: extractionItems.length,
+          quoteStatus: latestQuote?.status || null,
+        };
+      }),
+    };
+  }
+
+  /**
+   * Side-by-side prescription verification workspace details:
+   * Document scan URL, customer info, latest AI extraction with catalogue comparisons, existing quote.
+   */
+  async getPrescriptionVerificationDetail(prescriptionId: string, userId: string) {
+    await this.getPharmacistStore(userId);
+
+    const prescription = await this.prisma.prescription.findUnique({
+      where: { id: prescriptionId },
+      include: {
+        customerUser: {
+          select: {
+            id: true,
+            email: true,
+            phone: true,
+            customerProfile: true,
+          },
+        },
+        familyMember: true,
+        aiExtractions: {
+          orderBy: { createdAt: 'desc' },
+          take: 1,
+        },
+        quotes: {
+          orderBy: { createdAt: 'desc' },
+          take: 1,
+          include: {
+            items: true,
+          },
+        },
+      },
+    });
+
+    if (!prescription) {
+      throw new NotFoundException(`Prescription '${prescriptionId}' not found.`);
+    }
+
+    // Auto-update status to UNDER_REVIEW if newly opened
+    if (prescription.status === PrescriptionStatus.UPLOADED) {
+      await this.prisma.prescription.update({
+        where: { id: prescriptionId },
+        data: { status: PrescriptionStatus.UNDER_REVIEW },
+      });
+      prescription.status = PrescriptionStatus.UNDER_REVIEW;
+    }
+
+    // Generate signed document view URL (10 minutes)
+    let viewUrl: string | null = null;
+    try {
+      viewUrl = await this.storageService.getPresignedPrescriptionUrl(prescription.objectKey, 600);
+    } catch (err: any) {
+      this.logger.warn(`Could not generate presigned preview URL for prescription: ${err.message}`);
+    }
+
+    const latestQuote = prescription.quotes[0];
+    const formattedQuote = latestQuote
+      ? {
+          id: latestQuote.id,
+          prescriptionId: latestQuote.prescriptionId,
+          pharmacistId: latestQuote.pharmacistId,
+          storeId: latestQuote.storeId,
+          status: latestQuote.status,
+          subtotal: Number(latestQuote.subtotal),
+          deliveryFee: Number(latestQuote.deliveryFee),
+          totalAmount: Number(latestQuote.totalAmount),
+          pharmacistNotes: latestQuote.pharmacistNotes,
+          quotedAt: latestQuote.quotedAt.toISOString(),
+          validUntil: latestQuote.validUntil?.toISOString() || null,
+          orderId: latestQuote.orderId,
+          items: latestQuote.items.map((item) => ({
+            id: item.id,
+            quoteId: item.quoteId,
+            medicineId: item.medicineId,
+            detectedMedicineName: item.detectedMedicineName,
+            medicineNameSnapshot: item.medicineNameSnapshot,
+            strengthSnapshot: item.strengthSnapshot,
+            dosageFormSnapshot: item.dosageFormSnapshot,
+            dosageInstructions: item.dosageInstructions,
+            unitPrice: Number(item.unitPrice),
+            quantity: item.quantity,
+            lineTotal: Number(item.lineTotal),
+            isAvailable: item.isAvailable,
+            unavailableReason: item.unavailableReason,
+            createdAt: item.createdAt.toISOString(),
+          })),
+        }
+      : null;
+
+    return {
+      prescription: {
+        id: prescription.id,
+        originalFileName: prescription.originalFileName,
+        mimeType: prescription.mimeType,
+        fileSizeBytes: prescription.fileSizeBytes,
+        status: prescription.status,
+        uploadedAt: prescription.uploadedAt.toISOString(),
+        viewUrl,
+      },
+      customer: {
+        id: prescription.customerUser.id,
+        fullName: prescription.customerUser.customerProfile?.fullName || 'Customer',
+        phone: prescription.customerUser.phone,
+        email: prescription.customerUser.email,
+      },
+      patient: {
+        name: prescription.familyMember?.fullName || prescription.customerUser.customerProfile?.fullName || 'Self',
+        relationship: prescription.familyMember?.relationship || 'SELF',
+        dateOfBirth: prescription.familyMember?.dateOfBirth?.toISOString() || null,
+      },
+      aiExtraction: prescription.aiExtractions[0] || null,
+      activeQuote: formattedQuote,
+    };
+  }
+
+  /**
+   * Generates or updates an itemized quotation for an uploaded prescription.
+   */
+  async createPrescriptionQuote(
+    prescriptionId: string,
+    dto: CreatePrescriptionQuoteDto,
+    userId: string,
+  ) {
+    const store = await this.getPharmacistStore(userId);
+
+    const prescription = await this.prisma.prescription.findUnique({
+      where: { id: prescriptionId },
+    });
+
+    if (!prescription) {
+      throw new NotFoundException(`Prescription '${prescriptionId}' not found.`);
+    }
+
+    if (dto.items.length === 0) {
+      throw new BadRequestException('At least one medicine item must be included in quotation.');
+    }
+
+    // Calculate line totals and subtotal
+    let subtotalNum = 0;
+    const itemsData = dto.items.map((item) => {
+      const unitPrice = Number(item.unitPrice);
+      const lineTotal = Number((unitPrice * item.quantity).toFixed(2));
+      if (item.isAvailable) {
+        subtotalNum += lineTotal;
+      }
+      return {
+        medicineId: item.medicineId || null,
+        detectedMedicineName: item.detectedMedicineName || null,
+        medicineNameSnapshot: item.medicineNameSnapshot,
+        strengthSnapshot: item.strengthSnapshot || null,
+        dosageFormSnapshot: item.dosageFormSnapshot || null,
+        dosageInstructions: item.dosageInstructions || null,
+        unitPrice: new Prisma.Decimal(unitPrice.toFixed(2)),
+        quantity: item.quantity,
+        lineTotal: new Prisma.Decimal(lineTotal.toFixed(2)),
+        isAvailable: item.isAvailable,
+        unavailableReason: item.isAvailable ? null : item.unavailableReason || 'Unavailable at store',
+      };
+    });
+
+    const subtotal = new Prisma.Decimal(subtotalNum.toFixed(2));
+    const deliveryFeeNum = subtotalNum >= 500 || subtotalNum === 0 ? 0 : 50;
+    const deliveryFee = new Prisma.Decimal(deliveryFeeNum.toFixed(2));
+    const totalAmount = new Prisma.Decimal((subtotalNum + deliveryFeeNum).toFixed(2));
+
+    const result = await this.prisma.$transaction(async (tx) => {
+      // Mark any prior open quote as EXPIRED
+      await tx.prescriptionQuote.updateMany({
+        where: {
+          prescriptionId,
+          status: 'QUOTED',
+        },
+        data: {
+          status: 'EXPIRED',
+        },
+      });
+
+      // Create new quote
+      const quote = await tx.prescriptionQuote.create({
+        data: {
+          prescriptionId,
+          pharmacistId: userId,
+          storeId: store.id,
+          status: 'QUOTED',
+          subtotal,
+          deliveryFee,
+          totalAmount,
+          pharmacistNotes: dto.pharmacistNotes?.trim() || null,
+          items: {
+            create: itemsData,
+          },
+        },
+        include: {
+          items: true,
+        },
+      });
+
+      // Mark prescription as APPROVED (verified & priced)
+      await tx.prescription.update({
+        where: { id: prescriptionId },
+        data: { status: PrescriptionStatus.APPROVED },
+      });
+
+      return quote;
+    });
+
+    await this.auditService.record({
+      actorUserId: userId,
+      action: 'PRESCRIPTION_QUOTED',
+      resourceType: 'PrescriptionQuote',
+      resourceId: result.id,
+      metadata: {
+        prescriptionId,
+        storeId: store.id,
+        totalAmount: Number(result.totalAmount),
+        itemCount: result.items.length,
+      },
+    });
+
+    const resolvedItems = Array.isArray(result.items) ? result.items : itemsData;
+
+    return {
+      ...result,
+      subtotal: Number(result.subtotal),
+      deliveryFee: Number(result.deliveryFee),
+      totalAmount: Number(result.totalAmount),
+      items: resolvedItems.map((i: any) => ({
+        ...i,
+        unitPrice: Number(i.unitPrice),
+        lineTotal: Number(i.lineTotal),
+      })),
+    };
+  }
+
+  /**
+   * Rejects a prescription directly from verification screen.
+   */
+  async rejectPrescriptionDirectly(
+    prescriptionId: string,
+    dto: RejectPrescriptionDto,
+    userId: string,
+  ) {
+    const store = await this.getPharmacistStore(userId);
+
+    const prescription = await this.prisma.prescription.findUnique({
+      where: { id: prescriptionId },
+    });
+    if (!prescription) {
+      throw new NotFoundException(`Prescription '${prescriptionId}' not found.`);
+    }
+
+    const updated = await this.prisma.prescription.update({
+      where: { id: prescriptionId },
+      data: { status: PrescriptionStatus.REJECTED },
+    });
+
+    await this.auditService.record({
+      actorUserId: userId,
+      action: 'PRESCRIPTION_REJECTED',
+      resourceType: 'Prescription',
+      resourceId: prescriptionId,
+      metadata: {
+        storeId: store.id,
+        reason: dto.reason,
+      },
+    });
+
+    return { success: true, status: updated.status, reason: dto.reason };
+  }
+
+  /**
+   * Requests customer re-upload directly from verification screen.
+   */
+  async requestPrescriptionReuploadDirectly(
+    prescriptionId: string,
+    dto: RequestReuploadDto,
+    userId: string,
+  ) {
+    const store = await this.getPharmacistStore(userId);
+
+    const prescription = await this.prisma.prescription.findUnique({
+      where: { id: prescriptionId },
+    });
+    if (!prescription) {
+      throw new NotFoundException(`Prescription '${prescriptionId}' not found.`);
+    }
+
+    const updated = await this.prisma.prescription.update({
+      where: { id: prescriptionId },
+      data: { status: PrescriptionStatus.REUPLOAD_REQUIRED },
+    });
+
+    await this.auditService.record({
+      actorUserId: userId,
+      action: 'PRESCRIPTION_REUPLOAD_REQUESTED',
+      resourceType: 'Prescription',
+      resourceId: prescriptionId,
+      metadata: {
+        storeId: store.id,
+        reason: dto.reason,
+      },
+    });
+
+    return { success: true, status: updated.status, reason: dto.reason };
   }
 }

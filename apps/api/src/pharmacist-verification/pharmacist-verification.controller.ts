@@ -13,6 +13,7 @@ import {
   RejectPrescriptionDto,
   RequestReuploadDto,
   PharmacistQueueQueryDto,
+  CreatePrescriptionQuoteDto,
 } from './pharmacist-verification.dto';
 
 @ApiTags('Pharmacist Verification')
@@ -121,5 +122,54 @@ export class PharmacistVerificationController {
     @CurrentUser('id') userId: string,
   ) {
     return this.verificationService.requestReupload(reviewId, dto, userId);
+  }
+
+  // ========================================================
+  // Prescription-First Verification & Quotation Endpoints
+  // ========================================================
+
+  @Get('prescription-queue')
+  @ApiOperation({ summary: 'Queue of uploaded prescriptions awaiting pharmacist verification and quotation' })
+  async getPrescriptionQueue(@CurrentUser('id') userId: string) {
+    return this.verificationService.getPrescriptionQueue(userId);
+  }
+
+  @Get('prescriptions/:prescriptionId/review-details')
+  @ApiOperation({ summary: 'Prescription scan document preview, AI candidates with catalogue comparison, and quotation draft' })
+  async getPrescriptionVerificationDetail(
+    @Param('prescriptionId', ParseUUIDPipe) prescriptionId: string,
+    @CurrentUser('id') userId: string,
+  ) {
+    return this.verificationService.getPrescriptionVerificationDetail(prescriptionId, userId);
+  }
+
+  @Post('prescriptions/:prescriptionId/quote')
+  @ApiOperation({ summary: 'Generate and send verified medicine price quotation to customer' })
+  async createPrescriptionQuote(
+    @Param('prescriptionId', ParseUUIDPipe) prescriptionId: string,
+    @Body() dto: CreatePrescriptionQuoteDto,
+    @CurrentUser('id') userId: string,
+  ) {
+    return this.verificationService.createPrescriptionQuote(prescriptionId, dto, userId);
+  }
+
+  @Post('prescriptions/:prescriptionId/reject')
+  @ApiOperation({ summary: 'Reject prescription directly with mandatory reason' })
+  async rejectPrescriptionDirectly(
+    @Param('prescriptionId', ParseUUIDPipe) prescriptionId: string,
+    @Body() dto: RejectPrescriptionDto,
+    @CurrentUser('id') userId: string,
+  ) {
+    return this.verificationService.rejectPrescriptionDirectly(prescriptionId, dto, userId);
+  }
+
+  @Post('prescriptions/:prescriptionId/request-reupload')
+  @ApiOperation({ summary: 'Request customer prescription re-upload directly with mandatory reason' })
+  async requestPrescriptionReuploadDirectly(
+    @Param('prescriptionId', ParseUUIDPipe) prescriptionId: string,
+    @Body() dto: RequestReuploadDto,
+    @CurrentUser('id') userId: string,
+  ) {
+    return this.verificationService.requestPrescriptionReuploadDirectly(prescriptionId, dto, userId);
   }
 }
