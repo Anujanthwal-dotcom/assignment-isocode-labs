@@ -95,27 +95,18 @@ export const MissingPrescriptionIllustration: React.FC<MissingPrescriptionIllust
         {/* Small empathetic status badge */}
         <div className="absolute -bottom-1 right-2 sm:right-6 bg-amber-50 border border-amber-200 text-amber-700 px-2 py-0.5 rounded-full text-[10px] font-semibold flex items-center gap-1 shadow-xs">
           <AlertCircle className="w-3 h-3 text-amber-600" />
-          <span>File Unavailable</span>
+          <span>File Not Found</span>
         </div>
       </div>
 
-      {/* Empathetic Apologetic Text */}
+      {/* Short Apologetic Header */}
       <h3
         className={`font-bold text-[#0F172A] ${
           compact ? 'text-sm' : 'text-base sm:text-lg'
-        } tracking-tight mb-1.5`}
+        } tracking-tight mb-3`}
       >
-        We Sincerely Apologize — File Unavailable
+        Sorry, file not found
       </h3>
-
-      <p
-        className={`text-slate-600 ${
-          compact ? 'text-[11px] leading-relaxed' : 'text-xs sm:text-sm leading-relaxed max-w-md'
-        } mb-4`}
-      >
-        We were unable to retrieve this prescription document from our secure storage archive. The
-        underlying file may have been cleared during maintenance or uploaded in a temporary session.
-      </p>
 
       {/* Target File Metadata Badge */}
       {fileName && (

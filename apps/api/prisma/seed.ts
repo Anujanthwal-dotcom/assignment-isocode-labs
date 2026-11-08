@@ -744,6 +744,53 @@ async function main() {
         { sku: 'MED-PAR-500-002', name: 'Paracetamol 500 mg (Dolo Demo)', dosage: '1 tab SOS', duration: '5 days' },
       ],
     },
+    {
+      refKey: 'rx-debasish-omeprazole-gastric',
+      fileName: 'rx-debasish-omeprazole-gastric.jpg',
+      originalFileName: 'Dr-Sengupta-Rx-Debasish-Gastro.jpg',
+      customerUserId: customerUser.id,
+      familyMemberId: null,
+      status: PrescriptionStatus.APPROVED,
+      objectKey: 'prescriptions/seed/rx-debasish-omeprazole-gastric.jpg',
+      doctorName: 'Dr. P. Sengupta',
+      patientName: 'Debasish Ghosh',
+      date: '2026-10-15',
+      items: [
+        { sku: 'MED-AMX-500-001', name: 'Omeprazole 20 mg', dosage: '1 cap OD (morning) x 14 days', duration: '14 days' },
+        { sku: 'MED-PAR-500-002', name: 'Domperidone 10 mg', dosage: '1 tab TDS x 5 days', duration: '5 days' },
+      ],
+    },
+    {
+      refKey: 'rx-debasish-atorvastatin-cardio',
+      fileName: 'rx-debasish-atorvastatin-cardio.jpg',
+      originalFileName: 'Dr-Chakraborty-Rx-Debasish-Cardio.jpg',
+      customerUserId: customerUser.id,
+      familyMemberId: null,
+      status: PrescriptionStatus.APPROVED,
+      objectKey: 'prescriptions/seed/rx-debasish-atorvastatin-cardio.jpg',
+      doctorName: 'Dr. R. Chakraborty',
+      patientName: 'Debasish Ghosh',
+      date: '2026-09-28',
+      items: [
+        { sku: 'MED-TEL-40-001', name: 'Atorvastatin 20 mg', dosage: '1 tab HS x 30 days', duration: '30 days' },
+        { sku: 'MED-MET-500-001', name: 'Aspirin 75 mg', dosage: '1 tab daily after food x 30 days', duration: '30 days' },
+      ],
+    },
+    {
+      refKey: 'rx-debasish-cetirizine-derm',
+      fileName: 'rx-debasish-cetirizine-derm.jpg',
+      originalFileName: 'Dr-Bose-Rx-Debasish-Derm.jpg',
+      customerUserId: customerUser.id,
+      familyMemberId: null,
+      status: PrescriptionStatus.APPROVED,
+      objectKey: 'prescriptions/seed/rx-debasish-cetirizine-derm.jpg',
+      doctorName: 'Dr. K. Bose',
+      patientName: 'Debasish Ghosh',
+      date: '2026-09-10',
+      items: [
+        { sku: 'MED-PAR-500-001', name: 'Cetirizine 10 mg', dosage: '1 tab HS x 10 days', duration: '10 days' },
+      ],
+    },
   ];
 
   const seededPrescriptions: Record<string, string> = {};
