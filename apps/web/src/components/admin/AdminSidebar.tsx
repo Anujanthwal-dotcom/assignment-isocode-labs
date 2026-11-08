@@ -12,9 +12,10 @@ import {
   UserCheck,
   Pill,
   Boxes,
-  Upload,
   ShieldCheck,
   BookOpenCheck,
+  ShoppingBag,
+  Building2,
 } from 'lucide-react';
 import { useAuth } from '@/lib/auth/auth-context';
 
@@ -25,12 +26,13 @@ interface AdminSidebarProps {
 
 const navItems = [
   { label: 'Overview', href: '/admin', icon: LayoutDashboard, exact: true },
+  { label: 'Sales & Orders', href: '/admin/orders', icon: ShoppingBag },
+  { label: 'Store & Staff Directory', href: '/admin/stores', icon: Building2 },
   { label: 'Central Analytics', href: '/admin/analytics', icon: BarChart3 },
   { label: 'Fulfilment Operations', href: '/admin/fulfilment', icon: Truck },
   { label: 'Review Assignments', href: '/admin/review-assignments', icon: UserCheck },
   { label: 'Medicine Catalogue', href: '/admin/medicines', icon: Pill },
   { label: 'Inventory', href: '/admin/inventory', icon: Boxes, exact: true },
-  { label: 'Stock Imports', href: '/admin/inventory/imports', icon: Upload },
   { label: 'Compliance Policy', href: '/admin/compliance', icon: ShieldCheck, exact: true },
   { label: 'H1 Register', href: '/admin/compliance/h1-register', icon: BookOpenCheck },
 ];

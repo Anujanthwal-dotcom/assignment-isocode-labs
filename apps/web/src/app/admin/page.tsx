@@ -81,7 +81,7 @@ export default function AdminDashboardPage() {
                 Administrator Name
               </span>
               <span className="font-semibold text-slate-900 text-base">
-                {user?.profile?.fullName || 'Vikram Malhotra'}
+                {user?.profile?.fullName || 'System Administrator'}
               </span>
             </div>
 
@@ -128,68 +128,82 @@ export default function AdminDashboardPage() {
       {overview && (
         <div className="space-y-4">
           <div className="flex items-center justify-between">
-            <h2 className="text-base font-bold text-slate-900">Live Chain Operations (30-Day Period)</h2>
+            <h2 className="text-base font-bold text-slate-900">Live Chain Operations &amp; Sales (30-Day Window)</h2>
             <Link
-              href="/admin/analytics"
+              href="/admin/orders"
               className="text-xs font-semibold text-[#0D5C5A] hover:underline"
             >
-              View Central Analytics &rarr;
+              View Sales &amp; Orders &rarr;
             </Link>
           </div>
 
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-            <div className="p-4 bg-white rounded-xl border border-slate-200 shadow-xs space-y-1">
-              <span className="text-xs text-slate-500 font-medium block">Total Orders</span>
-              <div className="text-2xl font-bold text-slate-900">{overview.totalOrders}</div>
-              <span className="text-[11px] text-slate-400">Live order records</span>
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
+            <div className="p-3.5 bg-white rounded-xl border border-slate-200 shadow-xs space-y-1">
+              <span className="text-[11px] text-slate-500 font-medium block">Total Sales (GMV)</span>
+              <div className="text-xl font-extrabold text-[#14161A]">
+                ₹{(overview.totalRevenue ?? 0).toLocaleString('en-IN', { minimumFractionDigits: 0 })}
+              </div>
+              <span className="text-[10px] text-emerald-700 font-medium">Recorded orders</span>
             </div>
 
-            <div className="p-4 bg-white rounded-xl border border-slate-200 shadow-xs space-y-1">
-              <span className="text-xs text-slate-500 font-medium block">Pending Verification</span>
-              <div className="text-2xl font-bold text-amber-600">{overview.pendingVerificationOrders}</div>
-              <span className="text-[11px] text-slate-400">Pharmacist queue</span>
+            <div className="p-3.5 bg-white rounded-xl border border-slate-200 shadow-xs space-y-1">
+              <span className="text-[11px] text-slate-500 font-medium block">Total Orders</span>
+              <div className="text-xl font-extrabold text-blue-600">{overview.totalOrders}</div>
+              <span className="text-[10px] text-slate-400">{overview.fulfilmentOrders ?? 0} in progress</span>
             </div>
 
-            <div className="p-4 bg-white rounded-xl border border-slate-200 shadow-xs space-y-1">
-              <span className="text-xs text-slate-500 font-medium block">In Fulfilment</span>
-              <div className="text-2xl font-bold text-blue-600">{overview.fulfilmentOrders}</div>
-              <span className="text-[11px] text-slate-400">Reserved &amp; packing</span>
+            <div className="p-3.5 bg-white rounded-xl border border-slate-200 shadow-xs space-y-1">
+              <span className="text-[11px] text-slate-500 font-medium block">Active Stores</span>
+              <div className="text-xl font-extrabold text-[#0D5C5A]">{overview.activeStoresCount}</div>
+              <span className="text-[10px] text-slate-400">Retail pharmacy hubs</span>
             </div>
 
-            <div className="p-4 bg-white rounded-xl border border-slate-200 shadow-xs space-y-1">
-              <span className="text-xs text-slate-500 font-medium block">Active Stores</span>
-              <div className="text-2xl font-bold text-[#0D5C5A]">{overview.activeStoresCount}</div>
-              <span className="text-[11px] text-slate-400">Operational hubs</span>
+            <div className="p-3.5 bg-white rounded-xl border border-slate-200 shadow-xs space-y-1">
+              <span className="text-[11px] text-slate-500 font-medium block">Customers</span>
+              <div className="text-xl font-extrabold text-purple-600">{overview.customersCount ?? 0}</div>
+              <span className="text-[10px] text-slate-400">Registered accounts</span>
+            </div>
+
+            <div className="p-3.5 bg-white rounded-xl border border-slate-200 shadow-xs space-y-1">
+              <span className="text-[11px] text-slate-500 font-medium block">Pharmacists</span>
+              <div className="text-xl font-extrabold text-emerald-600">{overview.pharmacistsCount ?? 0}</div>
+              <span className="text-[10px] text-slate-400">Licensed verifiers</span>
+            </div>
+
+            <div className="p-3.5 bg-white rounded-xl border border-slate-200 shadow-xs space-y-1">
+              <span className="text-[11px] text-slate-500 font-medium block">Store Staff</span>
+              <div className="text-xl font-extrabold text-slate-800">{overview.staffCount ?? 0}</div>
+              <span className="text-[10px] text-slate-400">Dispensing staff</span>
             </div>
           </div>
         </div>
       )}
 
       {/* Quick Navigation Panels */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-2">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 pt-2">
         <Link
-          href="/admin/fulfilment"
+          href="/admin/orders"
           className="p-4 bg-white rounded-xl border border-slate-200 hover:border-[#0D5C5A] transition-colors shadow-xs flex items-center gap-3"
         >
-          <div className="h-9 w-9 rounded-lg bg-[#F0FDFA] text-[#0D5C5A] flex items-center justify-center shrink-0">
-            <Truck className="h-4.5 w-4.5" />
+          <div className="h-9 w-9 rounded-lg bg-[#F0FDFA] text-[#0D5C5A] flex items-center justify-center shrink-0 font-bold">
+            ₹
           </div>
           <div>
-            <div className="text-xs font-bold text-slate-900">Fulfilment Operations</div>
-            <div className="text-[11px] text-slate-500">Route &amp; handover lifecycle</div>
+            <div className="text-xs font-bold text-slate-900">Sales &amp; Orders</div>
+            <div className="text-[11px] text-slate-500">Live GMV &amp; orders table</div>
           </div>
         </Link>
 
         <Link
-          href="/admin/inventory"
+          href="/admin/stores"
           className="p-4 bg-white rounded-xl border border-slate-200 hover:border-[#0D5C5A] transition-colors shadow-xs flex items-center gap-3"
         >
           <div className="h-9 w-9 rounded-lg bg-[#F0FDFA] text-[#0D5C5A] flex items-center justify-center shrink-0">
             <Boxes className="h-4.5 w-4.5" />
           </div>
           <div>
-            <div className="text-xs font-bold text-slate-900">Inventory &amp; Balances</div>
-            <div className="text-[11px] text-slate-500">Stock lines &amp; adjustments</div>
+            <div className="text-xs font-bold text-slate-900">Store Directory</div>
+            <div className="text-[11px] text-slate-500">Register stores, staff &amp; pharmacists</div>
           </div>
         </Link>
 
@@ -201,8 +215,21 @@ export default function AdminDashboardPage() {
             <ShieldCheck className="h-4.5 w-4.5" />
           </div>
           <div>
-            <div className="text-xs font-bold text-slate-900">Compliance &amp; Policy</div>
+            <div className="text-xs font-bold text-slate-900">Compliance Setup</div>
             <div className="text-[11px] text-slate-500">Rule sets &amp; H1 register</div>
+          </div>
+        </Link>
+
+        <Link
+          href="/admin/fulfilment"
+          className="p-4 bg-white rounded-xl border border-slate-200 hover:border-[#0D5C5A] transition-colors shadow-xs flex items-center gap-3"
+        >
+          <div className="h-9 w-9 rounded-lg bg-[#F0FDFA] text-[#0D5C5A] flex items-center justify-center shrink-0">
+            <Truck className="h-4.5 w-4.5" />
+          </div>
+          <div>
+            <div className="text-xs font-bold text-slate-900">Fulfilment Operations</div>
+            <div className="text-[11px] text-slate-500">Store routing &amp; stock holds</div>
           </div>
         </Link>
       </div>

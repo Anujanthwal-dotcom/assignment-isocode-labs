@@ -601,7 +601,7 @@ export default function MedicineCataloguePage() {
 
           <p className="text-[13px] text-[#6C757D] leading-relaxed">
             {deactivatingMedicine?.status === 'ACTIVE'
-              ? `Are you sure you want to deactivate ${deactivatingMedicine?.name} (${deactivatingMedicine?.sku})? Inactive medicines cannot receive daily stock imports or manual stock additions. Existing stock history remains preserved.`
+              ? `Are you sure you want to deactivate ${deactivatingMedicine?.name} (${deactivatingMedicine?.sku})? Inactive medicines cannot receive manual stock additions or adjustments. Existing stock history remains preserved.`
               : `Are you sure you want to reactivate ${deactivatingMedicine?.name} (${deactivatingMedicine?.sku})?`}
           </p>
 

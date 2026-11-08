@@ -105,12 +105,12 @@ vi.mock('@/lib/api/client', () => ({
 }));
 
 describe('Catalogue and Inventory UI Components & Pages', () => {
-  it('AdminSidebar renders Medicine Catalogue, Inventory, and Stock Imports links', () => {
+  it('AdminSidebar renders Medicine Catalogue and Inventory links and omits Stock Imports', () => {
     render(<AdminSidebar openMobile={false} onCloseMobile={vi.fn()} />);
 
     expect(screen.getByText('Medicine Catalogue')).toBeDefined();
     expect(screen.getByText('Inventory')).toBeDefined();
-    expect(screen.getByText('Stock Imports')).toBeDefined();
+    expect(screen.queryByText('Stock Imports')).toBeNull();
   });
 
   it('PharmacistSidebar renders Verification Queue and omits Store Inventory, H1 Register, and Store Fulfilment', () => {

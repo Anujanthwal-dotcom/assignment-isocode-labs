@@ -10,6 +10,10 @@ describe('AdminAnalyticsService', () => {
       order: {
         count: vi.fn(),
         findMany: vi.fn(),
+        aggregate: vi.fn().mockResolvedValue({ _sum: { totalAmount: 1250 } }),
+      },
+      user: {
+        count: vi.fn().mockResolvedValue(5),
       },
       store: {
         count: vi.fn(),
@@ -62,6 +66,8 @@ describe('AdminAnalyticsService', () => {
     expect(res.totalOrders).toBe(10);
     expect(res.activeStoresCount).toBe(3);
     expect(res.activeRefillSubscriptionsCount).toBe(4);
+    expect(res.totalRevenue).toBe(1250);
+    expect(res.customersCount).toBe(5);
     expect(res.dateRange.period).toBe('30D');
   });
 
