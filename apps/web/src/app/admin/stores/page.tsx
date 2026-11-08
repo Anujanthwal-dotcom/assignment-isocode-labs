@@ -228,16 +228,13 @@ export default function StoresAndDirectoryPage() {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="mx-auto w-full max-w-7xl space-y-8 py-2">
       {/* Page Header */}
-      <div className="pb-2 border-b border-[#EBECEF] flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+      <div className="border-b border-slate-200 pb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-5">
         <div>
-          <h1 className="text-2xl font-bold text-[#14161A] tracking-tight">
+          <h1 className="font-display text-2xl font-bold tracking-tight text-[#0F172A] sm:text-[28px] sm:leading-[36px]">
             Store &amp; Staff Directory
           </h1>
-          <p className="text-sm text-[#78879A] mt-1">
-            Manage physical pharmacy retail stores, registered store staff assignments, and licensed clinical pharmacists.
-          </p>
         </div>
 
         <div className="flex items-center gap-2 flex-wrap">
@@ -295,42 +292,42 @@ export default function StoresAndDirectoryPage() {
       )}
 
       {/* Overview Stat Tiles */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <div className="p-4 bg-white rounded-xl border border-[#EBECEF] shadow-xs space-y-1">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-5">
+        <div className="p-5 bg-white rounded-xl border border-[#EBECEF] shadow-xs space-y-1">
           <div className="flex items-center justify-between text-xs text-[#78879A] font-medium">
             <span>Physical Stores</span>
             <StoreIcon className="h-4 w-4 text-[#0D5C5A]" />
           </div>
-          <div className="text-2xl font-bold text-[#14161A]">{stores.length}</div>
+          <div className="text-[26px] leading-[32px] font-bold text-[#14161A]">{stores.length}</div>
           <span className="text-[11px] text-[#0D5C5A]">
             {stores.filter((s) => s.status === 'ACTIVE').length} active operational
           </span>
         </div>
 
-        <div className="p-4 bg-white rounded-xl border border-[#EBECEF] shadow-xs space-y-1">
+        <div className="p-5 bg-white rounded-xl border border-[#EBECEF] shadow-xs space-y-1">
           <div className="flex items-center justify-between text-xs text-[#78879A] font-medium">
             <span>Store Staff</span>
             <Users className="h-4 w-4 text-blue-600" />
           </div>
-          <div className="text-2xl font-bold text-blue-600">{staffList.length}</div>
+          <div className="text-[26px] leading-[32px] font-bold text-blue-600">{staffList.length}</div>
           <span className="text-[11px] text-slate-500">Assigned across stores</span>
         </div>
 
-        <div className="p-4 bg-white rounded-xl border border-[#EBECEF] shadow-xs space-y-1">
+        <div className="p-5 bg-white rounded-xl border border-[#EBECEF] shadow-xs space-y-1">
           <div className="flex items-center justify-between text-xs text-[#78879A] font-medium">
             <span>Pharmacists</span>
             <Shield className="h-4 w-4 text-emerald-600" />
           </div>
-          <div className="text-2xl font-bold text-emerald-600">{pharmacistsList.length}</div>
+          <div className="text-[26px] leading-[32px] font-bold text-emerald-600">{pharmacistsList.length}</div>
           <span className="text-[11px] text-emerald-700">Licensed verification officers</span>
         </div>
 
-        <div className="p-4 bg-white rounded-xl border border-[#EBECEF] shadow-xs space-y-1">
+        <div className="p-5 bg-white rounded-xl border border-[#EBECEF] shadow-xs space-y-1">
           <div className="flex items-center justify-between text-xs text-[#78879A] font-medium">
             <span>Registered Customers</span>
             <UserCheck className="h-4 w-4 text-purple-600" />
           </div>
-          <div className="text-2xl font-bold text-purple-600">
+          <div className="text-[26px] leading-[32px] font-bold text-purple-600">
             {loading ? '—' : customersList.length}
           </div>
           <span className="text-[11px] text-slate-500">Live PostgreSQL records</span>
@@ -401,13 +398,13 @@ export default function StoresAndDirectoryPage() {
                 <table className="w-full text-left text-xs border-collapse">
                   <thead>
                     <tr className="bg-[#F8F9FB] border-b border-[#EBECEF] text-[#78879A] font-semibold">
-                      <th className="py-3 px-4">Store Code</th>
-                      <th className="py-3 px-4">Store Name</th>
-                      <th className="py-3 px-4">City</th>
-                      <th className="py-3 px-4">Address</th>
-                      <th className="py-3 px-4 text-center">Assigned Staff</th>
-                      <th className="py-3 px-4 text-center">Orders Handled</th>
-                      <th className="py-3 px-4 text-right">Status</th>
+                      <th className="py-3.5 px-4">Store Code</th>
+                      <th className="py-3.5 px-4">Store Name</th>
+                      <th className="py-3.5 px-4">City</th>
+                      <th className="py-3.5 px-4">Address</th>
+                      <th className="py-3.5 px-4 text-center">Assigned Staff</th>
+                      <th className="py-3.5 px-4 text-center">Orders Handled</th>
+                      <th className="py-3.5 px-4 text-right">Status</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-[#EBECEF]">
@@ -420,25 +417,25 @@ export default function StoresAndDirectoryPage() {
                       )
                       .map((st) => (
                         <tr key={st.id} className="hover:bg-[#F0FDFA]/40 transition-colors">
-                          <td className="py-3 px-4 font-mono font-bold text-[#0D5C5A]">
+                          <td className="py-3.5 px-4 font-mono font-bold text-[#0D5C5A]">
                             {st.code}
                           </td>
-                          <td className="py-3 px-4 font-semibold text-[#14161A]">
+                          <td className="py-3.5 px-4 font-semibold text-[#14161A]">
                             {st.name}
                           </td>
-                          <td className="py-3 px-4 text-slate-600">{st.city}</td>
-                          <td className="py-3 px-4 text-slate-500 max-w-xs truncate" title={st.address}>
+                          <td className="py-3.5 px-4 text-slate-600">{st.city}</td>
+                          <td className="py-3.5 px-4 text-slate-500 max-w-xs truncate" title={st.address}>
                             {st.address}
                           </td>
-                          <td className="py-3 px-4 text-center">
+                          <td className="py-3.5 px-4 text-center">
                             <span className="font-semibold text-blue-700 bg-blue-50 px-2 py-0.5 rounded-full text-[11px]">
                               {st.staffCount ?? 0} staff
                             </span>
                           </td>
-                          <td className="py-3 px-4 text-center font-medium text-slate-700">
+                          <td className="py-3.5 px-4 text-center font-medium text-slate-700">
                             {st.ordersCount ?? 0}
                           </td>
-                          <td className="py-3 px-4 text-right">
+                          <td className="py-3.5 px-4 text-right">
                             <span
                               className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${
                                 st.status === 'ACTIVE'
@@ -464,13 +461,13 @@ export default function StoresAndDirectoryPage() {
                 <table className="w-full text-left text-xs border-collapse">
                   <thead>
                     <tr className="bg-[#F8F9FB] border-b border-[#EBECEF] text-[#78879A] font-semibold">
-                      <th className="py-3 px-4">Staff Name</th>
-                      <th className="py-3 px-4">Assigned Store</th>
-                      <th className="py-3 px-4">Designation</th>
-                      <th className="py-3 px-4">Phone</th>
-                      <th className="py-3 px-4">Email</th>
-                      <th className="py-3 px-4">Status</th>
-                      <th className="py-3 px-4 text-right">Registered At</th>
+                      <th className="py-3.5 px-4">Staff Name</th>
+                      <th className="py-3.5 px-4">Assigned Store</th>
+                      <th className="py-3.5 px-4">Designation</th>
+                      <th className="py-3.5 px-4">Phone</th>
+                      <th className="py-3.5 px-4">Email</th>
+                      <th className="py-3.5 px-4">Status</th>
+                      <th className="py-3.5 px-4 text-right">Registered At</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-[#EBECEF]">
@@ -488,22 +485,22 @@ export default function StoresAndDirectoryPage() {
                       })
                       .map((sp) => (
                         <tr key={sp.id} className="hover:bg-[#F0FDFA]/40 transition-colors">
-                          <td className="py-3 px-4 font-semibold text-[#14161A]">{sp.fullName}</td>
-                          <td className="py-3 px-4">
+                          <td className="py-3.5 px-4 font-semibold text-[#14161A]">{sp.fullName}</td>
+                          <td className="py-3.5 px-4">
                             <span className="font-semibold text-[#0D5C5A] bg-[#F0FDFA] border border-[#99F6E4] px-2 py-0.5 rounded-md inline-flex items-center gap-1">
                               <span>{sp.store.name}</span>
                               <span className="text-[10px] text-slate-500 font-mono">({sp.store.code})</span>
                             </span>
                           </td>
-                          <td className="py-3 px-4 text-slate-600">{sp.designation}</td>
-                          <td className="py-3 px-4 font-mono text-slate-600">{sp.phone}</td>
-                          <td className="py-3 px-4 text-slate-600">{sp.email}</td>
-                          <td className="py-3 px-4">
+                          <td className="py-3.5 px-4 text-slate-600">{sp.designation}</td>
+                          <td className="py-3.5 px-4 font-mono text-slate-600">{sp.phone}</td>
+                          <td className="py-3.5 px-4 text-slate-600">{sp.email}</td>
+                          <td className="py-3.5 px-4">
                             <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-700">
                               {sp.status}
                             </span>
                           </td>
-                          <td className="py-3 px-4 text-right text-slate-400">
+                          <td className="py-3.5 px-4 text-right text-slate-400">
                             {new Date(sp.createdAt).toLocaleDateString()}
                           </td>
                         </tr>
@@ -521,13 +518,13 @@ export default function StoresAndDirectoryPage() {
                 <table className="w-full text-left text-xs border-collapse">
                   <thead>
                     <tr className="bg-[#F8F9FB] border-b border-[#EBECEF] text-[#78879A] font-semibold">
-                      <th className="py-3 px-4">Pharmacist Name</th>
-                      <th className="py-3 px-4">Registration #</th>
-                      <th className="py-3 px-4">Clinical Scope</th>
-                      <th className="py-3 px-4">Phone</th>
-                      <th className="py-3 px-4">Email</th>
-                      <th className="py-3 px-4">Status</th>
-                      <th className="py-3 px-4 text-right">Registered</th>
+                      <th className="py-3.5 px-4">Pharmacist Name</th>
+                      <th className="py-3.5 px-4">Registration #</th>
+                      <th className="py-3.5 px-4">Clinical Scope</th>
+                      <th className="py-3.5 px-4">Phone</th>
+                      <th className="py-3.5 px-4">Email</th>
+                      <th className="py-3.5 px-4">Status</th>
+                      <th className="py-3.5 px-4 text-right">Registered</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-[#EBECEF]">
@@ -543,26 +540,26 @@ export default function StoresAndDirectoryPage() {
                       })
                       .map((ph) => (
                         <tr key={ph.id} className="hover:bg-[#F0FDFA]/40 transition-colors">
-                          <td className="py-3 px-4 font-semibold text-[#14161A] flex items-center gap-1.5">
+                          <td className="py-3.5 px-4 font-semibold text-[#14161A] flex items-center gap-1.5">
                             <Shield className="h-3.5 w-3.5 text-emerald-600" />
                             <span>{ph.fullName}</span>
                           </td>
-                          <td className="py-3 px-4 font-mono font-medium text-slate-700">
+                          <td className="py-3.5 px-4 font-mono font-medium text-slate-700">
                             {ph.registrationNumber || 'Pending Verification'}
                           </td>
-                          <td className="py-3 px-4">
+                          <td className="py-3.5 px-4">
                             <span className="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-[#F0FDFA] text-[#0D5C5A] border border-[#99F6E4]">
                               Independent Platform Verifier
                             </span>
                           </td>
-                          <td className="py-3 px-4 font-mono text-slate-600">{ph.phone}</td>
-                          <td className="py-3 px-4 text-slate-600">{ph.email}</td>
-                          <td className="py-3 px-4">
+                          <td className="py-3.5 px-4 font-mono text-slate-600">{ph.phone}</td>
+                          <td className="py-3.5 px-4 text-slate-600">{ph.email}</td>
+                          <td className="py-3.5 px-4">
                             <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-700">
                               {ph.status}
                             </span>
                           </td>
-                          <td className="py-3 px-4 text-right text-slate-400">
+                          <td className="py-3.5 px-4 text-right text-slate-400">
                             {new Date(ph.createdAt).toLocaleDateString()}
                           </td>
                         </tr>
@@ -593,13 +590,13 @@ export default function StoresAndDirectoryPage() {
                   <table className="w-full text-left text-xs border-collapse">
                     <thead>
                       <tr className="bg-[#F8F9FB] border-b border-[#EBECEF] text-[#78879A] font-semibold">
-                        <th className="py-3 px-4">Customer Name</th>
-                        <th className="py-3 px-4">Phone</th>
-                        <th className="py-3 px-4">Email</th>
-                        <th className="py-3 px-4 text-center">Orders Placed</th>
-                        <th className="py-3 px-4 text-center">Prescriptions Uploaded</th>
-                        <th className="py-3 px-4">Status</th>
-                        <th className="py-3 px-4 text-right">Member Since</th>
+                        <th className="py-3.5 px-4">Customer Name</th>
+                        <th className="py-3.5 px-4">Phone</th>
+                        <th className="py-3.5 px-4">Email</th>
+                        <th className="py-3.5 px-4 text-center">Orders Placed</th>
+                        <th className="py-3.5 px-4 text-center">Prescriptions Uploaded</th>
+                        <th className="py-3.5 px-4">Status</th>
+                        <th className="py-3.5 px-4 text-right">Member Since</th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-[#EBECEF]">
@@ -612,21 +609,21 @@ export default function StoresAndDirectoryPage() {
                       ) : (
                         paginated.map((c) => (
                           <tr key={c.id} className="hover:bg-[#F0FDFA]/40 transition-colors">
-                            <td className="py-3 px-4 font-semibold text-[#14161A]">{c.fullName}</td>
-                            <td className="py-3 px-4 font-mono text-slate-600">{c.phone}</td>
-                            <td className="py-3 px-4 text-slate-600">{c.email || '—'}</td>
-                            <td className="py-3 px-4 text-center font-bold text-slate-900">
+                            <td className="py-3.5 px-4 font-semibold text-[#14161A]">{c.fullName}</td>
+                            <td className="py-3.5 px-4 font-mono text-slate-600">{c.phone}</td>
+                            <td className="py-3.5 px-4 text-slate-600">{c.email || '—'}</td>
+                            <td className="py-3.5 px-4 text-center font-bold text-slate-900">
                               {c.ordersCount}
                             </td>
-                            <td className="py-3 px-4 text-center font-medium text-slate-700">
+                            <td className="py-3.5 px-4 text-center font-medium text-slate-700">
                               {c.prescriptionsCount}
                             </td>
-                            <td className="py-3 px-4">
+                            <td className="py-3.5 px-4">
                               <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-700">
                                 {c.status}
                               </span>
                             </td>
-                            <td className="py-3 px-4 text-right text-slate-400">
+                            <td className="py-3.5 px-4 text-right text-slate-400">
                               {new Date(c.createdAt).toLocaleDateString()}
                             </td>
                           </tr>
