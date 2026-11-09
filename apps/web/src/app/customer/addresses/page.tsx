@@ -157,7 +157,7 @@ export default function CustomerAddressesPage() {
   const handleSetDefault = async (id: string) => {
     try {
       await apiFetch(`/customer/addresses/${id}/default`, {
-        method: 'POST',
+        method: 'PATCH',
       });
       setAddresses((prev) =>
         prev.map((a) => ({

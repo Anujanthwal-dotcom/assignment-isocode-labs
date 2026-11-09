@@ -64,8 +64,8 @@ export default function CustomerRefillSubscriptionPage() {
     if (!confirm('Are you sure you want to stop all reminders for this medicine?')) return;
     try {
       setUpdating(true);
-      await apiFetch(`/customer/refills/subscriptions/${subscriptionId}`, {
-        method: 'DELETE',
+      await apiFetch(`/customer/refills/subscriptions/${subscriptionId}/cancel`, {
+        method: 'POST',
       });
       router.push('/customer/refills');
     } catch (err: any) {
