@@ -69,7 +69,7 @@ export default function PharmacistOrderReviewPage() {
 
   const fetchCatalogue = React.useCallback(async () => {
     try {
-      const res = await apiFetch<any>('/customer/medicines?limit=50&activeOnly=true');
+      const res = await apiFetch<any>('/customer/medicines?limit=50');
       setCatalogueMedicines(res.data || []);
     } catch {
       // Non-critical background catalogue fetch

@@ -45,7 +45,6 @@ export default function CustomerMedicinesPage() {
         const queryParams = new URLSearchParams({
           page: String(page),
           limit: '12',
-          activeOnly: 'true',
         });
         if (debouncedSearch.trim()) {
           queryParams.set('search', debouncedSearch.trim());
