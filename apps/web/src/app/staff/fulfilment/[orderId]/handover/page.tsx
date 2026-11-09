@@ -8,7 +8,7 @@ import { StaffShell } from '@/components/staff/StaffShell';
 import { BackButton } from '@/components/shared/BackButton';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Truck, CheckCircle2, DollarSign, FileText, ArrowRight, User } from 'lucide-react';
+import { Truck, CheckCircle2, DollarSign, FileText, ArrowRight } from 'lucide-react';
 
 export default function StaffHandoverPage() {
   const params = useParams();

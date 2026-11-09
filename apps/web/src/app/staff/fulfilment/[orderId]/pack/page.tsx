@@ -2,13 +2,12 @@
 
 import * as React from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import Link from 'next/link';
 import { apiFetch } from '@/lib/api/client';
 import { StaffShell } from '@/components/staff/StaffShell';
 import { BackButton } from '@/components/shared/BackButton';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { CheckCircle2, Package, ShieldCheck, ArrowRight, Boxes } from 'lucide-react';
+import { ShieldCheck, ArrowRight } from 'lucide-react';
 
 export default function StaffPackingPage() {
   const params = useParams();
