@@ -2,16 +2,27 @@
 
 import * as React from 'react';
 import Link from 'next/link';
+import { useSearchParams } from 'next/navigation';
 import { apiFetch } from '@/lib/api/client';
 import { BackButton } from '@/components/shared/BackButton';
 
 export default function AdminFulfilmentOrdersPage() {
+  const searchParams = useSearchParams();
   const [loading, setLoading] = React.useState(true);
   const [error, setError] = React.useState<string | null>(null);
   const [orders, setOrders] = React.useState<any[]>([]);
-  const [selectedStatus, setSelectedStatus] = React.useState<string>('ALL');
+  const [selectedStatus, setSelectedStatus] = React.useState<string>(
+    searchParams.get('status') || 'ALL',
+  );
   const [searchQuery, setSearchQuery] = React.useState('');
   const [actionLoading, setActionLoading] = React.useState<string | null>(null);
+
+  React.useEffect(() => {
+    const statusParam = searchParams.get('status');
+    if (statusParam) {
+      setSelectedStatus(statusParam);
+    }
+  }, [searchParams]);
 
   // Manual Routing Modal State
   const [manualModalOrder, setManualModalOrder] = React.useState<any | null>(null);

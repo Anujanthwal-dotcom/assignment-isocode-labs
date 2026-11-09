@@ -7,15 +7,27 @@ import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog';
 import { apiFetch } from '@/lib/api/client';
 import Link from 'next/link';
-import { Trash2, AlertCircle } from 'lucide-react';
+import { useSearchParams } from 'next/navigation';
+import { Trash2, AlertCircle, Search, X } from 'lucide-react';
 import { PrescriptionDTO, FamilyMemberDTO } from '@pharmacy/shared-types';
 import { MissingPrescriptionIllustration } from '@/components/customer/MissingPrescriptionIllustration';
 
 export default function CustomerPrescriptionsPage() {
+  const searchParams = useSearchParams();
   const [prescriptions, setPrescriptions] = React.useState<PrescriptionDTO[]>([]);
   const [familyMembers, setFamilyMembers] = React.useState<FamilyMemberDTO[]>([]);
   const [loading, setLoading] = React.useState(true);
   const [error, setError] = React.useState<string | null>(null);
+  const [searchQuery, setSearchQuery] = React.useState<string>(
+    searchParams.get('search') || '',
+  );
+
+  React.useEffect(() => {
+    const s = searchParams.get('search');
+    if (s !== null) {
+      setSearchQuery(s);
+    }
+  }, [searchParams]);
 
   // Upload Form State
   const [isUploadOpen, setIsUploadOpen] = React.useState(false);
@@ -158,6 +170,21 @@ export default function CustomerPrescriptionsPage() {
     }
   };
 
+  const filteredPrescriptions = React.useMemo(() => {
+    if (!searchQuery.trim()) return prescriptions;
+    const q = searchQuery.toLowerCase().trim();
+    return prescriptions.filter((rx) => {
+      const matchFile = rx.originalFileName?.toLowerCase().includes(q);
+      const matchId = rx.id.toLowerCase().includes(q);
+      const matchStatus = rx.status.toLowerCase().includes(q);
+      const matchFam = familyMembers
+        .find((f) => f.id === rx.familyMemberId)
+        ?.fullName.toLowerCase()
+        .includes(q);
+      return matchFile || matchId || matchStatus || matchFam;
+    });
+  }, [prescriptions, searchQuery, familyMembers]);
+
   return (
     <div className="max-w-[950px] mx-auto space-y-6">
       {/* Header */}
@@ -165,16 +192,37 @@ export default function CustomerPrescriptionsPage() {
         <div>
           <h1 className="text-2xl font-bold tracking-tight text-[#0F172A]">Prescriptions</h1>
         </div>
-        <Button
-          onClick={() => {
-            setSelectedFile(null);
-            setUploadError(null);
-            setIsUploadOpen(true);
-          }}
-          className="text-xs bg-[#0D5C5A] text-white hover:bg-[#0A4846]"
-        >
-          Upload Prescription
-        </Button>
+        <div className="flex items-center gap-3">
+          <div className="relative w-full sm:w-64">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-slate-400" />
+            <input
+              type="text"
+              placeholder="Search by file, patient, ID..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full pl-8 pr-7 py-1.5 text-xs rounded-lg border border-[#EBECEF] bg-white focus:outline-none focus:ring-2 focus:ring-[#0D5C5A]/20"
+            />
+            {searchQuery && (
+              <button
+                type="button"
+                onClick={() => setSearchQuery('')}
+                className="absolute right-2 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
+              >
+                <X className="h-3 w-3" />
+              </button>
+            )}
+          </div>
+          <Button
+            onClick={() => {
+              setSelectedFile(null);
+              setUploadError(null);
+              setIsUploadOpen(true);
+            }}
+            className="text-xs bg-[#0D5C5A] text-white hover:bg-[#0A4846] shrink-0"
+          >
+            Upload Prescription
+          </Button>
+        </div>
       </div>
 
       {/* Compliance Notice */}
@@ -198,24 +246,39 @@ export default function CustomerPrescriptionsPage() {
           <span className="text-xs uppercase font-bold text-red-600 block mb-1">Notice</span>
           <p className="text-sm text-red-700 font-medium">{error}</p>
         </Card>
-      ) : prescriptions.length === 0 ? (
+      ) : filteredPrescriptions.length === 0 ? (
         <Card className="p-12 border-[#EBECEF] bg-white text-center">
-          <h3 className="text-base font-semibold text-slate-800">No Prescriptions Uploaded</h3>
+          <h3 className="text-base font-semibold text-slate-800">
+            {searchQuery ? 'No Matching Prescriptions Found' : 'No Prescriptions Uploaded'}
+          </h3>
           <p className="text-xs text-slate-500 mt-1 max-w-sm mx-auto">
-            Upload your doctor&apos;s prescription (JPEG, PNG, or PDF up to 10 MB) to conveniently
-            order Schedule H or chronic refills.
+            {searchQuery
+              ? `No prescriptions matched "${searchQuery}". Clear your search or upload a new prescription.`
+              : `Upload your doctor's prescription (JPEG, PNG, or PDF up to 10 MB) to conveniently order Schedule H or chronic refills.`}
           </p>
-          <Button
-            size="sm"
-            onClick={() => setIsUploadOpen(true)}
-            className="mt-4 text-xs bg-[#0D5C5A] text-white"
-          >
-            Upload Prescription
-          </Button>
+          <div className="flex items-center justify-center gap-2 mt-4">
+            {searchQuery && (
+              <Button
+                size="sm"
+                variant="outline"
+                onClick={() => setSearchQuery('')}
+                className="text-xs"
+              >
+                Clear Search
+              </Button>
+            )}
+            <Button
+              size="sm"
+              onClick={() => setIsUploadOpen(true)}
+              className="text-xs bg-[#0D5C5A] text-white"
+            >
+              Upload Prescription
+            </Button>
+          </div>
         </Card>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {prescriptions.map((rx) => (
+          {filteredPrescriptions.map((rx) => (
             <Card
               key={rx.id}
               className="border-[#EBECEF] bg-white hover:border-[#0D5C5A]/40 transition-all p-5 flex flex-col justify-between"

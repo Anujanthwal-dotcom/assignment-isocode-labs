@@ -52,15 +52,51 @@ export const AdminHeader: React.FC<AdminHeaderProps> = ({ onToggleSidebar }) => 
 
       {/* Right: Notifications & Profile Menu */}
       <div className="flex items-center gap-3">
-        {/* Notification Icon */}
-        <button
-          type="button"
-          className="relative flex h-9 w-9 items-center justify-center rounded-[8px] border border-[#E2E8F0] bg-white text-[#0F172A] hover:bg-[#F0FDFA] hover:text-[#0D5C5A] transition-colors cursor-pointer"
-          aria-label="View notifications"
-        >
-          <Bell className="h-4 w-4" />
-          <span className="absolute top-2 right-2 h-1.5 w-1.5 rounded-full bg-[#14B8A6]" />
-        </button>
+        {/* Notification Icon Dropdown */}
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <button
+              type="button"
+              className="relative flex h-9 w-9 items-center justify-center rounded-[8px] border border-[#E2E8F0] bg-white text-[#0F172A] hover:bg-[#F0FDFA] hover:text-[#0D5C5A] transition-colors cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#14B8A6]"
+              aria-label="View notifications"
+            >
+              <Bell className="h-4 w-4" />
+              <span className="absolute top-2 right-2 h-1.5 w-1.5 rounded-full bg-[#14B8A6]" />
+            </button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end" className="w-[280px]">
+            <DropdownMenuLabel>
+              <div className="flex items-center justify-between">
+                <span className="font-semibold text-slate-900 text-xs">System Alert Queues</span>
+                <span className="text-[10px] font-bold text-[#0D5C5A] bg-[#F0FDFA] px-1.5 py-0.5 rounded border border-[#99F6E4]">
+                  Live
+                </span>
+              </div>
+            </DropdownMenuLabel>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem
+              onClick={() => router.push('/admin/review-assignments/unassigned')}
+              className="cursor-pointer text-xs flex flex-col items-start gap-0.5 py-2"
+            >
+              <span className="font-semibold text-[#0F172A]">Unassigned Reviews</span>
+              <span className="text-[11px] text-[#64748B]">Orders awaiting store assignment</span>
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              onClick={() => router.push('/admin/fulfilment/orders?status=STOCK_UNAVAILABLE')}
+              className="cursor-pointer text-xs flex flex-col items-start gap-0.5 py-2"
+            >
+              <span className="font-semibold text-amber-700">Stock Unavailable Queue</span>
+              <span className="text-[11px] text-[#64748B]">Orders needing alternative store routing</span>
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              onClick={() => router.push('/admin/inventory/reservations')}
+              className="cursor-pointer text-xs flex flex-col items-start gap-0.5 py-2"
+            >
+              <span className="font-semibold text-[#0F172A]">Inventory Holds</span>
+              <span className="text-[11px] text-[#64748B]">Active &amp; expiring stock reservations</span>
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
 
         {/* Administrator Profile Dropdown */}
         <DropdownMenu>
