@@ -236,8 +236,13 @@ Edit `.env`:
 | `JWT_ACCESS_SECRET`        | generated                                                        | 32+ characters or the API refuses to start |
 | `JWT_REFRESH_SECRET`       | generated                                                        | 32+ characters, different from access      |
 | `MAIL_PROVIDER`            | `brevo`                                                          | Production email                           |
-| `BREVO_API_KEY`            | `xkeysib-...`                                                    | Required for customer OTP email            |
+| `BREVO_SMTP_USER`          | `ops@example.com`                                                | Brevo SMTP account email (required)        |
+| `BREVO_SMTP_KEY`           | `xkeysib-...`                                                    | Brevo SMTP relay password (or `BREVO_API_KEY`) |
+| `BREVO_API_KEY`            | `xkeysib-...`                                                    | Brevo API key                              |
+| `BREVO_SMTP_HOST`          | `smtp-relay.brevo.com`                                           | Brevo SMTP relay host (port 587)           |
+| `BREVO_SMTP_PORT`          | `587`                                                            | SMTP port                                  |
 | `MAIL_FROM_EMAIL`          | `no-reply@example.com`                                           | Must be a verified Brevo sender            |
+| `MAIL_FROM_NAME`           | `Kolkata Pharmacy`                                               | Display sender name                        |
 | `DEMO_OTP_ENABLED`         | `false`                                                          | Never enable in production                 |
 | `PRESCRIPTION_AI_PROVIDER` | `mock` or `gemini`                                               | `gemini` requires `GEMINI_API_KEY`         |
 | `PORT`                     | `3001`                                                           | API port                                   |
@@ -313,6 +318,8 @@ NEXT_PUBLIC_API_URL=https://api.example.com pnpm build
 ```
 
 The root build compiles shared packages, the NestJS API, and the Next.js app in the required order. The build can take several minutes.
+
+> **Note on fonts during build:** Next.js uses `next/font/google` in `apps/web/src/app/layout.tsx` to download web fonts (`Plus_Jakarta_Sans`, `Inter`, `Noto_Sans_Bengali`, `Noto_Sans_Devanagari`) at build time. Ensure the build environment has outbound HTTPS access to `fonts.googleapis.com` during the `pnpm build` step (or configure `HTTPS_PROXY` if operating behind an egress proxy).
 
 If you change `API_DOMAIN` later, rebuild the web app so the public API URL is re-inlined.
 
@@ -858,7 +865,8 @@ Run monthly or after repeated deployments, not while a build is running.
 | API cannot upload to MinIO                         | Server cannot reach `files.example.com:443` (hairpin)                       | Test from the host; use split-horizon DNS or external S3                                        |
 | `prisma migrate deploy` fails                      | Database not ready, wrong password, or special characters in `DATABASE_URL` | Use hex passwords; check `docker compose logs postgres`                                         |
 | Web build runs out of memory                       | Next.js build on a small VPS                                                | Add swap or build on a larger machine/CI                                                        |
-| Customer OTP email never arrives                   | Brevo key missing, sender unverified, or `MAIL_PROVIDER` wrong              | Check `journalctl -u pharmacy-api`, Brevo activity, SPF/DKIM                                    |
+| Web build fails on font download (`next/font`)     | Outbound HTTPS to Google Fonts blocked during build                         | Ensure outbound HTTPS access to `fonts.googleapis.com` during `pnpm build`, or set `HTTPS_PROXY`|
+| Customer OTP email never arrives                   | Brevo key/user missing, sender unverified, or `MAIL_PROVIDER` wrong         | Check `BREVO_SMTP_USER`, `BREVO_SMTP_KEY`, `journalctl -u pharmacy-api`, Brevo logs, SPF/DKIM  |
 | Upload returns `413`                               | Reverse-proxy or CDN request-size limit                                     | Raise the limit or upload a smaller file                                                        |
 | MinIO container reports unhealthy                  | `mc ready local` cannot reach the server                                    | Check `docker compose logs minio`; verify credentials                                           |
 | `next: not found` in the web service               | Dependencies not installed or `next start` path wrong                       | Run `pnpm install --frozen-lockfile`; confirm `apps/web/node_modules/next/dist/bin/next` exists |
