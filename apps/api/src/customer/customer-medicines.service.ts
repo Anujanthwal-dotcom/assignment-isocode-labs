@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { CustomerListMedicinesDto } from './customer-medicines.dto';
-import { MedicineStatus, Prisma } from '@prisma/client';
+import { MedicineStatus, MedicineSchedule, Prisma } from '@prisma/client';
 
 @Injectable()
 export class CustomerMedicinesService {
@@ -14,6 +14,7 @@ export class CustomerMedicinesService {
 
     const where: Prisma.MedicineWhereInput = {
       status: MedicineStatus.ACTIVE,
+      schedule: MedicineSchedule.OTC,
     };
 
     if (dto.search && dto.search.trim()) {
@@ -75,6 +76,7 @@ export class CustomerMedicinesService {
       where: {
         id,
         status: MedicineStatus.ACTIVE,
+        schedule: MedicineSchedule.OTC,
       },
       select: {
         id: true,

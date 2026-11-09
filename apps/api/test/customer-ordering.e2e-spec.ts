@@ -67,7 +67,7 @@ describe('Customer Ordering E2E Tests', () => {
 
     // Find an active medicine
     const med = await prisma.medicine.findFirst({
-      where: { status: 'ACTIVE' },
+      where: { status: 'ACTIVE', schedule: 'OTC' },
     });
     testMedicineId = med!.id;
   }, 30000);

@@ -115,6 +115,9 @@ export default function CustomerMedicinesPage() {
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-2 border-b border-[#EBECEF]">
         <div>
           <h1 className="text-2xl font-bold tracking-tight text-[#0F172A]">Medicine Catalogue</h1>
+          <p className="text-xs text-slate-500 mt-1">
+            Over-the-counter (OTC) medicines available for direct order.
+          </p>
         </div>
         <Button
           size="sm"
@@ -130,7 +133,7 @@ export default function CustomerMedicinesPage() {
         <Input
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          placeholder="Search medicines by name, brand, generic salt, or SKU..."
+          placeholder="Search OTC medicines by name, brand, generic salt, or SKU..."
           className="h-11 px-4 pr-16 rounded-xl border-[#EBECEF] bg-white text-sm shadow-xs focus:ring-2 focus:ring-[#0D5C5A]"
         />
         {search && (
@@ -168,9 +171,9 @@ export default function CustomerMedicinesPage() {
         </Card>
       ) : medicines.length === 0 ? (
         <Card className="p-12 border-[#EBECEF] bg-white text-center">
-          <h3 className="text-base font-semibold text-slate-800">No Medicines Found</h3>
+          <h3 className="text-base font-semibold text-slate-800">No OTC Medicines Found</h3>
           <p className="text-xs text-slate-500 mt-1 max-w-sm mx-auto">
-            We couldn&apos;t find any active medicines matching &quot;{debouncedSearch}&quot;. Try
+            We couldn&apos;t find any active OTC medicines matching &quot;{debouncedSearch}&quot;. Try
             searching for another brand or generic name.
           </p>
           {debouncedSearch && (
