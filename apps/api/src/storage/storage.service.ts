@@ -10,6 +10,8 @@ export class StorageService implements OnModuleInit {
   private client!: Client;
   private importBucket!: string;
   private prescriptionBucket!: string;
+  private sseMode: string = '';
+  private kmsKeyId: string = '';
 
   constructor(private readonly configService: ConfigService) {}
 
@@ -30,6 +32,18 @@ export class StorageService implements OnModuleInit {
       'minio.bucketPrescriptions',
       'prescriptions',
     );
+    this.sseMode = this.configService.get<string>('minio.sseMode', '');
+    this.kmsKeyId = this.configService.get<string>('minio.kmsKeyId', '');
+
+    if (this.sseMode) {
+      this.logger.log(
+        `Server-Side Encryption enabled for prescriptions: mode=${this.sseMode}${
+          this.kmsKeyId ? `, key=${this.kmsKeyId}` : ''
+        }`,
+      );
+    } else {
+      this.logger.log('Server-Side Encryption for prescriptions is not configured (disabled).');
+    }
 
     this.client = new Client({
       endPoint,
@@ -112,12 +126,31 @@ export class StorageService implements OnModuleInit {
     const datePrefix = new Date().toISOString().slice(0, 10);
     const objectKey = `prescriptions/${datePrefix}/${randomUUID()}${extension}`;
 
+    const metadata: Record<string, string> = {
+      'Content-Type': mimeType,
+      'X-Original-Filename': encodeURIComponent(originalName),
+    };
+
+    if (this.sseMode) {
+      metadata['X-Amz-Server-Side-Encryption'] = this.sseMode;
+      if (this.kmsKeyId) {
+        metadata['X-Amz-Server-Side-Encryption-Aws-Kms-Key-Id'] = this.kmsKeyId;
+      }
+    }
+
     try {
-      await this.client.putObject(this.prescriptionBucket, objectKey, buffer, buffer.length, {
-        'Content-Type': mimeType,
-        'X-Original-Filename': encodeURIComponent(originalName),
-      });
-      this.logger.log(`Successfully uploaded prescription to private MinIO storage: ${objectKey}`);
+      await this.client.putObject(
+        this.prescriptionBucket,
+        objectKey,
+        buffer,
+        buffer.length,
+        metadata,
+      );
+      this.logger.log(
+        `Successfully uploaded prescription to private MinIO storage: ${objectKey}${
+          this.sseMode ? ` [SSE: ${this.sseMode}]` : ''
+        }`,
+      );
       return objectKey;
     } catch (err: any) {
       this.logger.error(

@@ -23,11 +23,12 @@ import * as argon2 from 'argon2';
 import * as fs from 'fs';
 import * as path from 'path';
 import { Client as MinioClient } from 'minio';
+import { resolveNodeEnv } from '../src/config/node-env';
 
 const prisma = new PrismaClient();
 
 async function main() {
-  const isDev = process.env.NODE_ENV !== 'production';
+  const isDev = resolveNodeEnv() === 'development';
 
   if (isDev) {
     console.log('🌱 Starting database seed...');

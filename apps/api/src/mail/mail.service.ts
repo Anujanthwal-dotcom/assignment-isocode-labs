@@ -12,32 +12,31 @@ export class MailService {
   private readonly provider: IMailProvider;
 
   constructor(private readonly configService: ConfigService) {
-    const nodeEnv = this.configService.get<string>('nodeEnv') || process.env.NODE_ENV;
     const mailProviderConfig = this.configService.get<string>('mail.provider');
-    const brevoApiKey = this.configService.get<string>('mail.apiKey') || '';
     const fromEmail = this.configService.get<string>('mail.fromEmail', 'no-reply@kolkatapharmacy.com');
     const fromName = this.configService.get<string>('mail.fromName', 'Kolkata Pharmacy');
+    const host = this.configService.get<string>('mail.host', 'smtp-relay.brevo.com');
+    const port = this.configService.get<number>('mail.smtpPort', 587);
+    const smtpUser = this.configService.get<string>('mail.smtpUser');
+    const smtpKey = this.configService.get<string>('mail.smtpKey');
 
-    if (nodeEnv === 'test') {
+    if (mailProviderConfig === 'mock') {
       this.provider = new MockMailProvider();
-      this.logger.log('MailService initialized with MockMailProvider (test environment)');
-    } else if (mailProviderConfig === 'brevo' && brevoApiKey && !brevoApiKey.startsWith('xkeysib-your')) {
-      this.provider = new BrevoApiProvider(brevoApiKey, fromEmail, fromName);
-      this.logger.log('MailService initialized with BrevoApiProvider (live REST API)');
-    } else {
-      const host = this.configService.get<string>('mail.host', 'localhost');
-      const port = this.configService.get<number>('mail.smtpPort', 1025);
-      const smtpUser = this.configService.get<string>('mail.smtpUser');
-      const smtpKey = this.configService.get<string>('mail.smtpKey');
-
+      this.logger.log('MailService initialized with MockMailProvider');
+    } else if (smtpUser && smtpKey && !smtpKey.startsWith('xkeysib-your')) {
       this.provider = new SmtpProvider({
         host,
         port,
-        auth: smtpUser && smtpKey ? { user: smtpUser, pass: smtpKey } : undefined,
+        auth: { user: smtpUser, pass: smtpKey },
         fromEmail,
         fromName,
       });
-      this.logger.log(`MailService initialized with SmtpProvider (${host}:${port})`);
+      this.logger.log(`MailService initialized with Brevo Nodemailer SmtpProvider (${host}:${port})`);
+    } else {
+      this.logger.warn(
+        'Brevo SMTP credentials (BREVO_SMTP_USER & BREVO_SMTP_KEY) not fully configured; defaulting to MockMailProvider for local/offline development.',
+      );
+      this.provider = new MockMailProvider();
     }
   }
 

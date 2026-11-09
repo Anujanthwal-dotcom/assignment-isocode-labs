@@ -46,10 +46,10 @@ export class SmtpProvider implements IMailProvider {
           : undefined,
       });
 
-      this.logger.log(`SMTP email dispatched to ${options.to.map((t) => t.email).join(', ')} [${info.messageId}]`);
+      this.logger.log(`Brevo SMTP email dispatched via Nodemailer to ${options.to.map((t) => t.email).join(', ')} [${info.messageId}]`);
       return {
         messageId: info.messageId || `smtp-${Date.now()}`,
-        provider: 'smtp',
+        provider: 'brevo_smtp',
       };
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : String(err);

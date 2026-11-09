@@ -15,6 +15,8 @@ import { MailService } from '../mail/mail.service';
 import { CustomerRegisterDto } from './auth.dto';
 import { UserRole, UserStatus } from '@prisma/client';
 import { normalizeEmail, normalizePhone } from '@pharmacy/validation';
+import { ConfigService } from '@nestjs/config';
+import { isDemoIdentifier } from './constants/demo-accounts';
 
 export interface FormattedUserResponse {
   id: string;
@@ -43,7 +45,13 @@ export class AuthService {
     private readonly sessionService: SessionService,
     private readonly auditService: AuditService,
     private readonly mailService: MailService,
+    private readonly configService: ConfigService,
   ) {}
+
+  private isDevelopment(): boolean {
+    const nodeEnv = this.configService.get<string>('nodeEnv', 'development');
+    return nodeEnv === 'development';
+  }
 
   /**
    * Register a new customer account.
@@ -55,6 +63,12 @@ export class AuthService {
     const email = normalizeEmail(dto.email);
     if (!email) {
       throw new BadRequestException('Please provide a valid email address.');
+    }
+
+    if (isDemoIdentifier(email) && !this.isDevelopment()) {
+      throw new BadRequestException(
+        'Reserved demo credentials are only permitted when NODE_ENV is set to development.',
+      );
     }
 
     const existingUser = await this.usersService.findByEmail(email);
@@ -128,6 +142,19 @@ export class AuthService {
     ipAddress?: string,
   ): Promise<{ success: boolean; message: string; developmentOtp?: string }> {
     const normalizedEmail = normalizeEmail(email);
+
+    if (isDemoIdentifier(normalizedEmail) && !this.isDevelopment()) {
+      await this.auditService.record({
+        action: 'LOGIN_FAILED',
+        resourceType: 'User',
+        metadata: { email: normalizedEmail, reason: 'DEMO_CREDENTIALS_PROHIBITED_IN_PRODUCTION' },
+        ipAddress,
+      });
+      throw new UnauthorizedException(
+        'Demo credentials are only permitted when NODE_ENV is set to development.',
+      );
+    }
+
     const user = await this.usersService.findByEmail(normalizedEmail);
 
     if (!user || user.role !== UserRole.CUSTOMER || !user.passwordHash) {
@@ -175,6 +202,18 @@ export class AuthService {
     if (!identifier) {
       throw new BadRequestException(
         isEmail ? 'Invalid email address.' : 'Invalid phone number.',
+      );
+    }
+
+    if (isDemoIdentifier(identifier) && !this.isDevelopment()) {
+      await this.auditService.record({
+        action: 'LOGIN_FAILED',
+        resourceType: 'User',
+        metadata: { identifier, reason: 'DEMO_CREDENTIALS_PROHIBITED_IN_PRODUCTION' },
+        ipAddress,
+      });
+      throw new UnauthorizedException(
+        'Demo credentials are only permitted when NODE_ENV is set to development.',
       );
     }
 
@@ -249,6 +288,19 @@ export class AuthService {
     ipAddress?: string,
   ): Promise<{ user: FormattedUserResponse; accessToken: string; refreshToken: string }> {
     const normalizedEmail = normalizeEmail(email);
+
+    if (isDemoIdentifier(normalizedEmail) && !this.isDevelopment()) {
+      await this.auditService.record({
+        action: 'LOGIN_FAILED',
+        resourceType: 'User',
+        metadata: { email: normalizedEmail, reason: 'DEMO_CREDENTIALS_PROHIBITED_IN_PRODUCTION' },
+        ipAddress,
+      });
+      throw new UnauthorizedException(
+        'Demo credentials are only permitted when NODE_ENV is set to development.',
+      );
+    }
+
     const user = await this.usersService.findByEmail(normalizedEmail);
 
     // Reject if account not found, or is CUSTOMER, or has no password hash

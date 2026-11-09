@@ -26,9 +26,8 @@ export class RedisService implements OnApplicationShutdown {
       this.logger.error(`Redis connection error: ${err.message}`);
     });
 
-    const nodeEnv = this.configService.get<string>('nodeEnv') || process.env.NODE_ENV;
-    if (nodeEnv !== 'test') {
-      // Eagerly connect if not in test environment
+    const eagerConnect = this.configService.get<boolean>('redis.eagerConnect', true);
+    if (eagerConnect) {
       this.client.connect().catch((err) => {
         this.logger.warn(`Initial Redis connection failed: ${err.message}. Retrying in background...`);
       });

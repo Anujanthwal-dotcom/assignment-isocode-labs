@@ -11,7 +11,7 @@ describe('OtpService Unit Tests (Redis-Backed)', () => {
   beforeEach(() => {
     mockConfigService = {
       get: vi.fn().mockImplementation((key: string, defaultValue?: any) => {
-        if (key === 'nodeEnv') return 'test';
+        if (key === 'nodeEnv') return 'development';
         if (key === 'demoOtp.enabled') return true;
         if (key === 'demoOtp.code') return '123456';
         if (key === 'demoOtp.emails') return ['customer@example.com', 'customer2@example.com'];
@@ -72,6 +72,51 @@ describe('OtpService Unit Tests (Redis-Backed)', () => {
         'otp:email:customer@example.com',
         expect.stringContaining('"attempts":0'),
       );
+    });
+  });
+
+  describe('Production Environment Gating (NODE_ENV=production)', () => {
+    let prodOtpService: OtpService;
+
+    beforeEach(() => {
+      const prodConfigService = {
+        get: vi.fn().mockImplementation((key: string, defaultValue?: any) => {
+          if (key === 'nodeEnv') return 'production';
+          if (key === 'demoOtp.enabled') return true; // Even if true, production overrides
+          if (key === 'demoOtp.code') return '123456';
+          if (key === 'demoOtp.emails') return ['customer@example.com', 'customer2@example.com'];
+          return defaultValue ?? null;
+        }),
+      };
+
+      prodOtpService = new OtpService(prodConfigService as any, mockRedisService, mockMailService);
+    });
+
+    it('does NOT pre-seed demo accounts in Redis during onModuleInit in production', async () => {
+      await prodOtpService.onModuleInit();
+      expect(mockRedisService.set).not.toHaveBeenCalled();
+    });
+
+    it('treats demo customer as regular customer: dispatches real email and omits developmentOtp in production', async () => {
+      mockRedisService.incr.mockResolvedValue(1);
+
+      const res = await prodOtpService.requestOtp('customer@example.com');
+      expect(res.success).toBe(true);
+      expect(res.developmentOtp).toBeUndefined();
+      expect(mockMailService.sendLoginOtpEmail).toHaveBeenCalledWith(
+        'customer@example.com',
+        expect.any(String),
+      );
+    });
+
+    it('deletes key on success in production instead of preserving it', async () => {
+      mockRedisService.get.mockResolvedValue(
+        JSON.stringify({ code: '555888', attempts: 0, isDemo: true, createdAt: Date.now() }),
+      );
+
+      const verified = await prodOtpService.verifyOtp('customer@example.com', '555888');
+      expect(verified).toBe(true);
+      expect(mockRedisService.del).toHaveBeenCalledWith('otp:email:customer@example.com');
     });
   });
 

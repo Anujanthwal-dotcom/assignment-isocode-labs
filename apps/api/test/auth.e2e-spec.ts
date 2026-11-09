@@ -4,12 +4,14 @@ import request from 'supertest';
 import cookieParser from 'cookie-parser';
 import { AppModule } from '../src/app.module';
 import { PrismaService } from '../src/prisma/prisma.service';
+import { RedisService } from '../src/redis/redis.service';
 import { UserRole, UserStatus } from '@prisma/client';
 import { describe, it, expect, beforeAll, afterAll } from 'vitest';
 
 describe('Auth & RBAC Integration Tests (18 Scenarios)', () => {
   let app: INestApplication;
   let prisma: PrismaService;
+  let redis: RedisService;
 
   beforeAll(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
@@ -28,9 +30,16 @@ describe('Auth & RBAC Integration Tests (18 Scenarios)', () => {
     await app.init();
 
     prisma = app.get<PrismaService>(PrismaService);
+    redis = app.get<RedisService>(RedisService);
 
-    // Clean up OTP challenges and test users created in previous runs
+    // Clean up legacy OTP challenge rows and test users created in previous runs
     await prisma.otpChallenge.deleteMany({});
+
+    // OTP challenges and rate-limit counters live in Redis; clear them so reruns are deterministic
+    const otpKeys = await redis.getClient().keys('otp:*');
+    if (otpKeys.length > 0) {
+      await redis.getClient().del(...otpKeys);
+    }
   }, 30000);
 
   afterAll(async () => {
@@ -131,11 +140,8 @@ describe('Auth & RBAC Integration Tests (18 Scenarios)', () => {
       .send({ phone: testPhone })
       .expect(200);
 
-    // Manually expire the challenge in DB
-    await prisma.otpChallenge.updateMany({
-      where: { phone: testPhone, consumedAt: null },
-      data: { expiresAt: new Date(Date.now() - 1000) },
-    });
+    // OTP challenges are stored in Redis; remove the key to simulate expiration
+    await redis.del(`otp:phone:${testPhone}`);
 
     await request(app.getHttpServer())
       .post('/api/v1/auth/customer/verify-otp')

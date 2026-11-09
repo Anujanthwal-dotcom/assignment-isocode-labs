@@ -10,6 +10,7 @@ import { ConfigService } from '@nestjs/config';
 import { OtpPurpose } from '@prisma/client';
 import * as crypto from 'crypto';
 import { normalizeEmail, normalizePhone } from '@pharmacy/validation';
+import { isDemoIdentifier } from '../constants/demo-accounts';
 import { RedisService } from '../../redis/redis.service';
 import { MailService } from '../../mail/mail.service';
 
@@ -33,9 +34,9 @@ export class OtpService implements OnModuleInit {
     private readonly redisService: RedisService,
     private readonly mailService: MailService,
   ) {
-    const nodeEnv = this.configService.get<string>('nodeEnv') || process.env.NODE_ENV;
-    this.isDev = nodeEnv === 'development' || nodeEnv === 'test';
-    this.demoEnabled = this.configService.get<boolean>('demoOtp.enabled', true);
+    const nodeEnv = this.configService.get<string>('nodeEnv', 'development');
+    this.isDev = nodeEnv === 'development';
+    this.demoEnabled = this.isDev && this.configService.get<boolean>('demoOtp.enabled', true);
     this.demoCode = this.configService.get<string>('demoOtp.code', '123456');
     this.demoEmails = this.configService.get<string[]>('demoOtp.emails', [
       'customer@example.com',
@@ -44,7 +45,7 @@ export class OtpService implements OnModuleInit {
   }
 
   async onModuleInit(): Promise<void> {
-    if (this.demoEnabled) {
+    if (this.demoEnabled && this.isDev) {
       try {
         for (const email of this.demoEmails) {
           const clean = normalizeEmail(email);
@@ -68,8 +69,8 @@ export class OtpService implements OnModuleInit {
 
   /**
    * Request OTP code for customer email (or legacy phone).
-   * For demo customers: sets fixed OTP in Redis without TTL.
-   * For regular customers: sets random OTP in Redis with 5-minute TTL and sends via Brevo/Mailpit.
+   * For demo customers (in development mode only): sets fixed OTP in Redis without TTL.
+   * For regular customers: sets random OTP in Redis with 5-minute TTL and sends via Brevo/Mail.
    */
   async requestOtp(
     rawIdentifier: string,
@@ -85,10 +86,12 @@ export class OtpService implements OnModuleInit {
     const key = isEmail ? `otp:email:${identifier}` : `otp:phone:${identifier}`;
     const rateLimitKey = `otp:ratelimit:${isEmail ? 'email' : 'phone'}:${identifier}`;
 
-    // 1. Check if demo account
+    // 1. Check if demo account (ONLY in development mode)
     const isDemoAccount =
+      this.isDev &&
       this.demoEnabled &&
-      ((isEmail && this.demoEmails.includes(identifier)) ||
+      (isDemoIdentifier(identifier) ||
+        (isEmail && this.demoEmails.includes(identifier)) ||
         (!isEmail && (identifier === '9876543210' || identifier === '9876543211')));
 
     if (isDemoAccount) {
@@ -190,16 +193,16 @@ export class OtpService implements OnModuleInit {
       );
     }
 
-    // Check code match
+    // Check code match (demo bypass and fallback ONLY in development mode)
     const isCodeMatch =
       data.code === code.trim() ||
-      (data.isDemo && code.trim() === this.demoCode) ||
+      (this.isDev && this.demoEnabled && data.isDemo && code.trim() === this.demoCode) ||
       (this.isDev && code.trim() === '123456');
 
     if (!isCodeMatch) {
       data.attempts += 1;
       const remainingTtl = await this.redisService.ttl(key);
-      if (data.isDemo) {
+      if (this.isDev && this.demoEnabled && data.isDemo) {
         await this.redisService.set(key, JSON.stringify(data));
       } else if (remainingTtl > 0) {
         await this.redisService.set(key, JSON.stringify(data), remainingTtl);
@@ -208,9 +211,9 @@ export class OtpService implements OnModuleInit {
     }
 
     // On success:
-    // If regular user: strictly delete key for single-use enforcement
-    // If demo customer: keep persistent in Redis for repeated evaluation logins
-    if (!data.isDemo) {
+    // If regular user (or in production): strictly delete key for single-use enforcement
+    // If demo customer in development: keep persistent in Redis for repeated evaluation logins
+    if (!this.isDev || !this.demoEnabled || !data.isDemo) {
       await this.redisService.del(key);
     } else {
       data.attempts = 0;

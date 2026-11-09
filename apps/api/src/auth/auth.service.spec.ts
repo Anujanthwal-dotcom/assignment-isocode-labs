@@ -40,6 +40,12 @@ describe('AuthService Unit Tests', () => {
       sendWelcomeEmail: jest.fn().mockResolvedValue({ messageId: 'm-1', provider: 'mock' }),
       sendLoginOtpEmail: jest.fn().mockResolvedValue({ messageId: 'm-2', provider: 'mock' }),
     };
+    const mockConfigService = {
+      get: jest.fn().mockImplementation((key: string, defaultVal?: any) => {
+        if (key === 'nodeEnv') return 'development';
+        return defaultVal ?? null;
+      }),
+    };
 
     authService = new AuthService(
       mockUsersService,
@@ -48,6 +54,7 @@ describe('AuthService Unit Tests', () => {
       mockSessionService,
       mockAuditService,
       mockMailService as any,
+      mockConfigService as any,
     );
   });
 
@@ -281,6 +288,77 @@ describe('AuthService Unit Tests', () => {
       expect(res.success).toBe(true);
       expect(res.developmentOtp).toBe('123456');
       expect(mockOtpService.requestOtp).toHaveBeenCalledWith('customer@example.com');
+    });
+  });
+
+  describe('Demo Credentials Environment Gating (NODE_ENV=production)', () => {
+    let prodAuthService: AuthService;
+
+    beforeEach(() => {
+      const prodConfigService = {
+        get: jest.fn().mockImplementation((key: string, defaultVal?: any) => {
+          if (key === 'nodeEnv') return 'production';
+          return defaultVal ?? null;
+        }),
+      };
+
+      prodAuthService = new AuthService(
+        mockUsersService,
+        mockOtpService,
+        mockTokenService,
+        mockSessionService,
+        mockAuditService,
+        { sendWelcomeEmail: jest.fn(), sendLoginOtpEmail: jest.fn() } as any,
+        prodConfigService as any,
+      );
+    });
+
+    it('rejects demo staff login with 401 Unauthorized in production', async () => {
+      await expect(
+        prodAuthService.staffLogin('pharmacist@example.com', 'DemoPassword123!'),
+      ).rejects.toThrow(
+        new UnauthorizedException(
+          'Demo credentials are only permitted when NODE_ENV is set to development.',
+        ),
+      );
+    });
+
+    it('rejects demo customer login initiation with 401 Unauthorized in production', async () => {
+      await expect(
+        prodAuthService.initiateCustomerLogin('customer@example.com', 'DemoPassword123!'),
+      ).rejects.toThrow(
+        new UnauthorizedException(
+          'Demo credentials are only permitted when NODE_ENV is set to development.',
+        ),
+      );
+    });
+
+    it('rejects demo customer OTP verification with 401 Unauthorized in production', async () => {
+      await expect(
+        prodAuthService.verifyCustomerOtp('customer@example.com', '123456'),
+      ).rejects.toThrow(
+        new UnauthorizedException(
+          'Demo credentials are only permitted when NODE_ENV is set to development.',
+        ),
+      );
+    });
+
+    it('allows non-demo staff login in production', async () => {
+      const password = 'RealSuperSecurePassword456!';
+      const hash = await argon2.hash(password, { type: argon2.argon2id });
+
+      mockUsersService.findByEmail.mockResolvedValue({
+        id: 'real-pharmacist-99',
+        email: 'realpharmacist@kolkataclinic.in',
+        role: UserRole.PHARMACIST,
+        status: UserStatus.ACTIVE,
+        passwordHash: hash,
+        pharmacistProfile: { fullName: 'Dr. Debasish Sen', storeId: 'store-1' },
+      });
+
+      const res = await prodAuthService.staffLogin('realpharmacist@kolkataclinic.in', password);
+      expect(res.user.id).toBe('real-pharmacist-99');
+      expect(res.accessToken).toBe('jwt_token');
     });
   });
 });

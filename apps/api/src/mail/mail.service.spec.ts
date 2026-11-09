@@ -1,5 +1,6 @@
 import { MailService } from './mail.service';
 import { MockMailProvider } from './providers/mock-mail.provider';
+import { SmtpProvider } from './providers/smtp.provider';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 describe('MailService Unit Tests', () => {
@@ -9,9 +10,9 @@ describe('MailService Unit Tests', () => {
   beforeEach(() => {
     mockConfigService = {
       get: vi.fn().mockImplementation((key: string, defaultValue?: any) => {
-        if (key === 'nodeEnv') return 'test';
-        if (key === 'mail.provider') return 'brevo';
-        if (key === 'mail.apiKey') return 'test-brevo-api-key';
+        if (key === 'mail.provider') return 'mock';
+        if (key === 'mail.smtpUser') return '';
+        if (key === 'mail.smtpKey') return '';
         if (key === 'mail.fromEmail') return 'no-reply@kolkatapharmacy.com';
         if (key === 'mail.fromName') return 'Kolkata Pharmacy';
         return defaultValue ?? null;
@@ -21,9 +22,39 @@ describe('MailService Unit Tests', () => {
     mailService = new MailService(mockConfigService);
   });
 
-  it('initializes with MockMailProvider in test environment', () => {
+  it('initializes with MockMailProvider when MAIL_PROVIDER=mock', () => {
     const provider = mailService.getProvider();
     expect(provider).toBeInstanceOf(MockMailProvider);
+  });
+
+  it('initializes with SmtpProvider when Brevo SMTP credentials are provided', () => {
+    const brevoConfigService = {
+      get: vi.fn().mockImplementation((key: string, defaultValue?: any) => {
+        if (key === 'mail.provider') return 'brevo';
+        if (key === 'mail.host') return 'smtp-relay.brevo.com';
+        if (key === 'mail.smtpPort') return 587;
+        if (key === 'mail.smtpUser') return 'user@example.com';
+        if (key === 'mail.smtpKey') return 'xsmtpsib-secret-key';
+        if (key === 'mail.fromEmail') return 'no-reply@kolkatapharmacy.com';
+        if (key === 'mail.fromName') return 'Kolkata Pharmacy';
+        return defaultValue ?? null;
+      }),
+    };
+
+    const brevoMailService = new MailService(brevoConfigService as any);
+    expect(brevoMailService.getProvider()).toBeInstanceOf(SmtpProvider);
+  });
+
+  it('falls back to MockMailProvider when Brevo credentials are not configured', () => {
+    const unconfiguredService = {
+      get: vi.fn().mockImplementation((key: string, defaultValue?: any) => {
+        if (key === 'mail.provider') return 'brevo';
+        return defaultValue ?? null;
+      }),
+    };
+
+    const fallbackMailService = new MailService(unconfiguredService as any);
+    expect(fallbackMailService.getProvider()).toBeInstanceOf(MockMailProvider);
   });
 
   it('sends login OTP email with branded template', async () => {

@@ -12,6 +12,7 @@ describe('RedisService Unit Tests', () => {
         if (key === 'redis.host') return 'localhost';
         if (key === 'redis.port') return 6379;
         if (key === 'redis.password') return 'secret';
+        if (key === 'redis.eagerConnect') return false;
         return defaultValue ?? null;
       }),
     };
