@@ -3,8 +3,8 @@
 **Project GitHub Repository**: [https://github.com/Anujanthwal-dotcom/assignment-isocode-labs](https://github.com/Anujanthwal-dotcom/assignment-isocode-labs)  
 **Live Application Staging Link**: [http://localhost:3000](http://localhost:3000) _(Docker Compose staging available via `pnpm infra:up && pnpm dev`)_  
 **Client**: Company A — Retail Pharmacy Chain, Kolkata & Howrah (46 Retail Stores & Central Distribution Warehouse)  
-**Target Audience**: Managing Director, Head of Engineering, Central Clinical Operations, Compliance Officers  
-**Author**: Engineering Team  
+**Target Audience**: Isocode Evaluation Team  
+**Author**: Anuj Anthwal  
 **Date**: November 2026  
 **Document Version**: 1.0.0 (Production Architecture Specification)
 
@@ -21,6 +21,7 @@
 7. [Engineering Scope Trade-Offs & Future Roadmap](#7-engineering-scope-trade-offs--future-roadmap)
 8. [Regulatory Compliance & Information Security (DPDP Act & DCA)](#8-regulatory-compliance--information-security-dpdp-act--dca)
 9. [Budget, Timeline & Target Performance Metrics](#9-budget-timeline--target-performance-metrics)
+10. [Conclusion & Architectural Readiness](#10-conclusion--architectural-readiness)
 
 ---
 
@@ -65,14 +66,14 @@ Based on Company A's operational data:
 
 - **Customer Base**: 9,000 regular chronic medicine customers spending an average of **₹2,200 per month**.
 - **Customer Drop-Off**: **20% (1,800 patients)** skip doses or defect to competitors each month due to forgotten refills or localized stockouts.
-- **Gross Margin Leakage**:  
-  $$\text{1,800 patients} \times \text{₹2,200/month} = \text{₹39.60 lakh gross sales lost/month}$$  
-  $$\text{₹39.60 lakh} \times 18\% \text{ gross margin} = \text{₹7.13 lakh lost margin/month} \implies \mathbf{₹85.54 \text{ \textbf{lakh/year}}}$$
-- **Labor Waste on WhatsApp Coordination**:  
-  $$\text{600 orders/day} \times 6 \text{ minutes labor} = 60 \text{ staff hours/day}$$  
-  $$60 \text{ hours/day} \times 360 \text{ operational days} \times \text{₹220/hour cost} = \mathbf{₹47.52 \text{ \textbf{lakh/year}}}$$
-- **Total Annual Recoverable Loss**:  
-  $$\mathbf{₹85.54 \text{ lakh}} + \mathbf{₹47.52 \text{ lakh}} = \mathbf{₹1.33 \text{ \textbf{crore per year}}}$$
+- **Gross Margin Leakage**:
+  - 1,800 patients × ₹2,200/month = **₹39.60 lakh** gross sales lost/month
+  - ₹39.60 lakh × 18% gross margin = **₹7.13 lakh** lost margin/month → **₹85.54 lakh/year**
+- **Labor Waste on WhatsApp Coordination**:
+  - 600 orders/day × 6 minutes labor = 60 staff hours/day
+  - 60 hours/day × 360 operational days × ₹220/hour cost = **₹47.52 lakh/year**
+- **Total Annual Recoverable Loss**:
+  - ₹85.54 lakh + ₹47.52 lakh = **₹1.33 crore/year**
 
 ### 1.4 The Strategic Objective
 
@@ -82,6 +83,26 @@ Build a centralized, multi-store digital ordering and clinical verification plat
 2. **Deterministic Clinical Verification**: Mandatory registered pharmacist review of every prescription before order creation, eliminating legal liability.
 3. **Automated Nearest-Store Routing**: Inventory-aware dynamic routing across 46 stores from daily stock CSV snapshots, including multi-store split fulfilment.
 4. **Single-Pane-of-Glass Operations**: Unified operations overview across all 46 stores for central management.
+
+### 1.5 System & Architectural Assumptions
+
+To establish clear operational boundaries and streamline end-to-end engineering implementation, the platform architecture is structured around four primary assumptions:
+
+1. **Email-Password Primary Authentication**:
+   - The **Email-Password method is the primary way to login** across all four platform portals.
+   - User identity is secured with industry-standard cryptographic password hashing (Argon2id), JWT session issuance with secure HTTP-only cookies / bearer authorization, Redis-backed brute-force rate limiting, and automated email password reset flows via Brevo SMTP relay.
+2. **Split Order Creation for Multi-Store Fulfillment**:
+   - **If a single store cannot fulfill the order, multiple child orders are created for the fulfilment of it**.
+   - When no single retail branch holds 100% of the prescribed line items, the Haversine dynamic routing engine splits the verified quotation into discrete child orders across the nearest available branch stores (e.g., Store A fulfills in-stock cardiac medicines; Store B fulfills remaining endocrine medicines) to guarantee fulfillment and eliminate customer drop-off.
+3. **Consolidated Payment for Order Bundles**:
+   - **The user will pay for the bundle of orders in a single consolidated transaction**.
+   - Customers never face fragmented payments or repeated checkout steps. The system aggregates all child fulfillment orders under a unified parent order bundle. The customer authorizes payment once (via UPI simulator, Net Banking, or single Cash on Delivery), and the backend ledger handles atomic stock reservations, fulfillment tracking, and store-level reconciliations transparently.
+4. **Quad-Portal Role Architecture (4 Specialized Portals)**:
+   - **4 dedicated portals are created for customer, pharmacist, store staff, and admin** personas:
+     - **Customer Portal** (`/customer`): Patient and caregiver interface for 1-minute chronic reordering, prescription uploads, family profile management, quotation approval, and unified bundle tracking.
+     - **Pharmacist Portal** (`/pharmacist`): Clinical verification interface featuring side-by-side zoomable prescription review, AI OCR validation, Schedule H/H1 compliance tagging, and quotation authoring.
+     - **Store Staff Portal** (`/staff`): Retail store terminal for daily stock CSV snapshot injection, digital pick-and-pack checklists, batch number recording, and delivery courier handover.
+     - **Admin Portal** (`/admin`): Central management dashboard providing chain-wide operational visibility across all 46 stores, real-time revenue and margin telemetry, stockout alerts, and DPDP / Schedule H1 statutory compliance audits.
 
 ---
 
@@ -94,14 +115,14 @@ The platform is engineered as an enterprise-grade **pnpm workspace monorepo** (`
 ```text
 pharmacy-platform/
 ├── apps/
-│   ├── web/                     # Next.js 15 (App Router, React 19, Tailwind CSS v4)
-│   │   ├── src/app/customer/    # Patient portal: OTP auth, 1-tap reorder, cart, refills, tracking
+│   ├── web/                     # Next.js 16.4.5 (App Router, React 19.3.1, Tailwind CSS v4)
+│   │   ├── src/app/customer/    # Patient portal: Email-password auth, 1-tap reorder, cart, refills, tracking
 │   │   ├── src/app/pharmacist/  # Clinical portal: Side-by-side verification, quotes, H1 register
 │   │   ├── src/app/staff/       # Retail store portal: Daily CSV injection, pick, pack, handover
 │   │   ├── src/app/admin/       # Central command: Multi-store metrics, compliance, catalogue
 │   │   └── src/components/      # Shared atomic UI components (design system)
 │   │
-│   └── api/                     # NestJS 11 (REST API, TypeScript 5.9, Prisma ORM, BullMQ)
+│   └── api/                     # NestJS 12.4.0 (REST API, TypeScript 5.9, Prisma ORM, BullMQ)
 │       ├── src/prescriptions/   # S3 file handling, Gemini multimodal OCR extraction, quotes
 │       ├── src/order-routing/   # Haversine distance matrix, greedy multi-store routing engine
 │       ├── src/inventory/       # Store balance management, 2-step CSV injection pipeline
@@ -117,14 +138,20 @@ pharmacy-platform/
 │
 └── infrastructure/
     └── docker/
-        └── docker-compose.yml   # Containerized PostgreSQL 16, Redis 7, MinIO S3, Mailpit SMTP
+        └── docker-compose.yml   # Containerized PostgreSQL 16, Redis 7, MinIO S3
 ```
+
+> **Verified framework baseline (from `pnpm-lock.yaml` and installed `node_modules`):**
+> - **`apps/web`** — Next.js **16.4.5** (declared `^16.4.5`) with React / React-DOM **19.3.1**.
+> - **`apps/api`** — NestJS **12.4.0** (`@nestjs/core`, `@nestjs/common`, `@nestjs/platform-express`; declared `^12.4.0`), Nest CLI **12.0.12**, `@nestjs/schematics` **12.0.13**.
+>
+> These are the resolved/locked versions in `pnpm-lock.yaml` (`lockfileVersion 9.0`), confirmed against the installed workspace `node_modules` — not just the declared semver ranges.
 
 ### 2.2 System Architecture Diagram
 
 ```mermaid
 flowchart TB
-    subgraph PresentationLayer["Presentation Layer (Next.js 15 App Router :3000)"]
+    subgraph PresentationLayer["Presentation Layer (Next.js 16 App Router :3000)"]
         direction TB
         CP["Customer Portal\n(Mobile-First Caregiver UX)"]
         PP["Pharmacist Terminal\n(Side-by-Side Review Queue)"]
@@ -132,7 +159,7 @@ flowchart TB
         AP["Admin Operations\n(Central 46-Store Command)"]
     end
 
-    subgraph GatewayLayer["API Gateway & Services (NestJS 11 :3001)"]
+    subgraph GatewayLayer["API Gateway & Services (NestJS 12 :3001)"]
         direction TB
         Auth["Auth & RBAC Guards\n(JWT, Redis Session Cache, Argon2)"]
         RxService["Prescription & Quoting Module"]
@@ -146,7 +173,7 @@ flowchart TB
         Postgres[("PostgreSQL 16\nACID Transactional DB\n:5432")]
         RedisQueue[("Redis 7\nBullMQ Queues & Rate Limits\n:6379")]
         MinIOS3[("MinIO Object Storage\nEncrypted Rx Documents\n:9000")]
-        Mailpit[("Mailpit SMTP\nNotification Catcher\n:8025")]
+        BrevoSMTP[("Brevo SMTP\nNodemailer Relay\n:587")]
     end
 
     subgraph ExternalIntelligence["Clinical AI Intelligence"]
@@ -169,18 +196,18 @@ flowchart TB
     InvService --> Postgres
     RefillService --> Postgres
     CompService --> Postgres
-    RefillService --> Mailpit
+    Auth --> BrevoSMTP
 ```
 
 ### 2.3 Technology Selection Rationale
 
 | Layer / Technology     | Choice                    | Alternative Considered             | Rationale & Architectural Justification                                                                                                                                                                                      |
 | :--------------------- | :------------------------ | :--------------------------------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Backend Framework**  | **NestJS 11 (Node.js)**   | Express, Go Gin, Python FastAPI    | Strict TypeScript dependency injection enforces clear domain boundaries between compliance, routing, and inventory modules. Built-in lifecycle interceptors and guards ensure mandatory RBAC enforcement.                    |
-| **Frontend Framework** | **Next.js 15 (React 19)** | Single Page App (Vite/React)       | Server-driven routing for 4 distinct user portals in a single app, optimized mobile asset delivery, zero-bundle server components, and Tailwind CSS v4 design token uniformity.                                              |
+| **Backend Framework**  | **NestJS 12.4.0 (Node.js)**   | Express, Go Gin, Python FastAPI    | Strict TypeScript dependency injection enforces clear domain boundaries between compliance, routing, and inventory modules. Built-in lifecycle interceptors and guards ensure mandatory RBAC enforcement.                    |
+| **Frontend Framework** | **Next.js 16.4.5 (React 19.3.1)** | Single Page App (Vite/React)       | Server-driven routing for 4 distinct user portals in a single app, optimized mobile asset delivery, zero-bundle server components, and Tailwind CSS v4 design token uniformity.                                              |
 | **Primary Database**   | **PostgreSQL 16**         | MongoDB, MySQL                     | High-volume pharmaceutical operations demand strict ACID transactions for stock reservations, preventing race conditions or overselling across 46 stores. Robust support for decimal financial types and JSONB audit trails. |
 | **ORM & Schema**       | **Prisma ORM**            | TypeORM, Drizzle                   | End-to-end type safety synchronizing database migrations with frontend and backend TypeScript types. Declarative relation tracking prevents orphaned prescription records.                                                   |
-| **Task Queue & Cache** | **Redis 7 + BullMQ**      | RabbitMQ, AWS SQS                  | Decouples resource-intensive AI multimodal vision tasks from the customer's HTTP request-response cycle. Redis provides microsecond rate-limiting for OTP authentication and session token invalidation.                     |
+| **Task Queue & Cache** | **Redis 7 + BullMQ**      | RabbitMQ, AWS SQS                  | Decouples resource-intensive AI multimodal vision tasks from the customer's HTTP request-response cycle. Redis provides microsecond rate-limiting for login authentication and session token invalidation.                     |
 | **Document Storage**   | **MinIO S3**              | Local disk storage, MongoDB GridFS | Industry-standard S3 API compatibility. Ensures zero public bucket exposure; document access is restricted to time-limited HMAC pre-signed URLs with audit logging under DPDP Act requirements.                              |
 | **AI Vision Engine**   | **Gemini 1.5 Flash**      | Tesseract OCR, AWS Textract        | Superior Indian medical handwriting recognition, bilingual English/Bengali doctor prescription deciphering, and native JSON output structured to our medicine catalogue schema.                                              |
 
@@ -447,7 +474,7 @@ The user interface was crafted following strict healthcare design guidelines:
 | **2** | **Prescription Upload Screen** (`/customer/prescriptions`)                          | Patient / Caregiver                 | Drag-and-drop zone, camera capture button, family profile selector dropdown, and reassuring privacy guarantee badges.                                                                 | Reduces friction in prescription attachment; family profiles ensure clear separation between father's cardiac drugs and mother's thyroid medicines. |
 | **3** | **Pharmacist Side-by-Side Review Queue** (`/pharmacist/review-queue`, `.../verify`) | Registered Pharmacist               | Split-screen interface: left pane displays high-resolution zoomable scanned prescription; right pane displays AI draft medicines alongside live store inventory and catalogue lookup. | Allows instantaneous visual cross-verification without switching tabs or losing clinical context; reduces verification time to under 5 minutes.     |
 | **4** | **Verified Quotation & Checkout** (`/customer/checkout`, `/customer/prescriptions`) | Patient / Caregiver                 | Transparent breakdown of pharmacist-approved medicines, unavailable item notices, delivery address selector, and UPI/COD toggles.                                                     | Fosters clinical trust; customer knows exactly what was approved and the exact cost before financial commitment.                                    |
-| **5** | **Store Fulfilment Terminal** (`/staff/fulfilment`, `.../pick`, `.../pack`)         | Retail Store Staff                  | High-contrast picking checklist with batch number input, tamper-evident packing verification, invoice generation button, and delivery handover logger.                                | Eliminates picking errors; enforces physical verification before invoice generation and physical delivery handover.                                 |
+| **5** | **Store Fulfilment Terminal** (`/staff/fulfilment`, `.../pick`, `.../pack`, `.../store`, `.../handover`) | Retail Store Staff | 4-stage operational flow: digital picking checklist with per-item confirm & exception flagging, statutory pre-packing verification, holding shelf / bin staging (`READY_FOR_HANDOVER`), and courier delivery handover logger. | Eliminates picking errors; enforces physical verification before invoice generation, staging control, and physical delivery handover. |
 | **6** | **Central Multi-Store Admin Overview** (`/admin`, `/admin/stores`)                  | Managing Director / Operations Head | Consolidated dashboard tracking total revenue, order volume across all 46 stores, median verification latency, and stock-out alerts.                                                  | Provides central management with real-time operational visibility across the entire Kolkata/Howrah chain.                                           |
 
 ---
@@ -513,7 +540,7 @@ Dispensing pharmaceuticals in India is strictly governed by the Drugs and Cosmet
 
 Prescription scans, medical histories, and chronic disease profiles constitute sensitive personal health data under the DPDP Act 2023:
 
-1. **Storage Encryption**: All prescription files uploaded to MinIO/S3 are stored in private buckets inaccessible to the public internet. Document access uses HMAC SHA-256 pre-signed URLs expiring within 15 minutes.
+1. **Storage Encryption**: All prescription files uploaded to MinIO/S3 are encrypted at rest using Server-Side Encryption (AES-256 / AWS KMS via `X-Amz-Server-Side-Encryption`) and stored in private buckets inaccessible to the public internet. Document access uses HMAC SHA-256 pre-signed URLs expiring within 5 to 15 minutes.
 2. **Role-Based Access Control (RBAC)**: Enforced via cryptographic NestJS guards (`RolesGuard`). Store staff can view only the orders assigned to their store; pharmacists can view only clinical queues; customers can view only their own and their registered family members' data.
 3. **Comprehensive Audit Logging**: Every view, download, verification, approval, and rejection of a prescription is logged immutably in the `AuditLog` table with actor user ID, IP address, and timestamp.
 4. **Data Minimization & Patient Consent**: Quotations and generic alternative switches require explicit, logged patient consent before proceeding to financial execution.

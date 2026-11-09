@@ -29,7 +29,7 @@ pharmacy-platform/
 │
 ├── infrastructure/
 │   └── docker/
-│       └── docker-compose.yml   # Containerized services (PostgreSQL, Redis, MinIO, Mailpit)
+│       └── docker-compose.yml   # Containerized services (PostgreSQL, Redis, MinIO)
 │
 └── docs/                        # Architectural documentation, demo guides, audit reports
 ```
@@ -57,7 +57,7 @@ flowchart TB
         Postgres[("PostgreSQL 16\nRelational DB :5432")]
         RedisCache[("Redis 7\nCache & BullMQ :6379")]
         MinIOStore[("MinIO S3 Storage\nPrivate Prescriptions :9000")]
-        MailpitSmtp[("Mailpit SMTP\nNotification Capture :1025/:8025")]
+        BrevoSmtp[("Brevo SMTP\nNodemailer Relay :587")]
         GeminiAI["Google Gemini 1.5 Flash\nMultimodal Vision LLM"]
     end
 
@@ -79,7 +79,7 @@ flowchart TB
     RoutingEngine --> Postgres
     InventoryModule --> Postgres
     ComplianceModule --> Postgres
-    AuthModule --> MailpitSmtp
+    AuthModule --> BrevoSmtp
 ```
 
 ---
@@ -92,8 +92,8 @@ All stateful dependencies are provisioned via Docker Compose (`infrastructure/do
 | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
 | **PostgreSQL** | `pharmacy-postgres` | `postgres:16-alpine` | `5432` | `5432` | `postgresql://` | Primary relational store for ACID transactions, catalogue, order states, store inventories, and immutable audit logs. |
 | **Redis** | `pharmacy-redis` | `redis:7-alpine` | `6379` | `6379` | `redis://` | OTP delivery tokens and rate limits, refresh-token sessions (with native TTL-based expiry and revocation), and BullMQ task queues for asynchronous background processing. |
-| **MinIO** | `pharmacy-minio` | `minio/minio:latest` | `9000`<br/>`9001` (UI) | `9000`<br/>`9001` | S3 API / HTTP | Private S3-compatible object storage for uploaded prescription images and documents. No public bucket access is permitted; signed short-lived URLs are generated on demand. |
-| **Mailpit** | `pharmacy-mailpit` | `axllent/mailpit:latest` | `1025`<br/>`8025` (UI) | `1025`<br/>`8025` | SMTP / HTTP | Local mail capture server for OTP authentication emails, quotation notifications, and order delivery confirmations without third-party email leakage. |
+| **MinIO** | `pharmacy-minio` | `minio/minio:latest` | `9000`<br/>`9001` (UI) | `9000`<br/>`9001` | S3 API / HTTP | Private S3-compatible object storage for uploaded prescription images and documents with Server-Side Encryption at rest (SSE-S3 / SSE-KMS via `X-Amz-Server-Side-Encryption`). No public bucket access is permitted; signed short-lived URLs are generated on demand. |
+| **Brevo** | *External Cloud* | N/A | `587` | `587` | SMTP (Nodemailer) | Transactional email delivery service for login OTP verification and welcome customer onboarding emails. |
 | **Google Gemini AI** | *External Cloud* | `gemini-1.5-flash` | N/A | 443 (HTTPS) | Google AI SDK / LangChain | Multimodal vision model for optical character recognition (OCR), handwritten medicine identification, dosage parsing, and safety warning generation. Includes deterministic mock provider fallback. |
 
 ### Health Verification & Probes
@@ -203,6 +203,13 @@ flowchart TD
 - The payment transaction covers the full subtotal and single delivery fee.
 - Each store receives a distinct sub-order (`Order` record) containing only the items they hold in stock, complete with local packing slips and delivery handovers.
 
+### Store Fulfilment Lifecycle & State Progression
+In the Store Staff Portal (`/staff/fulfilment`), store staff members sequentially mark each operational stage for their allocated order:
+1. **Pick** (`/staff/fulfilment/[orderId]/pick`): Staff checks physical pharmacy shelves, verifies item SKUs and quantities, and marks items picked (or flags exceptions if stock is damaged/missing). Order moves to `PICKING`.
+2. **Pack** (`/staff/fulfilment/[orderId]/pack`): Staff verifies brand integrity, batch shelf-life (> 6 months), and Schedule H/H1 statutory compliance, then marks packing complete. Order moves to `PACKED` and generates a local store tax invoice (`INV-STORE-...`).
+3. **Store** (`/staff/fulfilment/[orderId]/store`): Staff places the sealed package in the designated store holding shelf, staging bin, or cold-chain rack (e.g. `Shelf A-01`, `Cold Bin #2`). Order moves to `READY_FOR_HANDOVER`.
+4. **Handover to Delivery** (`/staff/fulfilment/[orderId]/handover`): Staff hands over the staged package to courier partner riders (Shadowfax, Dunzo, etc.) or counter collection, recording rider identity and AWB/tracking numbers. Stock is atomically decremented, stock reservations marked `CONSUMED`, and status transitions to `HANDED_OVER`. For COD orders, exact payment collection is verified and recorded.
+
 ---
 
 ## 6. Store-Level Inventory Management & Daily CSV Injection Pipeline
@@ -278,6 +285,6 @@ The platform adopts a unified, trusted healthcare design system across **all fou
 ## 8. Security & Statutory Compliance Standards
 
 1. **Authentication & Token Isolation**: Argon2id password hashing, HTTP-only secure cookie handling, short-lived JWT access tokens with Redis-backed revocation.
-2. **Prescription Confidentiality**: Documents are stored privately in MinIO. Presigned read URLs expire in 15 minutes and are issued only to authenticated users with valid ownership or clinical authorization.
+2. **Prescription Confidentiality & Encryption at Rest**: Documents are encrypted at rest using Server-Side Encryption (SSE-S3 / SSE-KMS with AES-256) and stored privately in MinIO/S3. Presigned read URLs expire in 5 to 15 minutes and are issued only to authenticated users with valid ownership or clinical authorization.
 3. **Statutory H1 Drug Register**: Dispensing any Schedule H1 medicine automatically creates an immutable, append-only `H1RegisterEntry` recording patient name, prescriber details, batch number, and verifying pharmacist registration number.
 4. **Audit Trail**: Sensitive actions (inventory adjustments, prescription rejections, price modifications) write to `AuditLogEntry` with actor IP address and pre/post state snapshots.

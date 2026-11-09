@@ -44,10 +44,15 @@ The core workflow is intentionally **prescription-first**: an uploaded prescript
 
 ### Store staff portal
 
-- Store-scoped live inventory and reorder levels
+- Store-scoped live inventory, balance monitoring, and reorder levels
 - Daily CSV stock snapshots with schema validation before any write
-- Atomic imports with row-level errors and rollback on failure
-- Picking, packing, invoicing, and physical handover
+- Atomic imports with row-level error reporting and rollback on failure
+- Multi-store single & split fulfilment queue (`/staff/fulfilment`) with sibling store shipment transparency
+- Complete 4-stage operational workflow:
+  1. **Pick** (`.../pick`): Digital shelf checklist, per-item pick confirmation, and stockout/damage exception reporting
+  2. **Pack** (`.../pack`): Statutory Good Pharmacy Practice checklist, tamper-evident packaging verification, and automatic tax invoice generation
+  3. **Store** (`.../store`): Physical staging shelf, holding bin, or cold-chain rack assignment (`READY_FOR_HANDOVER`)
+  4. **Handover to Delivery** (`.../handover`): Courier partner dispatch (Shadowfax, Dunzo, etc.), rider tracking references, and COD payment collection
 
 ### Admin and compliance portal
 
@@ -108,8 +113,7 @@ flowchart TB
 
     subgraph External["External services"]
         Gemini["Google Gemini<br/>(optional AI provider)"]
-        Brevo["Brevo<br/>transactional email"]
-        Mailpit["Mailpit<br/>local email capture"]
+        Brevo["Brevo<br/>transactional email (Nodemailer)"]
     end
 
     Customer --> UI
@@ -137,7 +141,6 @@ flowchart TB
 
     Redis -->|BullMQ jobs| Gemini
     Auth --> Brevo
-    Auth --> Mailpit
 ```
 
 ### Order lifecycle
@@ -166,7 +169,7 @@ A prescription never creates an order until it has been clinically reviewed, quo
 | Database         | PostgreSQL 16, Prisma ORM 6                                                     |
 | Cache and queues | Redis 7, ioredis, BullMQ                                                        |
 | Object storage   | MinIO (S3-compatible, private buckets, presigned URLs)                          |
-| Email            | Brevo (production), Mailpit (local)                                             |
+| Email            | Brevo (Nodemailer SMTP relay: `smtp-relay.brevo.com:587`)                      |
 | AI               | Deterministic mock provider or Google Gemini via LangChain                      |
 | Testing          | Vitest 5, Supertest, React Testing Library                                      |
 | Tooling          | Oxlint, Prettier, TypeScript                                                    |
@@ -188,23 +191,23 @@ A prescription never creates an order until it has been clinically reviewed, quo
 
 ### Optional credentials
 
-| Variable         | Purpose                                                                     |
-| ---------------- | --------------------------------------------------------------------------- |
-| `GEMINI_API_KEY` | Enables real AI prescription extraction (`PRESCRIPTION_AI_PROVIDER=gemini`) |
-| `BREVO_API_KEY`  | Enables transactional email in production (`MAIL_PROVIDER=brevo`)           |
+| Variable          | Purpose                                                                     |
+| ----------------- | --------------------------------------------------------------------------- |
+| `GEMINI_API_KEY`  | Enables real AI prescription extraction (`PRESCRIPTION_AI_PROVIDER=gemini`) |
+| `BREVO_SMTP_USER` | Brevo SMTP account login for live transactional email delivery             |
+| `BREVO_SMTP_KEY`  | Brevo SMTP key / master password for Nodemailer relay                       |
 
-Without these, the platform runs fully offline using the deterministic mock AI provider and Mailpit.
+Without these, the platform runs fully offline using deterministic mocks for AI and local development email.
 
 ### Local ports
 
-| Port            | Service               |
-| --------------- | --------------------- |
-| `3000`          | Next.js web           |
-| `3001`          | NestJS API            |
-| `5432`          | PostgreSQL            |
-| `6379`          | Redis                 |
-| `9000` / `9001` | MinIO API / console   |
-| `1025` / `8025` | Mailpit SMTP / web UI |
+| Port            | Service             |
+| --------------- | ------------------- |
+| `3000`          | Next.js web         |
+| `3001`          | NestJS API          |
+| `5432`          | PostgreSQL          |
+| `6379`          | Redis               |
+| `9000` / `9001` | MinIO API / console |
 
 ---
 
@@ -239,7 +242,7 @@ The defaults work for local development. Update `GEMINI_API_KEY` or `BREVO_API_K
 pnpm infra:up
 ```
 
-This starts PostgreSQL, Redis, MinIO, and Mailpit with health checks and named volumes.
+This starts PostgreSQL, Redis, and MinIO with health checks and named volumes.
 
 ### 5. Apply migrations and seed demo data
 
@@ -259,7 +262,6 @@ pnpm dev
 | `http://localhost:3000`               | Web portal selector |
 | `http://localhost:3001/api/v1/health` | API health          |
 | `http://localhost:3001/api/docs`      | Swagger UI          |
-| `http://localhost:8025`               | Mailpit inbox       |
 
 ### 7. Stop infrastructure
 
@@ -308,7 +310,7 @@ Integration tests expect the Docker services to be running and the database to b
 
 | Command                                       | Description                               |
 | --------------------------------------------- | ----------------------------------------- |
-| `pnpm infra:up`                               | Start PostgreSQL, Redis, MinIO, Mailpit   |
+| `pnpm infra:up`                               | Start PostgreSQL, Redis, MinIO            |
 | `pnpm infra:down`                             | Stop infrastructure containers            |
 | `pnpm infra:logs`                             | Follow infrastructure logs                |
 | `pnpm db:seed`                                | Seed demo stores, catalogue, and accounts |
@@ -326,7 +328,7 @@ In production, use `prisma migrate deploy` rather than `prisma migrate dev`, and
 
 - **AI extraction** defaults to a deterministic mock provider. Gemini can be enabled, but AI output is always a draft and never approves prescriptions or changes drug schedules.
 - **Payments** use an in-app UPI simulator and COD flow. No Razorpay/Cashfree webhooks or HMAC verification are implemented.
-- **SMS OTP** has no gateway integration. Customer OTP is delivered by email (Brevo or Mailpit). Demo OTP bypass is for local use only and must be disabled in production.
+- **SMS OTP** has no gateway integration. Customer OTP is delivered by email via Brevo. Demo credentials and demo OTP bypass are strictly gated to development mode (`NODE_ENV=development`) and fail in production.
 
 ### Fulfilment and routing
 
@@ -336,7 +338,7 @@ In production, use `prisma migrate deploy` rather than `prisma migrate dev`, and
 
 ### Infrastructure and operations
 
-- MinIO is suitable for local and single-server deployments. Production should use managed S3/GCS with KMS encryption and lifecycle policies.
+- MinIO is suitable for local and single-server deployments (configured with built-in KMS key and `MINIO_SERVER_SIDE_ENCRYPTION=AES256`). Production can use managed S3/GCS with AWS KMS encryption (`MINIO_SERVER_SIDE_ENCRYPTION=aws:kms` and `MINIO_KMS_KEY_ID`) and lifecycle policies.
 - Presigned prescription URLs are generated from `MINIO_ENDPOINT`. That endpoint must be reachable by the browser, or prescription previews will fail.
 - The repository's Compose file provisions backing infrastructure only; the API and web app run as host processes. High availability, autoscaling, centralized logging, metrics, and automated backups require additional infrastructure.
 - The demo seed creates accounts with known credentials and realistic demo data. Never run it against a production database.
