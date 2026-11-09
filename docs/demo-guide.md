@@ -43,7 +43,7 @@ This operational guide details the complete end-to-end scenarios for demonstrati
    - Click **"Upload & Analyze Prescription"**.
 3. **Observe AI Vision Extraction**:
    - Status transitions to `UNDER_REVIEW`.
-   - Background BullMQ job dispatches the image to Gemini 1.5 Flash.
+   - Background BullMQ job dispatches the image to Gemini 3.8 Flash.
    - Prescriber name, date, and medicines (`Amoxicillin 500 mg`, `Paracetamol 500 mg`) are extracted into structured candidate items.
 4. **Invariant Check**:
    - Open **My Orders** (`/customer/orders`).

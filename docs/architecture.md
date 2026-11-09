@@ -58,7 +58,7 @@ flowchart TB
         RedisCache[("Redis 7\nCache & BullMQ :6379")]
         MinIOStore[("MinIO S3 Storage\nPrivate Prescriptions :9000")]
         BrevoSmtp[("Brevo SMTP\nNodemailer Relay :587")]
-        GeminiAI["Google Gemini 1.5 Flash\nMultimodal Vision LLM"]
+        GeminiAI["Google Gemini 3.8 Flash\nMultimodal Vision LLM"]
     end
 
     Customer -->|REST API + Bearer JWT| AuthModule
@@ -94,7 +94,7 @@ All stateful dependencies are provisioned via Docker Compose (`infrastructure/do
 | **Redis** | `pharmacy-redis` | `redis:7-alpine` | `6379` | `6379` | `redis://` | OTP delivery tokens and rate limits, refresh-token sessions (with native TTL-based expiry and revocation), and BullMQ task queues for asynchronous background processing. |
 | **MinIO** | `pharmacy-minio` | `minio/minio:latest` | `9000`<br/>`9001` (UI) | `9000`<br/>`9001` | S3 API / HTTP | Private S3-compatible object storage for uploaded prescription images and documents with Server-Side Encryption at rest (SSE-S3 / SSE-KMS via `X-Amz-Server-Side-Encryption`). No public bucket access is permitted; signed short-lived URLs are generated on demand. |
 | **Brevo** | *External Cloud* | N/A | `587` | `587` | SMTP (Nodemailer) | Transactional email delivery service for login OTP verification and welcome customer onboarding emails. |
-| **Google Gemini AI** | *External Cloud* | `gemini-1.5-flash` | N/A | 443 (HTTPS) | Google AI SDK / LangChain | Multimodal vision model for optical character recognition (OCR), handwritten medicine identification, dosage parsing, and safety warning generation. Includes deterministic mock provider fallback. |
+| **Google Gemini AI** | *External Cloud* | `gemini-3.8-flash` | N/A | 443 (HTTPS) | Google AI SDK / LangChain | Multimodal vision model for optical character recognition (OCR), handwritten medicine identification, dosage parsing, and safety warning generation. Includes deterministic mock provider fallback. |
 
 ### Health Verification & Probes
 

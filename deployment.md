@@ -614,7 +614,7 @@ To use Gemini, set:
 ```dotenv
 PRESCRIPTION_AI_PROVIDER=gemini
 GEMINI_API_KEY=your-key
-GEMINI_MODEL=gemini-2.5-flash
+GEMINI_MODEL=gemini-3.8-flash
 ```
 
 Restart the API:

@@ -177,7 +177,7 @@ flowchart TB
     end
 
     subgraph ExternalIntelligence["Clinical AI Intelligence"]
-        GeminiVision["Google Gemini 1.5 Flash\nMultimodal Vision Model\n(Fallback: Deterministic Mock)"]
+        GeminiVision["Google Gemini 3.8 Flash\nMultimodal Vision Model\n(Fallback: Deterministic Mock)"]
     end
 
     PresentationLayer -->|REST API + Bearer JWT| Auth
@@ -209,7 +209,7 @@ flowchart TB
 | **ORM & Schema**       | **Prisma ORM**            | TypeORM, Drizzle                   | End-to-end type safety synchronizing database migrations with frontend and backend TypeScript types. Declarative relation tracking prevents orphaned prescription records.                                                   |
 | **Task Queue & Cache** | **Redis 7 + BullMQ**      | RabbitMQ, AWS SQS                  | Decouples resource-intensive AI multimodal vision tasks from the customer's HTTP request-response cycle. Redis provides microsecond rate-limiting for login authentication and session token invalidation.                     |
 | **Document Storage**   | **MinIO S3**              | Local disk storage, MongoDB GridFS | Industry-standard S3 API compatibility. Ensures zero public bucket exposure; document access is restricted to time-limited HMAC pre-signed URLs with audit logging under DPDP Act requirements.                              |
-| **AI Vision Engine**   | **Gemini 1.5 Flash**      | Tesseract OCR, AWS Textract        | Superior Indian medical handwriting recognition, bilingual English/Bengali doctor prescription deciphering, and native JSON output structured to our medicine catalogue schema.                                              |
+| **AI Vision Engine**   | **Gemini 3.8 Flash**      | Tesseract OCR, AWS Textract        | Superior Indian medical handwriting recognition, bilingual English/Bengali doctor prescription deciphering, and native JSON output structured to our medicine catalogue schema.                                              |
 
 ---
 
@@ -262,7 +262,7 @@ erDiagram
 #### 2. `Prescription`, `PrescriptionAIExtraction`, and `PrescriptionQuote`
 
 - **`Prescription`**: Sensitive medical document uploaded by customer. Stores MinIO S3 `objectKey`, file metadata, verification status (`UPLOADED`, `UNDER_REVIEW`, `APPROVED`, `REJECTED`, `REUPLOAD_REQUIRED`), and patient link (`familyMemberId`).
-- **`PrescriptionAIExtraction`**: Immutable record of background AI OCR processing. Stores provider (`Gemini 1.5 Flash`), extracted doctor name, candidate medicines, dosage instructions, confidence scores, and raw JSON.
+- **`PrescriptionAIExtraction`**: Immutable record of background AI OCR processing. Stores provider (`Gemini 3.8 Flash`), extracted doctor name, candidate medicines, dosage instructions, confidence scores, and raw JSON.
 - **`PrescriptionQuote` & `PrescriptionQuoteItem`**: Pharmacist-authored quotation generated _before_ any order exists. Quotes exact catalogue SKUs, confirmed retail pricing, unavailable medicine notes, and delivery charges.
 
 #### 3. `Order`, `OrderItem`, and `StockReservation`
@@ -299,7 +299,7 @@ sequenceDiagram
     participant API as NestJS API Gateway
     participant MinIO as MinIO S3 Storage
     participant Queue as BullMQ (Redis)
-    participant AI as Gemini 1.5 Flash
+    participant AI as Gemini 3.8 Flash
     actor Pharmacist
     participant PharmaPortal as Pharmacist Terminal
 
@@ -433,7 +433,7 @@ Handwritten medical prescriptions in West Bengal present significant variability
 flowchart LR
     Scan["Scanned Prescription\n(JPG / PNG / PDF)"] --> S3["Private MinIO S3\nEncrypted Storage"]
     S3 --> Worker["BullMQ Background Worker"]
-    Worker --> Gemini["Gemini 1.5 Flash\nMultimodal Vision LLM"]
+    Worker --> Gemini["Gemini 3.8 Flash\nMultimodal Vision LLM"]
 
     Gemini --> RawJSON["Structured JSON Output\n- Doctor / Prescriber\n- Patient Name\n- Detected Medicine Lines\n- Strength & Form\n- Dosage & Frequency"]
 

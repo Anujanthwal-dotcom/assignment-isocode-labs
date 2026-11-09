@@ -9,7 +9,7 @@ This document outlines architectural assumptions, simulated integrations, and te
 ### 1.1 Mock AI Prescription Reader
 
 - **Current State**: Uses a deterministic mock provider (`MockPrescriptionReader`) and optional LangChain structured prompt adapter.
-- **Production Path**: In production, configure Google Cloud Vertex AI (Gemini 1.5 Pro) or AWS Textract Medical with OCR preprocessing. The application boundary remains invariant: AI outputs are always treated as drafts and require explicit pharmacist review.
+- **Production Path**: In production, configure Google Cloud Vertex AI (Gemini 3.8 Flash) or AWS Textract Medical with OCR preprocessing. The application boundary remains invariant: AI outputs are always treated as drafts and require explicit pharmacist review.
 
 ### 1.2 Simulated Payment Provider
 
