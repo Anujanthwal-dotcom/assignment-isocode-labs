@@ -2,10 +2,8 @@
 
 import * as React from 'react';
 import { useParams } from 'next/navigation';
-import Link from 'next/link';
 import { apiFetch } from '@/lib/api/client';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { BackButton } from '@/components/shared/BackButton';
 

@@ -282,17 +282,16 @@ describe('Customer Ordering UI Tests', () => {
     });
   });
 
-  it('8. Renders CustomerNavbar without cart option', async () => {
+  it('8. Renders CustomerNavbar with cart option', async () => {
     render(<CustomerNavbar />);
     await waitFor(() => {
-      expect(screen.queryByText('Cart')).toBeNull();
-      expect(screen.queryByRole('link', { name: /cart/i })).toBeNull();
+      expect(screen.getByRole('link', { name: /cart/i })).toBeDefined();
     });
   });
 
-  it('9. Renders CustomerBottomNav without cart option', () => {
+  it('9. Renders CustomerBottomNav with cart option', () => {
     render(<CustomerBottomNav />);
-    expect(screen.queryByText('Cart')).toBeNull();
-    expect(screen.queryByRole('link', { name: /cart/i })).toBeNull();
+    expect(screen.getByText('Cart')).toBeDefined();
+    expect(screen.getByRole('link', { name: /cart/i })).toBeDefined();
   });
 });

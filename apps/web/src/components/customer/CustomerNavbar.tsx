@@ -14,6 +14,7 @@ import {
   Repeat,
   LogOut,
   Phone,
+  ShoppingCart,
 } from 'lucide-react';
 import {
   DropdownMenu,
@@ -25,7 +26,6 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { CustomerLocationSelector } from '@/components/customer/CustomerLocationSelector';
 import { useAuth } from '@/lib/auth/auth-context';
-import { apiFetch } from '@/lib/api/client';
 
 export const CustomerNavbar: React.FC = () => {
   const pathname = usePathname();
@@ -39,6 +39,7 @@ export const CustomerNavbar: React.FC = () => {
 
   const navLinks = [
     { href: '/customer', label: 'Home' },
+    { href: '/customer/medicines', label: 'Medicines' },
     { href: '/customer/prescriptions', label: 'Prescriptions' },
     { href: '/customer/family', label: 'Family' },
     { href: '/customer/refills', label: 'Refills' },
@@ -106,6 +107,16 @@ export const CustomerNavbar: React.FC = () => {
           >
             <Bell className="h-4 w-4" />
             <span className="absolute top-2 right-2 h-1.5 w-1.5 rounded-full bg-[#14B8A6]" />
+          </Link>
+
+          {/* Cart */}
+          <Link
+            href="/customer/cart"
+            className="relative flex h-9 w-9 items-center justify-center rounded-[10px] border border-[#EBECEF] bg-white text-[#0F172A] hover:bg-[#F0FDFA] hover:text-[#0D5C5A] transition-colors"
+            title="Cart"
+            aria-label="View cart"
+          >
+            <ShoppingCart className="h-4 w-4" />
           </Link>
 
 

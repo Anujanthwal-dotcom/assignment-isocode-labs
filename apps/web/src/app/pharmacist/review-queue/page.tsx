@@ -3,7 +3,7 @@
 import * as React from 'react';
 import Link from 'next/link';
 import { apiFetch } from '@/lib/api/client';
-import { FileText, ShoppingBag, Search, AlertCircle, ShieldCheck } from 'lucide-react';
+import { FileText, ShoppingBag, Search, AlertCircle } from 'lucide-react';
 
 interface QueueItem {
   orderId: string;

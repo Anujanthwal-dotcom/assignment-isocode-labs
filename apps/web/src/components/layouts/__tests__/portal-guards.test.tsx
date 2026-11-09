@@ -70,6 +70,27 @@ describe('Portal Route Protection & Role Redirection', () => {
       });
     });
 
+    it('redirects store staff user to /staff', async () => {
+      mockUser = {
+        id: 'u1',
+        role: 'STORE_STAFF',
+        status: 'ACTIVE',
+        profile: { fullName: 'Staff' },
+      };
+      mockLoading = false;
+      mockPathname = '/customer';
+
+      render(
+        <CustomerLayout>
+          <div>Customer Content</div>
+        </CustomerLayout>,
+      );
+
+      await waitFor(() => {
+        expect(mockReplace).toHaveBeenCalledWith('/staff');
+      });
+    });
+
     it('allows CUSTOMER on /customer without redirect', async () => {
       mockUser = {
         id: 'u1',
@@ -128,6 +149,27 @@ describe('Portal Route Protection & Role Redirection', () => {
         expect(mockReplace).toHaveBeenCalledWith('/customer');
       });
     });
+
+    it('redirects store staff visiting /pharmacist to /staff', async () => {
+      mockUser = {
+        id: 'u1',
+        role: 'STORE_STAFF',
+        status: 'ACTIVE',
+        profile: { fullName: 'Staff' },
+      };
+      mockLoading = false;
+      mockPathname = '/pharmacist';
+
+      render(
+        <PharmacistLayout>
+          <div>Pharmacist Content</div>
+        </PharmacistLayout>,
+      );
+
+      await waitFor(() => {
+        expect(mockReplace).toHaveBeenCalledWith('/staff');
+      });
+    });
   });
 
   describe('AdminLayout', () => {
@@ -149,6 +191,27 @@ describe('Portal Route Protection & Role Redirection', () => {
 
       await waitFor(() => {
         expect(mockReplace).toHaveBeenCalledWith('/pharmacist');
+      });
+    });
+
+    it('redirects store staff visiting /admin to /staff', async () => {
+      mockUser = {
+        id: 'u1',
+        role: 'STORE_STAFF',
+        status: 'ACTIVE',
+        profile: { fullName: 'Staff' },
+      };
+      mockLoading = false;
+      mockPathname = '/admin';
+
+      render(
+        <AdminLayout>
+          <div>Admin Content</div>
+        </AdminLayout>,
+      );
+
+      await waitFor(() => {
+        expect(mockReplace).toHaveBeenCalledWith('/staff');
       });
     });
 

@@ -13,8 +13,7 @@ import {
   DialogFooter,
 } from '@/components/ui/dialog';
 import { StatusBadge } from '@/components/shared/StatusBadge';
-import { formatINR } from '@pharmacy/validation';
-import { ShoppingBag, DollarSign, CheckCircle2, Clock, AlertTriangle, FileText, Eye } from 'lucide-react';
+import { ShoppingBag, DollarSign, CheckCircle2, FileText, Eye } from 'lucide-react';
 
 interface OrderItemDTO {
   id: string;

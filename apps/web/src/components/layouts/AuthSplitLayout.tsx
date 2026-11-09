@@ -1,7 +1,6 @@
 'use client';
 
 import * as React from 'react';
-import Link from 'next/link';
 import { BackButton } from '@/components/shared/BackButton';
 
 interface AuthSplitLayoutProps {

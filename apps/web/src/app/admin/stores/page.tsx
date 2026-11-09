@@ -1,7 +1,7 @@
 'use client';
 
 import * as React from 'react';
-import { apiFetch, ApiError } from '@/lib/api/client';
+import { apiFetch } from '@/lib/api/client';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import {
@@ -12,7 +12,7 @@ import {
   DialogFooter,
 } from '@/components/ui/dialog';
 import { SemanticAlert } from '@/components/shared/SemanticAlert';
-import { Building2, Users, UserCheck, Shield, Plus, Store as StoreIcon, UserPlus } from 'lucide-react';
+import { Users, UserCheck, Shield, Plus, Store as StoreIcon, UserPlus } from 'lucide-react';
 
 interface StoreDTO {
   id: string;

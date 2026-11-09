@@ -26,6 +26,8 @@ export const CustomerLayout: React.FC<{ children: React.ReactNode }> = ({ childr
       router.replace('/pharmacist');
     } else if (user.role === 'ADMIN') {
       router.replace('/admin');
+    } else if (user.role === 'STORE_STAFF') {
+      router.replace('/staff');
     } else if (user.role === 'CUSTOMER' && isLoginPage) {
       router.replace('/customer');
     }

@@ -6,7 +6,6 @@ import { apiFetch } from '@/lib/api/client';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import Link from 'next/link';
 import { RefillSubscriptionDto, RefillReminderDto } from '@pharmacy/shared-types';
 import { BackButton } from '@/components/shared/BackButton';
 

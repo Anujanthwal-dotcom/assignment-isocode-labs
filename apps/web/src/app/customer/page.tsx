@@ -15,6 +15,7 @@ import {
   Package,
   Truck,
   RotateCw,
+  Pill,
 } from 'lucide-react';
 import { useAuth } from '@/lib/auth/auth-context';
 import { Button } from '@/components/ui/button';
@@ -249,17 +250,17 @@ export default function CustomerHomePage() {
             </Link>
 
             <Link
-              href="/customer/prescriptions"
+              href="/customer/medicines"
               className="p-4 sm:p-5 rounded-[16px] border border-[#EBECEF] bg-white hover:border-[#14B8A6] hover:shadow-[0_4px_16px_rgba(0,0,0,0.04)] transition-all group block shadow-[0_2px_10px_rgba(0,0,0,0.02)]"
             >
               <div className="flex items-center justify-between mb-3">
                 <div className="h-10 w-10 rounded-[10px] bg-[#F0FDFA] flex items-center justify-center text-[#0D5C5A] group-hover:bg-[#0D5C5A] group-hover:text-white transition-colors">
-                  <FileText className="h-5 w-5" />
+                  <Pill className="h-5 w-5" />
                 </div>
                 <ArrowRight className="h-4 w-4 text-slate-400 group-hover:text-[#0D5C5A] group-hover:translate-x-0.5 transition-all" />
               </div>
               <h2 className="font-display font-bold text-sm text-[#0F172A] group-hover:text-[#0D5C5A] transition-colors">
-                Prescriptions
+                Browse Medicines
               </h2>
             </Link>
 

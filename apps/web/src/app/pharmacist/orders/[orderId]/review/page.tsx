@@ -1,7 +1,6 @@
 'use client';
 
 import * as React from 'react';
-import Link from 'next/link';
 import Image from 'next/image';
 import { useParams, useRouter } from 'next/navigation';
 import { apiFetch } from '@/lib/api/client';
@@ -18,6 +17,7 @@ export default function PharmacistOrderReviewPage() {
   const [successMessage, setSuccessMessage] = React.useState<string | null>(null);
 
   const [reviewData, setReviewData] = React.useState<any | null>(null);
+  const [reviewId, setReviewId] = React.useState<string | null>(null);
   const [zoomLevel, setZoomLevel] = React.useState(100);
 
   // Modals state
@@ -52,8 +52,11 @@ export default function PharmacistOrderReviewPage() {
     try {
       setLoading(true);
       setError(null);
-      const res = await apiFetch<any>(`/pharmacist/orders/${orderId}/review-details`);
+      const res = await apiFetch<any>(`/pharmacist/orders/${orderId}/review`);
       setReviewData(res);
+      if (res.review?.id) {
+        setReviewId(res.review.id);
+      }
       if (res.order?.customerUser?.fullName) {
         setH1PatientName(res.order.customerUser.fullName);
       }
@@ -90,12 +93,13 @@ export default function PharmacistOrderReviewPage() {
 
   const handleSaveFields = async (orderItemId: string) => {
     const corrections = fieldCorrections[orderItemId];
-    if (!corrections) return;
+    const currentReviewId = reviewId || reviewData?.review?.id;
+    if (!corrections || !currentReviewId) return;
 
     try {
       setActionLoading(true);
       setError(null);
-      await apiFetch(`/pharmacist/orders/${orderId}/items/${orderItemId}/update-draft`, {
+      await apiFetch(`/pharmacist/reviews/${currentReviewId}/items/${orderItemId}`, {
         method: 'PATCH',
         body: JSON.stringify(corrections),
       });
@@ -115,14 +119,16 @@ export default function PharmacistOrderReviewPage() {
       return;
     }
 
+    const currentReviewId = reviewId || reviewData?.review?.id;
+    if (!currentReviewId) return;
+
     try {
       setActionLoading(true);
       setError(null);
       const corrections = fieldCorrections[orderItemId] || {};
-      await apiFetch(`/pharmacist/orders/${orderId}/items/${orderItemId}/decision`, {
+      await apiFetch(`/pharmacist/reviews/${currentReviewId}/items/${orderItemId}/approve`, {
         method: 'POST',
         body: JSON.stringify({
-          decision: 'APPROVED',
           dosageInstructions: corrections.reviewedDosageInstructions,
           duration: corrections.reviewedDuration,
         }),
@@ -139,6 +145,9 @@ export default function PharmacistOrderReviewPage() {
 
   const handleSubmitH1Approval = async () => {
     if (!h1Modal) return;
+    const currentReviewId = reviewId || reviewData?.review?.id;
+    if (!currentReviewId) return;
+
     if (!h1PatientName.trim() || !h1PrescriberName.trim()) {
       setError('Patient and Prescriber name are required for Schedule H1 compliance.');
       return;
@@ -148,10 +157,9 @@ export default function PharmacistOrderReviewPage() {
       setActionLoading(true);
       setError(null);
       const corrections = fieldCorrections[h1Modal.itemId] || {};
-      await apiFetch(`/pharmacist/orders/${orderId}/items/${h1Modal.itemId}/decision`, {
+      await apiFetch(`/pharmacist/reviews/${currentReviewId}/items/${h1Modal.itemId}/approve`, {
         method: 'POST',
         body: JSON.stringify({
-          decision: 'APPROVED',
           dosageInstructions: corrections.reviewedDosageInstructions,
           duration: corrections.reviewedDuration,
           h1PatientName: h1PatientName.trim(),
@@ -172,6 +180,9 @@ export default function PharmacistOrderReviewPage() {
 
   const handleRejectItem = async () => {
     if (!rejectItemModal) return;
+    const currentReviewId = reviewId || reviewData?.review?.id;
+    if (!currentReviewId) return;
+
     if (!rejectItemReason.trim()) {
       setError('Please provide a reason for rejecting this item.');
       return;
@@ -180,10 +191,9 @@ export default function PharmacistOrderReviewPage() {
     try {
       setActionLoading(true);
       setError(null);
-      await apiFetch(`/pharmacist/orders/${orderId}/items/${rejectItemModal.itemId}/decision`, {
+      await apiFetch(`/pharmacist/reviews/${currentReviewId}/items/${rejectItemModal.itemId}/reject`, {
         method: 'POST',
         body: JSON.stringify({
-          decision: 'REJECTED',
           reason: rejectItemReason.trim(),
         }),
       });
@@ -201,6 +211,9 @@ export default function PharmacistOrderReviewPage() {
 
   const handleProposeAlternative = async () => {
     if (!alternativeModal) return;
+    const currentReviewId = reviewId || reviewData?.review?.id;
+    if (!currentReviewId) return;
+
     if (!altProposedMedicineId || !altReason.trim()) {
       setError('Please select an alternative medicine and provide a pharmacist reason.');
       return;
@@ -209,10 +222,9 @@ export default function PharmacistOrderReviewPage() {
     try {
       setActionLoading(true);
       setError(null);
-      await apiFetch(`/pharmacist/orders/${orderId}/alternatives`, {
+      await apiFetch(`/pharmacist/reviews/${currentReviewId}/items/${alternativeModal.itemId}/propose-alternative`, {
         method: 'POST',
         body: JSON.stringify({
-          orderItemId: alternativeModal.itemId,
           proposedMedicineId: altProposedMedicineId,
           reason: altReason.trim(),
         }),
@@ -231,14 +243,14 @@ export default function PharmacistOrderReviewPage() {
   };
 
   const handleApprovePrescription = async () => {
+    const currentReviewId = reviewId || reviewData?.review?.id;
+    if (!currentReviewId) return;
+
     try {
       setActionLoading(true);
       setError(null);
-      await apiFetch(`/pharmacist/orders/${orderId}/review-decision`, {
+      await apiFetch(`/pharmacist/reviews/${currentReviewId}/approve`, {
         method: 'POST',
-        body: JSON.stringify({
-          decision: 'APPROVED',
-        }),
       });
       router.push('/pharmacist/review-queue');
     } catch (err: any) {
@@ -248,6 +260,9 @@ export default function PharmacistOrderReviewPage() {
   };
 
   const handleRejectPrescription = async () => {
+    const currentReviewId = reviewId || reviewData?.review?.id;
+    if (!currentReviewId) return;
+
     if (!rejectPrescriptionReason.trim()) {
       setError('Please provide a reason for rejecting the prescription.');
       return;
@@ -256,11 +271,10 @@ export default function PharmacistOrderReviewPage() {
     try {
       setActionLoading(true);
       setError(null);
-      await apiFetch(`/pharmacist/orders/${orderId}/review-decision`, {
+      await apiFetch(`/pharmacist/reviews/${currentReviewId}/reject`, {
         method: 'POST',
         body: JSON.stringify({
-          decision: 'REJECTED',
-          notes: rejectPrescriptionReason.trim(),
+          reason: rejectPrescriptionReason.trim(),
         }),
       });
       setRejectPrescriptionModal(false);
@@ -272,6 +286,9 @@ export default function PharmacistOrderReviewPage() {
   };
 
   const handleRequestReupload = async () => {
+    const currentReviewId = reviewId || reviewData?.review?.id;
+    if (!currentReviewId) return;
+
     if (!reuploadReason.trim()) {
       setError('Please provide a reason explaining why a new prescription photo is needed.');
       return;
@@ -280,11 +297,10 @@ export default function PharmacistOrderReviewPage() {
     try {
       setActionLoading(true);
       setError(null);
-      await apiFetch(`/pharmacist/orders/${orderId}/review-decision`, {
+      await apiFetch(`/pharmacist/reviews/${currentReviewId}/request-reupload`, {
         method: 'POST',
         body: JSON.stringify({
-          decision: 'REUPLOAD_REQUESTED',
-          notes: reuploadReason.trim(),
+          reason: reuploadReason.trim(),
         }),
       });
       setReuploadModal(false);

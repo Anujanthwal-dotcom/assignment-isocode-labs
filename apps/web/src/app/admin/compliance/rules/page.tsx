@@ -3,11 +3,9 @@
 import * as React from 'react';
 import Link from 'next/link';
 import { apiFetch } from '@/lib/api/client';
-import { useAuth } from '@/lib/auth/auth-context';
 import { BackButton } from '@/components/shared/BackButton';
 
 export default function ComplianceRuleSetsPage() {
-  const { user } = useAuth();
   const [loading, setLoading] = React.useState(true);
   const [error, setError] = React.useState<string | null>(null);
   const [ruleSets, setRuleSets] = React.useState<any[]>([]);

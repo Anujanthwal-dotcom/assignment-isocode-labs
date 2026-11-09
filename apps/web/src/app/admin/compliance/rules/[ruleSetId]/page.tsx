@@ -1,16 +1,13 @@
 'use client';
 
 import * as React from 'react';
-import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import { apiFetch } from '@/lib/api/client';
-import { useAuth } from '@/lib/auth/auth-context';
 import { BackButton } from '@/components/shared/BackButton';
 
 export default function ComplianceRuleSetDetailPage() {
   const params = useParams();
   const ruleSetId = params?.ruleSetId as string;
-  const { user } = useAuth();
 
   const [loading, setLoading] = React.useState(true);
   const [error, setError] = React.useState<string | null>(null);

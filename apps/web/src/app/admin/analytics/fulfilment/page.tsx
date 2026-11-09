@@ -1,7 +1,6 @@
 'use client';
 
 import * as React from 'react';
-import Link from 'next/link';
 import { apiFetch } from '@/lib/api/client';
 import { BackButton } from '@/components/shared/BackButton';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
