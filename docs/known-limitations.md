@@ -23,8 +23,8 @@ This document outlines architectural assumptions, simulated integrations, and te
 
 ### 1.4 Object Storage (MinIO vs S3)
 
-- **Current State**: Local S3-compatible MinIO container running on ports `9000` / `9001`.
-- **Production Path**: Transition to AWS S3 or Google Cloud Storage with customer-managed KMS keys for at-rest prescription file encryption.
+- **Current State**: Local S3-compatible MinIO container running on ports `9000` / `9001` with Server-Side Encryption at rest enabled via `MINIO_KMS_SECRET_KEY` and `MINIO_SERVER_SIDE_ENCRYPTION=AES256`.
+- **Production Path**: In multi-region cloud production, configure AWS S3 or Google Cloud Storage using customer-managed AWS KMS keys via `MINIO_SERVER_SIDE_ENCRYPTION=aws:kms` and `MINIO_KMS_KEY_ID`.
 
 ---
 

@@ -55,6 +55,7 @@ services:
     environment:
       MINIO_ROOT_USER: ${MINIO_ROOT_USER:-minio_admin}
       MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:-minio_admin_secret_key}
+      MINIO_KMS_SECRET_KEY: ${MINIO_KMS_SECRET_KEY:-default-key:699No7L9kpVFZHuLfGbz3TyO4fCEm1+9qTP9t34JdLo=}
     ports:
       - '${MINIO_PORT:-9000}:9000'
       - '${MINIO_CONSOLE_PORT:-9001}:9001'
@@ -66,22 +67,6 @@ services:
       timeout: 5s
       retries: 5
       start_period: 10s
-
-  mailpit:
-    image: axllent/mailpit:latest
-    container_name: pharmacy-mailpit
-    restart: unless-stopped
-    environment:
-      MP_MAX_MESSAGES: 500
-    ports:
-      - '${MAIL_SMTP_PORT:-1025}:1025'
-      - '${MAIL_WEB_PORT:-8025}:8025'
-    healthcheck:
-      test: ['CMD-SHELL', 'nc -z localhost 1025 || exit 1']
-      interval: 10s
-      timeout: 5s
-      retries: 3
-      start_period: 5s
 
 volumes:
   postgres_data:

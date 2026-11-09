@@ -2,7 +2,7 @@
 
 This guide deploys the Pharmacy Management Platform to a single Linux VPS using:
 
-- the repository's existing `infrastructure/docker/docker-compose.yml` for PostgreSQL, Redis, MinIO, and optional Mailpit
+- the repository's existing `infrastructure/docker/docker-compose.yml` for PostgreSQL, Redis, and MinIO
 - Node.js + pnpm on the host for the NestJS API and Next.js web app
 - Caddy on the host for TLS and reverse proxying
 
@@ -30,7 +30,6 @@ flowchart TB
             Postgres[("PostgreSQL 16<br/>127.0.0.1:5432")]
             Redis[("Redis 7<br/>127.0.0.1:6379")]
             MinIO[("MinIO<br/>127.0.0.1:9000")]
-            Mailpit["Mailpit<br/>optional"]
         end
     end
 
@@ -139,7 +138,7 @@ sudo ufw enable
 sudo ufw status
 ```
 
-Docker-published ports can bypass UFW. Section 6.2 binds the database, Redis, MinIO, and Mailpit ports to loopback, which is the actual protection. Do not rely on UFW alone for container ports.
+Docker-published ports can bypass UFW. Section 6.2 binds the database, Redis, and MinIO ports to loopback, which is the actual protection. Do not rely on UFW alone for container ports.
 
 ### 3.5 Optional: fail2ban and swap
 
@@ -228,6 +227,9 @@ Edit `.env`:
 | `MINIO_USE_SSL`            | `true`                                                           |                                            |
 | `MINIO_ROOT_USER`          | `pharmacy_minio_admin`                                           |                                            |
 | `MINIO_ROOT_PASSWORD`      | generated                                                        |                                            |
+| `MINIO_SERVER_SIDE_ENCRYPTION` | `AES256` or `aws:kms`                                        | Server-side prescription file encryption   |
+| `MINIO_KMS_KEY_ID`         | KMS ARN (optional)                                               | Key ID when using `aws:kms`                |
+| `MINIO_KMS_SECRET_KEY`     | `key-name:base64-32bytes`                                        | MinIO standalone KMS key (if self-hosted)   |
 | `CORS_ORIGIN`              | `https://app.example.com`                                        | Exact web origin                           |
 | `WEB_ORIGIN`               | `https://app.example.com`                                        |                                            |
 | `API_ORIGIN`               | `https://api.example.com`                                        |                                            |
@@ -242,7 +244,7 @@ Edit `.env`:
 
 ### 6.2 Bind infrastructure ports to loopback
 
-The existing Compose file publishes PostgreSQL, Redis, MinIO, and Mailpit to all host interfaces. On a production server, edit `infrastructure/docker/docker-compose.yml` so each published port is prefixed with `127.0.0.1`.
+The existing Compose file publishes PostgreSQL, Redis, and MinIO to all host interfaces. On a production server, edit `infrastructure/docker/docker-compose.yml` so each published port is prefixed with `127.0.0.1`.
 
 Change these mappings:
 
@@ -256,10 +258,6 @@ Change these mappings:
 # minio
 - '127.0.0.1:${MINIO_PORT:-9000}:9000'
 - '127.0.0.1:${MINIO_CONSOLE_PORT:-9001}:9001'
-
-# mailpit (optional in production)
-- '127.0.0.1:${MAIL_SMTP_PORT:-1025}:1025'
-- '127.0.0.1:${MAIL_WEB_PORT:-8025}:8025'
 ```
 
 Caddy and the host-run API can still reach these ports on `127.0.0.1`.
@@ -301,11 +299,7 @@ docker compose --env-file .env -f infrastructure/docker/docker-compose.yml ps
 
 PostgreSQL, Redis, and MinIO should be `healthy`.
 
-Mailpit is not used when `MAIL_PROVIDER=brevo`. You may leave it running on loopback or stop it:
-
-```bash
-docker compose --env-file .env -f infrastructure/docker/docker-compose.yml stop mailpit
-```
+All transactional emails are dispatched via Brevo (`smtp-relay.brevo.com:587`). Ensure `BREVO_SMTP_USER` and `BREVO_SMTP_KEY` are configured in `.env`.
 
 ---
 
@@ -834,7 +828,7 @@ Run monthly or after repeated deployments, not while a build is running.
 - [ ] `DEMO_OTP_ENABLED=false`
 - [ ] SSH password authentication and root login disabled
 - [ ] UFW allows only `22`, `80`, `443`
-- [ ] PostgreSQL, Redis, MinIO, and Mailpit ports bound to `127.0.0.1`
+- [ ] PostgreSQL, Redis, and MinIO ports bound to `127.0.0.1`
 - [ ] API port `3001` is not reachable from the internet
 - [ ] MinIO console reachable only through the loopback SSH tunnel
 - [ ] Brevo sender/domain verified; SPF and DKIM published
@@ -892,7 +886,7 @@ When a single VPS is no longer sufficient:
 
 1. Move PostgreSQL to a managed service with point-in-time recovery.
 2. Move Redis to a managed instance with persistence and eviction policies.
-3. Move prescription storage to S3/GCS with KMS encryption, lifecycle rules, and a public presigned endpoint.
+3. Move prescription storage from single-node MinIO to AWS S3/GCS using configured KMS encryption (`MINIO_SERVER_SIDE_ENCRYPTION=aws:kms` and `MINIO_KMS_KEY_ID`), lifecycle rules, and a public presigned endpoint.
 4. Split BullMQ workers from the API process and scale them independently.
 5. Run multiple API replicas behind a load balancer; sessions and OTP state are already in Redis.
 6. Replace the API's startup migration step with a separate release job.

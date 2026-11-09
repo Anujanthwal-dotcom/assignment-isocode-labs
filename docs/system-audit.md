@@ -14,7 +14,7 @@ A comprehensive pre-implementation code and infrastructure audit was performed a
 - `@pharmacy/validation`
 - `@pharmacy/api` (NestJS backend)
 - `@pharmacy/web` (Next.js frontend)
-- PostgreSQL (16-alpine), Redis (7-alpine), MinIO (S3 object store), Mailpit
+- PostgreSQL (16-alpine), Redis (7-alpine), MinIO (S3 object store), Brevo (Nodemailer relay)
 
 The architecture adheres strictly to the offline-first, compliant pharmacy model specified in the technical requirements. All core domain logic—including customer ordering, AI-assisted prescription reading, regulatory compliance rules, store routing, stock reservation, pharmacist fulfilment, and chronic refills—is implemented with relational constraints and append-only audit tracking.
 
@@ -30,7 +30,7 @@ The architecture adheres strictly to the offline-first, compliant pharmacy model
 | **Inventory & Imports**         | `apps/api/src/inventory`, `apps/api/src/inventory-imports`                        | Daily CSV snapshot parser with atomic rollback, SKU normalization, batch balance updates, append-only `InventoryMovement` log                                                          | Fully Implemented |
 | **Customer Profiles**           | `apps/api/src/family-members`, `apps/api/src/customer-addresses`                  | Multi-profile family records (SELF uniqueness constraint), delivery addresses with 6-digit Indian PIN code validation                                                                  | Fully Implemented |
 | **Cart & Orders**               | `apps/api/src/cart`, `apps/api/src/orders`, `apps/api/src/payments`               | Persistent DB-backed shopping cart, server-side line total calculation, COD and mock UPI payments, sequential order numbering (`PH-YYYYMMDD-XXXXXX`)                                   | Fully Implemented |
-| **Prescription Storage**        | `apps/api/src/prescriptions`, `apps/api/src/storage`                              | Private MinIO S3 bucket (`prescriptions`), MIME/extension validation, 300-second pre-signed secure URLs, deletion protection when linked to orders                                     | Fully Implemented |
+| **Prescription Storage**        | `apps/api/src/prescriptions`, `apps/api/src/storage`                              | Private MinIO S3 bucket (`prescriptions`) with Server-Side Encryption at rest (SSE-S3 / SSE-KMS via `X-Amz-Server-Side-Encryption`), MIME/extension validation, 300-second pre-signed secure URLs, deletion protection when linked to orders | Fully Implemented |
 | **Prescription AI Pipeline**    | `apps/api/src/prescription-ai`                                                    | BullMQ asynchronous queue (`prescription-ai-extraction`), LangChain multimodal provider with Google Gemini fallback to deterministic mock reader, fuzzy catalogue matching             | Fully Implemented |
 | **Compliance Engine**           | `apps/api/src/compliance`                                                         | Active rule sets, Schedule H / H1 / X / Narcotic policies, hard blocks, fail-closed on unknown schedules, tamper-evident audit logging                                                 | Fully Implemented |
 | **Pharmacist Verification**     | `apps/api/src/pharmacist-verification`, `apps/api/src/review-assignments`         | Review queue scoped to assigned store, cross-store access rejection, line-item approval/rejection, generic substitution proposals                                                      | Fully Implemented |
@@ -83,8 +83,8 @@ The architecture adheres strictly to the offline-first, compliant pharmacy model
    - `ADMIN` users possess permission to create and activate compliance rule sets, while pharmacists and customers cannot modify compliance rules. Conversely, `ADMIN` cannot perform pharmacist approvals or clinical prescription fulfillment.
 4. **Hard-Blocked Classifications**:
    - Schedule X substances and Narcotics are strictly blocked by the deterministic compliance evaluator and cannot be approved, routed, or dispensed.
-5. **Storage Privacy**:
-   - Prescription files in MinIO are stored in a private bucket. No public access policies exist. Direct file access requires a pre-signed URL expiring in 300 seconds.
+5. **Storage Privacy & Encryption at Rest**:
+   - Prescription files in MinIO/S3 are encrypted at rest using AES-256 Server-Side Encryption (`X-Amz-Server-Side-Encryption`) and stored in a private bucket. No public access policies exist. Direct file access requires a pre-signed URL expiring in 300 seconds.
 
 ---
 
