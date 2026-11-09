@@ -80,7 +80,9 @@ export class InvoiceService {
     // Filter approved items
     const approvedItems = order.items.filter(
       (i) =>
-        i.reviews[0]?.status === 'APPROVED' && i.status !== 'REJECTED' && i.status !== 'REMOVED',
+        (i.reviews[0]?.status === 'APPROVED' || i.status === 'APPROVED') &&
+        i.status !== 'REJECTED' &&
+        i.status !== 'REMOVED',
     );
 
     if (approvedItems.length === 0) {

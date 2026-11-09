@@ -1,4 +1,10 @@
-import { Injectable, Logger, NotFoundException, ForbiddenException } from '@nestjs/common';
+import {
+  Injectable,
+  Logger,
+  NotFoundException,
+  ForbiddenException,
+  BadRequestException,
+} from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { OrderStatus, StockReservationStatus, Prisma } from '@prisma/client';
 
@@ -28,6 +34,7 @@ export class FulfilmentService {
     } else {
       where.status = {
         in: [
+          OrderStatus.APPROVED,
           OrderStatus.STOCK_RESERVED,
           OrderStatus.PICKING,
           OrderStatus.PACKED,
@@ -61,6 +68,9 @@ export class FulfilmentService {
             },
           },
           items: true,
+          fulfilmentStore: {
+            select: { id: true, code: true, name: true },
+          },
           stockReservations: {
             where: { status: StockReservationStatus.ACTIVE },
             take: 1,
@@ -69,14 +79,79 @@ export class FulfilmentService {
             orderBy: { routedAt: 'desc' },
             take: 1,
           },
+          statusHistory: {
+            orderBy: { createdAt: 'desc' },
+            take: 3,
+          },
         },
       }),
     ]);
+
+    // Check for sibling split orders for the fetched orders
+    const prescriptionIds = Array.from(
+      new Set(orders.map((o) => o.prescriptionId).filter((id): id is string => Boolean(id))),
+    );
+
+    const siblingOrders =
+      prescriptionIds.length > 0
+        ? await this.prisma.order.findMany({
+            where: {
+              prescriptionId: { in: prescriptionIds },
+            },
+            select: {
+              id: true,
+              orderNumber: true,
+              prescriptionId: true,
+              fulfilmentStoreId: true,
+              status: true,
+              fulfilmentStore: {
+                select: { id: true, code: true, name: true },
+              },
+              items: {
+                select: { id: true },
+              },
+            },
+          })
+        : [];
 
     return {
       data: orders.map((o) => {
         const activeRes = o.stockReservations[0];
         const latestRouting = o.routingDecisions[0];
+
+        // Sibling orders for multi-store split fulfilment
+        const siblings = siblingOrders.filter((s) => s.prescriptionId === o.prescriptionId);
+        const isSplitOrder = siblings.length > 1;
+        const splitPartIndex = isSplitOrder ? siblings.findIndex((s) => s.id === o.id) + 1 : 1;
+        const totalSplitParts = isSplitOrder ? siblings.length : 1;
+        const siblingStores = siblings
+          .filter((s) => s.id !== o.id)
+          .map((s) => ({
+            orderId: s.id,
+            orderNumber: s.orderNumber,
+            storeId: s.fulfilmentStoreId || '',
+            storeCode: s.fulfilmentStore?.code || 'STORE',
+            storeName: s.fulfilmentStore?.name || 'Retail Store',
+            itemCount: s.items.length,
+            status: s.status,
+          }));
+
+        // Check if staged in shelf/bin
+        const stageHistory = o.statusHistory.find((h) =>
+          h.note?.includes('Staged in Store Staging Bin:'),
+        );
+        let stagingLocation: string | null = null;
+        let stagingNotes: string | null = null;
+        if (stageHistory?.note) {
+          const match = stageHistory.note.match(
+            /Staged in Store Staging Bin:\s*([^\(]+)(?:\((.*)\))?/,
+          );
+          if (match) {
+            stagingLocation = match[1]?.trim() || null;
+            stagingNotes = match[2]?.trim() || null;
+          }
+        }
+
         return {
           orderId: o.id,
           orderNumber: o.orderNumber,
@@ -89,9 +164,17 @@ export class FulfilmentService {
           paymentMethod: o.paymentMethod,
           paymentStatus: o.paymentStatus,
           storeId: o.fulfilmentStoreId,
+          storeName: o.fulfilmentStore?.name,
+          storeCode: o.fulfilmentStore?.code,
           reservationExpiresAt: activeRes ? activeRes.expiresAt.toISOString() : null,
           routingMethod: latestRouting?.routingMethod || null,
           distanceKm: latestRouting?.distanceKm ? Number(latestRouting.distanceKm) : null,
+          stagingLocation,
+          stagingNotes,
+          isSplitOrder,
+          splitPartIndex,
+          totalSplitParts,
+          siblingStores,
         };
       }),
       pagination: {
@@ -126,6 +209,9 @@ export class FulfilmentService {
             picking: true,
           },
         },
+        fulfilmentStore: {
+          select: { id: true, code: true, name: true },
+        },
         payment: true,
         invoice: true,
         handover: true,
@@ -136,6 +222,9 @@ export class FulfilmentService {
         routingDecisions: {
           orderBy: { routedAt: 'desc' },
           take: 1,
+        },
+        statusHistory: {
+          orderBy: { createdAt: 'desc' },
         },
       },
     });
@@ -151,11 +240,63 @@ export class FulfilmentService {
     const activeRes = order.stockReservations[0];
     const latestRouting = order.routingDecisions[0];
 
+    // Sibling orders for multi-store split fulfilment
+    const siblingOrders = order.prescriptionId
+      ? await this.prisma.order.findMany({
+          where: {
+            prescriptionId: order.prescriptionId,
+          },
+          include: {
+            fulfilmentStore: {
+              select: { id: true, code: true, name: true },
+            },
+            items: true,
+          },
+          orderBy: { placedAt: 'asc' },
+        })
+      : [];
+
+    const isSplitOrder = siblingOrders.length > 1;
+    const splitPartIndex = isSplitOrder
+      ? siblingOrders.findIndex((s) => s.id === order.id) + 1
+      : 1;
+    const totalSplitParts = isSplitOrder ? siblingOrders.length : 1;
+    const siblingStores = siblingOrders
+      .filter((s) => s.id !== order.id)
+      .map((s) => ({
+        orderId: s.id,
+        orderNumber: s.orderNumber,
+        storeId: s.fulfilmentStoreId || '',
+        storeCode: s.fulfilmentStore?.code || 'STORE',
+        storeName: s.fulfilmentStore?.name || 'Retail Store',
+        itemCount: s.items.length,
+        status: s.status,
+      }));
+
+    // Check if staged in shelf/bin
+    const stageHistory = order.statusHistory?.find((h) =>
+      h.note?.includes('Staged in Store Staging Bin:'),
+    );
+    let stagingLocation: string | null = null;
+    let stagingNotes: string | null = null;
+    if (stageHistory?.note) {
+      const match = stageHistory.note.match(
+        /Staged in Store Staging Bin:\s*([^\(]+)(?:\((.*)\))?/,
+      );
+      if (match) {
+        stagingLocation = match[1]?.trim() || null;
+        stagingNotes = match[2]?.trim() || null;
+      }
+    }
+
     return {
       orderId: order.id,
       orderNumber: order.orderNumber,
       status: order.status,
       placedAt: order.placedAt.toISOString(),
+      storeId: order.fulfilmentStoreId,
+      storeName: order.fulfilmentStore?.name || null,
+      storeCode: order.fulfilmentStore?.code || null,
       customer: {
         name: order.customerUser.customerProfile?.fullName || 'Customer',
         phone: order.customerUser.phone,
@@ -171,10 +312,16 @@ export class FulfilmentService {
       reservationExpiresAt: activeRes ? activeRes.expiresAt.toISOString() : null,
       routingMethod: latestRouting?.routingMethod || null,
       distanceKm: latestRouting?.distanceKm ? Number(latestRouting.distanceKm) : null,
+      stagingLocation,
+      stagingNotes,
+      isSplitOrder,
+      splitPartIndex,
+      totalSplitParts,
+      siblingStores,
       items: order.items
         .filter(
           (i) =>
-            i.reviews[0]?.status === 'APPROVED' &&
+            (i.reviews[0]?.status === 'APPROVED' || i.status === 'APPROVED') &&
             i.status !== 'REJECTED' &&
             i.status !== 'REMOVED',
         )
@@ -207,6 +354,65 @@ export class FulfilmentService {
         : null,
       codCollected: !!order.codCollection,
       codCollectedAmount: order.codCollection ? Number(order.codCollection.collectedAmount) : null,
+    };
+  }
+
+  /**
+   * Records staging of packed order into store holding shelf / dispatch bin.
+   */
+  async recordStoreStaging(
+    orderId: string,
+    storeId: string,
+    userId: string,
+    dto: { storageBin: string; stagingNotes?: string },
+  ) {
+    const order = await this.prisma.order.findUnique({
+      where: { id: orderId },
+      select: { id: true, fulfilmentStoreId: true, status: true },
+    });
+
+    if (!order) {
+      throw new NotFoundException(`Order ${orderId} not found.`);
+    }
+
+    if (order.fulfilmentStoreId !== storeId) {
+      throw new ForbiddenException('Order is assigned to another fulfillment store.');
+    }
+
+    if (order.status !== OrderStatus.PACKED && order.status !== OrderStatus.READY_FOR_HANDOVER) {
+      throw new BadRequestException(
+        `Cannot stage order in status '${order.status}'. Order must be PACKED or READY_FOR_HANDOVER.`,
+      );
+    }
+
+    await this.prisma.$transaction(async (tx) => {
+      if (order.status !== OrderStatus.READY_FOR_HANDOVER) {
+        await tx.order.update({
+          where: { id: order.id },
+          data: { status: OrderStatus.READY_FOR_HANDOVER },
+        });
+      }
+
+      const noteText = `Staged in Store Staging Bin: ${dto.storageBin}${
+        dto.stagingNotes ? ` (${dto.stagingNotes})` : ''
+      }`;
+
+      await tx.orderStatusHistory.create({
+        data: {
+          orderId: order.id,
+          previousStatus: order.status,
+          newStatus: OrderStatus.READY_FOR_HANDOVER,
+          changedByUserId: userId,
+          note: noteText,
+        },
+      });
+    });
+
+    return {
+      success: true,
+      status: OrderStatus.READY_FOR_HANDOVER,
+      storageBin: dto.storageBin,
+      stagingNotes: dto.stagingNotes || null,
     };
   }
 

@@ -139,4 +139,33 @@ describe('PickingService', () => {
       }),
     );
   });
+
+  it('starts picking from APPROVED status when stock is reserved', async () => {
+    mockPrisma.order.findUnique.mockResolvedValue({
+      id: 'order-approved-1',
+      fulfilmentStoreId: 'store-1',
+      status: OrderStatus.APPROVED,
+      stockReservations: [{ id: 'res-1' }],
+      items: [
+        {
+          id: 'item-1',
+          medicineId: 'med-1',
+          quantity: 2,
+          status: 'APPROVED',
+          reviews: [],
+          picking: null,
+        },
+      ],
+    });
+
+    const res = await service.startPicking('order-approved-1', 'store-1', 'pharmacist-1');
+
+    expect(res.status).toBe(OrderStatus.PICKING);
+    expect(mockPrisma.order.update).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: { id: 'order-approved-1' },
+        data: { status: OrderStatus.PICKING },
+      }),
+    );
+  });
 });

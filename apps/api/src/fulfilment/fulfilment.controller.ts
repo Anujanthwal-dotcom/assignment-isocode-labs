@@ -32,6 +32,16 @@ export class CompletePackingDto {
   notes?: string;
 }
 
+export class StoreStagingDto {
+  @IsString()
+  @IsNotEmpty()
+  storageBin!: string;
+
+  @IsOptional()
+  @IsString()
+  stagingNotes?: string;
+}
+
 export class RecordHandoverDto {
   @IsEnum(HandoverType)
   handoverType!: HandoverType;
@@ -170,6 +180,29 @@ export class FulfilmentController {
       storeId,
       userId,
     );
+  }
+
+  @Post(':orderId/picking/confirm-all')
+  @Roles(UserRole.PHARMACIST, UserRole.STORE_STAFF)
+  @ApiOperation({ summary: 'Confirm all items picked in one action for quick store workflow' })
+  async confirmAllPicked(
+    @Param('orderId') orderId: string,
+    @CurrentUser('id') userId: string,
+  ) {
+    const storeId = await this.getPharmacistStoreId(userId);
+    return this.pickingService.confirmAllItemsPicked(orderId, storeId, userId);
+  }
+
+  @Post(':orderId/store-staging')
+  @Roles(UserRole.PHARMACIST, UserRole.STORE_STAFF)
+  @ApiOperation({ summary: 'Record order placed in store holding shelf or dispatch staging bin' })
+  async recordStoreStaging(
+    @Param('orderId') orderId: string,
+    @Body() dto: StoreStagingDto,
+    @CurrentUser('id') userId: string,
+  ) {
+    const storeId = await this.getPharmacistStoreId(userId);
+    return this.fulfilmentService.recordStoreStaging(orderId, storeId, userId, dto);
   }
 
   @Post(':orderId/packing/complete')

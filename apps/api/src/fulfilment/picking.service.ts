@@ -49,9 +49,14 @@ export class PickingService {
       throw new ForbiddenException('Order is assigned to another fulfillment store.');
     }
 
-    if (order.status !== OrderStatus.STOCK_RESERVED && order.status !== OrderStatus.PICKING) {
+    const canStartPicking =
+      order.status === OrderStatus.STOCK_RESERVED ||
+      order.status === OrderStatus.PICKING ||
+      order.status === OrderStatus.APPROVED;
+
+    if (!canStartPicking) {
       throw new BadRequestException(
-        `Cannot start picking for order in status '${order.status}'. Must be STOCK_RESERVED.`,
+        `Cannot start picking for order in status '${order.status}'. Must be STOCK_RESERVED or APPROVED.`,
       );
     }
 
@@ -59,10 +64,10 @@ export class PickingService {
       throw new UnprocessableEntityException('No active stock reservations found for this order.');
     }
 
-    // Filter approved items
+    // Filter approved items (handling both verified items and quote-accepted items)
     const approvedItems = order.items.filter(
       (item) =>
-        item.reviews[0]?.status === 'APPROVED' &&
+        (item.reviews[0]?.status === 'APPROVED' || item.status === 'APPROVED') &&
         item.status !== 'REJECTED' &&
         item.status !== 'REMOVED',
     );
@@ -84,7 +89,7 @@ export class PickingService {
         }
       }
 
-      if (order.status === OrderStatus.STOCK_RESERVED) {
+      if (order.status === OrderStatus.STOCK_RESERVED || order.status === OrderStatus.APPROVED) {
         await tx.order.update({
           where: { id: order.id },
           data: { status: OrderStatus.PICKING },
@@ -93,7 +98,7 @@ export class PickingService {
         await tx.orderStatusHistory.create({
           data: {
             orderId: order.id,
-            previousStatus: OrderStatus.STOCK_RESERVED,
+            previousStatus: order.status,
             newStatus: OrderStatus.PICKING,
             changedByUserId: pharmacistUserId,
             note: 'Store staff initiated medicine picking.',
@@ -323,5 +328,27 @@ export class PickingService {
           : null,
       })),
     };
+  }
+
+  /**
+   * Fast confirmation of all eligible items in order for swift store picking.
+   */
+  async confirmAllItemsPicked(orderId: string, storeId: string, pharmacistUserId: string) {
+    await this.startPicking(orderId, storeId, pharmacistUserId);
+
+    const checklist = await this.getPickingChecklist(orderId, storeId);
+    for (const item of checklist.items) {
+      if (item.picking?.status !== PickingItemStatus.PICKED) {
+        await this.confirmItemPicked(
+          orderId,
+          item.orderItemId,
+          item.quantityRequired,
+          storeId,
+          pharmacistUserId,
+        );
+      }
+    }
+
+    return this.getPickingChecklist(orderId, storeId);
   }
 }
