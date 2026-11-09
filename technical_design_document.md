@@ -1,108 +1,50 @@
 # Technical Design Document: Multi-Store Pharmacy Reordering & Clinical Verification Platform
 
-**Project GitHub Repository**: [https://github.com/Anujanthwal-dotcom/assignment-isocode-labs](https://github.com/Anujanthwal-dotcom/assignment-isocode-labs)  
-**Live Application Staging Link**: [http://localhost:3000](http://localhost:3000) _(Docker Compose staging available via `pnpm infra:up && pnpm dev`)_  
-**Client**: Company A — Retail Pharmacy Chain, Kolkata & Howrah (46 Retail Stores & Central Distribution Warehouse)  
-**Target Audience**: Isocode Evaluation Team  
-**Author**: Anuj Anthwal  
-**Date**: November 2026  
-**Document Version**: 1.0.0 (Production Architecture Specification)
+**Repository**: [https://github.com/Anujanthwal-dotcom/assignment-isocode-labs](https://github.com/Anujanthwal-dotcom/assignment-isocode-labs)  
+**System Baseline**: Next.js 16 (App Router), NestJS 12, PostgreSQL 16, Prisma ORM, Redis 7 / BullMQ, MinIO S3, Gemini 3.8 Flash  
 
 ---
 
 ## Table of Contents
 
-1. [Executive Summary & Problem Economics](#1-executive-summary--problem-economics)
+1. [System Overview & Core Problem](#1-system-overview--core-problem)
 2. [System Architecture & Technology Justification](#2-system-architecture--technology-justification)
-3. [Data Model & Entity Relationships](#3-data-model--entity-relationships)
-4. [Core Operational Lifecycles & Engineering Flows](#4-core-operational-lifecycles--engineering-flows)
+3. [Data Model & Entity Specifications](#3-data-model--entity-specifications)
+4. [Main Operational Flows](#4-main-operational-flows)
 5. [AI Vision Pipeline & Clinical Safety Boundary](#5-ai-vision-pipeline--clinical-safety-boundary)
-6. [UI/UX Decisions & Key Interface Analysis](#6-uiux-decisions--key-interface-analysis)
-7. [Engineering Scope Trade-Offs & Future Roadmap](#7-engineering-scope-trade-offs--future-roadmap)
-8. [Regulatory Compliance & Information Security (DPDP Act & DCA)](#8-regulatory-compliance--information-security-dpdp-act--dca)
-9. [Budget, Timeline & Target Performance Metrics](#9-budget-timeline--target-performance-metrics)
-10. [Conclusion & Architectural Readiness](#10-conclusion--architectural-readiness)
+6. [UI & Design Decisions](#6-ui--design-decisions)
+7. [Future Implementations & Scope Trade-Offs](#7-future-implementations--scope-trade-offs)
 
 ---
 
-## 1. Executive Summary & Problem Economics
+## 1. System Overview & Core Problem
 
-### 1.1 Client Background
+### 1.1 Problem Statement
 
-Company A is a premier regional pharmacy chain operating **46 physical retail stores** across Kolkata and Howrah, supported by a central warehouse. The business generates **₹180–210 crore** in annual revenue with an operational workforce of **380 staff**. A predominant share of revenue stems from chronic maintenance therapies (diabetes, hypertension, thyroid, and cardiovascular conditions) requiring recurring 30-day refills.
+Regional pharmacy networks operating across dozens of retail stores (such as 46 physical retail hubs across Kolkata and Howrah) face major operational inefficiencies when managing recurring chronic maintenance therapies (diabetes, cardiovascular, hypertension, and thyroid treatments):
 
-### 1.2 The Status Quo & Operational Breakdown
+- **Fragmented WhatsApp / Phone Channels**: Customers submit photos of physical prescriptions through ad-hoc WhatsApp chats or phone calls to individual branch stores.
+- **Isolated Inventory Silos**: Individual retail stores have zero visibility into sister store inventories. When a neighborhood store is out of stock of a particular medicine, the patient is turned away even if a branch 1.5 km away has adequate inventory.
+- **Manual Verification & Compliance Risk**: Prescriptions stored on decentralized staff smartphones violate data privacy standards, and dispensing Schedule H/H1 medications without structured clinical review creates severe regulatory liabilities under the Drugs and Cosmetics Act.
+- **Refill Drop-Off**: Chronic patients frequently miss refills due to lack of proactive dosage tracking and cumbersome reordering processes.
 
-Today, recurring prescriptions are handled through ad-hoc, localized channels:
+### 1.2 Core Architectural Principles
 
-- Customers send photos of paper prescriptions via WhatsApp or phone calls directly to individual branch stores.
-- Store pharmacists manually check physical shelf stock and respond informally.
-- Store staff handle local dispatch without centralized visibility.
-- Refills rely entirely on customer memory or arbitrary reminders.
-- Prescription scans remain trapped on unencrypted, individual store smartphones, creating severe DPDP Act liability.
-- Crucially, **stores cannot see each other's inventory**. If a customer's neighborhood store is out of stock of one medicine, the customer is turned away or skips their dose, unaware that a sister branch 1.5 km away has full stock.
-
-```mermaid
-flowchart LR
-    subgraph Legacy["Status Quo (Fragmented & Vulnerable)"]
-        direction TB
-        C1["Customer Phone"] -->|WhatsApp Photo| S1["Store A Phone\n(Isolated Stock)"]
-        C1 -.->|Out of Stock| Drop["20% Monthly Customer Drop-off\n(₹1.33 Cr Annual Leakage)"]
-        S1 -.->|Zero Visibility| S2["Store B (Stock Available)"]
-    end
-
-    subgraph Modernized["Unified Multi-Store Architecture (Platform)"]
-        direction TB
-        C2["Customer Web App\n(1-Tap 30D Reorder)"] -->|Encrypted Upload| API["Central NestJS API Gateway"]
-        API -->|AI Draft + S3| PQ["Central Pharmacist Review Queue"]
-        PQ -->|Approved Quotation| RE["Haversine Multi-Store Routing Engine"]
-        RE -->|Optimized Allocation| StoreNet["46 Kolkata/Howrah Stores\n(Single or Split Fulfilment)"]
-    end
-```
-
-### 1.3 Financial Impact & Business Case
-
-Based on Company A's operational data:
-
-- **Customer Base**: 9,000 regular chronic medicine customers spending an average of **₹2,200 per month**.
-- **Customer Drop-Off**: **20% (1,800 patients)** skip doses or defect to competitors each month due to forgotten refills or localized stockouts.
-- **Gross Margin Leakage**:
-  - 1,800 patients × ₹2,200/month = **₹39.60 lakh** gross sales lost/month
-  - ₹39.60 lakh × 18% gross margin = **₹7.13 lakh** lost margin/month → **₹85.54 lakh/year**
-- **Labor Waste on WhatsApp Coordination**:
-  - 600 orders/day × 6 minutes labor = 60 staff hours/day
-  - 60 hours/day × 360 operational days × ₹220/hour cost = **₹47.52 lakh/year**
-- **Total Annual Recoverable Loss**:
-  - ₹85.54 lakh + ₹47.52 lakh = **₹1.33 crore/year**
-
-### 1.4 The Strategic Objective
-
-Build a centralized, multi-store digital ordering and clinical verification platform enabling:
-
-1. **1-Minute Chronic Reordering**: Proactive dosage-calculated reminders and instant reordering for patients and elderly caregivers.
-2. **Deterministic Clinical Verification**: Mandatory registered pharmacist review of every prescription before order creation, eliminating legal liability.
-3. **Automated Nearest-Store Routing**: Inventory-aware dynamic routing across 46 stores from daily stock CSV snapshots, including multi-store split fulfilment.
-4. **Single-Pane-of-Glass Operations**: Unified operations overview across all 46 stores for central management.
-
-### 1.5 System & Architectural Assumptions
-
-To establish clear operational boundaries and streamline end-to-end engineering implementation, the platform architecture is structured around four primary assumptions:
+To address these challenges deterministically, the platform is engineered around four foundational principles:
 
 1. **Email-Password Primary Authentication**:
-   - The **Email-Password method is the primary way to login** across all four platform portals.
-   - User identity is secured with industry-standard cryptographic password hashing (Argon2id), JWT session issuance with secure HTTP-only cookies / bearer authorization, Redis-backed brute-force rate limiting, and automated email password reset flows via Brevo SMTP relay.
-2. **Split Order Creation for Multi-Store Fulfillment**:
-   - **If a single store cannot fulfill the order, multiple child orders are created for the fulfilment of it**.
-   - When no single retail branch holds 100% of the prescribed line items, the Haversine dynamic routing engine splits the verified quotation into discrete child orders across the nearest available branch stores (e.g., Store A fulfills in-stock cardiac medicines; Store B fulfills remaining endocrine medicines) to guarantee fulfillment and eliminate customer drop-off.
+   - Primary authentication across all portals is standard Email-Password.
+   - Secured with Argon2id cryptographic password hashing, stateless JWT session tokens with HTTP-only cookies and bearer authorization, Redis-backed rate limiting, and automated SMTP password recovery.
+2. **Multi-Store Split Order Fulfilment**:
+   - If a single store cannot fulfill 100% of an approved prescription order, the routing engine dynamically splits the allocation into discrete child orders across the closest available branch stores.
 3. **Consolidated Payment for Order Bundles**:
-   - **The user will pay for the bundle of orders in a single consolidated transaction**.
-   - Customers never face fragmented payments or repeated checkout steps. The system aggregates all child fulfillment orders under a unified parent order bundle. The customer authorizes payment once (via UPI simulator, Net Banking, or single Cash on Delivery), and the backend ledger handles atomic stock reservations, fulfillment tracking, and store-level reconciliations transparently.
-4. **Quad-Portal Role Architecture (4 Specialized Portals)**:
-   - **4 dedicated portals are created for customer, pharmacist, store staff, and admin** personas:
-     - **Customer Portal** (`/customer`): Patient and caregiver interface for 1-minute chronic reordering, prescription uploads, family profile management, quotation approval, and unified bundle tracking.
-     - **Pharmacist Portal** (`/pharmacist`): Clinical verification interface featuring side-by-side zoomable prescription review, AI OCR validation, Schedule H/H1 compliance tagging, and quotation authoring.
-     - **Store Staff Portal** (`/staff`): Retail store terminal for daily stock CSV snapshot injection, digital pick-and-pack checklists, batch number recording, and delivery courier handover.
-     - **Admin Portal** (`/admin`): Central management dashboard providing chain-wide operational visibility across all 46 stores, real-time revenue and margin telemetry, stockout alerts, and DPDP / Schedule H1 statutory compliance audits.
+   - The customer authorizes payment once for the entire bundle of medicines. The system manages stock reservations, multi-store dispatch, and fulfillment tracking under a single parent transaction.
+4. **Quad-Portal Persona Architecture**:
+   - Four specialized interfaces with distinct role-based access control (RBAC):
+     - **Customer Portal** (`/customer`): 1-minute chronic reordering, prescription uploads, family profile management, quotation approval, and bundle order tracking.
+     - **Pharmacist Portal** (`/pharmacist`): Side-by-side zoomable prescription review, AI OCR draft verification, Schedule H/H1 compliance tagging, and quotation authoring.
+     - **Store Staff Portal** (`/staff`): Daily stock CSV snapshot verification and ingestion, digital pick-and-pack checklists, and courier handover logging.
+     - **Admin Portal** (`/admin`): Chain-wide multi-store inventory visibility, order throughput telemetry, stockout alerts, and statutory audit logging.
 
 ---
 
@@ -110,77 +52,71 @@ To establish clear operational boundaries and streamline end-to-end engineering 
 
 ### 2.1 Monorepo Topology
 
-The platform is engineered as an enterprise-grade **pnpm workspace monorepo** (`pnpm@12.16.1`) enforcing modular decoupling between client interfaces, backend services, and shared domain types.
+The platform is structured as a **pnpm workspace monorepo** enforcing strict modularity between presentation layers, backend micro-modules, and shared domain contracts:
 
 ```text
 pharmacy-platform/
 ├── apps/
-│   ├── web/                     # Next.js 16.4.5 (App Router, React 19.3.1, Tailwind CSS v4)
-│   │   ├── src/app/customer/    # Patient portal: Email-password auth, 1-tap reorder, cart, refills, tracking
-│   │   ├── src/app/pharmacist/  # Clinical portal: Side-by-side verification, quotes, H1 register
-│   │   ├── src/app/staff/       # Retail store portal: Daily CSV injection, pick, pack, handover
-│   │   ├── src/app/admin/       # Central command: Multi-store metrics, compliance, catalogue
-│   │   └── src/components/      # Shared atomic UI components (design system)
+│   ├── web/                     # Next.js 16 (App Router, React 19, Tailwind CSS v4)
+│   │   ├── src/app/customer/    # Patient & Caregiver Portal
+│   │   ├── src/app/pharmacist/  # Clinical Verification & Quoting Terminal
+│   │   ├── src/app/staff/       # Retail Store Inventory & Fulfilment Hub
+│   │   ├── src/app/admin/       # Multi-Store Management Dashboard
+│   │   └── src/components/      # Shared atomic design system
 │   │
-│   └── api/                     # NestJS 12.4.0 (REST API, TypeScript 5.9, Prisma ORM, BullMQ)
-│       ├── src/prescriptions/   # S3 file handling, Gemini multimodal OCR extraction, quotes
-│       ├── src/order-routing/   # Haversine distance matrix, greedy multi-store routing engine
-│       ├── src/inventory/       # Store balance management, 2-step CSV injection pipeline
-│       ├── src/refills/         # Refill calculation service, cron automation, notifications
-│       ├── src/compliance/      # Statutory Schedule H/H1/X rules engine & audit logging
+│   └── api/                     # NestJS 12 (Modular REST API, TypeScript 5.9, Prisma ORM)
+│       ├── src/prescriptions/   # S3 upload, Gemini multimodal OCR extraction, quotes
+│       ├── src/order-routing/   # Haversine distance matrix, greedy multi-store router
+│       ├── src/inventory/       # Store balance management, 2-step CSV import pipeline
+│       ├── src/refills/         # Refill calculation engine, cron automation
+│       ├── src/compliance/      # Statutory Schedule H/H1/X rules engine & audit logger
 │       ├── src/fulfilment/      # Order lifecycle, picking checklist, invoices, handovers
-│       └── prisma/              # PostgreSQL schema, migrations, and demo dataset
+│       └── prisma/              # PostgreSQL schema, migrations, seed data
 │
 ├── packages/
 │   ├── shared-types/            # Shared DTOs, API contracts, status enums, role definitions
-│   ├── validation/              # Zod schemas, input sanitizers, currency formatters
-│   └── config/                  # Shared TypeScript and tooling configuration
+│   ├── validation/              # Zod schemas, input sanitizers, formatters
+│   └── config/                  # Shared TypeScript, ESLint, and Tailwind configurations
 │
 └── infrastructure/
     └── docker/
         └── docker-compose.yml   # Containerized PostgreSQL 16, Redis 7, MinIO S3
 ```
 
-> **Verified framework baseline (from `pnpm-lock.yaml` and installed `node_modules`):**
-> - **`apps/web`** — Next.js **16.4.5** (declared `^16.4.5`) with React / React-DOM **19.3.1**.
-> - **`apps/api`** — NestJS **12.4.0** (`@nestjs/core`, `@nestjs/common`, `@nestjs/platform-express`; declared `^12.4.0`), Nest CLI **12.0.12**, `@nestjs/schematics` **12.0.13**.
->
-> These are the resolved/locked versions in `pnpm-lock.yaml` (`lockfileVersion 9.0`), confirmed against the installed workspace `node_modules` — not just the declared semver ranges.
-
 ### 2.2 System Architecture Diagram
 
 ```mermaid
 flowchart TB
-    subgraph PresentationLayer["Presentation Layer (Next.js 16 App Router :3000)"]
+    subgraph ClientLayer["Presentation Layer (Next.js 16 App Router :3000)"]
         direction TB
         CP["Customer Portal\n(Mobile-First Caregiver UX)"]
         PP["Pharmacist Terminal\n(Side-by-Side Review Queue)"]
         SP["Store Staff Terminal\n(Daily Stock & Fulfilment)"]
-        AP["Admin Operations\n(Central 46-Store Command)"]
+        AP["Admin Operations\n(Central Multi-Store Command)"]
     end
 
-    subgraph GatewayLayer["API Gateway & Services (NestJS 12 :3001)"]
+    subgraph ServiceLayer["API Gateway & Domain Services (NestJS 12 :3001)"]
         direction TB
-        Auth["Auth & RBAC Guards\n(JWT, Redis Session Cache, Argon2)"]
+        Auth["Auth & RBAC Guards\n(JWT, Redis Rate Limits, Argon2id)"]
         RxService["Prescription & Quoting Module"]
-        RouteService["Multi-Store Routing Engine\n(Haversine Distance & Stock Matrix)"]
+        RouteService["Multi-Store Dynamic Routing Engine\n(Haversine Distance & Stock Matrix)"]
         InvService["Store Inventory & CSV Pipeline"]
-        RefillService["Refill Estimation & Reminder Engine"]
+        RefillService["Refill Estimation & Proactive Reminders"]
         CompService["Statutory Compliance & Audit Engine"]
     end
 
     subgraph DataStorageLayer["Data & Storage Infrastructure"]
         Postgres[("PostgreSQL 16\nACID Transactional DB\n:5432")]
         RedisQueue[("Redis 7\nBullMQ Queues & Rate Limits\n:6379")]
-        MinIOS3[("MinIO Object Storage\nEncrypted Rx Documents\n:9000")]
-        BrevoSMTP[("Brevo SMTP\nNodemailer Relay\n:587")]
+        MinIOS3[("MinIO Object Storage\nPrivate Encrypted Rx Vault\n:9000")]
+        SMTPRelay[("SMTP Relay\nNotification Delivery\n:587")]
     end
 
-    subgraph ExternalIntelligence["Clinical AI Intelligence"]
+    subgraph ExternalIntelligence["Clinical AI Subsystem"]
         GeminiVision["Google Gemini 3.8 Flash\nMultimodal Vision Model\n(Fallback: Deterministic Mock)"]
     end
 
-    PresentationLayer -->|REST API + Bearer JWT| Auth
+    ClientLayer -->|REST API + Bearer JWT| Auth
     Auth --> RxService
     Auth --> RouteService
     Auth --> InvService
@@ -189,33 +125,35 @@ flowchart TB
 
     RxService --> Postgres
     RxService --> MinIOS3
-    RxService -->|Queue OCR Extraction| RedisQueue
-    RedisQueue -->|Background Job| GeminiVision
+    RxService -->|Enqueue OCR Job| RedisQueue
+    RedisQueue -->|Async Worker| GeminiVision
 
     RouteService --> Postgres
     InvService --> Postgres
     RefillService --> Postgres
     CompService --> Postgres
-    Auth --> BrevoSMTP
+    Auth --> SMTPRelay
 ```
 
 ### 2.3 Technology Selection Rationale
 
-| Layer / Technology     | Choice                    | Alternative Considered             | Rationale & Architectural Justification                                                                                                                                                                                      |
-| :--------------------- | :------------------------ | :--------------------------------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Backend Framework**  | **NestJS 12.4.0 (Node.js)**   | Express, Go Gin, Python FastAPI    | Strict TypeScript dependency injection enforces clear domain boundaries between compliance, routing, and inventory modules. Built-in lifecycle interceptors and guards ensure mandatory RBAC enforcement.                    |
-| **Frontend Framework** | **Next.js 16.4.5 (React 19.3.1)** | Single Page App (Vite/React)       | Server-driven routing for 4 distinct user portals in a single app, optimized mobile asset delivery, zero-bundle server components, and Tailwind CSS v4 design token uniformity.                                              |
-| **Primary Database**   | **PostgreSQL 16**         | MongoDB, MySQL                     | High-volume pharmaceutical operations demand strict ACID transactions for stock reservations, preventing race conditions or overselling across 46 stores. Robust support for decimal financial types and JSONB audit trails. |
-| **ORM & Schema**       | **Prisma ORM**            | TypeORM, Drizzle                   | End-to-end type safety synchronizing database migrations with frontend and backend TypeScript types. Declarative relation tracking prevents orphaned prescription records.                                                   |
-| **Task Queue & Cache** | **Redis 7 + BullMQ**      | RabbitMQ, AWS SQS                  | Decouples resource-intensive AI multimodal vision tasks from the customer's HTTP request-response cycle. Redis provides microsecond rate-limiting for login authentication and session token invalidation.                     |
-| **Document Storage**   | **MinIO S3**              | Local disk storage, MongoDB GridFS | Industry-standard S3 API compatibility. Ensures zero public bucket exposure; document access is restricted to time-limited HMAC pre-signed URLs with audit logging under DPDP Act requirements.                              |
-| **AI Vision Engine**   | **Gemini 3.8 Flash**      | Tesseract OCR, AWS Textract        | Superior Indian medical handwriting recognition, bilingual English/Bengali doctor prescription deciphering, and native JSON output structured to our medicine catalogue schema.                                              |
+| Layer / Component | Technology Selected | Alternatives Evaluated | Architectural Justification |
+| :--- | :--- | :--- | :--- |
+| **Backend Framework** | **NestJS 12 (Node.js)** | Express, FastAPI, Go Gin | Modular dependency injection enforces strict boundaries between clinical compliance, routing, and inventory modules. Built-in execution lifecycle interceptors, pipes, and guards guarantee deterministic RBAC enforcement across all endpoints. |
+| **Frontend Framework** | **Next.js 16 (React 19)** | Single Page App (Vite + React) | Host all 4 specialized persona portals in a single cohesive codebase using route groups. Zero-bundle React Server Components, server actions for optimized data fetching, and unified Tailwind CSS design tokens. |
+| **Primary Database** | **PostgreSQL 16** | MongoDB, MySQL | High-concurrency retail pharmacy operations require strict ACID transactions for multi-store stock reservations to prevent race conditions. Native support for structured JSONB fields enables flexible audit trails and AI extraction metadata. |
+| **ORM & Migrations** | **Prisma ORM** | TypeORM, Drizzle, MikroORM | End-to-end type safety directly synchronizing database models with API contracts and frontend client types. Declarative relation tracking prevents orphaned medical records and invalid foreign keys. |
+| **Queue & Cache** | **Redis 7 + BullMQ** | RabbitMQ, AWS SQS | Decouples compute-heavy AI vision processing and periodic refill reminder scans from user HTTP request cycles. Redis also provides microsecond rate-limiting for login authentication and session revocation. |
+| **Object Storage** | **MinIO S3** | Local filesystem, MongoDB GridFS | S3 API-compatible private object storage. Guarantees zero public bucket access; document retrieval is locked behind time-expiring HMAC pre-signed URLs with cryptographic audit logging. |
+| **AI Vision Engine** | **Gemini 3.8 Flash** | Tesseract OCR, AWS Textract | High accuracy in recognizing handwritten doctor prescriptions with multilingual clinical terminology (Bengali and English). Direct extraction into structured JSON schema matching our internal medicine catalogue. |
 
 ---
 
-## 3. Data Model & Entity Relationships
+## 3. Data Model & Entity Specifications
 
-The data model is engineered around **four core domain clusters**: Identity & Access, Catalogue & Physical Inventory, Clinical Prescriptions & AI, and Order Routing & Fulfilment.
+The platform's data model comprises six interconnected domain clusters: Identity & Profiles, Physical Stores & Inventory, Prescriptions & AI Extractions, Orders & Fulfilment, Chronic Refills, and Compliance Auditing.
+
+### 3.1 Entity-Relationship Diagram
 
 ```mermaid
 erDiagram
@@ -239,7 +177,7 @@ erDiagram
 
     MEDICINE ||--o{ INVENTORY_BALANCE : quantities
     MEDICINE ||--o{ ORDER_ITEM : line_items
-    MEDICINE ||--o{ PRESCRIPTION_QUOTE_ITEM : mapped_to
+    MEDICINE ||--o{ PRESCRIPTION_QUOTE_ITEM : maps_to
 
     ORDER ||--o{ ORDER_ITEM : contains
     ORDER ||--o| INVOICE : generates
@@ -252,44 +190,50 @@ erDiagram
     REFILL_SUBSCRIPTION ||--o{ REFILL_REMINDER : dispatches
 ```
 
-### 3.1 Primary Entities Specification
+### 3.2 Core Entity Specifications
 
-#### 1. `Store` & `InventoryBalance`
+#### 1. Identity & Profiles
+- **`User`**: Base identity entity storing `email`, `passwordHash` (Argon2id), `role` (`CUSTOMER`, `PHARMACIST`, `STORE_STAFF`, `ADMIN`), and account status.
+- **`CustomerProfile`**: Patient metadata including primary delivery address, phone, and linked `FamilyMember` records for caregiver prescription management.
+- **`PharmacistProfile`**: Clinical verification credentials including Pharmacy Council registration number, state council identification, and active verification metrics.
+- **`StaffProfile`**: Store operational staff assigned to a specific physical retail `Store`.
 
-- **`Store`**: Represents each of the 46 Kolkata/Howrah physical pharmacy hubs with precise geocoordinates (`latitude`, `longitude`), operational status, and staff rosters.
-- **`InventoryBalance`**: Tracks physical units on hand per medicine per store (`quantity`, `reorderLevel`). Enforces a composite unique key `@@unique([medicineId, storeId])` ensuring atomic stock updates.
+#### 2. Physical Stores & Inventory
+- **`Store`**: Represents each retail branch with physical geocoordinates (`latitude`, `longitude`), operational status, contact information, and delivery radius limits.
+- **`Medicine`**: Master pharmaceutical catalogue item specifying brand name, generic composition, dosage form (tablet, capsule, syrup, injection), strength, unit price, and drug schedule (`OTC`, `SCHEDULE_H`, `SCHEDULE_H1`, `SCHEDULE_X`).
+- **`InventoryBalance`**: On-hand physical quantity per medicine per store (`quantity`, `reorderLevel`). Enforces a composite unique key `@@unique([medicineId, storeId])` ensuring atomic stock operations.
+- **`InventoryMovement`**: Immutable audit log of every stock change (`STOCK_IMPORT`, `RESERVATION_HOLD`, `RESERVATION_RELEASE`, `DISPENSED`, `ADJUSTMENT`).
 
-#### 2. `Prescription`, `PrescriptionAIExtraction`, and `PrescriptionQuote`
+#### 3. Prescriptions & Clinical Quotes
+- **`Prescription`**: Sensitive medical document uploaded by customer. Stores MinIO S3 `objectKey`, upload metadata, verification status (`UPLOADED`, `UNDER_REVIEW`, `APPROVED`, `REJECTED`, `REUPLOAD_REQUIRED`), and patient link (`familyMemberId`).
+- **`PrescriptionAIExtraction`**: Immutable record of background multimodal AI OCR output. Stores candidate medicines, detected dosages, frequencies, confidence scores, and raw JSON payload.
+- **`PrescriptionQuote`**: Pharmacist-authored commercial quotation generated *before* any order exists. Contains approved line items, substitution notes, price breakdown, and delivery fee.
+- **`PrescriptionQuoteItem`**: Individual SKU mapped to catalogue `Medicine`, confirmed price, daily dosage, and availability status.
 
-- **`Prescription`**: Sensitive medical document uploaded by customer. Stores MinIO S3 `objectKey`, file metadata, verification status (`UPLOADED`, `UNDER_REVIEW`, `APPROVED`, `REJECTED`, `REUPLOAD_REQUIRED`), and patient link (`familyMemberId`).
-- **`PrescriptionAIExtraction`**: Immutable record of background AI OCR processing. Stores provider (`Gemini 3.8 Flash`), extracted doctor name, candidate medicines, dosage instructions, confidence scores, and raw JSON.
-- **`PrescriptionQuote` & `PrescriptionQuoteItem`**: Pharmacist-authored quotation generated _before_ any order exists. Quotes exact catalogue SKUs, confirmed retail pricing, unavailable medicine notes, and delivery charges.
-
-#### 3. `Order`, `OrderItem`, and `StockReservation`
-
-- **`Order`**: Fulfilment entity created only _after_ customer quotation acceptance and payment. Tracks `orderNumber` (`ORD-YYYYMMDD-XXXX`), status (`PENDING_VERIFICATION` through `HANDED_OVER`), delivery address snapshot, and payment details (`UPI`, `COD`).
+#### 4. Orders & Multi-Store Fulfilment
+- **`Order`**: Order fulfillment entity generated only *after* customer quotation acceptance and payment. Tracks `orderNumber` (`ORD-YYYYMMDD-XXXX`), status (`PENDING_VERIFICATION`, `ROUTED`, `PICKING`, `PACKED`, `READY_FOR_HANDOVER`, `DISPATCHED`, `DELIVERED`), delivery address snapshot, and parent/child relationship for split orders.
 - **`OrderItem`**: Frozen price snapshot (`unitPrice`, `quantity`, `lineTotal`) and individual item review status.
-- **`StockReservation`**: Temporary, auto-expiring soft inventory lock (`ACTIVE`, `RELEASED`, `CONSUMED`) assigned to the routed store during packing to prevent double-allocation.
+- **`StockReservation`**: Soft inventory lock (`ACTIVE`, `RELEASED`, `CONSUMED`) assigned to the routed store during packing with an automatic expiration TTL.
+- **`OrderRoutingDecision`**: Immutable log of routing engine execution, including evaluated candidate stores, Haversine distances, and stock availability scores.
 
-#### 4. `RefillEstimate` & `RefillSubscription`
-
-- **`RefillEstimate`**: Algorithmic projection of customer medicine consumption based on dispensed quantity and verified daily dosage:
-  $$\text{estimatedSupplyDays} = \frac{\text{dispensedQuantity}}{\text{dailyConsumption}}$$
+#### 5. Chronic Refill Automation
+- **`RefillEstimate`**: Projected medicine exhaustion date computed from verified clinical dosage:
+  $$\text{Supply Days} = \left\lfloor \frac{\text{Dispensed Quantity}}{\text{Units per Dose} \times \text{Doses per Day}} \right\rfloor$$
 - **`RefillSubscription`**: Customer-managed recurring refill rule (`ACTIVE`, `PAUSED`, `CANCELLED`) with configured notification lead time (`reminderDaysBefore`, default 5 days).
+- **`RefillReminder`**: Idempotent dispatch log tracking notifications sent across channels.
 
-#### 5. `ComplianceRuleSet`, `ComplianceRule`, and `H1RegisterEntry`
-
-- **`ComplianceRuleSet`**: Dynamic, versioned statutory policy engine (`version`, `effectiveFrom`, `status`). Allows compliance administrators to adapt rules without code redeployment.
-- **`ComplianceRule`**: Mapped to statutory drug schedules (`OTC`, `SCHEDULE_H`, `SCHEDULE_H1`, `SCHEDULE_X`, `NARCOTIC`). Configures `requiresPrescription`, `requiresPharmacistApproval`, `requiresH1Register`, and `hardBlocked`.
-- **`H1RegisterEntry`**: Statutory Schedule H1 sales register mandated by the Drugs and Cosmetics Rules. Captures patient name, prescriber details, drug name, quantity, dispensing pharmacist registration number, and timestamp upon physical handover.
+#### 6. Regulatory Compliance & Audit
+- **`ComplianceRule`**: Mapped to statutory drug classifications (`OTC`, `SCHEDULE_H`, `SCHEDULE_H1`, `SCHEDULE_X`, `NARCOTIC`). Configures flags: `requiresPrescription`, `requiresPharmacistApproval`, `requiresH1Register`, and `hardBlocked`.
+- **`H1RegisterEntry`**: Statutory Schedule H1 sales register mandated by the Drugs and Cosmetics Rules. Captures patient details, prescriber registration, drug batch number, quantity, dispensing pharmacist registration number, and timestamp.
+- **`AuditLog`**: Tamper-evident record of all sensitive actions (document view, quotation generation, prescription approval, inventory overwrite) with actor ID, IP address, and timestamp.
 
 ---
 
-## 4. Core Operational Lifecycles & Engineering Flows
+## 4. Main Operational Flows
 
 ### 4.1 Flow A: Prescription-First Quotation & Ordering Lifecycle
 
-In traditional e-commerce, an order is created immediately when a user clicks checkout. In clinical pharmacy, **creating an unverified order for Schedule H/H1 medicines violates Indian pharmaceutical law**. Our platform enforces a **Prescription-First Quotation Workflow**:
+In standard e-commerce platforms, an order is created immediately at cart checkout. In regulated retail pharmacy, creating an unverified order for Schedule H/H1 drugs is unlawful. The platform implements a **Prescription-First Quotation Workflow**:
 
 ```mermaid
 sequenceDiagram
@@ -325,75 +269,70 @@ sequenceDiagram
 
     Customer->>WebApp: View prescription details (/customer/prescriptions)
     WebApp-->>Customer: Display "Verified Quotation Ready" (Line items & total)
-    Customer->>WebApp: Select delivery address & payment method (UPI/COD)
+    Customer->>WebApp: Select delivery address & payment method
     Customer->>WebApp: Click "Accept Quotation & Pay"
     WebApp->>API: POST /api/v1/prescriptions/:id/accept-quote
     API->>Postgres: Create Order(s) & trigger Nearest-Store Auto-Routing
 ```
 
-**Key Architectural Invariant**: Zero phantom orders exist in the database while a prescription is undergoing review. Customer orders are generated only when clinical verification is complete and the customer has authorized payment.
+**Key Architectural Invariant**: No phantom or pending orders exist in the database while a prescription is undergoing review. Customer orders are generated only after clinical verification is complete and the customer has authorized payment.
 
 ---
 
-### 4.2 Flow B: Multi-Store Dynamic Routing & Split Fulfilment Algorithm
+### 4.2 Flow B: Multi-Store Dynamic Routing & Split Fulfilment
 
-When an order is authorized, the system evaluates all **46 Kolkata and Howrah stores** to locate physical stock closest to the customer's delivery destination.
+When an order is authorized, the routing engine queries all active stores in the network to allocate inventory closest to the delivery destination.
 
-#### Routing Engine Decision Logic:
+#### Routing Algorithm:
 
-1. **Coordinate Geocoding**: Resolve the delivery address geocoordinates $(lat_C, lon_C)$.
-2. **Haversine Proximity Calculation**: For each active store $S_i$ with coordinates $(lat_S, lon_S)$, compute great-circle distance $d(C, S_i)$:
+1. **Geocoordinate Resolution**: Resolve delivery latitude and longitude $(lat_C, lon_C)$.
+2. **Haversine Distance Matrix**: For each active store $S_i$ with coordinates $(lat_S, lon_S)$, compute great-circle distance $d(C, S_i)$:
    $$a = \sin^2\left(\frac{\Delta lat}{2}\right) + \cos(lat_C)\cos(lat_S)\sin^2\left(\frac{\Delta lon}{2}\right)$$
    $$d = 2R \cdot \text{atan2}\left(\sqrt{a}, \sqrt{1-a}\right) \quad (R = 6371 \text{ km})$$
-3. **Sort Candidate Stores**: Rank stores in ascending order of distance: $[S_1, S_2, \dots, S_{46}]$.
-4. **Single-Store Evaluation (Priority 1)**: Iterate through candidate stores. If any single store $S_k$ has on-hand balance $\ge$ requested quantity for **100% of the line items**, allocate the entire order to $S_k$ (eliminates split delivery costs).
-5. **Multi-Store Split Fulfilment (Priority 2)**: If no single store holds complete stock, execute a greedy allocation:
-   - Starting from nearest store $S_1$, allocate available line items and create a child shipment order.
-   - Proceed to $S_2, S_3, \dots$ for remaining unfulfilled items.
-   - **Unified Payment Guarantee**: The customer pays once via a single bundle transaction; the backend links child shipment orders transparently.
+3. **Sort Candidate Stores**: Rank stores ascending by distance: $[S_1, S_2, \dots, S_N]$.
+4. **Single-Store Check (Priority 1)**: Iterate through candidate stores. If any single store $S_k$ has on-hand balance $\ge$ requested quantity for **100% of the line items**, allocate the entire order to $S_k$.
+5. **Multi-Store Split Allocation (Priority 2)**: If no single store holds 100% stock, execute a greedy allocation:
+   - Allocate available in-stock items to nearest store $S_1$ and create Child Order 1.
+   - Allocate remaining items to next closest store $S_2$ and create Child Order 2.
+   - Continue until all items are allocated or flagged for central warehouse fulfillment.
+   - **Unified Payment Guarantee**: The customer pays once for the combined order bundle; child shipment orders are managed transparently by the backend.
 
 ```mermaid
 flowchart TD
-    Start["Order Created from Accepted Quote"] --> Geo["Compute Haversine Distance to 46 Stores"]
+    Start["Order Created from Accepted Quote"] --> Geo["Compute Haversine Distance to Stores"]
     Geo --> Rank["Rank Stores Ascending by Distance"]
     Rank --> CheckSingle{"Does any single store hold 100% stock?"}
 
-    CheckSingle -- Yes --> AssignSingle["Assign Entire Order to Nearest Store\n(Single Shipment KOL-001)"]
+    CheckSingle -- Yes --> AssignSingle["Assign Entire Order to Nearest Store\n(Single Shipment)"]
     CheckSingle -- No --> GreedySplit["Execute Greedy Multi-Store Split Algorithm"]
 
     GreedySplit --> AllocA["Allocate Available Items to Store A (e.g. Salt Lake)"]
     AllocA --> AllocB["Allocate Remaining Items to Store B (e.g. Howrah)"]
-    AllocB --> ChildOrders["Generate Linked Child Orders with Single Bundle Payment"]
+    AllocB --> ChildOrders["Generate Linked Child Orders with Unified Payment"]
 
     AssignSingle --> SoftLock["Acquire Atomic Stock Reservations"]
     ChildOrders --> SoftLock
-    SoftLock --> End["Notify Store Staff for Picking"]
+    SoftLock --> End["Notify Store Staff Terminals for Picking"]
 ```
 
 ---
 
-### 4.3 Flow C: Refill Forecasting & Proactive Reminder Automation
+### 4.3 Flow C: Automated Chronic Refill Forecasting & Proactive Reminders
 
-To eliminate the ₹85.54 lakh annual revenue loss from customer refill drop-off, the platform automatically calculates run-out schedules from verified clinical dispensing data.
+To maintain continuous therapy adherence for chronic patients, the platform automates run-out calculations from dispensed clinical data:
 
-#### Algorithmic Formulation:
-
-$$\text{Supply Days} = \left\lfloor \frac{\text{Dispensed Quantity}}{\text{Units per Dose} \times \text{Doses per Day}} \right\rfloor$$
-$$\text{Estimated Run-out Date} = \text{Dispensed Timestamp} + \text{Supply Days}$$
-$$\text{Reminder Trigger Date} = \text{Estimated Run-out Date} - \text{Reminder Lead Time (Default 5 Days)}$$
-
-#### Automation Execution:
-
-- A daily automated BullMQ worker scans `RefillEstimate` records where `eligibilityStatus = ELIGIBLE` and `status = ACTIVE`.
-- When the current date reaches the Reminder Trigger Date, an idempotent `RefillReminder` is generated.
-- A high-priority in-app notification and email/SMS alert is dispatched to the customer containing a **1-Tap Reorder Action Link**.
-- Clicking reorder pre-populates the customer's cart with their exact chronic maintenance dosage, requiring under 60 seconds to reorder.
+1. **Run-Out Date Computation**:
+   $$\text{Run-Out Date} = \text{Dispensed Timestamp} + \left\lfloor \frac{\text{Dispensed Quantity}}{\text{Daily Dosage Units}} \right\rfloor$$
+2. **Reminder Trigger Date**:
+   $$\text{Trigger Date} = \text{Run-Out Date} - \text{Reminder Lead Time (Default 5 Days)}$$
+3. **Automated BullMQ Worker**: A scheduled daily worker queries active `RefillEstimate` records where `Trigger Date \le Current Date`.
+4. **1-Tap Reorder Action**: The customer receives an alert containing a deep link that pre-populates their cart with the exact chronic maintenance SKU and verified dosage, allowing reorder completion in under 60 seconds.
 
 ---
 
 ### 4.4 Flow D: Daily CSV Inventory Injection Pipeline
 
-Company A operates legacy physical billing terminals across its 46 stores. Direct real-time database synchronization with store POS terminals was cut to prevent store-level network failures from crashing the system. Instead, the platform implements a **High-Throughput Daily CSV Inventory Injection Pipeline** with mandatory 2-step schema verification.
+Rather than relying on fragile real-time database links to legacy store POS machines, the platform implements a high-throughput, schema-validated daily CSV import pipeline:
 
 ```mermaid
 sequenceDiagram
@@ -406,9 +345,9 @@ sequenceDiagram
     Staff->>UI: Select Store & attach daily physical stock CSV
     UI->>API: POST /api/v1/inventory/stores/:id/import/verify-schema
     API->>API: Stream parse CSV header & sample rows (Zod Schema Validation)
-    API-->>UI: Return Schema Check Result (Valid columns, row count, sample data)
+    API-->>UI: Return Schema Check Result (Valid columns, row count, sample preview)
 
-    UI->>Staff: Display green validation banner ("Schema Verified: Ready to Import")
+    UI->>Staff: Display validation banner ("Schema Verified: Ready to Import")
     Staff->>UI: Click "Confirm & Process Inventory Import"
     UI->>API: POST /api/v1/inventory/stores/:id/import/execute
     API->>DB: Begin ACID Transaction
@@ -423,11 +362,22 @@ sequenceDiagram
 
 ---
 
+### 4.5 Flow E: Store Fulfilment & Handover Lifecycle
+
+Once routed, store staff execute fulfillment through a 4-stage digital workflow:
+
+1. **Digital Picking Checklist** (`/staff/fulfilment/:id/pick`): Staff verify item name, strength, batch number, expiry date, and physical shelf location. Exceptions can be flagged with reasons (damaged stock, expired batch).
+2. **Pre-Packing Verification** (`/staff/fulfilment/:id/pack`): Verification of cold-chain packaging (if required), prescription copy inclusion, and tamper-evident packaging seals.
+3. **Staging & Bin Location** (`/staff/fulfilment/:id/store`): The packed order is moved to `READY_FOR_HANDOVER` and assigned to a specific holding shelf/bin.
+4. **Courier Handover & H1 Logging** (`/staff/fulfilment/:id/handover`): Recording of delivery courier details, handover timestamp, and automated entry creation in the statutory Schedule H1 sales register.
+
+---
+
 ## 5. AI Vision Pipeline & Clinical Safety Boundary
 
 ### 5.1 Architecture of the Prescription Reader
 
-Handwritten medical prescriptions in West Bengal present significant variability: cursive doctor handwriting, multilingual annotations (Bengali and English), varying lighting conditions, and crumpled paper.
+Handwritten medical prescriptions present significant challenges: cursive doctor handwriting, multilingual annotations (Bengali and English), and variable lighting conditions.
 
 ```mermaid
 flowchart LR
@@ -435,7 +385,7 @@ flowchart LR
     S3 --> Worker["BullMQ Background Worker"]
     Worker --> Gemini["Gemini 3.8 Flash\nMultimodal Vision LLM"]
 
-    Gemini --> RawJSON["Structured JSON Output\n- Doctor / Prescriber\n- Patient Name\n- Detected Medicine Lines\n- Strength & Form\n- Dosage & Frequency"]
+    Gemini --> RawJSON["Structured JSON Output\n- Doctor / Prescriber Details\n- Patient Identification\n- Medicine Line Items\n- Dosage, Form & Frequency"]
 
     RawJSON --> Fuzzy["Catalogue Matcher\n(Trigram / Levenshtein Distance)"]
     Fuzzy --> GenericFinder["Generic Alternative Engine\n(Active Ingredient Matcher)"]
@@ -443,157 +393,83 @@ flowchart LR
     GenericFinder --> DraftQueue["Pharmacist Verification Queue\n(Strictly Human-in-the-Loop Draft)"]
 ```
 
-### 5.2 Deterministic Safety Guardrails
+#### Extraction Schema:
+The Gemini vision prompt enforces strict JSON output adhering to the domain DTO:
+```json
+{
+  "doctor": {
+    "name": "Dr. S. K. Mukherjee",
+    "regNumber": "WBMC-48291",
+    "clinic": "Kolkata Heart Clinic"
+  },
+  "patient": {
+    "name": "Amitava Roy",
+    "age": 58,
+    "gender": "MALE"
+  },
+  "medicines": [
+    {
+      "detectedName": "Telma 40mg",
+      "dosage": "1 tablet daily morning",
+      "durationDays": 30,
+      "confidence": 0.94
+    }
+  ]
+}
+```
+
+### 5.2 Deterministic Clinical Safety Guardrails
 
 > [!CAUTION]
-> **Strict Clinical Principle**: The artificial intelligence subsystem is explicitly prohibited from exercising autonomous clinical discretion. Under no circumstance does an AI extraction directly create an order, reserve stock, or dispense medicine.
+> **Strict Clinical Guardrail**: The AI subsystem is explicitly prohibited from exercising autonomous clinical discretion. Under no circumstance does an AI extraction directly create an order, reserve stock, or dispense medication.
 
-1. **AI Output Is Non-Binding**: AI extractions are flagged with `status: QUEUED` $\to$ `status: COMPLETED` as draft proposals only. They are rendered in the pharmacist's verification terminal as suggestions.
-2. **Mandatory Pharmacist Affirmation**: A licensed pharmacist registered with the Pharmacy Council must manually inspect each item, confirm or modify the SKU mapping, verify daily dosages, and sign off.
-3. **Unreadable Document Handling**: If image blur, poor lighting, or handwriting illegibility results in an AI confidence score $< 0.60$ or if the pharmacist deems it indecipherable, the system issues a formal `REUPLOAD_REQUESTED` notice to the customer detailing photographic guidelines.
-4. **Cheaper Generic Alternative Consent**: When the AI discovers an active-ingredient chemical equivalent with a lower MRP, it proposes the alternative to the pharmacist. If approved by the pharmacist, it is presented to the customer as an optional cost-saving switch requiring explicit customer consent before cart addition.
-5. **Zero Medical Advice Guarantee**: The platform never provides algorithmic diagnosis, treatment advice, or drug-drug interaction warnings to customers. All clinical communication flows exclusively through registered healthcare personnel.
+1. **Non-Binding AI Output**: AI extractions are treated purely as unverified drafts. They are rendered in the pharmacist's terminal as suggestions awaiting human review.
+2. **Mandatory Licensed Pharmacist Review**: A registered pharmacist must inspect each line item, confirm or modify the SKU mapping against the active catalogue, verify dosages, and author the quotation.
+3. **Unreadable Document Handling**: If an image is blurry or illegible (confidence score $< 0.60$ or flagged by the pharmacist), the system triggers a `REUPLOAD_REQUESTED` notice to the customer with specific photography guidelines.
+4. **Generic Substitution Consent**: When an active-ingredient equivalent with a lower price is available, it is suggested to the pharmacist. If approved by the pharmacist, it is presented to the customer as an optional cost-saving switch requiring explicit customer consent before cart addition.
+5. **Zero Autonomous Medical Advice**: The system never provides algorithmic diagnoses, drug-drug interaction warnings, or treatment guidance directly to consumers.
 
 ---
 
-## 6. UI/UX Decisions & Key Interface Analysis
+## 6. UI & Design Decisions
 
-### 6.1 Design System & Healthcare Psychology
+### 6.1 Healthcare UX Principles
 
-The user interface was crafted following strict healthcare design guidelines:
+The user interface follows healthcare-specific ergonomics designed for chronic patients, senior citizens, and busy retail staff:
 
-- **Calm, Clinical Color Palette**: Primary deep healthcare teal (`#0D5C5A`), soft mint tint surfaces (`#F0FDFA`), clean neutral slate borders (`#E2E8F0`), and high-contrast charcoal typography (`#0F172A`).
-- **Caregiver & Senior Citizen Accessibility**: Large touch targets (minimum 44px), WCAG AAA contrast compliance, clear font weights (Inter font display), and total absence of promotional banners, upsell popups, or gaming dark patterns.
-- **Trilingual Localization**: Interface built with localization architecture for **Bengali (বাংলা)**, **Hindi (हिन्दी)**, and **English**, addressing the demographic profile of the Kolkata and Howrah metropolitan regions.
+- **Calm, Clinical Color Palette**: Primary deep clinical teal (`#0D5C5A`), soft mint tint surfaces (`#F0FDFA`), clean neutral borders (`#E2E8F0`), and high-contrast charcoal typography (`#0F172A`).
+- **Senior & Caregiver Accessibility**: Large interactive touch targets (minimum 44px), WCAG AAA contrast ratios, clear typography (Inter font family), and complete absence of upsell popups, promotional banners, or dark patterns.
+- **Trilingual Accessibility**: Frontend architecture supports **English**, **Bengali (বাংলা)**, and **Hindi (हिन्दी)** to serve the diverse demographic profile of Kolkata and Howrah.
 
 ### 6.2 Key Screen Analysis
 
-| #     | Screen / Portal                                                                     | Primary User                        | Layout & Design Choices                                                                                                                                                               | Clinical & Business Justification                                                                                                                   |
-| :---- | :---------------------------------------------------------------------------------- | :---------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | :-------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **1** | **Customer Home & 1-Minute Reorder** (`/customer`)                                  | Patient / Caregiver                 | Prominent 1-tap reorder card at the top displaying patient name, previous chronic medicines, and run-out countdown.                                                                   | Enables elderly patients or adult children managing parents' medicines to reorder in under 60 seconds without searching.                            |
-| **2** | **Prescription Upload Screen** (`/customer/prescriptions`)                          | Patient / Caregiver                 | Drag-and-drop zone, camera capture button, family profile selector dropdown, and reassuring privacy guarantee badges.                                                                 | Reduces friction in prescription attachment; family profiles ensure clear separation between father's cardiac drugs and mother's thyroid medicines. |
-| **3** | **Pharmacist Side-by-Side Review Queue** (`/pharmacist/review-queue`, `.../verify`) | Registered Pharmacist               | Split-screen interface: left pane displays high-resolution zoomable scanned prescription; right pane displays AI draft medicines alongside live store inventory and catalogue lookup. | Allows instantaneous visual cross-verification without switching tabs or losing clinical context; reduces verification time to under 5 minutes.     |
-| **4** | **Verified Quotation & Checkout** (`/customer/checkout`, `/customer/prescriptions`) | Patient / Caregiver                 | Transparent breakdown of pharmacist-approved medicines, unavailable item notices, delivery address selector, and UPI/COD toggles.                                                     | Fosters clinical trust; customer knows exactly what was approved and the exact cost before financial commitment.                                    |
+| # | Portal / Screen | Target User | Layout & Interaction Decisions | Clinical & Operational Justification |
+| :--- | :--- | :--- | :--- | :--- |
+| **1** | **Customer Home & 1-Tap Reorder** (`/customer`) | Patient / Caregiver | Prominent 1-tap reorder card at the top displaying patient name, previous chronic medicines, and run-out countdown. | Enables elderly patients and adult caregivers to reorder recurring medicines in under 60 seconds without searching. |
+| **2** | **Prescription Upload** (`/customer/prescriptions`) | Patient / Caregiver | Clean drag-and-drop zone, camera capture button, family profile selector dropdown, and privacy assurance badges. | Reduces friction in prescription submission; family profiles ensure clear separation between family members' therapies. |
+| **3** | **Pharmacist Side-by-Side Review Queue** (`/pharmacist/review-queue`, `.../verify`) | Registered Pharmacist | Split-screen interface: left pane displays high-resolution zoomable scanned prescription; right pane displays AI draft medicines alongside live catalogue lookup. | Enables instantaneous visual cross-verification without switching tabs or losing clinical context; reduces verification time to under 5 minutes. |
+| **4** | **Verified Quotation & Checkout** (`/customer/checkout`, `/customer/prescriptions`) | Patient / Caregiver | Itemized breakdown of pharmacist-approved medicines, unavailable item notices, delivery address selector, and payment toggles. | Establishes clinical trust; the customer knows exactly what was approved and the exact cost before committing payment. |
 | **5** | **Store Fulfilment Terminal** (`/staff/fulfilment`, `.../pick`, `.../pack`, `.../store`, `.../handover`) | Retail Store Staff | 4-stage operational flow: digital picking checklist with per-item confirm & exception flagging, statutory pre-packing verification, holding shelf / bin staging (`READY_FOR_HANDOVER`), and courier delivery handover logger. | Eliminates picking errors; enforces physical verification before invoice generation, staging control, and physical delivery handover. |
-| **6** | **Central Multi-Store Admin Overview** (`/admin`, `/admin/stores`)                  | Managing Director / Operations Head | Consolidated dashboard tracking total revenue, order volume across all 46 stores, median verification latency, and stock-out alerts.                                                  | Provides central management with real-time operational visibility across the entire Kolkata/Howrah chain.                                           |
+| **6** | **Central Multi-Store Admin Overview** (`/admin`, `/admin/stores`) | Operations Head / Admin | Consolidated dashboard displaying chain-wide order volume across all stores, verification latency, and stockout alerts. | Provides central management with real-time operational visibility across the entire store network. |
 
 ---
 
-## 7. Engineering Scope Trade-Offs & Future Roadmap
+## 7. Future Implementations & Scope Trade-Offs
 
-To ship a dependable, production-tested slice within the **₹9 lakh budget and 8-week timeline**, pragmatic engineering boundaries were established.
+### 7.1 Deliberate Engineering Boundaries (MVP Cuts)
 
-```mermaid
-quadrantChart
-    title Feature Scope Prioritization Matrix
-    x-axis Low Architectural Risk --> High Architectural Risk
-    y-axis High Business Value --> Low Business Value
-    quadrant-1 Phase 2 Roadmap
-    quadrant-2 Core Build (Shipped MVP)
-    quadrant-3 Out of Scope
-    quadrant-4 Deliberate Cuts
-    "1-Tap Chronic Reordering": [0.15, 0.95]
-    "Pharmacist Verification Queue": [0.20, 0.90]
-    "Dynamic Nearest-Store Routing": [0.35, 0.85]
-    "Daily CSV Stock Injection": [0.25, 0.80]
-    "Schedule H/H1 Compliance Engine": [0.30, 0.92]
-    "Live Road Distance Matrix API": [0.75, 0.40]
-    "Direct POS Database Sync": [0.85, 0.35]
-    "Live Razorpay Gateway": [0.60, 0.55]
-    "Doctor Teleconsultations": [0.90, 0.15]
-    "Diagnostic Lab Bookings": [0.92, 0.10]
-```
+To maintain focused execution and architectural stability, specific capabilities were deliberately scoped out of the initial build:
 
-### 7.1 What Was Deliberately Cut from the MVP
+1. **Direct POS Database Synchronization**: Direct continuous integration with disparate legacy POS machines across 46 stores was cut to prevent store-level network dropouts from compromising central database integrity. Replaced with the schema-validated **Daily CSV Inventory Injection Pipeline**.
+2. **Third-Party Road Traffic Matrix API**: Store routing uses the mathematical Haversine spherical distance formula rather than external paid traffic APIs (e.g., Google Distance Matrix), executing in sub-millisecond time without external network latency or cost.
+3. **Doctor Teleconsultations**: Telemedicine features were scoped out to keep the platform focused strictly on prescription verification and chronic reordering without introducing clinical malpractice exposure.
+4. **Diagnostic Lab Bookings**: Diagnostic test scheduling was excluded as it represents an entirely separate operational supply chain unrelated to retail pharmacy dispensing.
+5. **Live Commercial Payment Gateway**: Implemented as a complete in-app payment simulator with full webhook and token interfaces, allowing live gateway drop-in via environment configuration.
 
-1. **Doctor Consultations & Telemedicine**: Out of scope per client brief. Adding teleconsultations would dilute core engineering focus on chronic reordering and introduce complex medical liability.
-2. **Diagnostic Lab Test Booking**: Out of scope. Avoids extraneous operational workflows unrelated to retail pharmacy dispensing.
-3. **Real-Time Direct POS Database Integration**: Integrating directly with 46 disparate, legacy retail billing software instances was rejected due to fragile store-level internet connections. Replaced by the reliable, schema-validated **Daily CSV Inventory Injection Pipeline**.
-4. **Live Commercial Payment Gateway (Razorpay/Cashfree)**: Replaced with a fully modeled in-app UPI simulator and cash-on-delivery flow. The payment architecture uses complete webhook and token interfaces, allowing live gateway drop-in via configuration.
-5. **Third-Party Road Traffic Distance Matrix**: Store routing uses the mathematical Haversine spherical distance formula instead of costly external Google Distance Matrix API calls, executing in sub-millisecond time.
+### 7.2 Phase 2 & Future Roadmap
 
-### 7.2 Phase 2 Production Roadmap
-
-1. **SMS & WhatsApp Transactional Gateways**: Connect enterprise DLT-approved SMS gateways (Gupshup / Twilio) for out-of-app refill reminder delivery directly on WhatsApp.
-2. **Dedicated Delivery Fleet Application**: Lightweight mobile PWA for store delivery personnel featuring GPS route sequencing and digital customer signature/OTP capture at delivery.
-3. **Cross-Store Automated Stock Rebalancing**: Machine-learning demand forecasting analyzing historical refill cycles to recommend inter-store stock transfers from the central warehouse before stockouts occur.
-4. **Integration with State Pharmacy Council Registry**: Real-time verification of pharmacist registration numbers against the West Bengal State Pharmacy Council database.
-
----
-
-## 8. Regulatory Compliance & Information Security (DPDP Act & DCA)
-
-### 8.1 Statutory Compliance Architecture (Drugs & Cosmetics Act 1940)
-
-Dispensing pharmaceuticals in India is strictly governed by the Drugs and Cosmetics Act 1940 and Drugs and Cosmetics Rules 1945:
-
-- **Schedule X & Narcotics Hard Block**: Schedule X psychoactive drugs and NDPS narcotics are **hard-blocked by default** in both database rules and application code. Any attempt to cart, quote, or order a Schedule X drug returns a deterministic `422 Unprocessable Entity` error.
-- **Schedule H & H1 Mandatory Verification**: All Schedule H/H1 drugs require an approved prescription linked to the order. An unverified item cannot progress to picking or invoicing.
-- **Automated Schedule H1 Sales Register**: Rule 65 of the Drugs and Cosmetics Rules mandates maintaining an immutable Schedule H1 register. The platform automatically logs:
-  - Patient full name, address, and contact number
-  - Registered medical practitioner (prescriber) name and address
-  - Drug name, manufacturer, batch number, and dispensed quantity
-  - Dispensing pharmacist name and state registration number
-  - Timestamped immutable database record (`H1RegisterEntry`) triggered at physical handover.
-
-### 8.2 Digital Personal Data Protection Act (DPDP Act 2023)
-
-Prescription scans, medical histories, and chronic disease profiles constitute sensitive personal health data under the DPDP Act 2023:
-
-1. **Storage Encryption**: All prescription files uploaded to MinIO/S3 are encrypted at rest using Server-Side Encryption (AES-256 / AWS KMS via `X-Amz-Server-Side-Encryption`) and stored in private buckets inaccessible to the public internet. Document access uses HMAC SHA-256 pre-signed URLs expiring within 5 to 15 minutes.
-2. **Role-Based Access Control (RBAC)**: Enforced via cryptographic NestJS guards (`RolesGuard`). Store staff can view only the orders assigned to their store; pharmacists can view only clinical queues; customers can view only their own and their registered family members' data.
-3. **Comprehensive Audit Logging**: Every view, download, verification, approval, and rejection of a prescription is logged immutably in the `AuditLog` table with actor user ID, IP address, and timestamp.
-4. **Data Minimization & Patient Consent**: Quotations and generic alternative switches require explicit, logged patient consent before proceeding to financial execution.
-
----
-
-## 9. Budget, Timeline & Target Performance Metrics
-
-### 9.1 Resource Allocation & Timeline (8 Weeks / ₹9 Lakh)
-
-```mermaid
-gantt
-    title 8-Week Implementation & Commissioning Schedule
-    dateFormat  YYYY-MM-DD
-    section Phase 1: Core Architecture
-    Monorepo, Docker & PostgreSQL Schema Setup :2026-11-09, 10d
-    Authentication & RBAC Security Layer        :2026-11-19, 7d
-    section Phase 2: Clinical & AI Engine
-    S3 Storage & Gemini Multimodal OCR Pipeline :2026-11-26, 10d
-    Side-by-Side Pharmacist Review Queue        :2026-12-06, 8d
-    section Phase 3: Fulfilment & Routing
-    Multi-Store Haversine Dynamic Routing Engine:2026-12-14, 8d
-    Daily CSV Inventory Injection Pipeline      :2026-12-22, 6d
-    section Phase 4: Customer Experience & Launch
-    1-Tap Reorder, Refill Automation & UI Polish:2026-12-28, 8d
-    Full End-to-End Testing & Pilot Deployment  :2027-01-05, 7d
-```
-
-### 9.2 Budget Breakdown
-
-| Workstream                                     | Allocation     | Deliverables                                                                                    |
-| :--------------------------------------------- | :------------- | :---------------------------------------------------------------------------------------------- |
-| **System Architecture & Cloud Infrastructure** | ₹2.20 Lakh     | Monorepo scaffolding, PostgreSQL schema, Docker orchestration, Redis queues, and MinIO storage. |
-| **Clinical Quoting & AI Vision Pipeline**      | ₹2.60 Lakh     | Gemini multimodal integration, catalogue fuzzy matching, and side-by-side verification queue.   |
-| **Multi-Store Routing & Fulfilment**           | ₹2.10 Lakh     | Nearest-store routing engine, multi-store split fulfilment, and store staff picking terminal.   |
-| **Refill Automation & Customer Portals**       | ₹1.30 Lakh     | Proactive refill estimation, 1-tap reordering, family profiles, and multilingual UI design.     |
-| **Security, Regulatory Audit & QA**            | ₹0.80 Lakh     | DPDP Act encryption, Schedule H1 audit register, Vitest unit/integration testing suite.         |
-| **Total Project Investment**                   | **₹9.00 Lakh** | **Complete production-ready multi-store pharmacy platform.**                                    |
-
-### 9.3 Key Success Metrics & Business KPIs
-
-| Metric                                      | Baseline (Today)         | 6-Month Target                          | Verification Mechanism                                                  |
-| :------------------------------------------ | :----------------------- | :-------------------------------------- | :---------------------------------------------------------------------- |
-| **Online Regular Customer Adoption**        | 0% (Phone/WhatsApp)      | **$\ge$ 30%** (2,700 regular customers) | Monthly active customer accounts with $\ge$ 1 completed online reorder. |
-| **Monthly Refill Drop-off Rate**            | 20% (1,800 patients)     | **$\le$ 10%** (900 patients)            | Refill calculation cohort retention analytics.                          |
-| **Median Pharmacist Verification Time**     | 2–6 hours (Manual)       | **$<$ 10 minutes**                      | Prescription upload to quote generation timestamp delta in PostgreSQL.  |
-| **Unapproved Schedule H/H1 Dispatches**     | Vulnerable (Store phone) | **Strictly 0.0%**                       | Cryptographic compliance lock blocking unverified invoices.             |
-| **Store Inventory Synchronization Latency** | Days (Isolated stock)    | **$<$ 30 seconds**                      | Daily CSV injection pipeline execution runtime.                         |
-
----
-
-## 10. Conclusion & Architectural Readiness
-
-The developed Pharmacy Management Platform transforms Company A from a vulnerable, fragmented network of 46 individual pharmacy stores into a synchronized, clinically compliant regional powerhouse.
-
-By eliminating the ₹1.33 crore annual revenue leakage through **1-minute chronic reordering**, **side-by-side pharmacist verification**, and **automated nearest-store inventory routing**, the platform achieves full financial payback within 8 months of deployment while establishing an unassailable compliance standard under the Drugs and Cosmetics Act and DPDP Act 2023.
+1. **Enterprise WhatsApp & SMS Gateway Integration**: Connect enterprise DLT-approved SMS and WhatsApp Business API gateways (Gupshup / Twilio) to deliver proactive refill reminders directly to customers' chat applications.
+2. **Store Delivery Fleet Mobile Application**: Dedicated Progressive Web App (PWA) for store delivery drivers featuring route sequencing, GPS breadcrumbs, and digital customer OTP / signature capture upon delivery.
+3. **Predictive Inter-Store Stock Rebalancing**: Algorithmic demand forecasting that analyzes 30-day chronic refill cycles across geographic zones to recommend automated inter-store stock transfers from the central warehouse before local stockouts occur.
+4. **State Pharmacy Council Registry Integration**: Direct API integration with the West Bengal State Pharmacy Council to validate pharmacist registration numbers and renewal statuses in real time.
+5. **Customer Barcode / QR Pill Bottle Scanner**: Mobile camera feature allowing patients to scan existing medicine strips or QR codes on prescription labels to instantly initiate a reorder.
