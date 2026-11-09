@@ -46,6 +46,37 @@ To address these challenges deterministically, the platform is engineered around
      - **Store Staff Portal** (`/staff`): Daily stock CSV snapshot verification and ingestion, digital pick-and-pack checklists, and courier handover logging.
      - **Admin Portal** (`/admin`): Chain-wide multi-store inventory visibility, order throughput telemetry, stockout alerts, and statutory audit logging.
 
+### 1.3 System Assumptions
+
+The technical architecture and operational workflows are designed under the following foundational assumptions:
+
+1. **Email-Password Primary Authentication**:
+   - The Email-Password method is the primary way to log in across all four platform portals.
+   - Secured using Argon2id password hashing, JWT session issuance with secure HTTP-only cookies / bearer authorization, Redis-backed rate limiting, and automated email password reset flows via Brevo SMTP relay.
+
+2. **Split Order Creation for Multi-Store Fulfillment**:
+   - If a single store cannot fulfill the order, multiple child orders are created for the fulfilment of it.
+   - When no single retail branch holds 100% of the prescribed line items, the Haversine dynamic routing engine splits the verified quotation into discrete child orders across the nearest available branch stores (e.g., Store A fulfills in-stock cardiac medicines; Store B fulfills remaining endocrine medicines) to guarantee fulfillment and prevent drop-off.
+
+3. **Consolidated Payment for Order Bundles**:
+   - The user pays for the bundle of orders in a single consolidated transaction.
+   - Customers do not face fragmented checkouts or multiple payments. The system aggregates all child fulfillment orders under a unified parent order bundle. The customer authorizes payment once (via UPI simulator, Net Banking, or single Cash on Delivery), and the backend ledger handles atomic stock reservations, fulfillment tracking, and store-level reconciliations transparently.
+
+4. **Quad-Portal Role Architecture (4 Specialized Portals)**:
+   - Four dedicated portals are created for customer, pharmacist, store staff, and admin personas:
+     - **Customer Portal** (`/customer`): 1-minute chronic reordering, prescription uploads, family profile management, quotation approval, and unified bundle tracking.
+     - **Pharmacist Portal** (`/pharmacist`): Side-by-side zoomable prescription review, AI OCR validation, Schedule H/H1 compliance tagging, and quotation authoring.
+     - **Store Staff Portal** (`/staff`): Retail store terminal for daily stock CSV snapshot injection, digital pick-and-pack checklists, batch number recording, and delivery courier handover.
+     - **Admin Portal** (`/admin`): Central management dashboard providing chain-wide operational visibility across all 46 stores, real-time revenue and margin telemetry, stockout alerts, and DPDP / Schedule H1 statutory compliance audits.
+
+5. **Direct Cart Purchasing Restricted to OTC Medicines**:
+   - Only Over-The-Counter (OTC) medicines and general wellness products can be sold directly through the digital cart and instant checkout feature.
+   - All prescription pharmaceuticals (Schedule H, Schedule H1, Schedule X, and controlled substances) strictly require physical prescription upload, AI draft OCR extraction, and licensed pharmacist clinical verification with formal quotation authoring before any order creation or payment can take place.
+
+6. **Store Staff Order Status & Fulfilment Progression**:
+   - Retail branch store staff are responsible for updating and progressing the operational status of child fulfillment orders assigned to their store via the dedicated Store Staff Portal (`/staff/fulfilment`).
+   - Order progression follows a strict 4-stage chain-of-custody workflow: digital shelf picking (`PICKING` / item confirmation & batch tracking), statutory Good Pharmacy Practice verification & invoice generation (`PACKED`), physical staging bin allocation (`READY_FOR_HANDOVER`), and courier handover recording (`HANDED_OVER_TO_DELIVERY` / dispatch), driving real-time order tracking telemetry for the customer.
+
 ---
 
 ## 2. System Architecture & Technology Justification
