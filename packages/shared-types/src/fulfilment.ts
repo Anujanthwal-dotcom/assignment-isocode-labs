@@ -112,6 +112,16 @@ export interface OrderHandoverDTO {
   } | null;
 }
 
+export interface SiblingStoreOrderSummary {
+  orderId: string;
+  orderNumber: string;
+  storeId: string;
+  storeCode: string;
+  storeName: string;
+  itemCount: number;
+  status: string;
+}
+
 export interface StoreFulfilmentOrderSummaryDTO {
   orderId: string;
   orderNumber: string;
@@ -124,9 +134,15 @@ export interface StoreFulfilmentOrderSummaryDTO {
   paymentMethod: string;
   paymentStatus: string;
   storeId: string;
-  storeName: string;
-  storeCode: string;
+  storeName?: string;
+  storeCode?: string;
   reservationExpiresAt?: string | null;
   routingMethod?: OrderRoutingMethod | null;
   distanceKm?: number | null;
+  stagingLocation?: string | null;
+  stagingNotes?: string | null;
+  isSplitOrder?: boolean;
+  splitPartIndex?: number;
+  totalSplitParts?: number;
+  siblingStores?: SiblingStoreOrderSummary[];
 }

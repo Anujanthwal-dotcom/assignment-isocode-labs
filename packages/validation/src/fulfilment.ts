@@ -37,9 +37,15 @@ export const recordCodCollectionSchema = z.object({
   paymentReference: z.string().optional(),
 });
 
+export const storeStagingSchema = z.object({
+  storageBin: z.string().min(1, { message: 'Storage bin or shelf identifier is required.' }).max(50),
+  stagingNotes: z.string().max(255).optional(),
+});
+
 export type ManualRouteOrderInput = z.infer<typeof manualRouteOrderSchema>;
 export type PickItemConfirmInput = z.infer<typeof pickItemConfirmSchema>;
 export type PickItemExceptionInput = z.infer<typeof pickItemExceptionSchema>;
 export type CompletePackingInput = z.infer<typeof completePackingSchema>;
+export type StoreStagingInput = z.infer<typeof storeStagingSchema>;
 export type RecordHandoverInput = z.infer<typeof recordHandoverSchema>;
 export type RecordCodCollectionInput = z.infer<typeof recordCodCollectionSchema>;
